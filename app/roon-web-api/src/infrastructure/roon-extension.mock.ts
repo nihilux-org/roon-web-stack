@@ -1,0 +1,41 @@
+const onServerPaired = jest.fn();
+const onServerLost = jest.fn();
+const server = jest.fn();
+const onZones = jest.fn();
+const offZones = jest.fn();
+const onOutputs = jest.fn();
+const offOutputs = jest.fn();
+const startExtension = jest.fn();
+const getImage = jest.fn();
+const browse = jest.fn();
+const load = jest.fn();
+
+export const roonMock = {
+  onServerPaired,
+  onServerLost,
+  server,
+  onZones,
+  offZones,
+  onOutputs,
+  offOutputs,
+  startExtension,
+  getImage,
+  browse,
+  load,
+};
+
+jest.mock("./roon-extension", () => ({
+  roon: {
+    onServerLost,
+    onServerPaired,
+    server,
+    onZones,
+    offZones,
+    onOutputs,
+    offOutputs,
+    startExtension,
+    getImage,
+    browse,
+    load,
+  },
+}));

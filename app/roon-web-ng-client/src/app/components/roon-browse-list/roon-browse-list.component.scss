@@ -1,0 +1,53 @@
+:host {
+  height: 100%;
+  width: 100%;
+  .roon-list {
+    height: 100%;
+    width: 100%;
+    h3 {
+      margin: .5em 0 .5em 16px;
+    }
+    cdk-virtual-scroll-viewport {
+      height: 100%;
+      width: 100%;
+    }
+    ol {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      .roon-list-item {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        padding: 20px 0;
+        cursor: pointer;
+        .roon-item-image-placeholder {
+          height: 70px;
+          width: 70px;
+        }
+        .roon-item-info {
+          flex-grow: 1;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-evenly;
+          height: 70px;
+          span {
+            margin-left: 30px;
+          }
+        }
+        .roon-item-info.roon-item-prompt {
+          flex-direction: row;
+          justify-content: flex-start;
+          align-items: baseline;
+          mat-form-field {
+            flex-grow: 1;
+            margin-left: 30px;
+          }
+          button {
+            margin-left: 20px;
+          }
+        }
+      }
+    }
+  }
+}

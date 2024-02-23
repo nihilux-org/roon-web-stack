@@ -1,0 +1,20 @@
+<div mat-dialog-title class="browse-dialog-title">
+  @for (item of $dialogTitle(); track item; let first = $first; let index = $index) {
+    @if (!first) {
+      <mat-icon aria-hidden="true" fontIcon="navigate_next"/>
+    }
+    <button mat-flat-button (click)="onTitleClicked(index)">{{item}}</button>
+  }
+</div>
+<mat-dialog-content>
+  @if ($loading()) {
+    <div class="loading-spinner">
+      <mat-progress-spinner diameter="350" strokeWidth="15" color="primary" mode="indeterminate" />
+    </div>
+  } @else {
+    <nr-roon-browse-list [content]="content!" (clickedItem)="onItemClicked($event)" [zoneId]="zoneId"/>
+  }
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button (click)="closeDialog()"><mat-icon fontIcon="close"/>Close</button>
+</mat-dialog-actions>

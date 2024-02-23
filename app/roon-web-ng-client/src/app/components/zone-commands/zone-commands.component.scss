@@ -1,0 +1,17 @@
+:host {
+  display: block;
+  padding-top: 15px;
+  > div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .zones {
+      flex-grow: 1;
+      text-align: right;
+    }
+    .volume {
+      flex-grow: 1;
+      text-align: left;
+    }
+  }
+}

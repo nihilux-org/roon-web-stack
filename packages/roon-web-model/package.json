@@ -1,0 +1,30 @@
+{
+  "name": "@nihilux/roon-web-model",
+  "version": "0.0.1",
+  "private": true,
+  "types": "src/index.d.ts",
+  "license": "MIT",
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
+  },
+  "dependencies": {
+    "rxjs": "7.8.1"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "7.0.2",
+    "@typescript-eslint/parser": "7.0.2",
+    "eslint": "8.57.0",
+    "eslint-config-prettier": "9.1.0",
+    "eslint-config-standard": "17.1.0",
+    "eslint-import-resolver-typescript": "3.6.1",
+    "eslint-plugin-import": "2.29.1",
+    "eslint-plugin-n": "16.6.2",
+    "eslint-plugin-prettier": "5.1.3",
+    "eslint-plugin-promise": "6.1.1",
+    "eslint-plugin-simple-import-sort": "12.0.0",
+    "prettier": "3.2.5",
+    "typescript": "5.3.3"
+  },
+  "packageManager": "yarn@4.1.0+sha256.81a00df816059803e6b5148acf03ce313cad36b7f6e5af6efa040a15981a6ffb"
+}

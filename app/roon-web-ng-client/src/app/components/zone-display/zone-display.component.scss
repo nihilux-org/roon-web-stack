@@ -1,0 +1,15 @@
+:host {
+  display: flex;
+  min-height: 0;
+  > div {
+    width: 50%;
+    height: 100%;
+  }
+  .zone-image {
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    min-height: 0;
+    display: flex;
+  }
+}

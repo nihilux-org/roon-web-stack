@@ -1,0 +1,349 @@
+import {
+  ApiState,
+  ClientRoonApiBrowseLoadOptions,
+  ClientRoonApiBrowseOptions,
+  Command,
+  CommandState,
+  CommandStateListener,
+  QueueState,
+  QueueStateListener,
+  RoonApiBrowseLoadResponse,
+  RoonApiBrowseResponse,
+  RoonState,
+  RoonStateListener,
+  RoonWebClient,
+  RoonWebClientFactory,
+  ZoneState,
+  ZoneStateListener,
+} from "@model";
+
+interface ZoneStates {
+  zone?: ZoneState;
+  queue?: QueueState;
+}
+
+class InternalRoonWebClient implements RoonWebClient {
+  private _eventSource?: EventSource;
+  private _apiState?: ApiState;
+  private readonly _zones: Map<string, ZoneStates>;
+  private readonly _roonStateListeners: RoonStateListener[];
+  private readonly _commandStateListeners: CommandStateListener[];
+  private readonly _zoneStateListeners: ZoneStateListener[];
+  private readonly _queueStateListeners: QueueStateListener[];
+  private readonly _apiHost: URL;
+  private _abortController?: AbortController;
+  private _clientPath?: string;
+  private _isClosed: boolean;
+  private _libraryItemKey?: string;
+
+  constructor(apiHost: URL) {
+    this._apiHost = apiHost;
+    this._zones = new Map<string, ZoneStates>();
+    this._roonStateListeners = [];
+    this._commandStateListeners = [];
+    this._zoneStateListeners = [];
+    this._queueStateListeners = [];
+    this._isClosed = true;
+  }
+
+  start: () => Promise<void> = async () => {
+    if (this._isClosed) {
+      this._abortController = new AbortController();
+      const registerUrl = new URL("/api/register", this._apiHost);
+      const req = new Request(registerUrl, {
+        method: "POST",
+        mode: "cors",
+        headers: {
+          Accept: "application/json",
+        },
+        signal: this._abortController.signal,
+      });
+      const response = await fetch(req);
+      delete this._abortController;
+      if (response.status === 201) {
+        const locationHeader = response.headers.get("Location");
+        if (locationHeader) {
+          this._clientPath = locationHeader;
+          await this.loadLibraryItemKey();
+          this.connectEventSource();
+          this._isClosed = false;
+          return;
+        }
+      }
+      throw new Error("unable to register client");
+    }
+  };
+
+  restart: () => Promise<void> = async () => {
+    this.ensureStared();
+    this._isClosed = true;
+    this._eventSource?.close();
+    delete this._eventSource;
+    this._abortController?.abort();
+    return this.start();
+  };
+
+  stop: () => Promise<void> = async () => {
+    this.ensureStared();
+    const unregisterUrl = new URL(`${this._clientPath}/unregister`, this._apiHost);
+    const unregisterRequest = new Request(unregisterUrl, {
+      method: "POST",
+      mode: "cors",
+    });
+    const response = await fetch(unregisterRequest);
+    if (response.status === 204) {
+      this.closeClient();
+      return;
+    }
+    throw new Error("unable to unregister client");
+  };
+
+  onRoonState: (listener: RoonStateListener) => void = (listener: RoonStateListener) => {
+    if (this._apiState && this._apiState.state !== RoonState.STOPPED) {
+      listener(this._apiState);
+    } else if (this._apiState === undefined) {
+      listener({ state: RoonState.STARTING, zones: [] });
+    }
+    this._roonStateListeners.push(listener);
+  };
+
+  offRoonState: (listener: RoonStateListener) => void = (listener: RoonStateListener) => {
+    const listenerIndex = this._roonStateListeners.indexOf(listener);
+    if (listenerIndex !== -1) {
+      this._roonStateListeners.splice(listenerIndex, 1);
+    }
+  };
+
+  onCommandState: (listener: CommandStateListener) => void = (listener: CommandStateListener) => {
+    this._commandStateListeners.push(listener);
+  };
+
+  offCommandState: (listener: CommandStateListener) => void = (listener: CommandStateListener) => {
+    const listenerIndex = this._commandStateListeners.indexOf(listener);
+    if (listenerIndex !== -1) {
+      this._commandStateListeners.splice(listenerIndex, 1);
+    }
+  };
+
+  onZoneState: (listener: ZoneStateListener) => void = (listener: ZoneStateListener) => {
+    for (const zs of this._zones.values()) {
+      if (zs.zone) {
+        listener(zs.zone);
+      }
+    }
+    this._zoneStateListeners.push(listener);
+  };
+
+  offZoneState: (listener: ZoneStateListener) => void = (listener: ZoneStateListener) => {
+    const listenerIndex = this._zoneStateListeners.indexOf(listener);
+    if (listenerIndex !== -1) {
+      this._zoneStateListeners.splice(listenerIndex, 1);
+    }
+  };
+
+  onQueueState: (listener: QueueStateListener) => void = (listener: QueueStateListener) => {
+    for (const zs of this._zones.values()) {
+      if (zs.queue) {
+        listener(zs.queue);
+      }
+    }
+    this._queueStateListeners.push(listener);
+  };
+
+  offQueueState: (listener: QueueStateListener) => void = (listener: QueueStateListener) => {
+    const listenerIndex = this._queueStateListeners.indexOf(listener);
+    if (listenerIndex !== -1) {
+      this._queueStateListeners.splice(listenerIndex, 1);
+    }
+  };
+
+  command: (command: Command) => Promise<string> = async (command: Command): Promise<string> => {
+    this.ensureStared();
+    const commandUrl = new URL(`${this._clientPath}/command`, this._apiHost);
+    const req = new Request(commandUrl, {
+      method: "POST",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(command),
+    });
+    const response = await fetch(req);
+    if (response.status === 202) {
+      const json: CommandJsonResponse = (await response.json()) as unknown as CommandJsonResponse;
+      return json.command_id;
+    }
+    throw new Error("unable to send command");
+  };
+
+  browse: (options: ClientRoonApiBrowseOptions) => Promise<RoonApiBrowseResponse> = async (
+    options: ClientRoonApiBrowseOptions
+  ): Promise<RoonApiBrowseResponse> => {
+    this.ensureStared();
+    const browseUrl = new URL(`${this._clientPath}/browse`, this._apiHost);
+    const req = new Request(browseUrl, {
+      method: "POST",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(options),
+    });
+    const response = await fetch(req);
+    if (response.status === 200) {
+      return (await response.json()) as unknown as RoonApiBrowseResponse;
+    } else {
+      throw new Error("unable to browse content");
+    }
+  };
+
+  load: (options: ClientRoonApiBrowseLoadOptions) => Promise<RoonApiBrowseLoadResponse> = async (
+    options: ClientRoonApiBrowseLoadOptions
+  ): Promise<RoonApiBrowseLoadResponse> => {
+    this.ensureStared();
+    const loadUrl = new URL(`${this._clientPath}/load`, this._apiHost);
+    const req = new Request(loadUrl, {
+      method: "POST",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(options),
+    });
+    const response = await fetch(req);
+    if (response.status === 200) {
+      return (await response.json()) as unknown as RoonApiBrowseLoadResponse;
+    } else {
+      throw new Error("unable to load content");
+    }
+  };
+
+  library: (zone_id: string) => Promise<RoonApiBrowseLoadResponse> = async (zone_id) => {
+    this.ensureStared();
+    const browseLibraryResponse = await this.browse({
+      hierarchy: "browse",
+      item_key: this._libraryItemKey,
+      zone_or_output_id: zone_id,
+    });
+    return this.load({
+      hierarchy: "browse",
+      level: browseLibraryResponse.list?.level,
+    });
+  };
+
+  private loadLibraryItemKey: () => Promise<void> = async () => {
+    const exploreBrowseResponse = await this.browse({ hierarchy: "browse" });
+    const exploreLoadResponse = await this.load({ hierarchy: "browse", level: exploreBrowseResponse.list?.level });
+    const libraryItemKey = exploreLoadResponse.items.length ? exploreLoadResponse.items[0].item_key : undefined;
+    if (libraryItemKey) {
+      this._libraryItemKey = libraryItemKey;
+      return Promise.resolve();
+    } else {
+      return Promise.reject(new Error("can't initialize Library item_key"));
+    }
+  };
+
+  private ensureStared: () => void = () => {
+    if (this._clientPath === undefined) {
+      throw new Error("client has not been started");
+    }
+  };
+
+  private connectEventSource: () => void = (): void => {
+    if (this._eventSource === undefined) {
+      const eventSourceUrl = new URL(`${this._clientPath}/events`, this._apiHost);
+      this._eventSource = new EventSource(eventSourceUrl);
+      this._eventSource.addEventListener("state", this.onApiStateMessage);
+      this._eventSource.addEventListener("command_state", this.onCommandStateMessage);
+      this._eventSource.addEventListener("zone", this.onZoneMessage);
+      this._eventSource.addEventListener("queue", this.onQueueMessage);
+      this._eventSource.onerror = this.closeClient;
+    }
+  };
+
+  private onApiStateMessage = (m: MessageEvent<string>): void => {
+    const apiState: ApiState | undefined = parseJson(m.data);
+    if (apiState) {
+      this._apiState = apiState;
+      for (const roonStateListener of this._roonStateListeners) {
+        roonStateListener(apiState);
+      }
+    }
+  };
+
+  private onCommandStateMessage = (m: MessageEvent<string>): void => {
+    const commandState: CommandState | undefined = parseJson(m.data);
+    if (commandState) {
+      for (const commandStateListener of this._commandStateListeners) {
+        commandStateListener(commandState);
+      }
+    }
+  };
+
+  private onZoneMessage = (m: MessageEvent<string>): void => {
+    const zoneState: ZoneState | undefined = parseJson(m.data);
+    if (zoneState) {
+      const zoneStates = this._zones.get(zoneState.zone_id);
+      if (!zoneStates) {
+        this._zones.set(zoneState.zone_id, {
+          zone: zoneState,
+        });
+      } else {
+        zoneStates.zone = zoneState;
+      }
+      for (const zoneStateListener of this._zoneStateListeners) {
+        zoneStateListener(zoneState);
+      }
+    }
+  };
+
+  private onQueueMessage = (m: MessageEvent<string>): void => {
+    const queueState: QueueState | undefined = parseJson(m.data);
+    if (queueState) {
+      const zoneStates = this._zones.get(queueState.zone_id);
+      if (!zoneStates) {
+        this._zones.set(queueState.zone_id, {
+          queue: queueState,
+        });
+      } else {
+        zoneStates.queue = queueState;
+      }
+      for (const queueStateListener of this._queueStateListeners) {
+        queueStateListener(queueState);
+      }
+    }
+  };
+
+  private closeClient = (): void => {
+    this._eventSource?.close();
+    delete this._eventSource;
+    delete this._apiState;
+    this._zones.clear();
+    for (const stateListener of this._roonStateListeners) {
+      stateListener({ state: RoonState.STOPPED, zones: [] });
+    }
+    this._roonStateListeners.splice(0, Infinity);
+    this._commandStateListeners.splice(0, Infinity);
+    this._zoneStateListeners.splice(0, Infinity);
+    this._queueStateListeners.splice(0, Infinity);
+    this._isClosed = true;
+  };
+}
+
+const build: (apiUrl: URL) => RoonWebClient = (apiUrl: URL) => {
+  return new InternalRoonWebClient(apiUrl);
+};
+
+export const roonWebClientFactory: RoonWebClientFactory = {
+  build,
+};
+
+const parseJson = <T>(json: string): T | undefined => {
+  try {
+    return JSON.parse(json) as unknown as T;
+  } catch {
+    return undefined;
+  }
+};
+
+type CommandJsonResponse = { command_id: string };

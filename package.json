@@ -1,0 +1,28 @@
+{
+  "name": "@nihilux/roon-web-stack",
+  "version": "0.0.1",
+  "description": "a web stack, from api to web client, to use roon ia a browser",
+  "private": true,
+  "author": "nihil@nihilux.org",
+  "license": "MIT",
+  "workspaces": [
+    "packages/*",
+    "app/*"
+  ],
+  "engines": {
+    "node": ">= 20.11.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nihilux-org/roon-web-stack.git"
+  },
+  "scripts": {
+    "build": "yarn workspaces foreach -At run build",
+    "lint": "yarn workspaces foreach -At run lint",
+    "lint:fix": "yarn workspaces foreach -At run lint:fix",
+    "test": "yarn workspaces foreach -At run test",
+    "backend": "yarn workspace @nihilux/roon-web-api start",
+    "frontend": "yarn workspace @nihilux/roon-web-ng-client start"
+  },
+  "packageManager": "yarn@4.1.0+sha256.81a00df816059803e6b5148acf03ce313cad36b7f6e5af6efa040a15981a6ffb"
+}

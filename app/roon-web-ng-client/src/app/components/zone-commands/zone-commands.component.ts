@@ -1,0 +1,81 @@
+import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
+import { MatButtonModule } from "@angular/material/button";
+import { MatIconModule } from "@angular/material/icon";
+import { ZoneSelectorComponent } from "@components/zone-selector/zone-selector.component";
+import { ZoneVolumeComponent } from "@components/zone-volume/zone-volume.component";
+import { Command, CommandType } from "@model";
+import { DEFAULT_ZONE_COMMANDS, ZoneCommands, ZoneCommandState } from "@model/client";
+import { RoonService } from "@services/roon.service";
+
+@Component({
+  selector: "nr-zone-commands",
+  standalone: true,
+  imports: [MatButtonModule, MatIconModule, ZoneSelectorComponent, ZoneVolumeComponent],
+  templateUrl: "./zone-commands.component.html",
+  styleUrl: "./zone-commands.component.scss",
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class ZoneCommandsComponent {
+  private readonly _roonService: RoonService;
+  @Input({ required: true }) zoneCommands: ZoneCommands;
+
+  constructor(roonService: RoonService) {
+    this._roonService = roonService;
+    this.zoneCommands = DEFAULT_ZONE_COMMANDS;
+  }
+
+  onCommandClick(clickedCommand: string) {
+    let commandType: CommandType | undefined;
+    switch (clickedCommand) {
+      case "previousTrack":
+        commandType = CommandType.PREVIOUS;
+        break;
+      case "play":
+        commandType = CommandType.PLAY;
+        break;
+      case "pause":
+        commandType = CommandType.PAUSE;
+        break;
+      case "nextTrack":
+        commandType = CommandType.NEXT;
+        break;
+      default:
+        commandType = undefined;
+        break;
+    }
+    if (commandType) {
+      const zone_id = this.zoneCommands.zoneId;
+      if (
+        (commandType === CommandType.PREVIOUS || commandType === CommandType.NEXT) &&
+        this.zoneCommands.pause === ZoneCommandState.ACTIVE
+      ) {
+        this._roonService.command({
+          type: CommandType.PAUSE,
+          data: {
+            zone_id,
+          },
+        });
+        this._roonService.command({
+          type: commandType,
+          data: {
+            zone_id,
+          },
+        });
+        this._roonService.command({
+          type: CommandType.PLAY,
+          data: {
+            zone_id,
+          },
+        });
+      } else {
+        const command: Command = {
+          type: commandType,
+          data: {
+            zone_id,
+          },
+        };
+        this._roonService.command(command);
+      }
+    }
+  }
+}

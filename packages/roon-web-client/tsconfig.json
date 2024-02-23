@@ -1,0 +1,27 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "composite": true,
+    "baseUrl": "./src",
+    "lib": [
+      "ES2022",
+      "DOM"
+    ],
+    "paths": {
+      "@model": [
+        "../../roon-web-model/src/index.d.ts"
+      ],
+      "@mock": [
+        "mock/index.ts"
+      ]
+    },
+    /* Specify a set of entries that re-map imports to additional lookup locations. */
+    "outDir": "bin"
+    /* Specify an output folder for all emitted files. */
+  },
+  "references": [
+    {
+      "path": "../roon-web-model"
+    }
+  ]
+}

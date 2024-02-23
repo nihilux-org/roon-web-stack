@@ -1,0 +1,27 @@
+.volume-control {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  .volume-value {
+    display: inline-block;
+    width: 2rem;
+  }
+  .volume-output-name {
+    margin-right: 12px;
+    flex-grow: 1;
+  }
+  .volume-slider {
+    margin-left: 18px;
+    margin-right: 6px;
+    mat-slider {
+      width: 180px;
+    }
+    sub {
+      vertical-align: baseline;
+      font-size: 0.8rem;
+    }
+  }
+  .volume-fixed {
+    margin-right: 12px;
+  }
+}

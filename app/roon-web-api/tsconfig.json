@@ -1,0 +1,33 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "composite": true,
+    "baseUrl": "./src",
+    "paths": {
+      "@model": [
+        "../../../packages/roon-web-model/src/index.d.ts"
+      ],
+      "@infrastructure": [
+        "infrastructure/index.ts"
+      ],
+      "@data": [
+        "data/index.ts"
+      ],
+      "@mock": [
+        "mock/index.ts"
+      ],
+      "@service": [
+        "service/index.ts"
+      ],
+      "@roon-kit": [
+        "roon-kit/index.ts"
+      ]
+    },
+    "outDir": "bin",
+  },
+  "references": [
+    {
+      "path": "../../packages/roon-web-model"
+    }
+  ]
+}

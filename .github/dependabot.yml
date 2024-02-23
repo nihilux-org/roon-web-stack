@@ -1,0 +1,32 @@
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "github-actions"
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    groups:
+      angular:
+        patterns:
+         - "@angular*"
+      production-dependencies:
+        dependency-type: "production"
+        exclude-patterns:
+        - "@angular*"
+      development-dependencies:
+        dependency-type: "development"
+        exclude-patterns:
+        - "@angular*"
+    ignore:
+      - dependency-name: "nanoid"
+        update-types:
+          - "version-update:semver-major"

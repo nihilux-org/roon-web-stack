@@ -1,0 +1,47 @@
+<div class="roon-list">
+  @if(content.list.subtitle) {
+    <h3>{{sanitizeSubtitle(content.list.subtitle)}}</h3>
+  }
+  <cdk-virtual-scroll-viewport itemSize="111">
+    <ol>
+      <li *cdkVirtualFor="let item of dataSource; let last = last; let index = index">
+        @if (item) {
+          <div [tabindex]="index" (click)="!item.input_prompt ? onItemClicked(item.item_key, item.hint) : true" (keydown)="!item.input_prompt ? onItemClicked(item.item_key, item.hint) : true" class="roon-list-item">
+            @if (item.image_key || content.list.image_key) {
+              <nr-roon-image [src]="item.image_key ?? content.list.image_key!" [alt]="item.title + ' cover'" height="70" width="70" priority="false" />
+            } @else {
+              <div class="roon-item-image-placeholder"></div>
+            }
+            <div class="roon-item-info" [class.roon-item-prompt]="item.input_prompt">
+              <span>{{item.title}}</span>
+              @if (item.subtitle) {
+                <span>{{sanitizeSubtitle(item.subtitle)}}</span>
+              }
+              @if (item.input_prompt) {
+                <mat-form-field appearance="outline">
+                  <mat-label>{{item.input_prompt.prompt}}</mat-label>
+                  <input matInput (change)="onPromptInputChange(item.item_key + '_prompt_input', $event)" (keyup.enter)="onItemClicked(item.item_key, item.hint, true)"/>
+                </mat-form-field>
+                <button mat-button (click)="onItemClicked(item.item_key, item.hint, true)">{{item.input_prompt.action}}</button>
+              }
+            </div>
+            @if (item.hint === "action_list") {
+              <button mat-icon-button><mat-icon fontIcon="more_vert" /></button>
+              <div [matMenuTriggerFor]="actionMenu" [matMenuTriggerData]="item.item_key"></div>
+            }
+          </div>
+          @if (!last) {
+            <mat-divider [inset]="true" [vertical]="false" />
+          }
+        }
+      </li>
+    </ol>
+  </cdk-virtual-scroll-viewport>
+  <mat-menu #actionMenu="matMenu" xPosition="before">
+    <ng-template matMenuContent let-contextActions="actions">
+      @for (action of contextActions; track action.item_key) {
+        <button mat-menu-item (click)="onActionClicked(action.item_key)">{{action.title}}</button>
+      }
+    </ng-template>
+  </mat-menu>
+</div>

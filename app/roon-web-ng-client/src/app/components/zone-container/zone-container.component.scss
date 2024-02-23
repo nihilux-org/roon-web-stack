@@ -1,0 +1,9 @@
+:host {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  place-content: flex-end;
+  nr-zone-display {
+    flex-grow: 1;
+  }
+}

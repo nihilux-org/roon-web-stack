@@ -1,0 +1,24 @@
+:host {
+  .browse-dialog-title {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding-top: 24px;
+  }
+  mat-dialog-content {
+    width: 80vw;
+    height: 65vh;
+    overflow: hidden;
+    .loading-spinner {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+  mat-dialog-actions {
+    justify-content: flex-end;
+    padding: 0 24px 20px 0;
+  }
+}

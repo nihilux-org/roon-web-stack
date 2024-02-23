@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # set-up build env
+      - uses: actions/checkout@v4
+      - name: Set-up yarn version
+        run: corepack enable yarn
+      - name: Set-up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: package.json
+          cache: yarn
+      # build
+      - name: Install
+        run: yarn install --immutable
+      - name: Build
+        run: yarn build
+      - name: Test
+        run: yarn test

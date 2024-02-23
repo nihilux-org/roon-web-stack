@@ -1,0 +1,51 @@
+{
+  "name": "@nihilux/roon-web-client",
+  "version": "0.0.1",
+  "main": "bin/roon-web-client.js",
+  "typings": "bin/src/index.d.ts",
+  "license": "MIT",
+  "type": "module",
+  "private": true,
+  "exports": {
+    ".": {
+      "types": "./bin/src/index.d.ts",
+      "import": "./bin/roon-web-client.js",
+      "default": "./bin/roon-web-client.js"
+    }
+  },
+  "scripts": {
+    "build": "yarn run clean && yarn webpack",
+    "clean": "rimraf bin",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "test": "jest"
+  },
+  "devDependencies": {
+    "@nihilux/roon-web-model": "0.0.1",
+    "@types/jest": "29.5.12",
+    "@typescript-eslint/eslint-plugin": "7.0.2",
+    "@typescript-eslint/parser": "7.0.2",
+    "eslint": "8.57.0",
+    "eslint-config-prettier": "9.1.0",
+    "eslint-config-standard": "17.1.0",
+    "eslint-import-resolver-typescript": "3.6.1",
+    "eslint-plugin-import": "2.29.1",
+    "eslint-plugin-n": "16.6.2",
+    "eslint-plugin-prettier": "5.1.3",
+    "eslint-plugin-promise": "6.1.1",
+    "eslint-plugin-simple-import-sort": "12.0.0",
+    "eslint-webpack-plugin": "4.0.1",
+    "jest": "29.7.0",
+    "jest-fetch-mock": "3.0.3",
+    "jest-junit": "16.0.0",
+    "prettier": "3.2.5",
+    "rimraf": "5.0.5",
+    "ts-jest": "29.1.2",
+    "ts-loader": "9.5.1",
+    "tsconfig-paths-webpack-plugin": "4.1.0",
+    "typescript": "5.3.3",
+    "webpack": "5.90.3",
+    "webpack-cli": "5.1.4"
+  },
+  "packageManager": "yarn@4.1.0+sha256.81a00df816059803e6b5148acf03ce313cad36b7f6e5af6efa040a15981a6ffb"
+}
