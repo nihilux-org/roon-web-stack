@@ -15,7 +15,7 @@ The final produced artifact is a [`docker` image](https://hub.docker.com/reposit
 
 Thanks to [The Appgineer](https://github.com/TheAppgineer), this app is available in [roon extension manager](https://github.com/TheAppgineer/roon-extension-manager/wiki) starting with version `1.0.16` of the repository:
 
-<img style="max-width: 200px;" alt="Selecting a zone at first app launch" src="./doc/images/roon-extension-manager.png">
+<img style="width: 200px;" alt="roon-extension-manager settings" src="./doc/images/roon-extension-manager.png">
 
 This is the easiest way to use it.  
 You can find more info about this tool [on roon forum](https://community.roonlabs.com/t/roon-extension-manager-1-x-currently-at-v1-1-2/161624) or [in it's GitHub project](https://github.com/TheAppgineer/roon-extension-manager/wiki).  
