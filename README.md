@@ -11,7 +11,17 @@ The final produced artifact is a [`docker` image](https://hub.docker.com/reposit
 
 ## How to use it
 
-### Start the docker image
+### Using roon-extension-manager
+
+Thanks to [The Appgineer](https://github.com/TheAppgineer), this app is available in [roon extension manager](https://github.com/TheAppgineer/roon-extension-manager/wiki) starting with version `1.0.16` of the repository:
+
+<img style="max-width: 400px;" alt="Selecting a zone at first app launch" src="./doc/images/roon-extension-manager.png">
+
+This is the easiest way to use it.  
+You can find more info about this tool [on roon forum](https://community.roonlabs.com/t/roon-extension-manager-1-x-currently-at-v1-1-2/161624) or [in it's GitHub project](https://github.com/TheAppgineer/roon-extension-manager/wiki).  
+Once again, big thanks to [The Appgineer](https://github.com/TheAppgineer), both for the [roon extension manager](https://github.com/TheAppgineer/roon-extension-manager/wiki) and for the integration in the repository.
+
+### Using docker
 
 How to use the `docker` image [available on `docker hub`](https://hub.docker.com/repository/docker/nihiluxorg/roon-web-stack/general):  
 ```bash
@@ -97,12 +107,6 @@ If you don't, you'll see this message in the browser:
 As a reminder, this is how to enable an extension in `roon` settings:
 
 <img style="max-width: 800px;" alt="Application first launch, without extension being enabled in roon settings" src="./doc/images/enable-in-roon-extension-settings.png">
-
-### roon-extension-manager
-
-I'm thinking about making this app available via [roon extension manager](https://github.com/TheAppgineer/roon-extension-manager/wiki). This would ease the setup needed to run this app.  
-The bug regarding `armv7` support in `node alpine-lts` images is blocking, as support for `armv7` is one of the requirements of [roon extension manager](https://github.com/TheAppgineer/roon-extension-manager/wiki).  
-I also need to implement the `roon-extension-generator` part. No ETA, help is welcome, as always. 
 
 ## How to build it from source
 
