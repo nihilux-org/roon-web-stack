@@ -1,6 +1,6 @@
 {
   "name": "@nihilux/roon-web-client",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "bin/roon-web-client.js",
   "typings": "bin/src/index.d.ts",
   "license": "MIT",
@@ -21,7 +21,7 @@
     "test": "jest"
   },
   "devDependencies": {
-    "@nihilux/roon-web-model": "0.0.1",
+    "@nihilux/roon-web-model": "0.0.2",
     "@types/jest": "29.5.12",
     "@typescript-eslint/eslint-plugin": "7.0.2",
     "@typescript-eslint/parser": "7.0.2",

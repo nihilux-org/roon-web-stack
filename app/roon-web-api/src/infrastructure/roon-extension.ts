@@ -1,3 +1,4 @@
+import * as process from "process";
 import { logger } from "@infrastructure";
 import {
   EmptyObject,
@@ -19,7 +20,7 @@ const extension: RoonExtension = new Extension({
   description: {
     extension_id: "roon-web-stack",
     display_name: "roon web stack",
-    display_version: "0.0.1",
+    display_version: "0.0.2",
     publisher: "nihilux.org",
     email: "nihil@nihilux.org",
     website: "https://github.com/nihilux-org/roon-web-stack",
@@ -37,7 +38,7 @@ const onServerPaired = (listener: ServerListener): void => {
 };
 
 const onServerPairedDefaultListener: ServerListener = (server: RoonServer) => {
-  extension.set_status("paired");
+  extension.set_status(`paired, port in use: ${process.env["PORT"] ?? "3000"}`);
   logger.info(`paired roon server: ${server.display_name} (v${server.display_version} - ${server.core_id})`);
 };
 

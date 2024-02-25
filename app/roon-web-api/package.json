@@ -1,6 +1,6 @@
 {
   "name": "@nihilux/roon-web-api",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "main": "bin/app.js",
   "license": "MIT",
@@ -29,7 +29,7 @@
     "ts-retry-promise": "0.8.0"
   },
   "devDependencies": {
-    "@nihilux/roon-web-model": "0.0.1",
+    "@nihilux/roon-web-model": "0.0.2",
     "@types/jest": "29.5.12",
     "@types/node": "20.11.20",
     "@typescript-eslint/eslint-plugin": "7.0.2",
