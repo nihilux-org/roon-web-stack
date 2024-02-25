@@ -1,3 +1,30 @@
-<nr-zone-display [$trackDisplay]="$trackDisplay" />
-<nr-zone-commands [zoneCommands]="$zoneCommands()" />
-<nr-zone-progression [zoneProgression]="$zoneProgression()" />
+<div class="zone-display" [class.one-column]="$isOneColumn()">
+  <div class="zone-image">
+    @if ($trackDisplay() !== EMPTY_TRACK) {
+      @if ($image().imageSize !== -1) {
+        <nr-roon-image [src]="$image().src" [height]="$image().imageSize" [width]="$image().imageSize" priority="true" [alt]="$trackDisplay().title + ' cover'" />
+      }
+    } @else {
+      <div class="no-track-zone-info">
+        <p>{{$trackDisplay().title}}</p>
+      </div>
+    }
+  </div>
+  @if ($isCompact()) {
+    <div class="queue-display compact">
+      <div [style.height]="$imageSize() + 'px'">
+        <nr-zone-queue [$isOneColumn]="$isOneColumn" class="compact" />
+        <nr-zone-commands [zoneCommands]="$zoneCommands()" />
+        <nr-zone-progression [zoneProgression]="$zoneProgression()" />
+      </div>
+    </div>
+  } @else if ($isWide()) {
+    <div class="queue-display">
+      <nr-zone-queue [$isOneColumn]="$isOneColumn" />
+    </div>
+  }
+</div>
+@if ($isWide()) {
+  <nr-zone-commands [zoneCommands]="$zoneCommands()" />
+  <nr-zone-progression [zoneProgression]="$zoneProgression()" />
+}

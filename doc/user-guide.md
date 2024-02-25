@@ -19,6 +19,14 @@ You can choose the theme to use via `settings`:
 Available options are pretty straight forward.  
 The browser settings is set via `window.matchMedia("(prefers-color-scheme: dark)").matches`, but, if your preference changes following the time of the day, the app won't follow this setting: there's no way to know when to recompute this value when it changes. It should be updated if you reload the page though (but as you can see, I'm a `dark` theme user, so this has not been tested).
 
+### Display mode setting
+
+<img style="max-width: 800px;" alt="Selecting a zone at first app launch" src="./images/ug-display-mode-and-responsive.gif">
+
+There are, for now, two display modes available: `wide` and `compact`.
+
+With the ability to choose if the `queue` is displayed or not and the fact that the app is responsive (this feature is very young, please report any anomalies!), you should be able to build the presentation that suit the best both to your taste and the screen you want to use.
+
 ### Volume management
 
 Everything happens via the `volume` drawer that you can open by clicking on the `volume` icon:

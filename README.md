@@ -91,7 +91,10 @@ You can change the displayed `zone` with the `zone` selector on the app main scr
 
 <img style="max-width: 800px;" alt="Selecting a zone at first app launch" src="./doc/images/zone-selection-and-settings.gif">
 
-`Settings` are very minimal for now: only the theme to use and the displayed zone can be set.  
+`Settings` are kind of minimal for now:
+- you can choose the theme used
+- you can choose between two display modes
+- you can select the displayed zone
 As features will be added, settings will be added, if needed, to support them.  
 These settings are saved in `localstorage`, so they're both linked to the `host` serving the app and to the browser instance they've been set. Changing one of these parameters will reset all settings to their default value.
 

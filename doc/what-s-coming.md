@@ -33,10 +33,9 @@ This will not translate the content of what's returned by the `api`, what's comi
 ### 3. All the missing features  
 Here's an unordered list, just to give an idea:
 - Zone and Output management (limited to what's available in [node roon api](https://github.com/RoonLabs/node-roon-api))
-- Real support for small screens (the app is now *kind of responsive* but must be adapted for small or portrait screens)
-- Offer layout flexibility via `settings`:
-  - ability to hide the displayed zone queue
+- Offer more layout flexibility via `settings`:
   - ability to display more than one zone at the same time
+  - minimalist theme
   - ...
 - Custom actions: ability to define buttons launching an action you often do:
   - starting a web radio

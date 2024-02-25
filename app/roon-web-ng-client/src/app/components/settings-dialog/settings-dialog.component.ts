@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, Component } from "@angular/core";
+import { ChangeDetectionStrategy, Component, Signal } from "@angular/core";
 import { MatButton } from "@angular/material/button";
 import { MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle } from "@angular/material/dialog";
 import { MatIcon } from "@angular/material/icon";
 import { MatRadioButton, MatRadioChange, MatRadioGroup } from "@angular/material/radio";
 import { ZoneSelectorComponent } from "@components/zone-selector/zone-selector.component";
-import { CHOSEN_THEME } from "@model/client";
+import { CHOSEN_THEME, DISPLAY_MODE } from "@model/client";
 import { SettingsService } from "@services/settings.service";
 
 @Component({
@@ -27,9 +27,11 @@ import { SettingsService } from "@services/settings.service";
 export class SettingsDialogComponent {
   private readonly _dialogRef: MatDialogRef<SettingsDialogComponent>;
   private readonly _settingsService: SettingsService;
+  readonly $isSmallScreen: Signal<boolean>;
   constructor(settingsService: SettingsService, dialogRef: MatDialogRef<SettingsDialogComponent>) {
     this._dialogRef = dialogRef;
     this._settingsService = settingsService;
+    this.$isSmallScreen = this._settingsService.isSmallScreen();
   }
 
   chosenTheme() {
@@ -38,6 +40,14 @@ export class SettingsDialogComponent {
 
   setChosenTheme(change: MatRadioChange) {
     this._settingsService.saveChosenTheme(change.value as CHOSEN_THEME);
+  }
+
+  displayMode() {
+    return this._settingsService.displayMode();
+  }
+
+  setDisplayMode(change: MatRadioChange) {
+    this._settingsService.saveDisplayMode(change.value as DISPLAY_MODE);
   }
 
   onSave() {

@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Inject, OnInit, signal, WritableSignal } from "@angular/core";
-import { MatButton } from "@angular/material/button";
+import { MatButton, MatIconButton } from "@angular/material/button";
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
@@ -28,6 +28,7 @@ import { SettingsService } from "@services/settings.service";
     MatIcon,
     MatProgressSpinner,
     RoonBrowseListComponent,
+    MatIconButton,
   ],
   templateUrl: "./roon-browse-dialog.component.html",
   styleUrl: "./roon-browse-dialog.component.scss",

@@ -1,5 +1,5 @@
 @if ($queue().currentTrack !== EMPTY_TRACK_QUEUE_TRACK) {
-  <div [tabindex]="0" (click)="openActionMenu($queue().currentTrack.queue_item_id)" (keydown)="openActionMenu($queue().currentTrack.queue_item_id)" class="current-track">
+  <div [tabindex]="0" (click)="openActionMenu($queue().currentTrack.queue_item_id)" (keydown)="openActionMenu($queue().currentTrack.queue_item_id)" class="current-track" [class.is-one-column]="$isOneColumn()">
     <h1>{{$queue().currentTrack.title}}</h1>
     @if ($queue().currentTrack.disk?.title || $queue().currentTrack.artist) {
       <p>
@@ -14,42 +14,44 @@
     }
   </div>
 }
-<div class="queue">
-  @if ($queue().queue.length > 0) {
-    <cdk-virtual-scroll-viewport itemSize="101">
-      <ol>
-          <li *cdkVirtualFor="let track of $queue().queue; let last = last; let index = $index;">
-            <div [tabindex]="index" (click)="openActionMenu(track.queue_item_id)" (keydown)="openActionMenu(track.queue_item_id)" class="track">
-              @if (track.image_key) {
-                <nr-roon-image priority="false" [alt]="track.title + ' cover'" height="70" width="70" [src]="track.image_key!" />
-              } @else {
-                <div class="track-image-placeholder"></div>
-              }
-              <div class="track-info">
-                <span class="track-title">{{track.title}}</span>
-                @if (track.disk?.title) {
-                  <span class="track-album">on {{track.disk?.title}}</span>
+@if ($displayQueueTrack()) {
+  <div class="queue" [class.is-one-column]="$isOneColumn()" [@.disabled]="!hasBeenDisplay" @toggleQueueTrack (@toggleQueueTrack.done)="onQueueTrackOpened()">
+    @if ($queue().queue.length > 0) {
+      <cdk-virtual-scroll-viewport itemSize="101" minBufferPx="300" maxBufferPx="600">
+        <ol>
+            <li *cdkVirtualFor="let track of $queue().queue; let last = last; let index = $index;">
+              <div [tabindex]="index" (click)="openActionMenu(track.queue_item_id)" (keydown)="openActionMenu(track.queue_item_id)" class="track">
+                @if (track.image_key) {
+                  <nr-roon-image priority="false" [alt]="track.title + ' cover'" height="70" width="70" [src]="track.image_key!" />
+                } @else {
+                  <div class="track-image-placeholder"></div>
                 }
-                @if (track.artist) {
-                  <span class="track-artist">by {{track.artist}}</span>
-                }
+                <div class="track-info">
+                  <span class="track-title">{{track.title}}</span>
+                  @if (track.disk?.title) {
+                    <span class="track-album">on {{track.disk?.title}}</span>
+                  }
+                  @if (track.artist) {
+                    <span class="track-artist">by {{track.artist}}</span>
+                  }
+                </div>
               </div>
-            </div>
-            <div [matMenuTriggerFor]="actionMenu" [matMenuTriggerData]="track.queue_item_id"></div>
-            @if (!last) {
-              <mat-divider [inset]="true" [vertical]="false" />
-            }
-          </li>
-      </ol>
-    </cdk-virtual-scroll-viewport>
-  } @else {
-    <div class="track">
-      <div class="track-info">
-        <span class="track-title">Nothing in queue, go add some music or enjoy Roon radio!</span>
+              <div [matMenuTriggerFor]="actionMenu" [matMenuTriggerData]="track.queue_item_id"></div>
+              @if (!last) {
+                <mat-divider [inset]="true" [vertical]="false" />
+              }
+            </li>
+        </ol>
+      </cdk-virtual-scroll-viewport>
+    } @else {
+      <div class="track">
+        <div class="track-info">
+          <span class="track-title">Nothing in queue, go add some music or enjoy Roon radio!</span>
+        </div>
       </div>
-    </div>
-  }
-</div>
+    }
+  </div>
+}
 <div class="queue-commands">
   <nr-zone-queue-commands />
 </div>

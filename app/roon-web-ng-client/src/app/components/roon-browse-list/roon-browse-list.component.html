@@ -9,10 +9,10 @@
           <div [tabindex]="index" (click)="!item.input_prompt ? onItemClicked(item.item_key, item.hint) : true" (keydown)="!item.input_prompt ? onItemClicked(item.item_key, item.hint) : true" class="roon-list-item">
             @if (item.image_key || content.list.image_key) {
               <nr-roon-image [src]="item.image_key ?? content.list.image_key!" [alt]="item.title + ' cover'" height="70" width="70" priority="false" />
-            } @else {
+            } @else if(!$isSmallScreen()) {
               <div class="roon-item-image-placeholder"></div>
             }
-            <div class="roon-item-info" [class.roon-item-prompt]="item.input_prompt">
+            <div class="roon-item-info" [class.roon-item-prompt]="item.input_prompt" [class.is-small-screen]="$isSmallScreen()">
               <span>{{item.title}}</span>
               @if (item.subtitle) {
                 <span>{{sanitizeSubtitle(item.subtitle)}}</span>
@@ -31,7 +31,7 @@
             }
           </div>
           @if (!last) {
-            <mat-divider [inset]="true" [vertical]="false" />
+            <mat-divider [inset]="!$isSmallScreen()" [vertical]="false" />
           }
         }
       </li>

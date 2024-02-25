@@ -71,6 +71,12 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   }
 }
 
+.roon-list {
+  .cdk-virtual-scroll-orientation-vertical .cdk-virtual-scroll-content-wrapper {
+    max-width: 100% !important;
+  }
+}
+
 .browse-dialog-title {
   .mat-mdc-unelevated-button {
     font-size: mat.font-size($roon-cqrs-web-ng-client-typography, headline-6);

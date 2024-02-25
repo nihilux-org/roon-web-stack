@@ -1,5 +1,16 @@
+import { animate, style, transition, trigger } from "@angular/animations";
 import { CdkFixedSizeVirtualScroll, CdkVirtualForOf, CdkVirtualScrollViewport } from "@angular/cdk/scrolling";
-import { ChangeDetectionStrategy, Component, computed, QueryList, Signal, ViewChildren } from "@angular/core";
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  Input,
+  QueryList,
+  Signal,
+  ViewChild,
+  ViewChildren,
+} from "@angular/core";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatMenu, MatMenuContent, MatMenuItem, MatMenuTrigger } from "@angular/material/menu";
 import { RoonImageComponent } from "@components/roon-image/roon-image.component";
@@ -27,13 +38,34 @@ import { SettingsService } from "@services/settings.service";
   templateUrl: "./zone-queue.component.html",
   styleUrl: "./zone-queue.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
+  animations: [
+    trigger("toggleQueueTrack", [
+      transition(":enter", [
+        style({
+          flexGrow: 0,
+          opacity: 0,
+        }),
+        animate(
+          "0.2s ease-out",
+          style({
+            flexGrow: 1,
+            opacity: 1,
+          })
+        ),
+      ]),
+    ]),
+  ],
 })
-export class ZoneQueueComponent {
+export class ZoneQueueComponent implements AfterViewInit {
+  @Input({ required: true }) $isOneColumn!: Signal<boolean>;
   private readonly _roonService: RoonService;
   readonly $zoneId: Signal<string>;
   readonly $queue: Signal<QueueDisplay>;
+  readonly $displayQueueTrack: Signal<boolean>;
+  @ViewChild(CdkVirtualScrollViewport) _virtualScroll?: CdkVirtualScrollViewport;
   @ViewChildren(MatMenuTrigger) _menuTriggers!: QueryList<MatMenuTrigger>;
   protected readonly EMPTY_TRACK_QUEUE_TRACK = EMPTY_QUEUE_TRACK;
+  hasBeenDisplay: boolean;
 
   constructor(roonService: RoonService, settingsService: SettingsService) {
     this._roonService = roonService;
@@ -54,6 +86,8 @@ export class ZoneQueueComponent {
         };
       }
     });
+    this.$displayQueueTrack = settingsService.displayQueueTrack();
+    this.hasBeenDisplay = false;
   }
 
   openActionMenu(queue_item_id: number) {
@@ -76,5 +110,13 @@ export class ZoneQueueComponent {
         queue_item_id: `${queue_item_id}`,
       },
     });
+  }
+
+  onQueueTrackOpened() {
+    this._virtualScroll?.checkViewportSize();
+  }
+
+  ngAfterViewInit() {
+    this.hasBeenDisplay = true;
   }
 }

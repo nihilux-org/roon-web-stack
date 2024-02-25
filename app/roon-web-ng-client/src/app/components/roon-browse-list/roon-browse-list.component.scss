@@ -31,20 +31,34 @@
           flex-direction: column;
           justify-content: space-evenly;
           height: 70px;
+          min-width: 0;
           span {
-            margin-left: 30px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
           }
         }
         .roon-item-info.roon-item-prompt {
           flex-direction: row;
           justify-content: flex-start;
           align-items: baseline;
+          min-width: 0;
           mat-form-field {
             flex-grow: 1;
             margin-left: 30px;
           }
           button {
             margin-left: 20px;
+          }
+        }
+        .roon-item-info:not(.is-small-screen) {
+          span {
+            margin-left: 30px;
+          }
+        }
+        .roon-item-info.is-small-screen {
+          span {
+            margin-left: 15px;
           }
         }
       }
