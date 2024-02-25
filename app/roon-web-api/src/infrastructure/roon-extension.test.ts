@@ -245,7 +245,7 @@ describe("roon-extension.ts test suite", () => {
     } as unknown as RoonServer;
     const listener: ServerListener = registeredListener as unknown as ServerListener;
     listener(server);
-    expect(extensionMock.set_status).toHaveBeenCalledWith("paired");
+    expect(extensionMock.set_status).toHaveBeenCalledWith("paired, port in use: 3000");
     expect(loggerMock.info).toHaveBeenCalledWith("paired roon server: display_name (vdisplay_version - core_id)");
   });
 

@@ -3749,7 +3749,7 @@ __metadata:
   dependencies:
     "@fastify/static": "npm:7.0.1"
     "@gquittet/graceful-server": "npm:4.0.8"
-    "@nihilux/roon-web-model": "npm:0.0.1"
+    "@nihilux/roon-web-model": "npm:0.0.2"
     "@types/jest": "npm:29.5.12"
     "@types/node": "npm:20.11.20"
     "@typescript-eslint/eslint-plugin": "npm:7.0.2"
@@ -3792,11 +3792,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@nihilux/roon-web-client@npm:0.0.1, @nihilux/roon-web-client@workspace:packages/roon-web-client":
+"@nihilux/roon-web-client@npm:0.0.2, @nihilux/roon-web-client@workspace:packages/roon-web-client":
   version: 0.0.0-use.local
   resolution: "@nihilux/roon-web-client@workspace:packages/roon-web-client"
   dependencies:
-    "@nihilux/roon-web-model": "npm:0.0.1"
+    "@nihilux/roon-web-model": "npm:0.0.2"
     "@types/jest": "npm:29.5.12"
     "@typescript-eslint/eslint-plugin": "npm:7.0.2"
     "@typescript-eslint/parser": "npm:7.0.2"
@@ -3824,7 +3824,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@nihilux/roon-web-model@npm:0.0.1, @nihilux/roon-web-model@workspace:packages/roon-web-model":
+"@nihilux/roon-web-model@npm:0.0.2, @nihilux/roon-web-model@workspace:packages/roon-web-model":
   version: 0.0.0-use.local
   resolution: "@nihilux/roon-web-model@workspace:packages/roon-web-model"
   dependencies:
@@ -3867,8 +3867,8 @@ __metadata:
     "@angular/material": "npm:17.2.1"
     "@angular/platform-browser": "npm:17.2.2"
     "@angular/platform-browser-dynamic": "npm:17.2.2"
-    "@nihilux/roon-web-client": "npm:0.0.1"
-    "@nihilux/roon-web-model": "npm:0.0.1"
+    "@nihilux/roon-web-client": "npm:0.0.2"
+    "@nihilux/roon-web-model": "npm:0.0.2"
     "@types/jest": "npm:29.5.12"
     "@types/node": "npm:20.11.20"
     "@typescript-eslint/eslint-plugin": "npm:7.0.2"
