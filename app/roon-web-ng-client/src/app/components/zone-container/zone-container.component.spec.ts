@@ -1,12 +1,12 @@
 import { MockBuilder, MockedComponentFixture, MockRender } from "ng-mocks";
+import { Subject } from "rxjs";
 import { signal, WritableSignal } from "@angular/core";
 import { Output, Zone, ZoneState } from "@model";
+import { DISPLAY_MODE } from "@model/client";
+import { ResizeService } from "@services/resize.service";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
 import { ZoneContainerComponent } from "./zone-container.component";
-import { DISPLAY_MODE } from "@model/client";
-import { Subject } from "rxjs";
-import { ResizeService } from "@services/resize.service";
 
 describe("ZoneContainerComponent", () => {
   let component: ZoneContainerComponent;
