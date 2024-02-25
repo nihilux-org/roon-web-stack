@@ -1,6 +1,9 @@
 import { MockBuilder, MockedComponentFixture, MockRender } from "ng-mocks";
+import { Subject } from "rxjs";
 import { signal, WritableSignal } from "@angular/core";
 import { Output, Zone, ZoneState } from "@model";
+import { DISPLAY_MODE } from "@model/client";
+import { ResizeService } from "@services/resize.service";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
 import { ZoneContainerComponent } from "./zone-container.component";
@@ -8,31 +11,48 @@ import { ZoneContainerComponent } from "./zone-container.component";
 describe("ZoneContainerComponent", () => {
   let component: ZoneContainerComponent;
   let fixture: MockedComponentFixture<ZoneContainerComponent>;
-  let $selectedZoneId: WritableSignal<string>;
+  let $displayedZoneId: WritableSignal<string>;
+  let $displayMode: WritableSignal<DISPLAY_MODE>;
+  let $displayQueueTrack: WritableSignal<boolean>;
+  let $isOneColumn: WritableSignal<boolean>;
   let settingsService: {
-    selectedZoneId: jest.Mock;
-    saveSelectedZone: jest.Mock;
+    displayedZoneId: jest.Mock;
+    displayMode: jest.Mock;
+    displayQueueTrack: jest.Mock;
+    isOneColumn: jest.Mock;
   };
   let $zoneState: WritableSignal<ZoneState>;
   let roonService: {
     zoneState: jest.Mock;
   };
+  let resizeObservable: Subject<ResizeObserverEntry>;
+  let resizeService: {
+    observeElement: jest.Mock;
+  };
 
   beforeEach(async () => {
-    $selectedZoneId = signal("zone_id");
+    $displayedZoneId = signal("zone_id");
+    $displayMode = signal(DISPLAY_MODE.WIDE);
+    $displayQueueTrack = signal(true);
+    $isOneColumn = signal(false);
     settingsService = {
-      selectedZoneId: jest.fn().mockImplementation(() => $selectedZoneId),
-      saveSelectedZone: jest.fn().mockImplementation((zone_id: string) => {
-        $selectedZoneId.set(zone_id);
-      }),
+      displayedZoneId: jest.fn().mockImplementation(() => $displayedZoneId),
+      displayMode: jest.fn().mockImplementation(() => $displayMode),
+      displayQueueTrack: jest.fn().mockImplementation(() => $displayQueueTrack),
+      isOneColumn: jest.fn().mockImplementation(() => $isOneColumn),
     };
     $zoneState = signal(ZONE_STATE);
     roonService = {
       zoneState: jest.fn().mockImplementation(() => $zoneState),
     };
+    resizeObservable = new Subject<ResizeObserverEntry>();
+    resizeService = {
+      observeElement: jest.fn().mockImplementation(() => resizeObservable),
+    };
     await MockBuilder(ZoneContainerComponent)
       .mock(SettingsService, settingsService as Partial<SettingsService>)
-      .mock(RoonService, roonService as Partial<RoonService>);
+      .mock(RoonService, roonService as Partial<RoonService>)
+      .mock(ResizeService, resizeService as Partial<ResizeService>);
     fixture = MockRender(ZoneContainerComponent);
     component = fixture.componentInstance as ZoneContainerComponent;
     fixture.detectChanges();

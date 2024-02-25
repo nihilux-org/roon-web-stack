@@ -1,9 +1,10 @@
-import { ChangeDetectionStrategy, Component } from "@angular/core";
+import { ChangeDetectionStrategy, Component, Signal } from "@angular/core";
 import { MatButton } from "@angular/material/button";
 import { MatDialog } from "@angular/material/dialog";
 import { MatIcon } from "@angular/material/icon";
 import { RoonBrowseDialogComponent } from "@components/roon-browse-dialog/roon-browse-dialog.component";
 import { SettingsDialogComponent } from "@components/settings-dialog/settings-dialog.component";
+import { SettingsService } from "@services/settings.service";
 
 @Component({
   selector: "nr-zone-queue-commands",
@@ -14,7 +15,15 @@ import { SettingsDialogComponent } from "@components/settings-dialog/settings-di
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ZoneQueueCommandsComponent {
-  constructor(private _dialog: MatDialog) {}
+  private readonly _dialog: MatDialog;
+  private readonly _settingsService: SettingsService;
+  readonly $isOneColumn: Signal<boolean>;
+
+  constructor(dialog: MatDialog, settingsService: SettingsService) {
+    this._dialog = dialog;
+    this._settingsService = settingsService;
+    this.$isOneColumn = this._settingsService.isOneColumn();
+  }
 
   openBrowseDialog(firstPage: string) {
     this._dialog.open(RoonBrowseDialogComponent, {
@@ -30,5 +39,9 @@ export class ZoneQueueCommandsComponent {
     this._dialog.open(SettingsDialogComponent, {
       restoreFocus: false,
     });
+  }
+
+  toggleDisplayQueueTrack() {
+    this._settingsService.toggleDisplayQueueTrack();
   }
 }

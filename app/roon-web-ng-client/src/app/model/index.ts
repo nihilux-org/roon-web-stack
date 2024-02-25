@@ -46,7 +46,7 @@ export const EMPTY_TRACK: Track = {
 
 export interface TrackImage {
   src: string;
-  imageSise: number;
+  imageSize: number;
   isReady: boolean;
 }
 
@@ -69,4 +69,13 @@ export const enum CHOSEN_THEME {
   BROWSER = "BROWSER",
   DARK = "DARK",
   LIGHT = "LIGHT",
+}
+
+export type ClientBreakpoints = {
+  [key: string]: boolean;
+};
+
+export const enum DISPLAY_MODE {
+  COMPACT = "COMPACT",
+  WIDE = "WIDE",
 }

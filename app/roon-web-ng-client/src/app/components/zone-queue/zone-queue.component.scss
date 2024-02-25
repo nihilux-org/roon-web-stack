@@ -1,5 +1,6 @@
 :host {
-  height: 100%;
+  flex-grow: 1;
+  width: 100%;
   display: flex;
   flex-direction: column;
   place-content: flex-end;
@@ -68,7 +69,13 @@
       }
     }
   }
+  .queue.hide-queue-track {
+    display: none;
+  }
   .queue-commands {
     margin: 15px 0 0 10px;
   }
+}
+:host.compact {
+  place-content: space-between;
 }

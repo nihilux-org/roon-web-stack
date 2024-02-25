@@ -1,36 +1,84 @@
 import { deepEqual } from "fast-equals";
-import { ChangeDetectionStrategy, Component, computed, Signal } from "@angular/core";
+import { Subscription } from "rxjs";
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  computed,
+  ElementRef,
+  OnDestroy,
+  Signal,
+  signal,
+  WritableSignal,
+} from "@angular/core";
+import { RoonImageComponent } from "@components/roon-image/roon-image.component";
 import { ZoneCommandsComponent } from "@components/zone-commands/zone-commands.component";
-import { ZoneDisplayComponent } from "@components/zone-display/zone-display.component";
 import { ZoneProgressionComponent } from "@components/zone-progression/zone-progression.component";
+import { ZoneQueueComponent } from "@components/zone-queue/zone-queue.component";
 import { ZoneSelectorComponent } from "@components/zone-selector/zone-selector.component";
 import { ZoneState } from "@model";
 import {
   DEFAULT_ZONE_PROGRESSION,
+  DISPLAY_MODE,
   EMPTY_TRACK,
   TrackDisplay,
+  TrackImage,
   ZoneCommands,
   ZoneCommandState,
   ZoneProgression,
 } from "@model/client";
+import { ResizeService } from "@services/resize.service";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
 
 @Component({
   selector: "nr-zone-container",
   standalone: true,
-  imports: [ZoneCommandsComponent, ZoneDisplayComponent, ZoneProgressionComponent, ZoneSelectorComponent],
+  imports: [
+    ZoneCommandsComponent,
+    ZoneProgressionComponent,
+    ZoneSelectorComponent,
+    ZoneQueueComponent,
+    RoonImageComponent,
+  ],
   templateUrl: "./zone-container.component.html",
   styleUrl: "./zone-container.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ZoneContainerComponent {
+export class ZoneContainerComponent implements OnDestroy, AfterViewInit {
+  private static readonly NOT_READY_IMAGE: TrackImage = {
+    src: "",
+    imageSize: -1,
+    isReady: false,
+  };
+  private readonly _resizeService: ResizeService;
+  private readonly _settingsService: SettingsService;
+  private readonly _zoneContainerElement: ElementRef;
+  private readonly _changeDetector: ChangeDetectorRef;
   private readonly _$zone: Signal<ZoneState>;
+  private _resizeSubscription?: Subscription;
   readonly $trackDisplay: Signal<TrackDisplay>;
   readonly $zoneCommands: Signal<ZoneCommands>;
   readonly $zoneProgression: Signal<ZoneProgression>;
+  readonly $image: Signal<TrackImage>;
+  readonly $imageSize: WritableSignal<number>;
+  readonly $isOneColumn: Signal<boolean>;
+  readonly $isCompact: Signal<boolean>;
+  readonly $isWide: Signal<boolean>;
+  protected readonly EMPTY_TRACK = EMPTY_TRACK;
 
-  constructor(roonService: RoonService, settingsService: SettingsService) {
+  constructor(
+    roonService: RoonService,
+    settingsService: SettingsService,
+    elementRef: ElementRef,
+    resizeService: ResizeService,
+    changeDetector: ChangeDetectorRef
+  ) {
+    this._settingsService = settingsService;
+    this._zoneContainerElement = elementRef;
+    this._resizeService = resizeService;
+    this._changeDetector = changeDetector;
     this._$zone = roonService.zoneState(settingsService.displayedZoneId());
     this.$trackDisplay = computed(
       () => {
@@ -101,5 +149,59 @@ export class ZoneContainerComponent {
       }
       return DEFAULT_ZONE_PROGRESSION;
     });
+    this.$imageSize = signal(-1);
+    this.$image = computed(() => {
+      const src = this.$trackDisplay().image_key;
+      const imageSize = this.$imageSize();
+      if (src && imageSize !== -1) {
+        return {
+          src: src,
+          imageSize: imageSize,
+          isReady: true,
+        };
+      } else {
+        return ZoneContainerComponent.NOT_READY_IMAGE;
+      }
+    });
+    this.$isOneColumn = computed(() => {
+      let isOneColumn = false;
+      switch (this._settingsService.displayMode()()) {
+        case DISPLAY_MODE.COMPACT:
+          isOneColumn = this._settingsService.isOneColumn()() || !this._settingsService.displayQueueTrack();
+          break;
+        case DISPLAY_MODE.WIDE:
+          isOneColumn = this._settingsService.isOneColumn()() || !this._settingsService.displayQueueTrack()();
+          break;
+      }
+      return isOneColumn;
+    });
+    this.$isCompact = computed(() => {
+      return this._settingsService.displayMode()() === DISPLAY_MODE.COMPACT && !this._settingsService.isOneColumn()();
+    });
+    this.$isWide = computed(() => {
+      return this._settingsService.displayMode()() === DISPLAY_MODE.WIDE || this._settingsService.isOneColumn()();
+    });
+  }
+
+  ngAfterViewInit(): void {
+    const zoneDisplayDiv = this._zoneContainerElement.nativeElement as HTMLDivElement;
+    const zoneImageDiv = zoneDisplayDiv.getElementsByClassName("zone-image")[0] as HTMLDivElement;
+    setTimeout(() => {
+      this.$imageSize.set(Math.min(zoneImageDiv.offsetWidth - 20, zoneImageDiv.offsetHeight - 20));
+    }, 5);
+    let firstResize = true;
+    this._resizeSubscription = this._resizeService.observeElement(zoneImageDiv).subscribe((resizeEntry) => {
+      if (!firstResize) {
+        const borderBox = resizeEntry.borderBoxSize[0];
+        this.$imageSize.set(Math.min(borderBox.inlineSize - 20, borderBox.blockSize - 20));
+        this._changeDetector.detectChanges();
+      } else {
+        firstResize = false;
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    this._resizeSubscription?.unsubscribe();
   }
 }

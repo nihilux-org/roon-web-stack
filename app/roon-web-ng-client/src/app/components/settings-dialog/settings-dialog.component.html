@@ -2,11 +2,18 @@
 <mat-dialog-content>
   <div class="settings">
     <div class="setting">
+      <label for="display-mode-selector">Display mode:</label>
+      <mat-radio-group id="display-mode-selector" aria-label="Select a display mode" [value]="displayMode()()" (change)="setDisplayMode($event)">
+        <mat-radio-button [value]="'WIDE'" color="primary">Wide</mat-radio-button>
+        <mat-radio-button [value]="'COMPACT'" color="primary">Compact</mat-radio-button>
+      </mat-radio-group>
+    </div>
+    <div class="setting">
       <label for="theme-selector">Theme:</label>
-      <mat-radio-group id="theme-selector" aria-label="Select a theme" [value]="chosenTheme()()" (change)="setChosenTheme($event)">
+      <mat-radio-group id="theme-selector" aria-label="Select a theme" [value]="chosenTheme()()" (change)="setChosenTheme($event)" [class.small-screen]="$isSmallScreen()">
         <mat-radio-button [value]="'DARK'" color="primary">Dark</mat-radio-button>
         <mat-radio-button [value]="'LIGHT'" color="primary">Light</mat-radio-button>
-        <mat-radio-button [value]="'BROWSER'" color="primary">Follow browser settings</mat-radio-button>
+        <mat-radio-button [value]="'BROWSER'" color="primary">Browser</mat-radio-button>
       </mat-radio-group>
     </div>
     <div class="setting">

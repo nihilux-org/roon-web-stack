@@ -15,17 +15,15 @@ import { SettingsService } from "@services/settings.service";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ZoneSelectorComponent {
-  private readonly _roonService: RoonService;
   private readonly _settingsService: SettingsService;
   private readonly _$zoneId: Signal<string>;
   $zones: Signal<ZoneDescription[]>;
   $label: Signal<string>;
 
   constructor(roonService: RoonService, settingsService: SettingsService) {
-    this._roonService = roonService;
     this._settingsService = settingsService;
     this._$zoneId = this._settingsService.displayedZoneId();
-    this.$zones = this._roonService.zones();
+    this.$zones = roonService.zones();
     this.$label = computed(() => {
       const zoneId = this._$zoneId();
       return this.$zones().find((zd: ZoneDescription) => zd.zone_id === zoneId)?.display_name ?? "Zones";
