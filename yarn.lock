@@ -33,14 +33,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@angular-builders/jest@npm:17.0.1":
-  version: 17.0.1
-  resolution: "@angular-builders/jest@npm:17.0.1"
+"@angular-builders/jest@npm:17.0.2":
+  version: 17.0.2
+  resolution: "@angular-builders/jest@npm:17.0.2"
   dependencies:
     "@angular-builders/common": "npm:1.0.1"
     "@angular-devkit/architect": "npm:>=0.1700.0 < 0.1800.0"
     "@angular-devkit/core": "npm:^17.0.0"
-    jest-preset-angular: "npm:14.0.2"
+    jest-preset-angular: "npm:14.0.3"
     lodash: "npm:^4.17.15"
   peerDependencies:
     "@angular-devkit/build-angular": ^17.0.0
@@ -48,7 +48,7 @@ __metadata:
     "@angular/core": ^17.0.0
     "@angular/platform-browser-dynamic": ^17.0.0
     jest: ">=29"
-  checksum: 10c0/000c92a9515b6bf12e69df77de4d6c529dd3d451d27e8bd50fc5c2b3a78f56bcfa29e31405f281efa3577345b8ede5284c0c99976ef01e5b21b396d1340761b2
+  checksum: 10c0/b2ecc3b421bb39e9fc9008a238b8205b34d6f4a787509d6e3555a8d8d2d8cf2250d203c661b7d620356daf464c2ad7a66b979a987e336675e2ef5a755a20bc27
   languageName: node
   linkType: hard
 
@@ -3849,7 +3849,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@nihilux/roon-web-ng-client@workspace:app/roon-web-ng-client"
   dependencies:
-    "@angular-builders/jest": "npm:17.0.1"
+    "@angular-builders/jest": "npm:17.0.2"
     "@angular-devkit/build-angular": "npm:17.2.1"
     "@angular-eslint/builder": "npm:17.2.1"
     "@angular-eslint/eslint-plugin": "npm:17.2.1"
@@ -9776,9 +9776,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-preset-angular@npm:14.0.2":
-  version: 14.0.2
-  resolution: "jest-preset-angular@npm:14.0.2"
+"jest-preset-angular@npm:14.0.3":
+  version: 14.0.3
+  resolution: "jest-preset-angular@npm:14.0.3"
   dependencies:
     bs-logger: "npm:^0.2.6"
     esbuild: "npm:>=0.15.13"
@@ -9797,7 +9797,7 @@ __metadata:
   dependenciesMeta:
     esbuild:
       optional: true
-  checksum: 10c0/4f9e8e2b91c31485da62b013b4dc5eedd49860201c06650ae9bee158cd4c1177da45f13421919923cb8906a67d1c7f9f0900a3841065d43ca8c7d2c6eba0c0c7
+  checksum: 10c0/3fca2770d6d3622023686b7531a15b19e35cc05bf825f3550ff4f7154473790cad0f7d6d90b1d5f244a0df23f8851df3ff7dc8a720167a6fd6c1aa328d228c24
   languageName: node
   linkType: hard
 
