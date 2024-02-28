@@ -1,5 +1,5 @@
-import { defer, from, Observable, retry, timer } from "rxjs";
-import { computed, Injectable, Signal, signal, WritableSignal } from "@angular/core";
+import { defer, from, Observable, retry, Subscription, timer } from "rxjs";
+import { computed, Injectable, OnDestroy, Signal, signal, WritableSignal } from "@angular/core";
 import {
   ApiState,
   ClientRoonApiBrowseLoadOptions,
@@ -18,12 +18,14 @@ import {
   ZoneState,
   ZoneStateListener,
 } from "@model";
+import { VisibilityState } from "@model/client";
 import { roonWebClientFactory, UPDATE_NEEDED_ERROR_MESSAGE } from "@nihilux/roon-web-client";
+import { VisibilityService } from "@services/visibility.service";
 
 @Injectable({
   providedIn: "root",
 })
-export class RoonService {
+export class RoonService implements OnDestroy {
   private static readonly THIS_IS_A_BUG_ERROR_MSG = "this is a bug!";
 
   private readonly _roonClient: RoonWebClient;
@@ -40,9 +42,11 @@ export class RoonService {
     }
   >;
   private readonly _queueStateListener: QueueStateListener;
+  private readonly _visibilitySubscription: Subscription;
   private _isStarted: boolean;
+  private _isRefreshing: boolean;
 
-  constructor() {
+  constructor(visibilityService: VisibilityService) {
     this._$roonState = signal({
       state: RoonState.STARTING,
       zones: [],
@@ -94,6 +98,23 @@ export class RoonService {
       }
     };
     this._isStarted = false;
+    this._isRefreshing = false;
+    this._visibilitySubscription = visibilityService.observeVisibility((visibilityState) => {
+      if (this._isStarted && visibilityState === VisibilityState.VISIBLE && !this._isRefreshing) {
+        this._isRefreshing = true;
+        const refreshSub = defer(() => this._roonClient.refresh())
+          .pipe(
+            // FIXME?: there are too many retries attempts, but it's a cheap way to be safe
+            retry({
+              count: 5,
+            })
+          )
+          .subscribe(() => {
+            this._isRefreshing = false;
+            refreshSub.unsubscribe();
+          });
+      }
+    });
   }
 
   start: () => Promise<void> = async () => {
@@ -249,6 +270,10 @@ export class RoonService {
     this.ensureStarted();
     return this._roonClient.version();
   };
+
+  ngOnDestroy() {
+    this._visibilitySubscription.unsubscribe();
+  }
 
   private reconnect: () => void = () => {
     const retrySub = defer(() => this._roonClient.restart())

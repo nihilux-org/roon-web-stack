@@ -1241,6 +1241,29 @@ describe("roon-web-client-factory.ts test suite", () => {
     await client.start();
     expect(client.version()).toEqual(VERSION);
   });
+
+  it("RoonWebClient#refresh should not call #refresh if no error has happened on the underlying SSE request", async () => {
+    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    const client = roonWebClientFactory.build(API_URL);
+    await client.start();
+    const refreshSpy = jest.spyOn(client, "restart");
+    await client.refresh();
+    expect(refreshSpy).toHaveBeenCalledTimes(0);
+  });
+
+  it("RoonWebClient#refresh should call #refresh if an error has happened on the underlying SSE request", async () => {
+    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    const client = roonWebClientFactory.build(API_URL);
+    await client.start();
+    const refreshSpy = jest.spyOn(client, "restart");
+    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    const eventSource = eventSourceMocks.get(EVENTS_URL.toString());
+    if (eventSource && eventSource.onerror) {
+      eventSource.onerror();
+    }
+    await client.refresh();
+    expect(refreshSpy).toHaveBeenCalledTimes(1);
+  });
 });
 
 const client_path = "/api/client_id";

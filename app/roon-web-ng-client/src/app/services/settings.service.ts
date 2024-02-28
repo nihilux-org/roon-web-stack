@@ -43,6 +43,7 @@ export class SettingsService implements OnDestroy {
     this._$breakpoints = signal(this.computeInitialBreakpoints());
     this._$displayMode = signal((localStorage.getItem(SettingsService.DISPLAY_MODE_KEY) ?? "WIDE") as DisplayMode);
     const renderer = rendererFactory.createRenderer(null, null);
+    // FIXME?: should this be more semantically placed in nr-root.component?
     effect(() => {
       let isDarkTheme: boolean;
       switch (this._$chosenTheme() as ChosenTheme) {

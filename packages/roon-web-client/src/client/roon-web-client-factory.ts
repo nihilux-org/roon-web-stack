@@ -39,6 +39,7 @@ class InternalRoonWebClient implements RoonWebClient {
   private _roonWebStackVersion?: string;
   private _clientPath?: string;
   private _isClosed: boolean;
+  private _mustRefresh: boolean;
   private _libraryItemKey?: string;
 
   constructor(apiHost: URL) {
@@ -49,6 +50,7 @@ class InternalRoonWebClient implements RoonWebClient {
     this._zoneStateListeners = [];
     this._queueStateListeners = [];
     this._isClosed = true;
+    this._mustRefresh = true;
   }
 
   start: () => Promise<void> = async () => {
@@ -89,6 +91,7 @@ class InternalRoonWebClient implements RoonWebClient {
           await this.loadLibraryItemKey();
           this.connectEventSource();
           this._isClosed = false;
+          this._mustRefresh = false;
           return;
         }
       }
@@ -103,6 +106,14 @@ class InternalRoonWebClient implements RoonWebClient {
     delete this._eventSource;
     this._abortController?.abort();
     return this.start();
+  };
+
+  refresh: () => Promise<void> = () => {
+    if (this._mustRefresh) {
+      return this.restart();
+    } else {
+      return Promise.resolve();
+    }
   };
 
   stop: () => Promise<void> = async () => {
@@ -287,7 +298,9 @@ class InternalRoonWebClient implements RoonWebClient {
       this._eventSource.addEventListener("command_state", this.onCommandStateMessage);
       this._eventSource.addEventListener("zone", this.onZoneMessage);
       this._eventSource.addEventListener("queue", this.onQueueMessage);
-      this._eventSource.onerror = this.closeClient;
+      this._eventSource.onerror = () => {
+        this._mustRefresh = true;
+      };
     }
   };
 

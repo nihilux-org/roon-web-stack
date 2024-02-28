@@ -74,3 +74,8 @@ export enum DisplayMode {
   COMPACT = "COMPACT",
   WIDE = "WIDE",
 }
+
+export enum VisibilityState {
+  VISIBLE = "VISIBLE",
+  HIDDEN = "HIDDEN",
+}
