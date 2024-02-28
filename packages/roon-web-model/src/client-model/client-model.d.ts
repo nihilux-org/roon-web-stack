@@ -10,6 +10,7 @@ export interface RoonWebClient {
   start: () => Promise<void>;
   stop: () => Promise<void>;
   restart: () => Promise<void>;
+  refresh: () => Promise<void>;
   onRoonState: (listener: RoonStateListener) => void;
   offRoonState: (listener: RoonStateListener) => void;
   onCommandState: (listener: CommandStateListener) => void;
