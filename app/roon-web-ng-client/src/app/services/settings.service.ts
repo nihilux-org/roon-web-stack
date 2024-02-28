@@ -10,7 +10,7 @@ import {
   signal,
   WritableSignal,
 } from "@angular/core";
-import { CHOSEN_THEME, ClientBreakpoints, DISPLAY_MODE } from "@model/client";
+import { ChosenTheme, ClientBreakpoints, DisplayMode } from "@model/client";
 
 @Injectable({
   providedIn: "root",
@@ -32,7 +32,7 @@ export class SettingsService implements OnDestroy {
   private readonly _$chosenTheme: WritableSignal<string>;
   private readonly _$displayQueueTrack: WritableSignal<boolean>;
   private readonly _$breakpoints: WritableSignal<ClientBreakpoints>;
-  private readonly _$displayMode: WritableSignal<DISPLAY_MODE>;
+  private readonly _$displayMode: WritableSignal<DisplayMode>;
   private _breakPointSubscription?: Subscription;
 
   constructor(rendererFactory: RendererFactory2, breakPointObserver: BreakpointObserver) {
@@ -41,15 +41,15 @@ export class SettingsService implements OnDestroy {
     this._$chosenTheme = signal(localStorage.getItem(SettingsService.CHOSEN_THEME_KEY) ?? "BROWSER");
     this._$displayQueueTrack = signal(this.loadBooleanFromLocalStorage(SettingsService.DISPLAY_QUEUE_TRACK_KEY, true));
     this._$breakpoints = signal(this.computeInitialBreakpoints());
-    this._$displayMode = signal((localStorage.getItem(SettingsService.DISPLAY_MODE_KEY) ?? "WIDE") as DISPLAY_MODE);
+    this._$displayMode = signal((localStorage.getItem(SettingsService.DISPLAY_MODE_KEY) ?? "WIDE") as DisplayMode);
     const renderer = rendererFactory.createRenderer(null, null);
     effect(() => {
       let isDarkTheme: boolean;
-      switch (this._$chosenTheme() as CHOSEN_THEME) {
-        case CHOSEN_THEME.DARK:
+      switch (this._$chosenTheme() as ChosenTheme) {
+        case ChosenTheme.DARK:
           isDarkTheme = true;
           break;
-        case CHOSEN_THEME.LIGHT:
+        case ChosenTheme.LIGHT:
           isDarkTheme = false;
           break;
         default:
@@ -78,7 +78,7 @@ export class SettingsService implements OnDestroy {
     return this._$displayedZoneId;
   }
 
-  saveChosenTheme(chosenTheme: CHOSEN_THEME) {
+  saveChosenTheme(chosenTheme: ChosenTheme) {
     localStorage.setItem(SettingsService.CHOSEN_THEME_KEY, chosenTheme);
     this._$chosenTheme.set(chosenTheme);
   }
@@ -132,12 +132,12 @@ export class SettingsService implements OnDestroy {
     });
   }
 
-  saveDisplayMode(displayMode: DISPLAY_MODE) {
+  saveDisplayMode(displayMode: DisplayMode) {
     localStorage.setItem(SettingsService.DISPLAY_MODE_KEY, displayMode);
     this._$displayMode.set(displayMode);
   }
 
-  displayMode(): Signal<DISPLAY_MODE> {
+  displayMode(): Signal<DisplayMode> {
     return this._$displayMode;
   }
 

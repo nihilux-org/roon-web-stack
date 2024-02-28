@@ -21,7 +21,7 @@
     "test": "jest"
   },
   "devDependencies": {
-    "@nihilux/roon-web-model": "0.0.2",
+    "@nihilux/roon-web-model": "workspace:*",
     "@types/jest": "29.5.12",
     "@typescript-eslint/eslint-plugin": "7.1.0",
     "@typescript-eslint/parser": "7.1.0",

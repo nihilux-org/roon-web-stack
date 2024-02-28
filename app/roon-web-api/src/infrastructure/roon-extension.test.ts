@@ -1,6 +1,6 @@
 import { extensionMock, loggerMock } from "@mock";
 
-import { logger } from "@infrastructure";
+import { extension_version, logger } from "@infrastructure";
 import {
   OutputListener,
   Roon,
@@ -246,7 +246,9 @@ describe("roon-extension.ts test suite", () => {
     const listener: ServerListener = registeredListener as unknown as ServerListener;
     listener(server);
     expect(extensionMock.set_status).toHaveBeenCalledWith("paired, port in use: 3000");
-    expect(loggerMock.info).toHaveBeenCalledWith("paired roon server: display_name (vdisplay_version - core_id)");
+    expect(loggerMock.info).toHaveBeenCalledWith(
+      `extension version: ${extension_version}, paired roon server: display_name (vdisplay_version - core_id)`
+    );
   });
 
   it("roon#startExtension should register the default onServerLost listener", () => {

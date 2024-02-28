@@ -20,7 +20,7 @@ import { ZoneSelectorComponent } from "@components/zone-selector/zone-selector.c
 import { ZoneState } from "@model";
 import {
   DEFAULT_ZONE_PROGRESSION,
-  DISPLAY_MODE,
+  DisplayMode,
   EMPTY_TRACK,
   TrackDisplay,
   TrackImage,
@@ -166,20 +166,20 @@ export class ZoneContainerComponent implements OnDestroy, AfterViewInit {
     this.$isOneColumn = computed(() => {
       let isOneColumn = false;
       switch (this._settingsService.displayMode()()) {
-        case DISPLAY_MODE.COMPACT:
+        case DisplayMode.COMPACT:
           isOneColumn = this._settingsService.isOneColumn()() || !this._settingsService.displayQueueTrack();
           break;
-        case DISPLAY_MODE.WIDE:
+        case DisplayMode.WIDE:
           isOneColumn = this._settingsService.isOneColumn()() || !this._settingsService.displayQueueTrack()();
           break;
       }
       return isOneColumn;
     });
     this.$isCompact = computed(() => {
-      return this._settingsService.displayMode()() === DISPLAY_MODE.COMPACT && !this._settingsService.isOneColumn()();
+      return this._settingsService.displayMode()() === DisplayMode.COMPACT && !this._settingsService.isOneColumn()();
     });
     this.$isWide = computed(() => {
-      return this._settingsService.displayMode()() === DISPLAY_MODE.WIDE || this._settingsService.isOneColumn()();
+      return this._settingsService.displayMode()() === DisplayMode.WIDE || this._settingsService.isOneColumn()();
     });
   }
 

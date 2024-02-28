@@ -1,7 +1,7 @@
 import { FastifyInstance, FastifyPluginAsync, FastifyReply, FastifyRequest } from "fastify";
 import { fastifyPlugin } from "fastify-plugin";
 import { FastifySSEPlugin } from "fastify-sse-v2";
-import { logger, roon } from "@infrastructure";
+import { extension_version, logger, roon } from "@infrastructure";
 import {
   Client,
   ClientRoonApiBrowseLoadOptions,
@@ -29,7 +29,10 @@ interface ImageQuery {
 
 const apiRoute: FastifyPluginAsync = async (server: FastifyInstance): Promise<void> => {
   await server.register(FastifySSEPlugin);
-  server.post("/register", (res: FastifyRequest, reply: FastifyReply) => {
+  server.get("/version", (_: FastifyRequest, reply: FastifyReply) => {
+    return reply.status(204).header("x-roon-web-stack-version", extension_version).send();
+  });
+  server.post("/register", (_: FastifyRequest, reply: FastifyReply) => {
     const client_id = clientManager.register();
     const location = `/api/${client_id}`;
     return reply.status(201).header("location", location).send();

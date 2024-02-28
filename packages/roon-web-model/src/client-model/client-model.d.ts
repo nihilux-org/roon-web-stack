@@ -22,6 +22,7 @@ export interface RoonWebClient {
   browse: (options: ClientRoonApiBrowseOptions) => Promise<RoonApiBrowseResponse>;
   load: (options: ClientRoonApiBrowseLoadOptions) => Promise<RoonApiBrowseLoadResponse>;
   library: (zone_id: string) => Promise<RoonApiBrowseLoadResponse>;
+  version: () => string;
 }
 
 export interface RoonWebClientFactory {

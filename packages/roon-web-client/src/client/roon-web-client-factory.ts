@@ -22,7 +22,11 @@ interface ZoneStates {
   queue?: QueueState;
 }
 
+export const UPDATE_NEEDED_ERROR_MESSAGE = "api updated, need to reload the app!";
+
 class InternalRoonWebClient implements RoonWebClient {
+  private static readonly X_ROON_WEB_STACK_VERSION_HEADER = "x-roon-web-stack-version";
+  private static readonly CLIENT_NOT_STARTED_ERROR_MESSAGE = "client has not been started";
   private _eventSource?: EventSource;
   private _apiState?: ApiState;
   private readonly _zones: Map<string, ZoneStates>;
@@ -32,6 +36,7 @@ class InternalRoonWebClient implements RoonWebClient {
   private readonly _queueStateListeners: QueueStateListener[];
   private readonly _apiHost: URL;
   private _abortController?: AbortController;
+  private _roonWebStackVersion?: string;
   private _clientPath?: string;
   private _isClosed: boolean;
   private _libraryItemKey?: string;
@@ -49,8 +54,25 @@ class InternalRoonWebClient implements RoonWebClient {
   start: () => Promise<void> = async () => {
     if (this._isClosed) {
       this._abortController = new AbortController();
+      const versionUrl = new URL("/api/version", this._apiHost);
+      const versionReq = new Request(versionUrl, {
+        method: "GET",
+        mode: "cors",
+        signal: this._abortController.signal,
+      });
+      const versionResponse = await fetch(versionReq);
+      const version = versionResponse.headers.get(InternalRoonWebClient.X_ROON_WEB_STACK_VERSION_HEADER);
+      if (versionResponse.status === 204 && version) {
+        if (this._roonWebStackVersion && this._roonWebStackVersion !== version) {
+          throw new Error(UPDATE_NEEDED_ERROR_MESSAGE);
+        } else {
+          this._roonWebStackVersion = version;
+        }
+      } else {
+        throw new Error("unable to validate roon-web-stack version");
+      }
       const registerUrl = new URL("/api/register", this._apiHost);
-      const req = new Request(registerUrl, {
+      const registerReq = new Request(registerUrl, {
         method: "POST",
         mode: "cors",
         headers: {
@@ -58,10 +80,10 @@ class InternalRoonWebClient implements RoonWebClient {
         },
         signal: this._abortController.signal,
       });
-      const response = await fetch(req);
+      const registerResponse = await fetch(registerReq);
       delete this._abortController;
-      if (response.status === 201) {
-        const locationHeader = response.headers.get("Location");
+      if (registerResponse.status === 201) {
+        const locationHeader = registerResponse.headers.get("Location");
         if (locationHeader) {
           this._clientPath = locationHeader;
           await this.loadLibraryItemKey();
@@ -231,6 +253,14 @@ class InternalRoonWebClient implements RoonWebClient {
     });
   };
 
+  version: () => string = () => {
+    if (this._roonWebStackVersion) {
+      return this._roonWebStackVersion;
+    } else {
+      throw new Error(InternalRoonWebClient.CLIENT_NOT_STARTED_ERROR_MESSAGE);
+    }
+  };
+
   private loadLibraryItemKey: () => Promise<void> = async () => {
     const exploreBrowseResponse = await this.browse({ hierarchy: "browse" });
     const exploreLoadResponse = await this.load({ hierarchy: "browse", level: exploreBrowseResponse.list?.level });
@@ -245,7 +275,7 @@ class InternalRoonWebClient implements RoonWebClient {
 
   private ensureStared: () => void = () => {
     if (this._clientPath === undefined) {
-      throw new Error("client has not been started");
+      throw new Error(InternalRoonWebClient.CLIENT_NOT_STARTED_ERROR_MESSAGE);
     }
   };
 

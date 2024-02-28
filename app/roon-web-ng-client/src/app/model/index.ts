@@ -60,7 +60,7 @@ export interface NavigationEvent {
   input?: string;
 }
 
-export const enum CHOSEN_THEME {
+export enum ChosenTheme {
   BROWSER = "BROWSER",
   DARK = "DARK",
   LIGHT = "LIGHT",
@@ -70,7 +70,7 @@ export type ClientBreakpoints = {
   [key: string]: boolean;
 };
 
-export const enum DISPLAY_MODE {
+export enum DisplayMode {
   COMPACT = "COMPACT",
   WIDE = "WIDE",
 }

@@ -2,13 +2,14 @@ import { MockBuilder, MockRender } from "ng-mocks";
 import { signal, WritableSignal } from "@angular/core";
 import { ComponentFixture } from "@angular/core/testing";
 import { MatDialogRef } from "@angular/material/dialog";
-import { CHOSEN_THEME, DISPLAY_MODE } from "@model/client";
+import { ChosenTheme, DisplayMode } from "@model/client";
+import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
 import { SettingsDialogComponent } from "./settings-dialog.component";
 
 describe("SettingsDialogComponent", () => {
   let $chosenTheme: WritableSignal<string>;
-  let $displayMode: WritableSignal<DISPLAY_MODE>;
+  let $displayMode: WritableSignal<DisplayMode>;
   let $isSmallScreen: WritableSignal<boolean>;
   let settingsService: {
     chosenTheme: jest.Mock;
@@ -17,28 +18,37 @@ describe("SettingsDialogComponent", () => {
     saveDisplayMode: jest.Mock;
     isSmallScreen: jest.Mock;
   };
+  let version: string;
+  let roonService: {
+    version: jest.Mock;
+  };
   let closeDialog: jest.Mock;
   let component: SettingsDialogComponent;
   let fixture: ComponentFixture<SettingsDialogComponent>;
 
   beforeEach(async () => {
-    $chosenTheme = signal(CHOSEN_THEME.BROWSER);
-    $displayMode = signal(DISPLAY_MODE.WIDE);
+    $chosenTheme = signal(ChosenTheme.BROWSER);
+    $displayMode = signal(DisplayMode.WIDE);
     $isSmallScreen = signal(false);
     settingsService = {
       chosenTheme: jest.fn().mockImplementation(() => $chosenTheme),
-      saveIsDarkTheme: jest.fn().mockImplementation((chosenTheme: CHOSEN_THEME) => {
+      saveIsDarkTheme: jest.fn().mockImplementation((chosenTheme: ChosenTheme) => {
         $chosenTheme.set(chosenTheme);
       }),
       displayMode: jest.fn().mockImplementation(() => $displayMode),
-      saveDisplayMode: jest.fn().mockImplementation((displayMode: DISPLAY_MODE) => {
+      saveDisplayMode: jest.fn().mockImplementation((displayMode: DisplayMode) => {
         $displayMode.set(displayMode);
       }),
       isSmallScreen: jest.fn().mockImplementation(() => $isSmallScreen),
     };
+    version = "version";
+    roonService = {
+      version: jest.fn().mockImplementation(() => version),
+    };
     closeDialog = jest.fn();
     await MockBuilder(SettingsDialogComponent)
       .mock(SettingsService, settingsService as Partial<SettingsService>)
+      .mock(RoonService, roonService as Partial<RoonService>)
       .mock(MatDialogRef<SettingsDialogComponent>, {
         close: closeDialog,
       });

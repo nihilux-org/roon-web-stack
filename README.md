@@ -18,7 +18,7 @@ Thanks to [The Appgineer](https://github.com/TheAppgineer), this app is availabl
 <img style="width: 600px;" alt="roon-extension-manager settings" src="./doc/images/roon-extension-manager.png">
 
 This is the easiest way to use it.  
-You can find more info about this tool [on roon forum](https://community.roonlabs.com/t/roon-extension-manager-1-x-currently-at-v1-1-2/161624) or [in it's GitHub project](https://github.com/TheAppgineer/roon-extension-manager/wiki).  
+You can find more info about this tool [on roon forum](https://community.roonlabs.com/t/roon-extension-manager-1-x-currently-at-v1-1-2/161624) or [in its GitHub project](https://github.com/TheAppgineer/roon-extension-manager/wiki).  
 Once again, big thanks to [The Appgineer](https://github.com/TheAppgineer), both for the [roon extension manager](https://github.com/TheAppgineer/roon-extension-manager/wiki) and for the integration in the repository.
 
 ### Using docker
@@ -47,7 +47,7 @@ The corresponding `path` is declared as a `volume` in the [Dockerfile](./app/roo
 This directory must be readable and writable by the user inside the `docker`.
 
 **disclaimer:**  
-*There's a bug somewhere between `node lts-alpine` images, `qemu`, `buildx` and `github actions` that breaks them for `armv7` (32 bits `ARM`, like Raspberry Pi 3 and older).  
+*There's a bug somewhere between `node lts-alpine` images, `qemu`, `buildx` and `github actions` that breaks them for `armv7` (32 bits `ARM`, like Raspberry Pi 2 and older).  
 I want neither to add a dedicated pipeline for this architecture as a workaround, nor I want to use `debian` as base image, because it's hundred of `MB` larger.  
 Waiting for this bug to be resolved, this platform is not supported (see [this issue](https://github.com/nodejs/docker-node/issues/1798) and this [repo that reproduces this bug](https://github.com/felddy/npm-hang-test)).*
 
@@ -95,6 +95,7 @@ You can change the displayed `zone` with the `zone` selector on the app main scr
 - you can choose the theme used
 - you can choose between two display modes
 - you can select the displayed zone
+
 As features will be added, settings will be added, if needed, to support them.  
 These settings are saved in `localstorage`, so they're both linked to the `host` serving the app and to the browser instance they've been set. Changing one of these parameters will reset all settings to their default value.
 
