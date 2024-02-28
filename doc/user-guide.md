@@ -68,6 +68,8 @@ When you launch a `Live Radio`, it will take precedence on what's playing in the
 
 <img style="max-width: 800px;" alt="Selecting a zone at first app launch" src="./images/ug-live-radio-and-play-from-here.gif">
 
+(I know, [radio covers are missing... it's on roon side sorry about that](#where-are-the-cover-images-of-the-live-radio))
+
 ## FAQ
 
 ### Some covers are missing, why?

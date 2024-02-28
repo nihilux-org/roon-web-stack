@@ -50,11 +50,6 @@ export interface TrackImage {
   isReady: boolean;
 }
 
-export interface QueueDisplay {
-  currentTrack: QueueTrack;
-  queue: QueueTrack[];
-}
-
 export const EMPTY_QUEUE_TRACK: QueueTrack = {
   title: "__empty_queue_track__",
   queue_item_id: -1,
