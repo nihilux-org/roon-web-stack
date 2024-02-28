@@ -104,14 +104,21 @@ export class RoonService implements OnDestroy {
         this._isRefreshing = true;
         const refreshSub = defer(() => this._roonClient.refresh())
           .pipe(
-            // FIXME?: there are too many retries attempts, but it's a cheap way to be safe
             retry({
+              // FIXME?: 2 should be good... it's a pain to test on mobile, let's keep 5 to be sure?
               count: 5,
             })
           )
-          .subscribe(() => {
-            this._isRefreshing = false;
-            refreshSub.unsubscribe();
+          .subscribe({
+            next: () => {
+              this._isRefreshing = false;
+              refreshSub.unsubscribe();
+            },
+            // FIXME?: if refresh breaks, isn't reloading everything a little extreme?
+            error: () => {
+              refreshSub.unsubscribe();
+              window.location.reload();
+            },
           });
       }
     });
