@@ -26,6 +26,7 @@ export const UPDATE_NEEDED_ERROR_MESSAGE = "api updated, need to reload the app!
 
 class InternalRoonWebClient implements RoonWebClient {
   private static readonly X_ROON_WEB_STACK_VERSION_HEADER = "x-roon-web-stack-version";
+  private static readonly CLIENT_NOT_STARTED_ERROR_MESSAGE = "client has not been started";
   private _eventSource?: EventSource;
   private _apiState?: ApiState;
   private readonly _zones: Map<string, ZoneStates>;
@@ -34,7 +35,6 @@ class InternalRoonWebClient implements RoonWebClient {
   private readonly _zoneStateListeners: ZoneStateListener[];
   private readonly _queueStateListeners: QueueStateListener[];
   private readonly _apiHost: URL;
-  private _mustRefresh: boolean;
   private _abortController?: AbortController;
   private _roonWebStackVersion?: string;
   private _clientPath?: string;
@@ -49,7 +49,6 @@ class InternalRoonWebClient implements RoonWebClient {
     this._zoneStateListeners = [];
     this._queueStateListeners = [];
     this._isClosed = true;
-    this._mustRefresh = true;
   }
 
   start: () => Promise<void> = async () => {
@@ -90,7 +89,6 @@ class InternalRoonWebClient implements RoonWebClient {
           await this.loadLibraryItemKey();
           this.connectEventSource();
           this._isClosed = false;
-          this._mustRefresh = false;
           return;
         }
       }
@@ -255,6 +253,14 @@ class InternalRoonWebClient implements RoonWebClient {
     });
   };
 
+  version: () => string = () => {
+    if (this._roonWebStackVersion) {
+      return this._roonWebStackVersion;
+    } else {
+      throw new Error(InternalRoonWebClient.CLIENT_NOT_STARTED_ERROR_MESSAGE);
+    }
+  };
+
   private loadLibraryItemKey: () => Promise<void> = async () => {
     const exploreBrowseResponse = await this.browse({ hierarchy: "browse" });
     const exploreLoadResponse = await this.load({ hierarchy: "browse", level: exploreBrowseResponse.list?.level });
@@ -269,7 +275,7 @@ class InternalRoonWebClient implements RoonWebClient {
 
   private ensureStared: () => void = () => {
     if (this._clientPath === undefined) {
-      throw new Error("client has not been started");
+      throw new Error(InternalRoonWebClient.CLIENT_NOT_STARTED_ERROR_MESSAGE);
     }
   };
 

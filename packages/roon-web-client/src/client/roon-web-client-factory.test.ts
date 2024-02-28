@@ -95,6 +95,9 @@ describe("roon-web-client-factory.ts test suite", () => {
     expect(() => {
       client.offQueueState(queueStateListener);
     }).not.toThrow(error);
+    expect(() => {
+      client.version();
+    }).toThrow(error);
     void expect(client.stop()).rejects.toEqual(error);
     void expect(client.restart()).rejects.toEqual(error);
     void expect(client.command(COMMAND)).rejects.toEqual(error);
@@ -1231,6 +1234,13 @@ describe("roon-web-client-factory.ts test suite", () => {
     const newVersionRestart = client.restart();
     void expect(newVersionRestart).rejects.toEqual(new Error(UPDATE_NEEDED_ERROR_MESSAGE));
   });
+
+  it("RoonWebClient#version should return the version returned by the API in 'x-roon-web-stack-version' header of the response of GET '/api/version'", async () => {
+    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    const client = roonWebClientFactory.build(API_URL);
+    await client.start();
+    expect(client.version()).toEqual(VERSION);
+  });
 });
 
 const client_path = "/api/client_id";
@@ -1282,6 +1292,8 @@ const sendQueueEvent = (queueState: QueueState, eventSourceMock?: EventSourceMoc
     );
   }
 };
+
+const VERSION = "version";
 
 const SYNC_API_STATE_WITH_TWO_ZONES: ApiState = {
   state: RoonState.SYNC,
@@ -1439,7 +1451,7 @@ const mockVersionGet: MockResponseInitFunction = (req: Request) => {
   if (req.method === "GET" && req.url === new URL("/api/version", API_URL).toString()) {
     return Promise.resolve({
       headers: {
-        "x-roon-web-stack-version": "version",
+        "x-roon-web-stack-version": VERSION,
       },
       status: 204,
     });

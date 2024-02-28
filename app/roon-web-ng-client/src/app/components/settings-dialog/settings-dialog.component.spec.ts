@@ -3,6 +3,7 @@ import { signal, WritableSignal } from "@angular/core";
 import { ComponentFixture } from "@angular/core/testing";
 import { MatDialogRef } from "@angular/material/dialog";
 import { ChosenTheme, DisplayMode } from "@model/client";
+import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
 import { SettingsDialogComponent } from "./settings-dialog.component";
 
@@ -16,6 +17,10 @@ describe("SettingsDialogComponent", () => {
     displayMode: jest.Mock;
     saveDisplayMode: jest.Mock;
     isSmallScreen: jest.Mock;
+  };
+  let version: string;
+  let roonService: {
+    version: jest.Mock;
   };
   let closeDialog: jest.Mock;
   let component: SettingsDialogComponent;
@@ -36,9 +41,14 @@ describe("SettingsDialogComponent", () => {
       }),
       isSmallScreen: jest.fn().mockImplementation(() => $isSmallScreen),
     };
+    version = "version";
+    roonService = {
+      version: jest.fn().mockImplementation(() => version),
+    };
     closeDialog = jest.fn();
     await MockBuilder(SettingsDialogComponent)
       .mock(SettingsService, settingsService as Partial<SettingsService>)
+      .mock(RoonService, roonService as Partial<RoonService>)
       .mock(MatDialogRef<SettingsDialogComponent>, {
         close: closeDialog,
       });

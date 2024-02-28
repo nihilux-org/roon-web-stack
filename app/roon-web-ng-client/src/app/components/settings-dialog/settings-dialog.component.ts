@@ -5,6 +5,7 @@ import { MatIcon } from "@angular/material/icon";
 import { MatRadioButton, MatRadioChange, MatRadioGroup } from "@angular/material/radio";
 import { ZoneSelectorComponent } from "@components/zone-selector/zone-selector.component";
 import { ChosenTheme, DisplayMode } from "@model/client";
+import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
 
 @Component({
@@ -28,10 +29,16 @@ export class SettingsDialogComponent {
   private readonly _dialogRef: MatDialogRef<SettingsDialogComponent>;
   private readonly _settingsService: SettingsService;
   readonly $isSmallScreen: Signal<boolean>;
-  constructor(settingsService: SettingsService, dialogRef: MatDialogRef<SettingsDialogComponent>) {
+  readonly version: string;
+  constructor(
+    settingsService: SettingsService,
+    roonService: RoonService,
+    dialogRef: MatDialogRef<SettingsDialogComponent>
+  ) {
     this._dialogRef = dialogRef;
     this._settingsService = settingsService;
     this.$isSmallScreen = this._settingsService.isSmallScreen();
+    this.version = roonService.version();
   }
 
   chosenTheme() {

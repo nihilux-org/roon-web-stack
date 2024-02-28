@@ -245,6 +245,11 @@ export class RoonService {
     return this._roonClient.load(options);
   };
 
+  version: () => string = () => {
+    this.ensureStarted();
+    return this._roonClient.version();
+  };
+
   private reconnect: () => void = () => {
     const retrySub = defer(() => this._roonClient.restart())
       .pipe(
