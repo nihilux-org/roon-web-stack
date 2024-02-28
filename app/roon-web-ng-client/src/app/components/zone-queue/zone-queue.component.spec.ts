@@ -2,7 +2,7 @@ import { MockBuilder, MockedComponentFixture, MockedDebugElement, MockRender, ng
 import { computed, Signal, signal, WritableSignal } from "@angular/core";
 import { BrowserAnimationsModule, NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { QueueState } from "@model";
-import { EMPTY_QUEUE_TRACK, EMPTY_TRACK, TrackDisplay } from "@model/client";
+import { EMPTY_TRACK, TrackDisplay } from "@model/client";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
 import { ZoneQueueComponent } from "./zone-queue.component";
