@@ -1,25 +1,24 @@
-@if ($queue().currentTrack !== EMPTY_TRACK_QUEUE_TRACK) {
-  <div [tabindex]="0" (click)="openActionMenu($queue().currentTrack.queue_item_id)" (keydown)="openActionMenu($queue().currentTrack.queue_item_id)" class="current-track" [class.is-one-column]="$isOneColumn()">
-    <h1>{{$queue().currentTrack.title}}</h1>
-    @if ($queue().currentTrack.disk?.title || $queue().currentTrack.artist) {
+@if ($trackDisplay().title !== EMPTY_TRACK.title) {
+  <div [tabindex]="0" class="current-track" [class.is-one-column]="$isOneColumn()">
+    <h1>{{$trackDisplay().title}}</h1>
+    @if ($trackDisplay().disk?.title || $trackDisplay().artist) {
       <p>
-        @if ($queue().currentTrack.disk?.title) {
-          <span class="current-track-album">on {{$queue().currentTrack.disk?.title}}</span>
+        @if ($trackDisplay().disk?.title) {
+          <span class="current-track-album">on {{$trackDisplay().disk?.title}}</span>
         }
-        @if ($queue().currentTrack.artist) {
-          <span class="current-track-artist">by {{$queue().currentTrack.artist}}</span>
+        @if ($trackDisplay().artist) {
+          <span class="current-track-artist">by {{$trackDisplay().artist}}</span>
         }
       </p>
-      <div [matMenuTriggerFor]="actionMenu" [matMenuTriggerData]="$queue().currentTrack.queue_item_id"></div>
     }
   </div>
 }
 @if ($displayQueueTrack()) {
   <div class="queue" [class.is-one-column]="$isOneColumn()" [@.disabled]="!hasBeenDisplay" @toggleQueueTrack (@toggleQueueTrack.done)="onQueueTrackOpened()">
-    @if ($queue().queue.length > 0) {
+    @if ($queue().length > 0) {
       <cdk-virtual-scroll-viewport itemSize="101" minBufferPx="300" maxBufferPx="600">
         <ol>
-            <li *cdkVirtualFor="let track of $queue().queue; let last = last; let index = $index;">
+            <li *cdkVirtualFor="let track of $queue(); let last = last; let index = $index;">
               <div [tabindex]="index" (click)="openActionMenu(track.queue_item_id)" (keydown)="openActionMenu(track.queue_item_id)" class="track">
                 @if (track.image_key) {
                   <nr-roon-image priority="false" [alt]="track.title + ' cover'" height="70" width="70" [src]="track.image_key!" />

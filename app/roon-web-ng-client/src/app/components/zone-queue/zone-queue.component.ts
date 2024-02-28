@@ -15,8 +15,8 @@ import { MatDividerModule } from "@angular/material/divider";
 import { MatMenu, MatMenuContent, MatMenuItem, MatMenuTrigger } from "@angular/material/menu";
 import { RoonImageComponent } from "@components/roon-image/roon-image.component";
 import { ZoneQueueCommandsComponent } from "@components/zone-queue-commands/zone-queue-commands.component";
-import { CommandType } from "@model";
-import { EMPTY_QUEUE_TRACK, QueueDisplay } from "@model/client";
+import { CommandType, QueueTrack } from "@model";
+import { EMPTY_TRACK, TrackDisplay } from "@model/client";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
 
@@ -58,13 +58,14 @@ import { SettingsService } from "@services/settings.service";
 })
 export class ZoneQueueComponent implements AfterViewInit {
   @Input({ required: true }) $isOneColumn!: Signal<boolean>;
+  @Input({ required: true }) $trackDisplay!: Signal<TrackDisplay>;
   private readonly _roonService: RoonService;
   readonly $zoneId: Signal<string>;
-  readonly $queue: Signal<QueueDisplay>;
+  readonly $queue: Signal<QueueTrack[]>;
   readonly $displayQueueTrack: Signal<boolean>;
   @ViewChild(CdkVirtualScrollViewport) _virtualScroll?: CdkVirtualScrollViewport;
   @ViewChildren(MatMenuTrigger) _menuTriggers!: QueryList<MatMenuTrigger>;
-  protected readonly EMPTY_TRACK_QUEUE_TRACK = EMPTY_QUEUE_TRACK;
+  protected readonly EMPTY_TRACK = EMPTY_TRACK;
   hasBeenDisplay: boolean;
 
   constructor(roonService: RoonService, settingsService: SettingsService) {
@@ -72,18 +73,11 @@ export class ZoneQueueComponent implements AfterViewInit {
     this.$zoneId = settingsService.displayedZoneId();
     this.$queue = computed(() => {
       const queueState = this._roonService.queueState(this.$zoneId)();
-      if (queueState.tracks.length > 0) {
-        const currentTrack = queueState.tracks[0];
-        const queue = [...queueState.tracks].splice(1);
-        return {
-          currentTrack,
-          queue,
-        };
+      const currentTrack = this.$trackDisplay();
+      if (queueState.tracks.length > 0 && currentTrack.title === queueState.tracks[0].title) {
+        return [...queueState.tracks].splice(1);
       } else {
-        return {
-          currentTrack: EMPTY_QUEUE_TRACK,
-          queue: [],
-        };
+        return queueState.tracks;
       }
     });
     this.$displayQueueTrack = settingsService.displayQueueTrack();
