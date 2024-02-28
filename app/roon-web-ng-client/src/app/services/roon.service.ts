@@ -1,4 +1,4 @@
-import { defer, from, Observable, retry } from "rxjs";
+import { defer, from, Observable, retry, timer } from "rxjs";
 import { computed, Injectable, Signal, signal, WritableSignal } from "@angular/core";
 import {
   ApiState,
@@ -18,7 +18,7 @@ import {
   ZoneState,
   ZoneStateListener,
 } from "@model";
-import { roonWebClientFactory } from "@nihilux/roon-web-client";
+import { roonWebClientFactory, UPDATE_NEEDED_ERROR_MESSAGE } from "@nihilux/roon-web-client";
 
 @Injectable({
   providedIn: "root",
@@ -106,7 +106,10 @@ export class RoonService {
       .then(() => {
         this._isStarted = true;
       })
-      .catch(() => {
+      .catch((err) => {
+        if (err instanceof Error && err.message === UPDATE_NEEDED_ERROR_MESSAGE) {
+          window.location.reload();
+        }
         // silently ignored: an error here means the extension has not been authorized in roon
         // the UI  displays a message explaining the situation
       });
@@ -246,7 +249,12 @@ export class RoonService {
     const retrySub = defer(() => this._roonClient.restart())
       .pipe(
         retry({
-          delay: 5000,
+          delay: (err) => {
+            if (err instanceof Error && err.message === UPDATE_NEEDED_ERROR_MESSAGE) {
+              window.location.reload();
+            }
+            return timer(5000);
+          },
         })
       )
       .subscribe(() => {

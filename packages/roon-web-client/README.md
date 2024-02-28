@@ -18,10 +18,10 @@ For typings, you must also add the [model](../roon-web-model) of this `monorepo`
 ```json
 {
   "dependencies": {
-    "@nihilux/roon-web-client": "${version}"
+    "@nihilux/roon-web-client": "workspace:*"
   },
   "devDependencies": {
-    "@nihilux/roon-web-model": "${version}"
+    "@nihilux/roon-web-model": "workspace:*"
   }
 }
 ```

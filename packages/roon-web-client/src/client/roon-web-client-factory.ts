@@ -22,7 +22,10 @@ interface ZoneStates {
   queue?: QueueState;
 }
 
+export const UPDATE_NEEDED_ERROR_MESSAGE = "api updated, need to reload the app!";
+
 class InternalRoonWebClient implements RoonWebClient {
+  private static readonly X_ROON_WEB_STACK_VERSION_HEADER = "x-roon-web-stack-version";
   private _eventSource?: EventSource;
   private _apiState?: ApiState;
   private readonly _zones: Map<string, ZoneStates>;
@@ -31,7 +34,9 @@ class InternalRoonWebClient implements RoonWebClient {
   private readonly _zoneStateListeners: ZoneStateListener[];
   private readonly _queueStateListeners: QueueStateListener[];
   private readonly _apiHost: URL;
+  private _mustRefresh: boolean;
   private _abortController?: AbortController;
+  private _roonWebStackVersion?: string;
   private _clientPath?: string;
   private _isClosed: boolean;
   private _libraryItemKey?: string;
@@ -44,13 +49,31 @@ class InternalRoonWebClient implements RoonWebClient {
     this._zoneStateListeners = [];
     this._queueStateListeners = [];
     this._isClosed = true;
+    this._mustRefresh = true;
   }
 
   start: () => Promise<void> = async () => {
     if (this._isClosed) {
       this._abortController = new AbortController();
+      const versionUrl = new URL("/api/version", this._apiHost);
+      const versionReq = new Request(versionUrl, {
+        method: "GET",
+        mode: "cors",
+        signal: this._abortController.signal,
+      });
+      const versionResponse = await fetch(versionReq);
+      const version = versionResponse.headers.get(InternalRoonWebClient.X_ROON_WEB_STACK_VERSION_HEADER);
+      if (versionResponse.status === 204 && version) {
+        if (this._roonWebStackVersion && this._roonWebStackVersion !== version) {
+          throw new Error(UPDATE_NEEDED_ERROR_MESSAGE);
+        } else {
+          this._roonWebStackVersion = version;
+        }
+      } else {
+        throw new Error("unable to validate roon-web-stack version");
+      }
       const registerUrl = new URL("/api/register", this._apiHost);
-      const req = new Request(registerUrl, {
+      const registerReq = new Request(registerUrl, {
         method: "POST",
         mode: "cors",
         headers: {
@@ -58,15 +81,16 @@ class InternalRoonWebClient implements RoonWebClient {
         },
         signal: this._abortController.signal,
       });
-      const response = await fetch(req);
+      const registerResponse = await fetch(registerReq);
       delete this._abortController;
-      if (response.status === 201) {
-        const locationHeader = response.headers.get("Location");
+      if (registerResponse.status === 201) {
+        const locationHeader = registerResponse.headers.get("Location");
         if (locationHeader) {
           this._clientPath = locationHeader;
           await this.loadLibraryItemKey();
           this.connectEventSource();
           this._isClosed = false;
+          this._mustRefresh = false;
           return;
         }
       }

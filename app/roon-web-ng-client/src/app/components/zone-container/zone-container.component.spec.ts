@@ -2,7 +2,7 @@ import { MockBuilder, MockedComponentFixture, MockRender } from "ng-mocks";
 import { Subject } from "rxjs";
 import { signal, WritableSignal } from "@angular/core";
 import { Output, Zone, ZoneState } from "@model";
-import { DISPLAY_MODE } from "@model/client";
+import { DisplayMode } from "@model/client";
 import { ResizeService } from "@services/resize.service";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
@@ -12,7 +12,7 @@ describe("ZoneContainerComponent", () => {
   let component: ZoneContainerComponent;
   let fixture: MockedComponentFixture<ZoneContainerComponent>;
   let $displayedZoneId: WritableSignal<string>;
-  let $displayMode: WritableSignal<DISPLAY_MODE>;
+  let $displayMode: WritableSignal<DisplayMode>;
   let $displayQueueTrack: WritableSignal<boolean>;
   let $isOneColumn: WritableSignal<boolean>;
   let settingsService: {
@@ -32,7 +32,7 @@ describe("ZoneContainerComponent", () => {
 
   beforeEach(async () => {
     $displayedZoneId = signal("zone_id");
-    $displayMode = signal(DISPLAY_MODE.WIDE);
+    $displayMode = signal(DisplayMode.WIDE);
     $displayQueueTrack = signal(true);
     $isOneColumn = signal(false);
     settingsService = {

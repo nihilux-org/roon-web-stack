@@ -16,11 +16,13 @@ import {
 } from "@model";
 import { Extension } from "@roon-kit";
 
+export const extension_version = "0.0.2";
+
 const extension: RoonExtension = new Extension({
   description: {
     extension_id: "roon-web-stack",
     display_name: "roon web stack",
-    display_version: "0.0.2",
+    display_version: extension_version,
     publisher: "nihilux.org",
     email: "nihil@nihilux.org",
     website: "https://github.com/nihilux-org/roon-web-stack",
@@ -39,7 +41,9 @@ const onServerPaired = (listener: ServerListener): void => {
 
 const onServerPairedDefaultListener: ServerListener = (server: RoonServer) => {
   extension.set_status(`paired, port in use: ${process.env["PORT"] ?? "3000"}`);
-  logger.info(`paired roon server: ${server.display_name} (v${server.display_version} - ${server.core_id})`);
+  logger.info(
+    `extension version: ${extension_version}, paired roon server: ${server.display_name} (v${server.display_version} - ${server.core_id})`
+  );
 };
 
 const onServerLostDefaultListener: ServerListener = (server: RoonServer) => {

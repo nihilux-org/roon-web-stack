@@ -21,7 +21,7 @@ import {
   ZoneState,
   ZoneStateListener,
 } from "@model";
-import { roonWebClientFactory } from "./roon-web-client-factory";
+import { roonWebClientFactory, UPDATE_NEEDED_ERROR_MESSAGE } from "./roon-web-client-factory";
 
 const API_URL = new URL("http://test.test:3000");
 
@@ -103,16 +103,20 @@ describe("roon-web-client-factory.ts test suite", () => {
     void expect(client.library(zone_id)).rejects.toEqual(error);
   });
 
-  it("RoonWebClient#start should call POST '/api/register', save the returned Location header as client_path, load Explore and Library item_key and open an EventSource on '${client_path}/events'", async () => {
-    fetchMock.once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+  it("RoonWebClient#start should call GET '/api/version', call POST '/api/register', save the returned Location header as client_path, load Explore and Library item_key and open an EventSource on '${client_path}/events'", async () => {
+    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
     const client = roonWebClientFactory.build(API_URL);
     await client.start();
+    expect(fetchMock.mock.calls).toHaveLength(4);
+    const versionUrl = new URL("/api/version", API_URL);
+    const versionRequest = fetchMock.mock.calls[0][0] as Request;
+    expect(versionRequest.url).toEqual(versionUrl.toString());
+    expect(versionRequest.method).toEqual("GET");
     const registerUrl = new URL("/api/register", API_URL);
-    expect(fetchMock.mock.calls).toHaveLength(3);
-    const sentRequest = fetchMock.mock.calls[0][0] as Request;
-    expect(sentRequest.url).toEqual(registerUrl.toString());
-    expect(sentRequest.method).toEqual("POST");
-    expect(sentRequest.headers.get("Accept")).toEqual("application/json");
+    const registerRequest = fetchMock.mock.calls[1][0] as Request;
+    expect(registerRequest.url).toEqual(registerUrl.toString());
+    expect(registerRequest.method).toEqual("POST");
+    expect(registerRequest.headers.get("Accept")).toEqual("application/json");
     expect(eventSourceMocks.size).toEqual(1);
     expect(eventSourceMocks.has(EVENTS_URL.toString())).toBe(true);
     expect(eventSourceMockConstructor).toHaveBeenCalledTimes(1);
@@ -125,9 +129,53 @@ describe("roon-web-client-factory.ts test suite", () => {
     expect(eventSourceMock?.getEventListener("queue")).not.toBeUndefined();
   });
 
-  it("RoonWebClient#start should return a rejected Promise without calling '${client_path}/events' if any error occurred during the call of POST '/api/register'", () => {
+  it("RoonWebClient#start should return a rejected Promise without calling POST '/api/register' if any error occurred during the call of GET '/api/version'", () => {
     const error = new Error("network error");
     fetchMock.once((): Promise<MockResponseInit> => Promise.reject(error));
+    const client = roonWebClientFactory.build(API_URL);
+    const startPromise = client.start();
+    void expect(startPromise).rejects.toEqual(error);
+    expect(fetchMock.mock.calls).toHaveLength(1);
+  });
+
+  it("RoonWebClient#start should return a rejected Promise without calling POST '/api/register' if the status of the response of GET '/api/version' is not 204", () => {
+    fetchMock.once((req: Request): Promise<MockResponseInit> => {
+      if (req.method === "GET" && req.url === new URL("/api/version", API_URL).toString()) {
+        return Promise.resolve({
+          headers: {
+            "x-roon-web-stack-version": "version",
+          },
+          status: 200,
+        });
+      } else {
+        return Promise.reject(new Error("error"));
+      }
+    });
+    const client = roonWebClientFactory.build(API_URL);
+    const startPromise = client.start();
+    void expect(startPromise).rejects.toEqual(new Error("unable to validate roon-web-stack version"));
+    expect(fetchMock.mock.calls).toHaveLength(1);
+  });
+
+  it("RoonWebClient#start should return a rejected Promise without calling POST '/api/register' if the status of the response of GET '/api/version' does not have a 'x-roon-web-stack-version' header", () => {
+    fetchMock.once((req: Request): Promise<MockResponseInit> => {
+      if (req.method === "GET" && req.url === new URL("/api/version", API_URL).toString()) {
+        return Promise.resolve({
+          status: 204,
+        });
+      } else {
+        return Promise.reject(new Error("error"));
+      }
+    });
+    const client = roonWebClientFactory.build(API_URL);
+    const startPromise = client.start();
+    void expect(startPromise).rejects.toEqual(new Error("unable to validate roon-web-stack version"));
+    expect(fetchMock.mock.calls).toHaveLength(1);
+  });
+
+  it("RoonWebClient#start should return a rejected Promise without calling '${client_path}/events' if any error occurred during the call of POST '/api/register'", () => {
+    const error = new Error("network error");
+    fetchMock.once(mockVersionGet).once((): Promise<MockResponseInit> => Promise.reject(error));
     const client = roonWebClientFactory.build(API_URL);
     const startPromise = client.start();
     void expect(startPromise).rejects.toEqual(error);
@@ -135,7 +183,7 @@ describe("roon-web-client-factory.ts test suite", () => {
   });
 
   it("RoonWebClient#start should return a rejected Promise without calling '${client_path}/events' if the status of the response of POST '/api/register' is not 201", () => {
-    fetchMock.once((req: Request): Promise<MockResponseInit> => {
+    fetchMock.once(mockVersionGet).once((req: Request): Promise<MockResponseInit> => {
       if (req.method === "POST" && req.url === new URL("/api/register", API_URL).toString()) {
         return Promise.resolve({
           headers: {
@@ -154,7 +202,7 @@ describe("roon-web-client-factory.ts test suite", () => {
   });
 
   it("RoonWebClient#start should return a rejected Promise without calling '${client_path}/events' if the response of POST '/api/register' does not have a 'Location' header", () => {
-    fetchMock.once((req: Request): Promise<MockResponseInit> => {
+    fetchMock.once(mockVersionGet).once((req: Request): Promise<MockResponseInit> => {
       if (req.method === "POST" && req.url === new URL("/api/register", API_URL).toString()) {
         return Promise.resolve({
           status: 201,
@@ -171,7 +219,10 @@ describe("roon-web-client-factory.ts test suite", () => {
 
   it("RoonWebClient#start should return a rejected Promise without calling '${client_path}/events' if any error occurred during the browse call to load Library item_key", () => {
     const error = new Error("network error");
-    fetchMock.once(mockRegisterPost).once((): Promise<MockResponseInit> => Promise.reject(error));
+    fetchMock
+      .once(mockVersionGet)
+      .once(mockRegisterPost)
+      .once((): Promise<MockResponseInit> => Promise.reject(error));
     const client = roonWebClientFactory.build(API_URL);
     const startPromise = client.start();
     void expect(startPromise).rejects.toEqual(error);
@@ -181,6 +232,7 @@ describe("roon-web-client-factory.ts test suite", () => {
   it("RoonWebClient#start should return a rejected Promise without calling '${client_path}/events' if any error occurred during the load call to load Library item_key", () => {
     const error = new Error("network error");
     fetchMock
+      .once(mockVersionGet)
       .once(mockRegisterPost)
       .once(mockLibraryBrowsePost)
       .once((): Promise<MockResponseInit> => Promise.reject(error));
@@ -192,6 +244,7 @@ describe("roon-web-client-factory.ts test suite", () => {
 
   it("RoonWebClient#start should return a rejected Promise without calling '${client_path}/events' the load call to load Library item_key is not present in the load response", () => {
     fetchMock
+      .once(mockVersionGet)
       .once(mockRegisterPost)
       .once(mockLibraryBrowsePost)
       .once(
@@ -211,7 +264,7 @@ describe("roon-web-client-factory.ts test suite", () => {
   });
 
   it("RoonWebClient#onRoonState should always replay the last known ApiState and forward incoming events", async () => {
-    fetchMock.once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
     const client = roonWebClientFactory.build(API_URL);
     await client.start();
     const eventSourceMock = eventSourceMocks.get(EVENTS_URL.toString());
@@ -266,7 +319,7 @@ describe("roon-web-client-factory.ts test suite", () => {
   });
 
   it("RoonWebClient#onRoonState should gracefully ignore incoming events with malformed JSON", async () => {
-    fetchMock.once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
     const client = roonWebClientFactory.build(API_URL);
     await client.start();
     const eventSourceMock = eventSourceMocks.get(EVENTS_URL.toString());
@@ -283,7 +336,7 @@ describe("roon-web-client-factory.ts test suite", () => {
   });
 
   it("RoonWebClient#offRoonState should unregister the given RoonStateListener without impact on the other registered listeners", async () => {
-    fetchMock.once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
     const client = roonWebClientFactory.build(API_URL);
     await client.start();
     const eventSourceMock = eventSourceMocks.get(EVENTS_URL.toString());
@@ -309,7 +362,7 @@ describe("roon-web-client-factory.ts test suite", () => {
   });
 
   it("RoonWebClient#offRoonState should ignore silently unregistered listeners", async () => {
-    fetchMock.once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
     const client = roonWebClientFactory.build(API_URL);
     await client.start();
     const eventSourceMock = eventSourceMocks.get(EVENTS_URL.toString());
@@ -332,7 +385,7 @@ describe("roon-web-client-factory.ts test suite", () => {
   });
 
   it("RoonWebClient#onCommandState should never replay the last known CommandState and just forward incoming events", async () => {
-    fetchMock.once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
     const client = roonWebClientFactory.build(API_URL);
     await client.start();
     const eventSourceMock = eventSourceMocks.get(EVENTS_URL.toString());
@@ -380,7 +433,7 @@ describe("roon-web-client-factory.ts test suite", () => {
   });
 
   it("RoonWebClient#onCommandState should gracefully ignore incoming events with malformed JSON", async () => {
-    fetchMock.once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
     const client = roonWebClientFactory.build(API_URL);
     await client.start();
     const eventSourceMock = eventSourceMocks.get(EVENTS_URL.toString());
@@ -402,7 +455,7 @@ describe("roon-web-client-factory.ts test suite", () => {
   });
 
   it("RoonWebClient#offCommandState should unregister the given CommandStateListener without impact on the other registered listeners", async () => {
-    fetchMock.once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
     const client = roonWebClientFactory.build(API_URL);
     await client.start();
     const eventSourceMock = eventSourceMocks.get(EVENTS_URL.toString());
@@ -434,7 +487,7 @@ describe("roon-web-client-factory.ts test suite", () => {
   });
 
   it("RoonWebClient#offCommandState should ignore silently unregistered listeners", async () => {
-    fetchMock.once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
     const client = roonWebClientFactory.build(API_URL);
     await client.start();
     const eventSourceMock = eventSourceMocks.get(EVENTS_URL.toString());
@@ -463,7 +516,7 @@ describe("roon-web-client-factory.ts test suite", () => {
   });
 
   it("RoonWebClient#onZoneState should always replay last known ZoneState for each zone and forward incoming events", async () => {
-    fetchMock.once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
     const client = roonWebClientFactory.build(API_URL);
     await client.start();
     const eventSourceMock = eventSourceMocks.get(EVENTS_URL.toString());
@@ -495,7 +548,7 @@ describe("roon-web-client-factory.ts test suite", () => {
   });
 
   it("RoonWebClient#onZoneState should gracefully ignore incoming events with malformed JSON", async () => {
-    fetchMock.once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
     const client = roonWebClientFactory.build(API_URL);
     await client.start();
     const eventSourceMock = eventSourceMocks.get(EVENTS_URL.toString());
@@ -514,7 +567,7 @@ describe("roon-web-client-factory.ts test suite", () => {
   });
 
   it("RoonWebClient#offZoneState should unregister the given ZoneStateListener without impact on the other registered listeners", async () => {
-    fetchMock.once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
     const client = roonWebClientFactory.build(API_URL);
     await client.start();
     const eventSourceMock = eventSourceMocks.get(EVENTS_URL.toString());
@@ -534,7 +587,7 @@ describe("roon-web-client-factory.ts test suite", () => {
   });
 
   it("RoonWebClient#offZoneState should ignore silently unregistered listeners", async () => {
-    fetchMock.once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
     const client = roonWebClientFactory.build(API_URL);
     await client.start();
     const eventSourceMock = eventSourceMocks.get(EVENTS_URL.toString());
@@ -551,7 +604,7 @@ describe("roon-web-client-factory.ts test suite", () => {
   });
 
   it("RoonWebClient#onQueueState should always replay last known QueueState for each zone and forward incoming events", async () => {
-    fetchMock.once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
     const client = roonWebClientFactory.build(API_URL);
     await client.start();
     const eventSourceMock = eventSourceMocks.get(EVENTS_URL.toString());
@@ -593,7 +646,7 @@ describe("roon-web-client-factory.ts test suite", () => {
   });
 
   it("RoonWebClient#onQueueState should gracefully ignore incoming events with malformed JSON", async () => {
-    fetchMock.once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
     const client = roonWebClientFactory.build(API_URL);
     await client.start();
     const eventSourceMock = eventSourceMocks.get(EVENTS_URL.toString());
@@ -612,7 +665,7 @@ describe("roon-web-client-factory.ts test suite", () => {
   });
 
   it("RoonWebClient#offQueueState should unregister the given QueueStateListener without impact on the other registered listeners", async () => {
-    fetchMock.once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
     const client = roonWebClientFactory.build(API_URL);
     await client.start();
     const eventSourceMock = eventSourceMocks.get(EVENTS_URL.toString());
@@ -632,7 +685,7 @@ describe("roon-web-client-factory.ts test suite", () => {
   });
 
   it("RoonWebClient#offQueueState should ignore silently unregistered listeners", async () => {
-    fetchMock.once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
     const client = roonWebClientFactory.build(API_URL);
     await client.start();
     const eventSourceMock = eventSourceMocks.get(EVENTS_URL.toString());
@@ -650,6 +703,7 @@ describe("roon-web-client-factory.ts test suite", () => {
 
   it("RoonWebClient#stop should call POST '${client_path}/unregister', close the EventSource and clean any data", async () => {
     fetchMock
+      .once(mockVersionGet)
       .once(mockRegisterPost)
       .once(mockLibraryBrowsePost)
       .once(mockLibraryLoadPost)
@@ -677,12 +731,12 @@ describe("roon-web-client-factory.ts test suite", () => {
     expect(publishedRoonStates).toHaveLength(2);
     expect(publishedZoneStates).toHaveLength(4);
     await client.stop();
-    expect(fetchMock.mock.calls).toHaveLength(4);
-    const sentRequest = fetchMock.mock.calls[3][0] as Request;
+    expect(fetchMock.mock.calls).toHaveLength(5);
+    const sentRequest = fetchMock.mock.calls[4][0] as Request;
     expect(sentRequest.url).toEqual(new URL(`${client_path}/unregister`, API_URL).toString());
     expect(sentRequest.method).toEqual("POST");
     expect(eventSourceMock?.close).toHaveBeenCalledTimes(1);
-    fetchMock.once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
     await client.start();
     client.onRoonState(roonStateListener);
     client.onZoneState(zoneStateListener);
@@ -693,6 +747,7 @@ describe("roon-web-client-factory.ts test suite", () => {
   it("RoonWebClient#stop should return a rejected Promise on any error during call of POST '/api/client_id/unregister', without closing the EventSource or any open Observable", async () => {
     const error = new Error("network error");
     fetchMock
+      .once(mockVersionGet)
       .once(mockRegisterPost)
       .once(mockLibraryBrowsePost)
       .once(mockLibraryLoadPost)
@@ -711,8 +766,8 @@ describe("roon-web-client-factory.ts test suite", () => {
     sendZoneEvent(OTHER_ZONE_STATE, eventSourceMock);
     const stopPromise = client.stop();
     void expect(stopPromise).rejects.toEqual(error);
-    expect(fetchMock.mock.calls).toHaveLength(4);
-    const sentRequest = fetchMock.mock.calls[3][0] as Request;
+    expect(fetchMock.mock.calls).toHaveLength(5);
+    const sentRequest = fetchMock.mock.calls[4][0] as Request;
     expect(sentRequest.url).toEqual(new URL(`${client_path}/unregister`, API_URL).toString());
     expect(sentRequest.method).toEqual("POST");
   });
@@ -720,6 +775,7 @@ describe("roon-web-client-factory.ts test suite", () => {
   it("RoonWebClient#stop should return a rejected Promise is status of response of call to POST '${client_path}/unregister', without closing the EventSource or clean any data", async () => {
     const error = new Error("unable to unregister client");
     fetchMock
+      .once(mockVersionGet)
       .once(mockRegisterPost)
       .once(mockLibraryBrowsePost)
       .once(mockLibraryLoadPost)
@@ -744,8 +800,8 @@ describe("roon-web-client-factory.ts test suite", () => {
     expect(publishedZoneStates).toHaveLength(2);
     const stopPromise = client.stop();
     void expect(stopPromise).rejects.toEqual(error);
-    expect(fetchMock.mock.calls).toHaveLength(4);
-    const sentRequest = fetchMock.mock.calls[3][0] as Request;
+    expect(fetchMock.mock.calls).toHaveLength(5);
+    const sentRequest = fetchMock.mock.calls[4][0] as Request;
     expect(sentRequest.url).toEqual(new URL(`${client_path}/unregister`, API_URL).toString());
     expect(sentRequest.method).toEqual("POST");
     expect(eventSourceMock?.close).toHaveBeenCalledTimes(0);
@@ -762,6 +818,7 @@ describe("roon-web-client-factory.ts test suite", () => {
     async () => {
       const command_id = "command_id";
       fetchMock
+        .once(mockVersionGet)
         .once(mockRegisterPost)
         .once(mockLibraryBrowsePost)
         .once(mockLibraryLoadPost)
@@ -781,8 +838,8 @@ describe("roon-web-client-factory.ts test suite", () => {
       await client.start();
       const returnedCommandId = await client.command(COMMAND);
       expect(returnedCommandId).toEqual(command_id);
-      expect(fetchMock.mock.calls).toHaveLength(4);
-      const sentRequest = fetchMock.mock.calls[3][0] as Request;
+      expect(fetchMock.mock.calls).toHaveLength(5);
+      const sentRequest = fetchMock.mock.calls[4][0] as Request;
       expect(sentRequest.url).toEqual(new URL(`${client_path}/command`, API_URL).toString());
       expect(sentRequest.method).toEqual("POST");
       expect(sentRequest.headers.get("Accept")).toEqual("application/json");
@@ -798,6 +855,7 @@ describe("roon-web-client-factory.ts test suite", () => {
     async () => {
       const error = new Error("network error");
       fetchMock
+        .once(mockVersionGet)
         .once(mockRegisterPost)
         .once(mockLibraryBrowsePost)
         .once(mockLibraryLoadPost)
@@ -821,6 +879,7 @@ describe("roon-web-client-factory.ts test suite", () => {
     async () => {
       const command_id = "command_id";
       fetchMock
+        .once(mockVersionGet)
         .once(mockRegisterPost)
         .once(mockLibraryBrowsePost)
         .once(mockLibraryLoadPost)
@@ -854,6 +913,7 @@ describe("roon-web-client-factory.ts test suite", () => {
         action: "action",
       };
       fetchMock
+        .once(mockVersionGet)
         .once(mockRegisterPost)
         .once(mockLibraryBrowsePost)
         .once(mockLibraryLoadPost)
@@ -868,8 +928,8 @@ describe("roon-web-client-factory.ts test suite", () => {
       await client.start();
       const response = await client.browse(options);
       expect(response).toEqual(roonApiBrowseResponse);
-      expect(fetchMock.mock.calls).toHaveLength(4);
-      const sentRequest = fetchMock.mock.calls[3][0] as Request;
+      expect(fetchMock.mock.calls).toHaveLength(5);
+      const sentRequest = fetchMock.mock.calls[4][0] as Request;
       expect(sentRequest.url).toEqual(new URL(`${client_path}/browse`, API_URL).toString());
       expect(sentRequest.method).toEqual("POST");
       expect(sentRequest.headers.get("Accept")).toEqual("application/json");
@@ -888,6 +948,7 @@ describe("roon-web-client-factory.ts test suite", () => {
       };
       const error = new Error("error");
       fetchMock
+        .once(mockVersionGet)
         .once(mockRegisterPost)
         .once(mockLibraryBrowsePost)
         .once(mockLibraryLoadPost)
@@ -916,6 +977,7 @@ describe("roon-web-client-factory.ts test suite", () => {
         action: "action",
       };
       fetchMock
+        .once(mockVersionGet)
         .once(mockRegisterPost)
         .once(mockLibraryBrowsePost)
         .once(mockLibraryLoadPost)
@@ -958,6 +1020,7 @@ describe("roon-web-client-factory.ts test suite", () => {
         ],
       };
       fetchMock
+        .once(mockVersionGet)
         .once(mockRegisterPost)
         .once(mockLibraryBrowsePost)
         .once(mockLibraryLoadPost)
@@ -972,8 +1035,8 @@ describe("roon-web-client-factory.ts test suite", () => {
       await client.start();
       const response = await client.load(options);
       expect(response).toEqual(roonApiLoadResponse);
-      expect(fetchMock.mock.calls).toHaveLength(4);
-      const sentRequest = fetchMock.mock.calls[3][0] as Request;
+      expect(fetchMock.mock.calls).toHaveLength(5);
+      const sentRequest = fetchMock.mock.calls[4][0] as Request;
       expect(sentRequest.url).toEqual(new URL(`${client_path}/load`, API_URL).toString());
       expect(sentRequest.method).toEqual("POST");
       expect(sentRequest.headers.get("Accept")).toEqual("application/json");
@@ -992,6 +1055,7 @@ describe("roon-web-client-factory.ts test suite", () => {
       };
       const error = new Error("error");
       fetchMock
+        .once(mockVersionGet)
         .once(mockRegisterPost)
         .once(mockLibraryBrowsePost)
         .once(mockLibraryLoadPost)
@@ -1030,6 +1094,7 @@ describe("roon-web-client-factory.ts test suite", () => {
         ],
       };
       fetchMock
+        .once(mockVersionGet)
         .once(mockRegisterPost)
         .once(mockLibraryBrowsePost)
         .once(mockLibraryLoadPost)
@@ -1072,6 +1137,7 @@ describe("roon-web-client-factory.ts test suite", () => {
         },
       };
       fetchMock
+        .once(mockVersionGet)
         .once(mockRegisterPost)
         .once(mockLibraryBrowsePost)
         .once(mockLibraryLoadPost)
@@ -1110,7 +1176,7 @@ describe("roon-web-client-factory.ts test suite", () => {
   );
 
   it("RoonWebClient#restart should cleanup and call RoonWebClient#start", async () => {
-    fetchMock.once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
     const client = roonWebClientFactory.build(API_URL);
     await client.start();
     const startSpy = jest.spyOn(client, "start");
@@ -1122,20 +1188,21 @@ describe("roon-web-client-factory.ts test suite", () => {
       },
       "close"
     );
-    fetchMock.once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
     await client.restart();
     expect(startSpy).toHaveBeenCalledTimes(1);
     expect(eventSourceCloseSpy).toHaveBeenCalledTimes(1);
   });
 
   it("RoonWebClient#restart should cancel ongoing restarts", async () => {
-    fetchMock.once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
     const client = roonWebClientFactory.build(API_URL);
     await client.start();
     fetchMock
       .once(() => {
         return new Promise(() => {});
       })
+      .once(mockVersionGet)
       .once(mockRegisterPost)
       .once(mockLibraryBrowsePost)
       .once(mockLibraryLoadPost);
@@ -1143,6 +1210,26 @@ describe("roon-web-client-factory.ts test suite", () => {
     const secondRestart = client.restart();
     void expect(firstRestart).rejects.toEqual(new DOMException("The operation was aborted", "ABORT_ERROR"));
     void expect(secondRestart).resolves;
+  });
+
+  it("RoonWebClient#restart should return a rejected Promise with expected message if the api version has changed since the first call to #start", async () => {
+    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    const client = roonWebClientFactory.build(API_URL);
+    await client.start();
+    fetchMock.once((req) => {
+      if (req.method === "GET" && req.url === new URL("/api/version", API_URL).toString()) {
+        return Promise.resolve({
+          headers: {
+            "x-roon-web-stack-version": "new_version",
+          },
+          status: 204,
+        });
+      } else {
+        return Promise.reject(new Error("error"));
+      }
+    });
+    const newVersionRestart = client.restart();
+    void expect(newVersionRestart).rejects.toEqual(new Error(UPDATE_NEEDED_ERROR_MESSAGE));
   });
 });
 
@@ -1346,6 +1433,19 @@ const LIBRARY_LOAD_RESPONSE: RoonApiBrowseLoadResponse = {
     count: 42,
     level: 421,
   },
+};
+
+const mockVersionGet: MockResponseInitFunction = (req: Request) => {
+  if (req.method === "GET" && req.url === new URL("/api/version", API_URL).toString()) {
+    return Promise.resolve({
+      headers: {
+        "x-roon-web-stack-version": "version",
+      },
+      status: 204,
+    });
+  } else {
+    return Promise.reject(new Error("error"));
+  }
 };
 
 const mockRegisterPost: MockResponseInitFunction = (req: Request) => {
