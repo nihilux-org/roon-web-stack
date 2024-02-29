@@ -9,10 +9,8 @@ RUN corepack enable yarn && \
 
 FROM alpine:${ALPINE_VERSION}
 WORKDIR /usr/src/app
-RUN apk add --no-cache libstdc++ dumb-init \
-  && addgroup -g 1000 node && adduser -u 1000 -G node -s /bin/sh -D node \
+RUN addgroup -g 1000 node && adduser -u 1000 -G node -s /bin/sh -D node \
   && chown node:node ./
-USER node
 RUN mkdir /usr/src/app/config \
     && chown node:node /usr/src/app/config \
     && ln -sv /usr/src/app/config/config.json /usr/src/app/config.json
@@ -21,8 +19,10 @@ ENV HOST=0.0.0.0
 COPY --from=builder /usr/local/bin/node /usr/local/bin/
 COPY --from=builder /usr/local/bin/docker-entrypoint.sh /usr/local/bin/
 ENTRYPOINT ["docker-entrypoint.sh"]
+RUN apk add --no-cache libstdc++ dumb-init
 COPY --from=builder /usr/src/roon-web-stack/LICENSE ./LICENSE
 COPY --from=builder /usr/src/roon-web-stack/app/roon-web-api/node_modules ./node_modules
 COPY --from=builder /usr/src/roon-web-stack/app/roon-web-api/bin/app.js ./app.js
 COPY --from=builder /usr/src/roon-web-stack/app/roon-web-ng-client/dist/roon-web-ng-client/browser ./web
+USER node
 CMD ["dumb-init", "node", "app.js"]
