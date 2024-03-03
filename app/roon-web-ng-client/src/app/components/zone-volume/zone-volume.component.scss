@@ -1,10 +1,15 @@
+.volume-header {
+  margin: 0 5px 5px 5px;
+}
 .volume-control {
   display: flex;
   align-items: center;
   justify-content: flex-end;
+  margin: 5px 5px 0 5px;
   .volume-value {
     display: inline-block;
     width: 2rem;
+    cursor: default;
   }
   .volume-output-name {
     margin-right: 12px;

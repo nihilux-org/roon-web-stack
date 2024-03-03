@@ -1,6 +1,6 @@
 import { MockBuilder, MockedComponentFixture, MockRender } from "ng-mocks";
 import { Command } from "@model";
-import { DEFAULT_ZONE_COMMANDS, ZoneCommands } from "@model/client";
+import { ZoneCommands, ZoneCommandState } from "@model/client";
 import { RoonService } from "@services/roon.service";
 import { ZoneCommandsComponent } from "./zone-commands.component";
 
@@ -21,7 +21,7 @@ describe("ZoneCommandsComponent", () => {
     };
     await MockBuilder(ZoneCommandsComponent).mock(RoonService, roonService as Partial<RoonService>);
     fixture = MockRender(ZoneCommandsComponent, {
-      zoneCommands: DEFAULT_ZONE_COMMANDS,
+      zoneCommands: ZONE_COMMANDS,
     });
     component = fixture.componentInstance as ZoneCommandsComponent;
     fixture.detectChanges();
@@ -31,3 +31,13 @@ describe("ZoneCommandsComponent", () => {
     expect(component).toBeTruthy();
   });
 });
+
+const ZONE_COMMANDS: ZoneCommands = {
+  zoneId: "zone_id",
+  previousTrack: ZoneCommandState.ABSENT,
+  loading: ZoneCommandState.ABSENT,
+  pause: ZoneCommandState.ABSENT,
+  play: ZoneCommandState.ABSENT,
+  nextTrack: ZoneCommandState.ABSENT,
+  outputs: [],
+};

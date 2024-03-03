@@ -1,6 +1,6 @@
 const executor = jest.fn();
 
-export const playCommandExecutorMock = executor;
+export const playFromHereCommandExecutorMock = executor;
 
 jest.mock("./play-from-here-command-executor", () => ({
   executor,

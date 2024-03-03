@@ -332,10 +332,10 @@ export interface RoonApiTransport {
   subscribe_queue(zone: Zone | Output, max_item_count: number, cb: RoonApiTransportQueueSubscriptionCallback): void;
   subscribe_zones(cb: RoonApiTransportZonesSubscriptionCallback): void;
   toggle_standby(output: Output, opts: RoonApiTransportStandbyOptions): Promise<void>;
-  transfer_zone(fromzone: Zone | Output, tozone: Zone | Output): Promise<void>;
+  transfer_zone(fromZone: Zone | Output, toZone: Zone | Output): Promise<void>;
   ungroup_outputs(outputs: Output[]): Promise<void>;
   zone_by_zone_id(zone_id: string): Zone | null;
-  zone_by_output_id(output_is: string): Output | null;
+  zone_by_output_id(output_id: string): Output | null;
   zone_by_object(zone: Zone | Output): Zone;
 }
 

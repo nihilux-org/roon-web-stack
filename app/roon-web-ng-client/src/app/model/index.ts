@@ -1,4 +1,4 @@
-import { Output, QueueTrack, Track } from "@model";
+import { CommandResult, Output, QueueTrack, Track } from "@model";
 
 export interface ZoneProgression {
   length: string;
@@ -27,16 +27,6 @@ export enum ZoneCommandState {
   ACTIVE = "ACTIVE",
   DISABLED = "DISABLED",
 }
-
-export const DEFAULT_ZONE_COMMANDS: ZoneCommands = {
-  zoneId: "",
-  previousTrack: ZoneCommandState.ABSENT,
-  loading: ZoneCommandState.ABSENT,
-  pause: ZoneCommandState.ABSENT,
-  play: ZoneCommandState.ABSENT,
-  nextTrack: ZoneCommandState.ABSENT,
-  outputs: [],
-};
 
 export interface TrackDisplay extends Omit<Track, "length" | "seek_percentage" | "seek_position"> {}
 
@@ -79,3 +69,5 @@ export enum VisibilityState {
   VISIBLE = "VISIBLE",
   HIDDEN = "HIDDEN",
 }
+
+export type CommandCallback = (commandState: CommandResult) => void;

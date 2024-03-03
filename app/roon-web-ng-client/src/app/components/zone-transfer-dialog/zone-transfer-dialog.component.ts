@@ -1,0 +1,62 @@
+import { ChangeDetectionStrategy, Component } from "@angular/core";
+import { MatButton } from "@angular/material/button";
+import { MatDialogContent, MatDialogRef, MatDialogTitle } from "@angular/material/dialog";
+import { MatDivider } from "@angular/material/divider";
+import { MatIcon } from "@angular/material/icon";
+import { CommandResult, CommandType, TransferZoneCommand, ZoneDescription } from "@model";
+import { CommandCallback } from "@model/client";
+import { RoonService } from "@services/roon.service";
+import { SettingsService } from "@services/settings.service";
+
+@Component({
+  selector: "nr-zone-transfer-dialog",
+  standalone: true,
+  imports: [MatDialogContent, MatDivider, MatDialogTitle, MatIcon, MatButton],
+  templateUrl: "./zone-transfer-dialog.component.html",
+  styleUrl: "./zone-transfer-dialog.component.scss",
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class ZoneTransferDialogComponent {
+  private readonly _dialogRef: MatDialogRef<ZoneTransferDialogComponent>;
+  private readonly _roonService: RoonService;
+  private readonly _settingsService: SettingsService;
+  private readonly _currentZoneId: string;
+  readonly currentZone: string;
+  readonly transferableZones: ZoneDescription[];
+
+  constructor(
+    dialogRef: MatDialogRef<ZoneTransferDialogComponent>,
+    roonService: RoonService,
+    settingsService: SettingsService
+  ) {
+    this._dialogRef = dialogRef;
+    this._roonService = roonService;
+    this._settingsService = settingsService;
+    this._currentZoneId = this._settingsService.displayedZoneId()();
+    const zones = this._roonService.zones()();
+    this.currentZone =
+      zones.find((zd) => {
+        return zd.zone_id === this._currentZoneId;
+      })?.display_name ?? "";
+    this.transferableZones = zones.filter((zd) => {
+      return zd.zone_id !== this._currentZoneId;
+    });
+  }
+
+  onTransferZoneSelected(to_zone_id: string) {
+    const commandCallback: CommandCallback = (commandResult) => {
+      if (commandResult === CommandResult.APPLIED) {
+        this._settingsService.saveDisplayedZoneId(to_zone_id);
+      }
+    };
+    const command: TransferZoneCommand = {
+      type: CommandType.TRANSFER_ZONE,
+      data: {
+        zone_id: this._currentZoneId,
+        to_zone_id,
+      },
+    };
+    this._dialogRef.close();
+    this._roonService.command(command, commandCallback);
+  }
+}

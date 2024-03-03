@@ -19,7 +19,7 @@
       <cdk-virtual-scroll-viewport itemSize="101" minBufferPx="300" maxBufferPx="600">
         <ol>
             <li *cdkVirtualFor="let track of $queue(); let last = last; let index = $index;">
-              <div [tabindex]="index" (click)="openActionMenu(track.queue_item_id)" (keydown)="openActionMenu(track.queue_item_id)" class="track">
+              <div tabindex="0" (click)="openActionMenu(track.queue_item_id)" (keydown)="openActionMenu(track.queue_item_id)" class="track">
                 @if (track.image_key) {
                   <nr-roon-image priority="false" [alt]="track.title + ' cover'" height="70" width="70" [src]="track.image_key!" />
                 } @else {

@@ -18,7 +18,7 @@ import {
   ZoneState,
   ZoneStateListener,
 } from "@model";
-import { VisibilityState } from "@model/client";
+import { CommandCallback, VisibilityState } from "@model/client";
 import { roonWebClientFactory, UPDATE_NEEDED_ERROR_MESSAGE } from "@nihilux/roon-web-client";
 import { VisibilityService } from "@services/visibility.service";
 
@@ -32,7 +32,7 @@ export class RoonService implements OnDestroy {
   private readonly _roonStateListener: RoonStateListener;
   private readonly _$roonState: WritableSignal<ApiState>;
   private readonly _commandStateListener: CommandStateListener;
-  private readonly _$commandState: WritableSignal<CommandState | undefined>;
+  private readonly _commandCallbacks: Map<string, CommandCallback>;
   private readonly _zoneStateListener: ZoneStateListener;
   private readonly _zoneStates?: Map<
     string,
@@ -58,9 +58,13 @@ export class RoonService implements OnDestroy {
         this.reconnect();
       }
     };
-    this._$commandState = signal(undefined);
+    this._commandCallbacks = new Map<string, CommandCallback>();
     this._commandStateListener = (notification: CommandState): void => {
-      this._$commandState.set(notification);
+      const commandCallback = this._commandCallbacks.get(notification.command_id);
+      if (commandCallback) {
+        this._commandCallbacks.delete(notification.command_id);
+        commandCallback(notification.state);
+      }
     };
     this._zoneStates = new Map<
       string,
@@ -156,11 +160,6 @@ export class RoonService implements OnDestroy {
     });
   };
 
-  commandState: () => Signal<CommandState | undefined> = () => {
-    this.ensureStarted();
-    return this._$commandState;
-  };
-
   zoneState: ($zoneId: Signal<string>) => Signal<ZoneState> = ($zoneId: Signal<string>) => {
     this.ensureStarted();
     return computed(() => {
@@ -189,12 +188,22 @@ export class RoonService implements OnDestroy {
     });
   };
 
-  command: (command: Command) => void = (command: Command) => {
+  command: (command: Command, commandCallback?: CommandCallback) => void = (
+    command: Command,
+    commandCallback?: CommandCallback
+  ) => {
     this.ensureStarted();
-    this._roonClient.command(command).catch((err) => {
-      // eslint-disable-next-line no-console
-      console.error(err);
-    });
+    this._roonClient
+      .command(command)
+      .then((commandId) => {
+        if (commandCallback) {
+          this._commandCallbacks.set(commandId, commandCallback);
+        }
+      })
+      .catch((err) => {
+        // eslint-disable-next-line no-console
+        console.error(err);
+      });
   };
 
   library: (zone_id: string) => Observable<RoonApiBrowseLoadResponse> = (zone_id: string) => {
