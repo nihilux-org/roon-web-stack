@@ -1,12 +1,12 @@
 <div mat-dialog-title class="browse-dialog-title">
   @for (item of $dialogTitle(); track item; let first = $first; let index = $index; let count = $count) {
-    @if (count > 3 && index === (count - 3)) {
+    @if (count >= $itemsInTitle() && index === (count - $itemsInTitle())) {
       <button mat-icon-button aria-label="back in navigation" (click)="onTitleClicked(index)">
         <mat-icon aria-hidden="false" fontIcon="arrow_upward"/>
       </button>
     }
-    @if (count < 4 || index > (count - 3)) {
-      @if (!first) {
+    @if (index > (count - $itemsInTitle())) {
+      @if (!first && index > (count - $itemsInTitle() + 1)) {
         <mat-icon aria-hidden="true" fontIcon="navigate_next"/>
       }
       <button mat-flat-button (click)="onTitleClicked(index)">{{item}}</button>

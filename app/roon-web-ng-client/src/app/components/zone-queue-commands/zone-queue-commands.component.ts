@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Signal } from "@angular/core";
-import { MatButton } from "@angular/material/button";
+import { MatButton, MatIconButton } from "@angular/material/button";
 import { MatDialog } from "@angular/material/dialog";
 import { MatIcon } from "@angular/material/icon";
 import { RoonBrowseDialogComponent } from "@components/roon-browse-dialog/roon-browse-dialog.component";
@@ -9,7 +9,7 @@ import { SettingsService } from "@services/settings.service";
 @Component({
   selector: "nr-zone-queue-commands",
   standalone: true,
-  imports: [MatButton, MatIcon],
+  imports: [MatButton, MatIcon, MatIconButton],
   templateUrl: "./zone-queue-commands.component.html",
   styleUrl: "./zone-queue-commands.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -29,6 +29,7 @@ export class SettingsDialogComponent {
   private readonly _dialogRef: MatDialogRef<SettingsDialogComponent>;
   private readonly _settingsService: SettingsService;
   readonly $isSmallScreen: Signal<boolean>;
+  readonly $isOneColumn: Signal<boolean>;
   readonly version: string;
   constructor(
     settingsService: SettingsService,
@@ -38,6 +39,7 @@ export class SettingsDialogComponent {
     this._dialogRef = dialogRef;
     this._settingsService = settingsService;
     this.$isSmallScreen = this._settingsService.isSmallScreen();
+    this.$isOneColumn = this._settingsService.isOneColumn();
     this.version = roonService.version();
   }
 

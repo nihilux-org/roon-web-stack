@@ -1,6 +1,7 @@
 :host {
   display: flex;
   justify-content: flex-end;
+  align-items: center;
   button:not(:last-of-type) {
     margin-right: 20px;
   }

@@ -13,9 +13,11 @@
               <div class="roon-item-image-placeholder"></div>
             }
             <div class="roon-item-info" [class.roon-item-prompt]="item.input_prompt" [class.is-small-screen]="$isSmallScreen()">
-              <span>{{item.title}}</span>
-              @if (item.subtitle) {
-                <span>{{sanitizeSubtitle(item.subtitle)}}</span>
+              @if (!(item.input_prompt && $isSmallScreen())) {
+                <span>{{item.title}}</span>
+                @if (item.subtitle) {
+                  <span>{{sanitizeSubtitle(item.subtitle)}}</span>
+                }
               }
               @if (item.input_prompt) {
                 <mat-form-field appearance="outline">
