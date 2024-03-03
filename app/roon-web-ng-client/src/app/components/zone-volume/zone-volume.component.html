@@ -1,16 +1,16 @@
 <div>
-  <button mat-icon-button aria-label="Volume" [matMenuTriggerFor]="zoneCommands.outputs.length > 0 ? volumeMenu : null">
+  <button tabindex="0" mat-icon-button aria-label="Volume" [matMenuTriggerFor]="zoneCommands.outputs.length > 0 ? volumeMenu : null">
     <mat-icon [fontIcon]="isMuted() ? 'volume_off' : 'volume_up'" />
   </button>
   <mat-menu #volumeMenu="matMenu" yPosition="above" xPosition="after" class="volume-panel">
     <div class="volume-header">
-      <button mat-icon-button (click)="onOpenTransferDialog()"><mat-icon fontIcon="sync_alt" /></button>
+      <button tabindex="0" mat-icon-button (click)="onOpenTransferDialog()"><mat-icon fontIcon="sync_alt" /></button>
     </div>
     <mat-divider />
     @for (output of zoneCommands.outputs; track output.output_id; let count = $count) {
       <div class="volume-control">
         @if (output.volume) {
-          <button mat-icon-button (click)="onOutputMute($event, output.output_id)"><mat-icon [fontIcon]="output.volume.is_muted ? 'volume_off' : 'volume_up'" /></button>
+          <button tabindex="0" mat-icon-button (click)="onOutputMute($event, output.output_id)"><mat-icon [fontIcon]="output.volume.is_muted ? 'volume_off' : 'volume_up'" /></button>
           @if (count !== 1) {
             <span class="volume-output-name">{{output.display_name}}</span>
           }
@@ -28,8 +28,8 @@
             <sub>{{output.volume.hard_limit_max ?? output.volume.max ?? 100}}</sub>
           </span>
           <span class="volume-buttons">
-            <button mat-icon-button (click)="onVolumeStep($event, output.output_id, true)"><mat-icon fontIcon="do_not_disturb_on" /></button>
-            <button mat-icon-button (click)="onVolumeStep($event, output.output_id)"><mat-icon fontIcon="add_circle" /></button>
+            <button tabindex="0" mat-icon-button (click)="onVolumeStep($event, output.output_id, true)"><mat-icon fontIcon="do_not_disturb_on" /></button>
+            <button tabindex="0" mat-icon-button (click)="onVolumeStep($event, output.output_id)"><mat-icon fontIcon="add_circle" /></button>
           </span>
         } @else {
           <button mat-icon-button disabled><mat-icon fontIcon="volume_up" /></button>

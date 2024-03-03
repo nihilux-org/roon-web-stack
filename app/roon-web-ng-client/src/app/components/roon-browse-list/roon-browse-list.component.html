@@ -6,7 +6,7 @@
     <ol>
       <li *cdkVirtualFor="let item of dataSource; let last = last; let index = index">
         @if (item) {
-          <div [tabindex]="index" (click)="!item.input_prompt ? onItemClicked(item.item_key, item.hint) : true" (keydown)="!item.input_prompt ? onItemClicked(item.item_key, item.hint) : true" class="roon-list-item">
+          <button tabindex="0" (click)="!item.input_prompt ? onItemClicked(item.item_key, item.hint) : true" class="roon-list-item">
             @if (item.image_key || content.list.image_key) {
               <nr-roon-image [src]="item.image_key ?? content.list.image_key!" [alt]="item.title + ' cover'" height="70" width="70" priority="false" />
             } @else if(!$isSmallScreen()) {
@@ -29,7 +29,7 @@
               <button mat-icon-button><mat-icon fontIcon="more_vert" /></button>
               <div [matMenuTriggerFor]="actionMenu" [matMenuTriggerData]="item.item_key"></div>
             }
-          </div>
+          </button>
           @if (!last) {
             <mat-divider [inset]="!$isSmallScreen()" [vertical]="false" />
           }

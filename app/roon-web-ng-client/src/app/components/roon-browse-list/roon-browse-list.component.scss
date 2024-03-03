@@ -1,3 +1,5 @@
+@use "../styles/mixins" as nr;
+
 :host {
   height: 100%;
   width: 100%;
@@ -13,14 +15,15 @@
     }
     ol {
       list-style: none;
-      margin: 0;
+      margin: 5px;
       padding: 0;
       .roon-list-item {
+        @include nr.button-reset();
         display: flex;
         justify-content: flex-start;
         align-items: center;
         padding: 20px 0;
-        cursor: pointer;
+        width: 100%;
         .roon-item-image-placeholder {
           height: 70px;
           width: 70px;
@@ -32,6 +35,7 @@
           justify-content: space-evenly;
           height: 70px;
           min-width: 0;
+          text-align: left;
           span {
             overflow: hidden;
             white-space: nowrap;

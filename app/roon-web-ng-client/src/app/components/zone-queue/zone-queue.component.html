@@ -1,5 +1,5 @@
 @if ($trackDisplay().title !== EMPTY_TRACK.title) {
-  <div [tabindex]="0" class="current-track" [class.is-one-column]="$isOneColumn()">
+  <div class="current-track" [class.is-one-column]="$isOneColumn()">
     <h1>{{$trackDisplay().title}}</h1>
     @if ($trackDisplay().disk?.title || $trackDisplay().artist) {
       <p>
@@ -19,7 +19,7 @@
       <cdk-virtual-scroll-viewport itemSize="101" minBufferPx="300" maxBufferPx="600">
         <ol>
             <li *cdkVirtualFor="let track of $queue(); let last = last; let index = $index;">
-              <div tabindex="0" (click)="openActionMenu(track.queue_item_id)" (keydown)="openActionMenu(track.queue_item_id)" class="track">
+              <button tabindex="0" (click)="openActionMenu(track.queue_item_id)" class="track">
                 @if (track.image_key) {
                   <nr-roon-image priority="false" [alt]="track.title + ' cover'" height="70" width="70" [src]="track.image_key!" />
                 } @else {
@@ -34,7 +34,7 @@
                     <span class="track-artist">by {{track.artist}}</span>
                   }
                 </div>
-              </div>
+              </button>
               <div [matMenuTriggerFor]="actionMenu" [matMenuTriggerData]="track.queue_item_id"></div>
               @if (!last) {
                 <mat-divider [inset]="true" [vertical]="false" />
