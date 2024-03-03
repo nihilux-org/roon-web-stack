@@ -31,7 +31,7 @@ export class ZoneQueueCommandsComponent {
       data: {
         firstPage,
       },
-      autoFocus: "input:first-of-type",
+      autoFocus: firstPage === "library" ? "input:first-of-type" : "button.roon-list-item:first-of-type",
     });
   }
 
