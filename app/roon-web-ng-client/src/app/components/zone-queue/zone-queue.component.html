@@ -16,7 +16,7 @@
 @if ($displayQueueTrack()) {
   <div class="queue" [class.is-one-column]="$isOneColumn()" [@.disabled]="!hasBeenDisplay" @toggleQueueTrack (@toggleQueueTrack.done)="onQueueTrackOpened()">
     @if ($queue().length > 0) {
-      <cdk-virtual-scroll-viewport itemSize="101" minBufferPx="300" maxBufferPx="600">
+      <cdk-virtual-scroll-viewport itemSize="101" minBufferPx="100" maxBufferPx="610">
         <ol>
             <li *cdkVirtualFor="let track of $queue(); let last = last; let index = $index;">
               <button tabindex="0" (click)="openActionMenu(track.queue_item_id)" class="track">

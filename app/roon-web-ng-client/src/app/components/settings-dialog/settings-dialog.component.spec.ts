@@ -11,12 +11,14 @@ describe("SettingsDialogComponent", () => {
   let $chosenTheme: WritableSignal<string>;
   let $displayMode: WritableSignal<DisplayMode>;
   let $isSmallScreen: WritableSignal<boolean>;
+  let $isOneColumn: WritableSignal<boolean>;
   let settingsService: {
     chosenTheme: jest.Mock;
     saveIsDarkTheme: jest.Mock;
     displayMode: jest.Mock;
     saveDisplayMode: jest.Mock;
     isSmallScreen: jest.Mock;
+    isOneColumn: jest.Mock;
   };
   let version: string;
   let roonService: {
@@ -30,6 +32,7 @@ describe("SettingsDialogComponent", () => {
     $chosenTheme = signal(ChosenTheme.BROWSER);
     $displayMode = signal(DisplayMode.WIDE);
     $isSmallScreen = signal(false);
+    $isOneColumn = signal(false);
     settingsService = {
       chosenTheme: jest.fn().mockImplementation(() => $chosenTheme),
       saveIsDarkTheme: jest.fn().mockImplementation((chosenTheme: ChosenTheme) => {
@@ -40,6 +43,7 @@ describe("SettingsDialogComponent", () => {
         $displayMode.set(displayMode);
       }),
       isSmallScreen: jest.fn().mockImplementation(() => $isSmallScreen),
+      isOneColumn: jest.fn().mockImplementation(() => $isOneColumn),
     };
     version = "version";
     roonService = {

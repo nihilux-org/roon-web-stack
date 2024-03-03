@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, Component, Inject, OnInit, signal, WritableSignal } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  Inject,
+  OnInit,
+  Signal,
+  signal,
+  WritableSignal,
+} from "@angular/core";
 import { MatButton, MatIconButton } from "@angular/material/button";
 import {
   MAT_DIALOG_DATA,
@@ -39,9 +48,10 @@ export class RoonBrowseDialogComponent implements OnInit {
   private readonly _dialogRef: MatDialogRef<RoonBrowseDialogComponent>;
   private readonly _firstPage: string;
   content?: RoonApiBrowseLoadResponse | undefined = undefined;
-  zoneId: string;
-  $dialogTitle: WritableSignal<string[]>;
-  $loading: WritableSignal<boolean>;
+  readonly zoneId: string;
+  readonly $dialogTitle: WritableSignal<string[]>;
+  readonly $loading: WritableSignal<boolean>;
+  readonly $itemsInTitle: Signal<number>;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) data: { firstPage: "library" | "explore" },
@@ -55,6 +65,14 @@ export class RoonBrowseDialogComponent implements OnInit {
     this._firstPage = data.firstPage;
     this.$dialogTitle = signal([]);
     this.$loading = signal(true);
+    const $isOneColumn = settingsService.isOneColumn();
+    this.$itemsInTitle = computed(() => {
+      if ($isOneColumn()) {
+        return 2;
+      } else {
+        return 3;
+      }
+    });
   }
 
   ngOnInit() {
