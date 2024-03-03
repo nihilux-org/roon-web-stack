@@ -3,15 +3,19 @@
   padding-top: 15px;
   > div {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     .zones {
-      flex-grow: 1;
+      flex-basis: 35%;
       text-align: right;
     }
     .volume {
-      flex-grow: 1;
+      flex-basis: 35%;
       text-align: left;
+    }
+    .buttons {
+      flex-basis: 30%;
+      text-align: center;
     }
   }
 }
