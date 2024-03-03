@@ -2,7 +2,8 @@ import { loggerMock, nanoidMock } from "@mock";
 import { roonMock } from "../infrastructure/roon-extension.mock";
 import { controlExecutorMock } from "./command-executor/control-command-executor.mock";
 import { muteCommandExecutorMock } from "./command-executor/mute-command-executor.mock";
-import { playCommandExecutorMock } from "./command-executor/play-from-here-command-executor.mock";
+import { playFromHereCommandExecutorMock } from "./command-executor/play-from-here-command-executor.mock";
+import { transferZoneCommandExecutorMock } from "./command-executor/transfer-zone-command-executor.mock";
 import { volumeCommandExecutor } from "./command-executor/volume-command-executor.mock";
 
 import { Subject } from "rxjs";
@@ -16,6 +17,7 @@ import {
   Output,
   PlayFromHereCommand,
   RoonServer,
+  TransferZoneCommand,
   VolumeCommand,
   VolumeStrategy,
   Zone,
@@ -89,7 +91,11 @@ describe("command-dispatcher.ts test suite", () => {
 
   it("command-dispatcher#dispatch should call control-command-executor command executor with any ControlCommand", async () => {
     const controlCommands = commands.filter(
-      (c) => c.type !== CommandType.VOLUME && c.type !== CommandType.MUTE && c.type !== CommandType.PLAY_FROM_HERE
+      (c) =>
+        c.type !== CommandType.VOLUME &&
+        c.type !== CommandType.MUTE &&
+        c.type !== CommandType.PLAY_FROM_HERE &&
+        c.type !== CommandType.TRANSFER_ZONE
     );
     controlExecutorMock.mockImplementation(() => Promise.resolve());
     const notifications: CommandState[] = [];
@@ -189,7 +195,34 @@ describe("command-dispatcher.ts test suite", () => {
     await promise;
     expect(commandIds).toHaveLength(playFromHereCommand.length);
     playFromHereCommand.forEach((command, index) => {
-      expect(playCommandExecutorMock).toHaveBeenNthCalledWith(index + 1, command, {
+      expect(playFromHereCommandExecutorMock).toHaveBeenNthCalledWith(index + 1, command, {
+        server,
+        zone,
+      });
+    });
+  });
+
+  it("command-dispatcher#dispatch should call transfer-zone-command-executor with any TransferZoneCommand", async () => {
+    const transferZoneCommands: TransferZoneCommand[] = commands
+      .filter((c: Command) => c.type === CommandType.TRANSFER_ZONE)
+      .map((c: Command) => c as unknown as TransferZoneCommand);
+    const notifications: CommandState[] = [];
+    const commandIds: string[] = [];
+    const promise: Promise<void> = new Promise((resolve) => {
+      controlChannel.subscribe((cn: CommandState) => {
+        notifications.push(cn);
+        if (notifications.length === transferZoneCommands.length) {
+          resolve();
+        }
+      });
+    });
+    transferZoneCommands.forEach((c: Command) => {
+      commandIds.push(commandDispatcher.dispatch(c, controlChannel));
+    });
+    await promise;
+    expect(commandIds).toHaveLength(transferZoneCommands.length);
+    transferZoneCommands.forEach((command, index) => {
+      expect(transferZoneCommandExecutorMock).toHaveBeenNthCalledWith(index + 1, command, {
         server,
         zone,
       });
@@ -331,6 +364,13 @@ const commands: Command[] = [
     data: {
       zone_id,
       queue_item_id: "queue_item_id",
+    },
+  },
+  {
+    type: CommandType.TRANSFER_ZONE,
+    data: {
+      zone_id,
+      to_zone_id: "to_zone_id",
     },
   },
 ];

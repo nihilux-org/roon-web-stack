@@ -1,0 +1,18 @@
+:host {
+  h2 {
+    padding-bottom: 18px;
+  }
+  mat-divider {
+    min-width: 300px;
+  }
+  .from-zone {
+    display: flex;
+    margin-bottom: 20px;
+    mat-icon {
+      margin-right: 10px;
+    }
+  }
+  button {
+    margin-bottom: 20px;
+  }
+}

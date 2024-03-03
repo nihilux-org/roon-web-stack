@@ -3,7 +3,6 @@ import { roonCqrsClientMock, roonWebClientFactoryMock } from "@mock/roon-cqrs-cl
 import { signal } from "@angular/core";
 import { TestBed } from "@angular/core/testing";
 import {
-  CommandResult,
   CommandStateListener,
   QueueState,
   QueueStateListener,
@@ -57,7 +56,6 @@ describe("RoonServiceService", () => {
   it("should throw an error on any method other thant #start if #start has not been called and awaited", () => {
     const error = new Error("you must wait for RoonService#start to complete before calling any other methods");
     expect(() => service.zones()).toThrow(error);
-    expect(() => service.commandState()).toThrow(error);
     expect(() => service.zoneState($zoneId)()).toThrow(error);
     expect(() => service.queueState($zoneId)()).toThrow(error);
   });
@@ -146,83 +144,6 @@ describe("RoonServiceService", () => {
       });
     }
     expect(states()).toEqual(otherStates());
-  });
-
-  it("#commandState should return a Signal<CommandNotification | undefined> with undefined as first value and updating as new events are received by the internal RoonCqrsClient", async () => {
-    await service.start();
-    if (roonStateListener) {
-      roonStateListener({
-        state: RoonState.SYNC,
-        zones: zoneDescriptions,
-      });
-    }
-    const states = service.commandState();
-    expect(states()).toBeUndefined();
-    if (commandStateListener) {
-      commandStateListener({
-        state: CommandResult.APPLIED,
-        command_id: "command_id",
-      });
-      commandStateListener({
-        state: CommandResult.REJECTED,
-        command_id: "other_command_id",
-      });
-    }
-    expect(states()).toEqual({
-      state: CommandResult.REJECTED,
-      command_id: "other_command_id",
-    });
-  });
-
-  it("#commandState should return the same Signal<CommandNotification | undefined> at each call", async () => {
-    await service.start();
-    if (roonStateListener) {
-      roonStateListener({
-        state: RoonState.SYNC,
-        zones: zoneDescriptions,
-      });
-    }
-    const states = service.commandState();
-    const otherStates = service.commandState();
-    expect(states).toBe(otherStates);
-  });
-
-  it("#zoneState should return a Signal<ZoneState>, bound to the zone described by given zone_id, with the last received value and updating as new events are received by the internal RoonCqrsClient", async () => {
-    await service.start();
-    if (roonStateListener) {
-      roonStateListener({
-        state: RoonState.SYNC,
-        zones: zoneDescriptions,
-      });
-    }
-    if (queueStateListener) {
-      queueStateListener(QUEUE_STATE);
-    }
-    if (zoneStateListener) {
-      zoneStateListener({
-        ...OTHER_ZONE_STATE,
-        display_name: "another_value",
-      });
-      zoneStateListener(OTHER_ZONE_STATE);
-      zoneStateListener(ZONE_STATE);
-    }
-    const states = service.zoneState(signal(other_zone_id));
-    expect(states()).toBe(OTHER_ZONE_STATE);
-    if (zoneStateListener) {
-      zoneStateListener({
-        ...OTHER_ZONE_STATE,
-        is_previous_allowed: !OTHER_ZONE_STATE.is_previous_allowed,
-      });
-      zoneStateListener({
-        ...OTHER_ZONE_STATE,
-        is_next_allowed: !OTHER_ZONE_STATE.is_next_allowed,
-      });
-    }
-    expect(states()).toEqual({
-      ...OTHER_ZONE_STATE,
-      is_next_allowed: !OTHER_ZONE_STATE.is_next_allowed,
-    });
-    expect(service.zoneState($zoneId)()).toBe(ZONE_STATE);
   });
 
   it("#zoneState should return a unique Signal<ZoneState> at each call for a given $zoneId but propagating the same value", async () => {

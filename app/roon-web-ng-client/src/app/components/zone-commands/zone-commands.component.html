@@ -1,5 +1,5 @@
 <div>
-  <nr-zone-volume [outputs]="zoneCommands.outputs" class="volume" />
+  <nr-zone-volume [zoneCommands]="zoneCommands" class="volume" />
   <div class="buttons">
     @if (zoneCommands.previousTrack !== "ABSENT") {
       <button mat-icon-button aria-label="Previous track" [disabled]="zoneCommands.previousTrack ==='DISABLED'" (click)="onCommandClick('previousTrack')">

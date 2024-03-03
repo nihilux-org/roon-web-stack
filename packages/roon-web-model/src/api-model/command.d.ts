@@ -24,10 +24,12 @@ export const enum CommandType {
   STOP = "STOP",
   PREVIOUS = "PREVIOUS",
   NEXT = "NEXT",
-  // volume action
+  // volume actions
   VOLUME = "VOLUME",
   MUTE = "MUTE",
+  // other actions
   PLAY_FROM_HERE = "PLAY_FROM_HERE",
+  TRANSFER_ZONE = "TRANSFER_ZONE",
 }
 
 export interface PlayCommand {
@@ -111,16 +113,15 @@ export interface PlayFromHereCommand {
   };
 }
 
-export type Command =
-  | PlayCommand
-  | PauseCommand
-  | PlayPauseCommand
-  | StopCommand
-  | NextCommand
-  | PreviousCommand
-  | VolumeCommand
-  | MuteCommand
-  | PlayFromHereCommand;
+export interface TransferZoneCommand {
+  type: CommandType.TRANSFER_ZONE;
+  data: {
+    zone_id: string;
+    to_zone_id: string;
+  };
+}
+
+export type Command = ControlCommand | VolumeCommand | MuteCommand | PlayFromHereCommand | TransferZoneCommand;
 
 export type ControlCommand =
   | PlayCommand

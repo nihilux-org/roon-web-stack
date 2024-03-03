@@ -1,9 +1,13 @@
 <div>
-  <button mat-icon-button aria-label="Volume" [matMenuTriggerFor]="outputs.length > 0 ? volumeMenu : null">
+  <button mat-icon-button aria-label="Volume" [matMenuTriggerFor]="zoneCommands.outputs.length > 0 ? volumeMenu : null">
     <mat-icon [fontIcon]="isMuted() ? 'volume_off' : 'volume_up'" />
   </button>
   <mat-menu #volumeMenu="matMenu" yPosition="above" xPosition="after" class="volume-panel">
-    @for (output of outputs; track output.output_id; let count = $count) {
+    <div class="volume-header">
+      <button mat-icon-button (click)="onOpenTransferDialog()"><mat-icon fontIcon="sync_alt" /></button>
+    </div>
+    <mat-divider />
+    @for (output of zoneCommands.outputs; track output.output_id; let count = $count) {
       <div class="volume-control">
         @if (output.volume) {
           <button mat-icon-button (click)="onOutputMute($event, output.output_id)"><mat-icon [fontIcon]="output.volume.is_muted ? 'volume_off' : 'volume_up'" /></button>
@@ -32,8 +36,6 @@
           <span class="volume-fixed">Volume control is fixed</span>
         }
       </div>
-    } @empty {
-
     }
   </mat-menu>
 </div>

@@ -4,7 +4,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { ZoneSelectorComponent } from "@components/zone-selector/zone-selector.component";
 import { ZoneVolumeComponent } from "@components/zone-volume/zone-volume.component";
 import { Command, CommandType } from "@model";
-import { DEFAULT_ZONE_COMMANDS, ZoneCommands, ZoneCommandState } from "@model/client";
+import { ZoneCommands, ZoneCommandState } from "@model/client";
 import { RoonService } from "@services/roon.service";
 
 @Component({
@@ -17,11 +17,10 @@ import { RoonService } from "@services/roon.service";
 })
 export class ZoneCommandsComponent {
   private readonly _roonService: RoonService;
-  @Input({ required: true }) zoneCommands: ZoneCommands;
+  @Input({ required: true }) zoneCommands!: ZoneCommands;
 
   constructor(roonService: RoonService) {
     this._roonService = roonService;
-    this.zoneCommands = DEFAULT_ZONE_COMMANDS;
   }
 
   onCommandClick(clickedCommand: string) {

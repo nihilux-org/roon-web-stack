@@ -15,6 +15,7 @@ import {
 import { executor as controlExecutor } from "./command-executor/control-command-executor";
 import { executor as muteExecutor } from "./command-executor/mute-command-executor";
 import { executor as playFromHereExecutor } from "./command-executor/play-from-here-command-executor";
+import { executor as transferZoneExecutor } from "./command-executor/transfer-zone-command-executor";
 import { executor as volumeExecutor } from "./command-executor/volume-command-executor";
 
 const dispatch = (command: Command, controlChannel: Subject<CommandState>): string => {
@@ -37,6 +38,8 @@ const dispatch = (command: Command, controlChannel: Subject<CommandState>): stri
     case CommandType.PLAY_FROM_HERE:
       executeCommand(command_id, command, findZone(command.data.zone_id), playFromHereExecutor, controlChannel);
       break;
+    case CommandType.TRANSFER_ZONE:
+      executeCommand(command_id, command, findZone(command.data.zone_id), transferZoneExecutor, controlChannel);
   }
   return command_id;
 };

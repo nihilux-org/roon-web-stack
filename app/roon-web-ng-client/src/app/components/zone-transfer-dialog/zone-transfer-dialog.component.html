@@ -1,0 +1,12 @@
+<h2 mat-dialog-title>Transfer zone</h2>
+<mat-divider />
+<mat-dialog-content>
+  <span class="from-zone"><mat-icon fontIcon="speaker" />{{currentZone}}</span>
+  <mat-divider />
+  <h4>to zone:</h4>
+  @for (zone of transferableZones; track zone.zone_id; let index = $index;) {
+    <div>
+      <button mat-button (click)="onTransferZoneSelected(zone.zone_id)"><mat-icon fontIcon="speaker" />{{zone.display_name}}</button>
+    </div>
+  }
+</mat-dialog-content>
