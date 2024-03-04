@@ -1,6 +1,6 @@
 <div>
-  <nr-zone-volume [zoneCommands]="zoneCommands" class="volume" />
-  <div class="buttons">
+  <nr-zone-volume [zoneCommands]="zoneCommands" class="volume" [class.is-small-screen]="$isSmallScreen()"/>
+  <div class="buttons" [class.is-small-screen]="$isSmallScreen()">
     @if (zoneCommands.previousTrack !== "ABSENT") {
       <button tabindex="0" mat-icon-button aria-label="Previous track" [disabled]="zoneCommands.previousTrack ==='DISABLED'" (click)="onCommandClick('previousTrack')">
         <mat-icon fontIcon="skip_previous" />
@@ -27,5 +27,5 @@
       </button>
     }
   </div>
-  <nr-zone-selector class="zones" responsive="true" />
+  <nr-zone-selector class="zones" responsive="true" [class.is-small-screen]="$isSmallScreen()"/>
 </div>
