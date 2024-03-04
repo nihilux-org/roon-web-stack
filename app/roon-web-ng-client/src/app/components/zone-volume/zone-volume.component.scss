@@ -29,4 +29,10 @@
   .volume-fixed {
     margin-right: 12px;
   }
+  .volume-slider.is-small-screen {
+    margin-left: 12px;
+    mat-slider {
+      width: 110px;
+    }
+  }
 }

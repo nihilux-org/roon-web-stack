@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
+import { ChangeDetectionStrategy, Component, Input, Signal } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatDialog } from "@angular/material/dialog";
 import { MatDivider } from "@angular/material/divider";
@@ -9,6 +9,7 @@ import { ZoneTransferDialogComponent } from "@components/zone-transfer-dialog/zo
 import { CommandType, MuteCommand, MuteType, VolumeCommand, VolumeStrategy } from "@model";
 import { ZoneCommands } from "@model/client";
 import { RoonService } from "@services/roon.service";
+import { SettingsService } from "@services/settings.service";
 
 @Component({
   selector: "nr-zone-volume",
@@ -22,10 +23,12 @@ export class ZoneVolumeComponent {
   @Input({ required: true }) zoneCommands!: ZoneCommands;
   private readonly _dialog: MatDialog;
   private readonly _roonService: RoonService;
+  readonly $isSmallScreen: Signal<boolean>;
 
-  constructor(dialog: MatDialog, roonService: RoonService) {
+  constructor(dialog: MatDialog, roonService: RoonService, settingsService: SettingsService) {
     this._dialog = dialog;
     this._roonService = roonService;
+    this.$isSmallScreen = settingsService.isSmallScreen();
   }
 
   onVolumeStep(event: MouseEvent, output_id: string, decrement?: boolean) {

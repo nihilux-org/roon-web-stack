@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
+import { ChangeDetectionStrategy, Component, Input, Signal } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { ZoneSelectorComponent } from "@components/zone-selector/zone-selector.component";
@@ -6,6 +6,7 @@ import { ZoneVolumeComponent } from "@components/zone-volume/zone-volume.compone
 import { Command, CommandType } from "@model";
 import { ZoneCommands, ZoneCommandState } from "@model/client";
 import { RoonService } from "@services/roon.service";
+import { SettingsService } from "@services/settings.service";
 
 @Component({
   selector: "nr-zone-commands",
@@ -18,9 +19,11 @@ import { RoonService } from "@services/roon.service";
 export class ZoneCommandsComponent {
   private readonly _roonService: RoonService;
   @Input({ required: true }) zoneCommands!: ZoneCommands;
+  readonly $isSmallScreen: Signal<boolean>;
 
-  constructor(roonService: RoonService) {
+  constructor(roonService: RoonService, settingsService: SettingsService) {
     this._roonService = roonService;
+    this.$isSmallScreen = settingsService.isSmallScreen();
   }
 
   onCommandClick(clickedCommand: string) {

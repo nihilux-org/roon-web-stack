@@ -1,7 +1,9 @@
 import { MockBuilder, MockedComponentFixture, MockRender } from "ng-mocks";
+import { signal, WritableSignal } from "@angular/core";
 import { Command, CommandType, VolumeCommand } from "@model";
 import { ZoneCommands, ZoneCommandState } from "@model/client";
 import { RoonService } from "@services/roon.service";
+import { SettingsService } from "@services/settings.service";
 import { ZoneVolumeComponent } from "./zone-volume.component";
 
 describe("ZoneVolumeComponent", () => {
@@ -11,6 +13,10 @@ describe("ZoneVolumeComponent", () => {
   let zoneCommands: ZoneCommands;
   let roonService: {
     volume: jest.Mock;
+  };
+  let $isSmallScreen: WritableSignal<boolean>;
+  let settingsService: {
+    isSmallScreen: jest.Mock;
   };
 
   beforeEach(async () => {
@@ -31,7 +37,13 @@ describe("ZoneVolumeComponent", () => {
         }
       }),
     };
-    await MockBuilder(ZoneVolumeComponent).mock(RoonService, roonService as Partial<RoonService>);
+    $isSmallScreen = signal(false);
+    settingsService = {
+      isSmallScreen: jest.fn().mockImplementation(() => $isSmallScreen),
+    };
+    await MockBuilder(ZoneVolumeComponent)
+      .mock(RoonService, roonService as Partial<RoonService>)
+      .mock(SettingsService, settingsService as Partial<SettingsService>);
     fixture = MockRender(ZoneVolumeComponent, {
       zoneCommands,
     });
