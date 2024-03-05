@@ -141,9 +141,10 @@ export class RoonService implements OnDestroy {
       .catch((err) => {
         if (err instanceof Error && err.message === UPDATE_NEEDED_ERROR_MESSAGE) {
           window.location.reload();
+        } else {
+          // eslint-disable-next-line no-console
+          console.error("startup-error", err);
         }
-        // silently ignored: an error here means the extension has not been authorized in roon
-        // the UI  displays a message explaining the situation
       });
   };
 
