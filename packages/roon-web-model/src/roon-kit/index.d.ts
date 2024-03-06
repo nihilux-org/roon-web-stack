@@ -71,7 +71,7 @@ export interface RoonApiBrowseOptions {
   pop_all?: boolean;
   pop_levels?: number;
   refresh_list?: boolean;
-  set_display_offset?: number;
+  set_display_offset?: number | boolean;
 }
 
 export type RoonApiBrowseHierarchy =
