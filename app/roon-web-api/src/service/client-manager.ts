@@ -1,7 +1,7 @@
 import { nanoid } from "nanoid";
 import { map, mergeWith, Observable, Subject } from "rxjs";
 import { dataConverter, zoneManager } from "@data";
-import { roon } from "@infrastructure";
+import { logger, roon } from "@infrastructure";
 import {
   Client,
   ClientManager,
@@ -18,10 +18,10 @@ import { commandDispatcher } from "@service";
 class InternalClient implements Client {
   private readonly client_id: string;
   private readonly commandChannel: Subject<CommandState>;
-  private readonly onCloseListener: () => void;
+  private readonly onCloseListener: (client: Client) => void;
   private eventChannel?: Observable<RoonSseMessage>;
 
-  constructor(client_id: string, onCloseListener: () => void) {
+  constructor(client_id: string, onCloseListener: (client: Client) => void) {
     this.client_id = client_id;
     this.commandChannel = new Subject<CommandState>();
     this.onCloseListener = onCloseListener;
@@ -37,7 +37,7 @@ class InternalClient implements Client {
   };
 
   close = (): void => {
-    this.onCloseListener();
+    this.onCloseListener(this);
   };
 
   command = (command: Command): string => {
@@ -52,6 +52,10 @@ class InternalClient implements Client {
   load = async (options: RoonApiBrowseLoadOptions): Promise<RoonApiBrowseLoadResponse> => {
     options.multi_session_key = this.client_id;
     return roon.load(options);
+  };
+
+  id = (): string => {
+    return this.client_id;
   };
 }
 
@@ -71,8 +75,16 @@ class InternalClientManager implements ClientManager {
   register = (): string => {
     this.ensureStarted();
     const client_id = generateClientId();
-    const client = new InternalClient(client_id, () => {
-      this.clients.delete(client_id);
+    const client = new InternalClient(client_id, (c: Client) => {
+      this.clients.delete(c.id());
+      // this seems to be the closest thing to a close browsing session in roon API
+      c.browse({
+        hierarchy: "browse",
+        pop_all: true,
+        set_display_offset: true,
+      }).catch((err) => {
+        logger.error(err, "error while cleaning client '%s' state", c.id());
+      });
     });
     this.clients.set(client_id, client);
     return client_id;

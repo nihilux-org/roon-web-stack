@@ -121,6 +121,16 @@ describe("client-manager.ts test suite", () => {
     expect(() => clientManager.get(client_id)).toThrow(new Error(`'${client_id}' is not a registered client_id`));
   });
 
+  it("clientManager#unregister should call the associated Client#close and delete the instance", async () => {
+    await clientManager.start();
+    const client_id = clientManager.register();
+    const client = clientManager.get(client_id);
+    const closeSpy = jest.spyOn(client, "close");
+    clientManager.unregister(client_id);
+    expect(closeSpy).toHaveBeenCalledTimes(1);
+    expect(() => clientManager.get(client_id)).toThrow(new Error(`'${client_id}' is not a registered client_id`));
+  });
+
   it("clientManager#unregister should ignore silently unregistered client_id", async () => {
     await clientManager.start();
     clientManager.unregister("unregistered_client_id");
@@ -149,58 +159,85 @@ describe("client-manager.ts test suite", () => {
     expect(clientManager.register).toThrow(NOT_STARTED_ERROR);
   });
 
-  it(
-    "Client#events should bind the response to a SseWrapper with a merge of zoneManager#events and its internal " +
-      "Subject<CommandNotification> as sources and start this SseWrapper",
-    async () => {
-      await clientManager.start();
-      const client_id = clientManager.register();
-      const client = clientManager.get(client_id);
-      const events = client.events();
-      events.subscribe((message) => {
-        roonSseMessages.push(message);
-      });
-      expect(zoneManagerMock.events).toHaveBeenCalledTimes(1);
-      // this is not the cleanest way to test it... but it does the job 🤷
-      let commandChannel: Subject<CommandState> | undefined = undefined;
-      commandDispatcherMock.dispatch.mockImplementation(
-        (command: Command, commandNotification: Subject<CommandState>): string => {
-          commandChannel = commandNotification;
-          return "done";
-        }
-      );
-      roonSseMessageSubject.next({
+  it("Client#events return an Observable<RoonSseMessage> with a merge of zoneManager#events and its internal Subject<CommandNotification>", async () => {
+    await clientManager.start();
+    const client_id = clientManager.register();
+    const client = clientManager.get(client_id);
+    const events = client.events();
+    events.subscribe((message) => {
+      roonSseMessages.push(message);
+    });
+    expect(zoneManagerMock.events).toHaveBeenCalledTimes(1);
+    // this is not the cleanest way to test it... but it does the job 🤷
+    let commandChannel: Subject<CommandState> | undefined = undefined;
+    commandDispatcherMock.dispatch.mockImplementation(
+      (command: Command, commandNotification: Subject<CommandState>): string => {
+        commandChannel = commandNotification;
+        return "done";
+      }
+    );
+    roonSseMessageSubject.next({
+      event: "state",
+      data: {
+        state: RoonState.SYNC,
+        zones: [],
+      },
+    });
+    client.command({} as unknown as Command);
+    expect(commandChannel).not.toBeUndefined();
+    (commandChannel as unknown as Subject<CommandState>).next({
+      state: CommandResult.APPLIED,
+      command_id: "command_id",
+    });
+    expect(roonSseMessages).toHaveLength(2);
+    expect(roonSseMessages).toEqual([
+      {
         event: "state",
         data: {
           state: RoonState.SYNC,
           zones: [],
         },
-      });
-      client.command({} as unknown as Command);
-      expect(commandChannel).not.toBeUndefined();
-      (commandChannel as unknown as Subject<CommandState>).next({
-        state: CommandResult.APPLIED,
-        command_id: "command_id",
-      });
-      expect(roonSseMessages).toHaveLength(2);
-      expect(roonSseMessages).toEqual([
-        {
-          event: "state",
-          data: {
-            state: RoonState.SYNC,
-            zones: [],
-          },
+      },
+      {
+        event: "command_state",
+        data: {
+          command_id: "command_id",
+          state: CommandResult.APPLIED,
         },
-        {
-          event: "command_state",
-          data: {
-            command_id: "command_id",
-            state: CommandResult.APPLIED,
-          },
-        },
-      ]);
-    }
-  );
+      },
+    ]);
+  });
+
+  it("Client#close should call roon#browse to clean browse state and remove client instance of clientManager", async () => {
+    await clientManager.start();
+    const client_id = clientManager.register();
+    const client = clientManager.get(client_id);
+    client.close();
+    expect(roonMock.browse).toHaveBeenCalledTimes(1);
+    expect(roonMock.browse).toHaveBeenCalledWith({
+      multi_session_key: client_id,
+      hierarchy: "browse",
+      pop_all: true,
+      set_display_offset: true,
+    });
+    expect(() => clientManager.get(client_id)).toThrow(new Error(`'${client_id}' is not a registered client_id`));
+  });
+
+  it("Client#close should call roon#browse to clean browse state, silently logging any error, and remove client instance of clientManager", async () => {
+    await clientManager.start();
+    const client_id = clientManager.register();
+    const client = clientManager.get(client_id);
+    roonMock.browse.mockImplementation(() => Promise.reject(new Error("network error")));
+    client.close();
+    expect(roonMock.browse).toHaveBeenCalledTimes(1);
+    expect(roonMock.browse).toHaveBeenCalledWith({
+      multi_session_key: client_id,
+      hierarchy: "browse",
+      pop_all: true,
+      set_display_offset: true,
+    });
+    expect(() => clientManager.get(client_id)).toThrow(new Error(`'${client_id}' is not a registered client_id`));
+  });
 
   it("Client#command should return the 'command_id' returned by commandDispatcher#disaptch", async () => {
     const command_id = "command_id";
