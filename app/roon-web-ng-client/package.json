@@ -38,7 +38,7 @@
     "@angular/compiler-cli": "17.2.3",
     "@nihilux/roon-web-model": "workspace:*",
     "@types/jest": "29.5.12",
-    "@types/node": "20.11.24",
+    "@types/node": "20.11.25",
     "@typescript-eslint/eslint-plugin": "7.1.1",
     "@typescript-eslint/parser": "7.1.1",
     "eslint": "8.57.0",
@@ -54,6 +54,6 @@
     "jsdom-testing-mocks": "1.13.0",
     "ng-mocks": "14.12.1",
     "prettier": "3.2.5",
-    "typescript": "5.3.3"
+    "typescript": "5.4.2"
   }
 }
