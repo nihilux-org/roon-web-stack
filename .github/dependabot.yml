@@ -30,3 +30,7 @@ updates:
       - dependency-name: "nanoid"
         update-types:
           - "version-update:semver-major"
+      - dependency-name: "typescript"
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
