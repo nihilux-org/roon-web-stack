@@ -9,12 +9,12 @@ const registerGracefulShutdown = (server: FastifyInstance): IGracefulServer => {
     timeout: 1000,
   });
   gracefulShutdown.on(GracefulServer.READY, () => {
-    logger.debug("roon-cqrs-api is ready");
+    logger.debug("roon-web-api is ready");
   });
   gracefulShutdown.on(GracefulServer.SHUTTING_DOWN, () => {
-    logger.debug("roon-cqrs-api shutdown starts");
+    logger.debug("roon-web-api shutdown starts");
     clientManager.stop();
-    logger.info("roon-cqrs-api shutdown complete");
+    logger.info("roon-web-api shutdown complete");
   });
   gracefulShutdown.on(GracefulServer.SHUTDOWN, (error) => {
     if (error instanceof Error && (error.message === "SIGINT" || error.message === "SIGTERM")) {
