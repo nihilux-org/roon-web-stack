@@ -59,10 +59,6 @@ $roon-cqrs-web-ng-client-light-theme: mat.define-light-theme((
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
-.volume-panel {
-  max-width:fit-content !important;
-}
-
 .queue {
   cdk-virtual-scroll-viewport {
     .cdk-virtual-scroll-content-wrapper {

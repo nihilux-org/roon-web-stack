@@ -1,0 +1,41 @@
+.volume-header {
+  margin: 5px;
+}
+.volume-output-name {
+  margin: 12px;
+  display: inline-block;
+}
+.volume-control {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 10px 5px;
+  .volume-value {
+    display: inline-block;
+    width: 2rem;
+    cursor: default;
+    text-align: center;
+  }
+  .volume-slider {
+    margin-left: 18px;
+    margin-right: 6px;
+    mat-slider {
+      width: 180px;
+    }
+    sub {
+      vertical-align: baseline;
+      font-size: 0.8rem;
+    }
+  }
+  .volume-fixed {
+    margin-right: 12px;
+  }
+  .volume-slider.is-small-screen {
+    mat-slider {
+      width: 110px;
+    }
+  }
+}
+.volume-panel {
+  padding: 0;
+}

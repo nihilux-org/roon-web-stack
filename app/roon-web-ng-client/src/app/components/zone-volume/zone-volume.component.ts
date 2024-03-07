@@ -1,84 +1,31 @@
-import { ChangeDetectionStrategy, Component, Input, Signal } from "@angular/core";
-import { MatButtonModule } from "@angular/material/button";
+import { ChangeDetectionStrategy, Component, Input, ViewChild } from "@angular/core";
+import { MatButtonModule, MatIconButton } from "@angular/material/button";
 import { MatDialog } from "@angular/material/dialog";
 import { MatDivider } from "@angular/material/divider";
 import { MatIconModule } from "@angular/material/icon";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatSliderModule } from "@angular/material/slider";
-import { ZoneTransferDialogComponent } from "@components/zone-transfer-dialog/zone-transfer-dialog.component";
-import { CommandType, MuteCommand, MuteType, VolumeCommand, VolumeStrategy } from "@model";
+import { ZoneVolumeDialogComponent } from "@components/zone-volume-dialog/zone-volume-dialog.component";
 import { ZoneCommands } from "@model/client";
-import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
 
 @Component({
   selector: "nr-zone-volume",
   standalone: true,
-  imports: [MatButtonModule, MatIconModule, MatMenuModule, MatSliderModule, MatDivider],
+  imports: [MatButtonModule, MatDivider, MatIconModule, MatMenuModule, MatSliderModule],
   templateUrl: "./zone-volume.component.html",
   styleUrl: "./zone-volume.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ZoneVolumeComponent {
   @Input({ required: true }) zoneCommands!: ZoneCommands;
+  @ViewChild("volumeButton") _volumeButton!: MatIconButton;
   private readonly _dialog: MatDialog;
-  private readonly _roonService: RoonService;
-  readonly $isSmallScreen: Signal<boolean>;
+  private readonly _$isSmallScreen;
 
-  constructor(dialog: MatDialog, roonService: RoonService, settingsService: SettingsService) {
+  constructor(dialog: MatDialog, settingsService: SettingsService) {
     this._dialog = dialog;
-    this._roonService = roonService;
-    this.$isSmallScreen = settingsService.isSmallScreen();
-  }
-
-  onVolumeStep(event: MouseEvent, output_id: string, decrement?: boolean) {
-    event.stopPropagation();
-    const output = this.zoneCommands.outputs.find((o) => o.output_id === output_id);
-    if (output?.volume) {
-      const value = (output.volume.step ?? 1) * (decrement ? -1 : 1);
-      const command: VolumeCommand = {
-        type: CommandType.VOLUME,
-        data: {
-          zone_id: output.zone_id,
-          output_id,
-          strategy: VolumeStrategy.RELATIVE_STEP,
-          value,
-        },
-      };
-      this._roonService.command(command);
-    }
-  }
-
-  onOutputMute(event: MouseEvent, output_id: string) {
-    event.stopPropagation();
-    const output = this.zoneCommands.outputs.find((o) => o.output_id === output_id);
-    if (output?.volume) {
-      const command: MuteCommand = {
-        type: CommandType.MUTE,
-        data: {
-          zone_id: output.zone_id,
-          output_id,
-          type: MuteType.TOGGLE,
-        },
-      };
-      this._roonService.command(command);
-    }
-  }
-
-  onVolumeSliderChange(value: number, output_id: string) {
-    const output = this.zoneCommands.outputs.find((o) => o.output_id === output_id);
-    if (output?.volume) {
-      const command: VolumeCommand = {
-        type: CommandType.VOLUME,
-        data: {
-          zone_id: output.zone_id,
-          output_id,
-          value,
-          strategy: VolumeStrategy.ABSOLUTE,
-        },
-      };
-      this._roonService.command(command);
-    }
+    this._$isSmallScreen = settingsService.isSmallScreen();
   }
 
   isMuted() {
@@ -91,7 +38,28 @@ export class ZoneVolumeComponent {
     }
   }
 
-  onOpenTransferDialog() {
-    this._dialog.open(ZoneTransferDialogComponent);
+  onVolumeDrawerOpen() {
+    const nbOutputs = this.zoneCommands.outputs.length;
+    if (nbOutputs > 0) {
+      const buttonElementRect = (
+        this._volumeButton._elementRef.nativeElement as HTMLButtonElement
+      ).getBoundingClientRect();
+      // FIXME? this must be updated if CSS changes... but it's efficient 🤷
+      let topDelta: number;
+      if (nbOutputs === 1) {
+        topDelta = 127;
+      } else {
+        topDelta = 58 + nbOutputs * 117;
+      }
+      this._dialog.open(ZoneVolumeDialogComponent, {
+        position: {
+          top: `${buttonElementRect.top - topDelta}px`,
+          left: this._$isSmallScreen() ? "1%" : `${buttonElementRect.left}px`,
+        },
+        minWidth: this._$isSmallScreen() ? "99%" : undefined,
+        restoreFocus: false,
+        autoFocus: false,
+      });
+    }
   }
 }
