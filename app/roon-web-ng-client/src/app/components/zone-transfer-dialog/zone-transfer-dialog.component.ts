@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from "@angular/core";
-import { MatButton } from "@angular/material/button";
-import { MatDialogContent, MatDialogRef, MatDialogTitle } from "@angular/material/dialog";
+import { MatButton, MatIconButton } from "@angular/material/button";
+import { MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle } from "@angular/material/dialog";
 import { MatDivider } from "@angular/material/divider";
 import { MatIcon } from "@angular/material/icon";
 import { CommandResult, CommandType, TransferZoneCommand, ZoneDescription } from "@model";
@@ -11,7 +11,7 @@ import { SettingsService } from "@services/settings.service";
 @Component({
   selector: "nr-zone-transfer-dialog",
   standalone: true,
-  imports: [MatDialogContent, MatDivider, MatDialogTitle, MatIcon, MatButton],
+  imports: [MatDialogContent, MatDivider, MatDialogTitle, MatIcon, MatButton, MatDialogActions, MatIconButton],
   templateUrl: "./zone-transfer-dialog.component.html",
   styleUrl: "./zone-transfer-dialog.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -58,5 +58,9 @@ export class ZoneTransferDialogComponent {
     };
     this._dialogRef.close();
     this._roonService.command(command, commandCallback);
+  }
+
+  onCancel() {
+    this._dialogRef.close();
   }
 }

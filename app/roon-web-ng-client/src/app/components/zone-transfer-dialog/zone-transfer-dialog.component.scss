@@ -15,4 +15,9 @@
   button {
     margin-bottom: 20px;
   }
+  mat-dialog-actions {
+    button {
+      margin: 0 8px 8px 0;
+    }
+  }
 }
