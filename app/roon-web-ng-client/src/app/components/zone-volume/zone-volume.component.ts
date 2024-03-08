@@ -56,7 +56,7 @@ export class ZoneVolumeComponent {
           top: `${buttonElementRect.top - topDelta}px`,
           left: this._$isSmallScreen() ? "1%" : `${buttonElementRect.left}px`,
         },
-        minWidth: this._$isSmallScreen() ? "99%" : undefined,
+        minWidth: this._$isSmallScreen() ? "99%" : "500px",
         restoreFocus: false,
         autoFocus: false,
       });

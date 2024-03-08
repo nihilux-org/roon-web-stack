@@ -19,8 +19,11 @@
   .volume-slider {
     margin-left: 18px;
     margin-right: 6px;
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
     mat-slider {
-      width: 180px;
+      flex-grow: 1;
     }
     sub {
       vertical-align: baseline;
@@ -30,12 +33,29 @@
   .volume-fixed {
     margin-right: 12px;
   }
-  .volume-slider.is-small-screen {
-    mat-slider {
-      width: 110px;
-    }
-  }
 }
 .volume-panel {
   padding: 0;
+}
+
+@media screen and (max-width: 399px) {
+  .volume-control {
+    .mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+    .mat-mdc-icon-button.mat-mdc-button-base {
+      --mdc-icon-button-state-layer-size: 36px;
+      padding: 0;
+    }
+  }
+}
+
+@media screen and (max-width: 290px) {
+  .volume-control {
+    .volume-buttons {
+      display: none;
+    }
+  }
 }
