@@ -1,0 +1,37 @@
+<h2 mat-dialog-title>Zone grouping</h2>
+<mat-divider />
+<mat-dialog-content class="zone-grouping">
+  <span tabindex="0" class="from-zone"><mat-icon fontIcon="speaker" />{{mainOutput.display_name}}</span>
+  <mat-divider />
+  @if ($groupedOutputs().length > 0) {
+    <h3>Currently in zone:</h3>
+    @for (output of $groupedOutputs(); track output.output_id; let index = $index) {
+      <p>
+        <mat-checkbox
+          [checked]="output.state === 'checked'"
+          [indeterminate]="output.state === 'indeterminate'"
+          (change)="toggleGroupedOutput(index)"
+          [color]="output.state === 'indeterminate' ? 'warn' : 'primary'">
+            <mat-icon fontIcon="speaker"/>{{output.display_name}}
+        </mat-checkbox>
+      </p>
+    }
+    <mat-divider />
+  }
+  @if ($canGroupOutputs().length > 0) {
+    <h3>Add to zone:</h3>
+    @for (output of $canGroupOutputs(); track output.output_id; let index = $index) {
+      <p>
+        <mat-checkbox
+          [checked]="output.state === 'checked'"
+          (change)="toggleCanGroupedOutput(index)"
+          color="primary">
+          <mat-icon fontIcon="speaker"/>{{output.display_name}}
+        </mat-checkbox>
+      </p>
+    }
+  }
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button tabindex="0" mat-button (click)="onSave()"><mat-icon fontIcon="save" />Save</button>
+</mat-dialog-actions>

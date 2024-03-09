@@ -199,6 +199,7 @@ describe("zone-manager.ts test suite", () => {
         data: {
           state: RoonState.STARTING,
           zones: [],
+          outputs: [],
         },
       },
       {
@@ -206,6 +207,7 @@ describe("zone-manager.ts test suite", () => {
         data: {
           state: RoonState.SYNCING,
           zones: [],
+          outputs: [],
         },
       },
     ]);
@@ -410,6 +412,29 @@ describe("zone-manager.ts test suite", () => {
               zone_id: OTHER_ZONE.zone_id,
             },
           ],
+          outputs: [
+            {
+              display_name: ZONE.outputs[0].display_name,
+              zone_id: ZONE.zone_id,
+              output_id: ZONE.outputs[0].output_id,
+            },
+
+            {
+              display_name: ZONE.outputs[1].display_name,
+              zone_id: ZONE.zone_id,
+              output_id: ZONE.outputs[1].output_id,
+            },
+            {
+              display_name: OTHER_ZONE.outputs[0].display_name,
+              zone_id: OTHER_ZONE.zone_id,
+              output_id: OTHER_ZONE.outputs[0].output_id,
+            },
+            {
+              display_name: OTHER_ZONE.outputs[1].display_name,
+              zone_id: OTHER_ZONE.zone_id,
+              output_id: OTHER_ZONE.outputs[1].output_id,
+            },
+          ],
         },
       },
       ZONE_MESSAGE,
@@ -443,24 +468,66 @@ describe("zone-manager.ts test suite", () => {
         ZONE,
       ],
     });
-    expect(messages).toHaveLength(4);
+    expect(messages).toHaveLength(5);
     expect(messages).toEqual([
       {
         event: "state",
         data: {
           state: RoonState.SYNCING,
           zones: [],
+          outputs: [],
         },
       },
       {
         event: "state",
         data: {
           state: RoonState.SYNC,
-          zones: [],
+          zones: [
+            {
+              display_name: ZONE.display_name,
+              zone_id: ZONE.zone_id,
+            },
+          ],
+          outputs: [
+            {
+              display_name: ZONE.outputs[0].display_name,
+              zone_id: ZONE.zone_id,
+              output_id: ZONE.outputs[0].output_id,
+            },
+            {
+              display_name: ZONE.outputs[1].display_name,
+              zone_id: ZONE.zone_id,
+              output_id: ZONE.outputs[1].output_id,
+            },
+          ],
         },
       },
       ZONE_MESSAGE,
       ZONE_MESSAGE,
+      {
+        event: "state",
+        data: {
+          state: RoonState.SYNC,
+          zones: [
+            {
+              display_name: ZONE.display_name,
+              zone_id: ZONE.zone_id,
+            },
+          ],
+          outputs: [
+            {
+              display_name: ZONE.outputs[0].display_name,
+              zone_id: ZONE.zone_id,
+              output_id: ZONE.outputs[0].output_id,
+            },
+            {
+              display_name: ZONE.outputs[1].display_name,
+              zone_id: ZONE.zone_id,
+              output_id: ZONE.outputs[1].output_id,
+            },
+          ],
+        },
+      },
     ]);
   });
 
@@ -501,6 +568,29 @@ describe("zone-manager.ts test suite", () => {
               display_name: OTHER_ZONE.display_name,
             },
           ],
+          outputs: [
+            {
+              display_name: ZONE.outputs[0].display_name,
+              zone_id: ZONE.zone_id,
+              output_id: ZONE.outputs[0].output_id,
+            },
+
+            {
+              display_name: ZONE.outputs[1].display_name,
+              zone_id: ZONE.zone_id,
+              output_id: ZONE.outputs[1].output_id,
+            },
+            {
+              display_name: OTHER_ZONE.outputs[0].display_name,
+              zone_id: OTHER_ZONE.zone_id,
+              output_id: OTHER_ZONE.outputs[0].output_id,
+            },
+            {
+              display_name: OTHER_ZONE.outputs[1].display_name,
+              zone_id: OTHER_ZONE.zone_id,
+              output_id: OTHER_ZONE.outputs[1].output_id,
+            },
+          ],
         },
       },
       ZONE_MESSAGE,
@@ -521,7 +611,7 @@ describe("zone-manager.ts test suite", () => {
         data: OTHER_ZONE_STATE,
       },
     ]);
-    expect(dataConverterMock.toRoonSseMessage).toHaveBeenCalledTimes(9);
+    expect(dataConverterMock.toRoonSseMessage).toHaveBeenCalledTimes(10);
     const convertZoneArgs = dataConverterMock.toRoonSseMessage.mock.lastCall as Array<unknown>;
     expect(convertZoneArgs[0]).toEqual({
       ...OTHER_ZONE,
@@ -654,7 +744,7 @@ describe("zone-manager.ts test suite", () => {
       ],
     } as unknown as RoonApiTransportOutputs);
     expect(states).toHaveLength(8);
-    expect(dataConverterMock.toRoonSseMessage).toHaveBeenCalledTimes(10);
+    expect(dataConverterMock.toRoonSseMessage).toHaveBeenCalledTimes(11);
     const convertZoneArgs = dataConverterMock.toRoonSseMessage.mock.lastCall as Array<unknown>;
     expect(convertZoneArgs[0]).toEqual({
       ...ZONE,
@@ -697,6 +787,19 @@ describe("zone-manager.ts test suite", () => {
               zone_id: ZONE.zone_id,
             },
           ],
+          outputs: [
+            {
+              display_name: ZONE.outputs[0].display_name,
+              zone_id: ZONE.zone_id,
+              output_id: ZONE.outputs[0].output_id,
+            },
+
+            {
+              display_name: ZONE.outputs[1].display_name,
+              zone_id: ZONE.zone_id,
+              output_id: ZONE.outputs[1].output_id,
+            },
+          ],
         },
       },
       ZONE_MESSAGE,
@@ -732,6 +835,19 @@ describe("zone-manager.ts test suite", () => {
             {
               display_name: ZONE.display_name,
               zone_id: ZONE.zone_id,
+            },
+          ],
+          outputs: [
+            {
+              display_name: ZONE.outputs[0].display_name,
+              zone_id: ZONE.zone_id,
+              output_id: ZONE.outputs[0].output_id,
+            },
+
+            {
+              display_name: ZONE.outputs[1].display_name,
+              zone_id: ZONE.zone_id,
+              output_id: ZONE.outputs[1].output_id,
             },
           ],
         },
@@ -818,6 +934,7 @@ describe("zone-manager.ts test suite", () => {
         data: {
           state: RoonState.STARTING,
           zones: [],
+          outputs: [],
         },
       },
       {
@@ -825,20 +942,101 @@ describe("zone-manager.ts test suite", () => {
         data: {
           state: RoonState.SYNCING,
           zones: [],
+          outputs: [],
         },
       },
       {
         event: "state",
         data: {
           state: RoonState.SYNC,
-          zones: [],
+          zones: [
+            {
+              display_name: ZONE.display_name,
+              zone_id: ZONE.zone_id,
+            },
+            {
+              display_name: OTHER_ZONE.display_name,
+              zone_id: OTHER_ZONE.zone_id,
+            },
+            {
+              display_name: YET_ANOTHER_ZONE.display_name,
+              zone_id: YET_ANOTHER_ZONE.zone_id,
+            },
+          ],
+          outputs: [
+            {
+              display_name: ZONE.outputs[0].display_name,
+              zone_id: ZONE.zone_id,
+              output_id: ZONE.outputs[0].output_id,
+            },
+            {
+              display_name: ZONE.outputs[1].display_name,
+              zone_id: ZONE.zone_id,
+              output_id: ZONE.outputs[1].output_id,
+            },
+            {
+              display_name: OTHER_ZONE.outputs[0].display_name,
+              zone_id: OTHER_ZONE.zone_id,
+              output_id: OTHER_ZONE.outputs[0].output_id,
+            },
+            {
+              display_name: OTHER_ZONE.outputs[1].display_name,
+              zone_id: OTHER_ZONE.zone_id,
+              output_id: OTHER_ZONE.outputs[1].output_id,
+            },
+            {
+              display_name: YET_ANOTHER_ZONE.outputs[0].display_name,
+              zone_id: YET_ANOTHER_ZONE.zone_id,
+              output_id: YET_ANOTHER_ZONE.outputs[0].output_id,
+            },
+          ],
         },
       },
       {
         event: "state",
         data: {
           state: RoonState.LOST,
-          zones: [],
+          zones: [
+            {
+              display_name: ZONE.display_name,
+              zone_id: ZONE.zone_id,
+            },
+            {
+              display_name: OTHER_ZONE.display_name,
+              zone_id: OTHER_ZONE.zone_id,
+            },
+            {
+              display_name: YET_ANOTHER_ZONE.display_name,
+              zone_id: YET_ANOTHER_ZONE.zone_id,
+            },
+          ],
+          outputs: [
+            {
+              display_name: ZONE.outputs[0].display_name,
+              zone_id: ZONE.zone_id,
+              output_id: ZONE.outputs[0].output_id,
+            },
+            {
+              display_name: ZONE.outputs[1].display_name,
+              zone_id: ZONE.zone_id,
+              output_id: ZONE.outputs[1].output_id,
+            },
+            {
+              display_name: OTHER_ZONE.outputs[0].display_name,
+              zone_id: OTHER_ZONE.zone_id,
+              output_id: OTHER_ZONE.outputs[0].output_id,
+            },
+            {
+              display_name: OTHER_ZONE.outputs[1].display_name,
+              zone_id: OTHER_ZONE.zone_id,
+              output_id: OTHER_ZONE.outputs[1].output_id,
+            },
+            {
+              display_name: YET_ANOTHER_ZONE.outputs[0].display_name,
+              zone_id: YET_ANOTHER_ZONE.zone_id,
+              output_id: YET_ANOTHER_ZONE.outputs[0].output_id,
+            },
+          ],
         },
       },
     ]);
@@ -870,6 +1068,7 @@ describe("zone-manager.ts test suite", () => {
           data: {
             state: RoonState.STARTING,
             zones: [],
+            outputs: [],
           },
         },
         {
@@ -877,27 +1076,148 @@ describe("zone-manager.ts test suite", () => {
           data: {
             state: RoonState.SYNCING,
             zones: [],
+            outputs: [],
           },
         },
         {
           event: "state",
           data: {
             state: RoonState.SYNC,
-            zones: [],
+            zones: [
+              {
+                display_name: ZONE.display_name,
+                zone_id: ZONE.zone_id,
+              },
+              {
+                display_name: OTHER_ZONE.display_name,
+                zone_id: OTHER_ZONE.zone_id,
+              },
+              {
+                display_name: YET_ANOTHER_ZONE.display_name,
+                zone_id: YET_ANOTHER_ZONE.zone_id,
+              },
+            ],
+            outputs: [
+              {
+                display_name: ZONE.outputs[0].display_name,
+                zone_id: ZONE.zone_id,
+                output_id: ZONE.outputs[0].output_id,
+              },
+              {
+                display_name: ZONE.outputs[1].display_name,
+                zone_id: ZONE.zone_id,
+                output_id: ZONE.outputs[1].output_id,
+              },
+              {
+                display_name: OTHER_ZONE.outputs[0].display_name,
+                zone_id: OTHER_ZONE.zone_id,
+                output_id: OTHER_ZONE.outputs[0].output_id,
+              },
+              {
+                display_name: OTHER_ZONE.outputs[1].display_name,
+                zone_id: OTHER_ZONE.zone_id,
+                output_id: OTHER_ZONE.outputs[1].output_id,
+              },
+              {
+                display_name: YET_ANOTHER_ZONE.outputs[0].display_name,
+                zone_id: YET_ANOTHER_ZONE.zone_id,
+                output_id: YET_ANOTHER_ZONE.outputs[0].output_id,
+              },
+            ],
           },
         },
         {
           event: "state",
           data: {
             state: RoonState.LOST,
-            zones: [],
+            zones: [
+              {
+                display_name: ZONE.display_name,
+                zone_id: ZONE.zone_id,
+              },
+              {
+                display_name: OTHER_ZONE.display_name,
+                zone_id: OTHER_ZONE.zone_id,
+              },
+              {
+                display_name: YET_ANOTHER_ZONE.display_name,
+                zone_id: YET_ANOTHER_ZONE.zone_id,
+              },
+            ],
+            outputs: [
+              {
+                display_name: ZONE.outputs[0].display_name,
+                zone_id: ZONE.zone_id,
+                output_id: ZONE.outputs[0].output_id,
+              },
+              {
+                display_name: ZONE.outputs[1].display_name,
+                zone_id: ZONE.zone_id,
+                output_id: ZONE.outputs[1].output_id,
+              },
+              {
+                display_name: OTHER_ZONE.outputs[0].display_name,
+                zone_id: OTHER_ZONE.zone_id,
+                output_id: OTHER_ZONE.outputs[0].output_id,
+              },
+              {
+                display_name: OTHER_ZONE.outputs[1].display_name,
+                zone_id: OTHER_ZONE.zone_id,
+                output_id: OTHER_ZONE.outputs[1].output_id,
+              },
+              {
+                display_name: YET_ANOTHER_ZONE.outputs[0].display_name,
+                zone_id: YET_ANOTHER_ZONE.zone_id,
+                output_id: YET_ANOTHER_ZONE.outputs[0].output_id,
+              },
+            ],
           },
         },
         {
           event: "state",
           data: {
             state: RoonState.SYNCING,
-            zones: [],
+            zones: [
+              {
+                display_name: ZONE.display_name,
+                zone_id: ZONE.zone_id,
+              },
+              {
+                display_name: OTHER_ZONE.display_name,
+                zone_id: OTHER_ZONE.zone_id,
+              },
+              {
+                display_name: YET_ANOTHER_ZONE.display_name,
+                zone_id: YET_ANOTHER_ZONE.zone_id,
+              },
+            ],
+            outputs: [
+              {
+                display_name: ZONE.outputs[0].display_name,
+                zone_id: ZONE.zone_id,
+                output_id: ZONE.outputs[0].output_id,
+              },
+              {
+                display_name: ZONE.outputs[1].display_name,
+                zone_id: ZONE.zone_id,
+                output_id: ZONE.outputs[1].output_id,
+              },
+              {
+                display_name: OTHER_ZONE.outputs[0].display_name,
+                zone_id: OTHER_ZONE.zone_id,
+                output_id: OTHER_ZONE.outputs[0].output_id,
+              },
+              {
+                display_name: OTHER_ZONE.outputs[1].display_name,
+                zone_id: OTHER_ZONE.zone_id,
+                output_id: OTHER_ZONE.outputs[1].output_id,
+              },
+              {
+                display_name: YET_ANOTHER_ZONE.outputs[0].display_name,
+                zone_id: YET_ANOTHER_ZONE.zone_id,
+                output_id: YET_ANOTHER_ZONE.outputs[0].output_id,
+              },
+            ],
           },
         },
       ]);
@@ -908,6 +1228,7 @@ describe("zone-manager.ts test suite", () => {
           data: {
             state: RoonState.STARTING,
             zones: [],
+            outputs: [],
           },
         },
         {
@@ -915,34 +1236,195 @@ describe("zone-manager.ts test suite", () => {
           data: {
             state: RoonState.SYNCING,
             zones: [],
+            outputs: [],
           },
         },
         {
           event: "state",
           data: {
             state: RoonState.SYNC,
-            zones: [],
+            zones: [
+              {
+                display_name: ZONE.display_name,
+                zone_id: ZONE.zone_id,
+              },
+              {
+                display_name: OTHER_ZONE.display_name,
+                zone_id: OTHER_ZONE.zone_id,
+              },
+              {
+                display_name: YET_ANOTHER_ZONE.display_name,
+                zone_id: YET_ANOTHER_ZONE.zone_id,
+              },
+            ],
+            outputs: [
+              {
+                display_name: ZONE.outputs[0].display_name,
+                zone_id: ZONE.zone_id,
+                output_id: ZONE.outputs[0].output_id,
+              },
+              {
+                display_name: ZONE.outputs[1].display_name,
+                zone_id: ZONE.zone_id,
+                output_id: ZONE.outputs[1].output_id,
+              },
+              {
+                display_name: OTHER_ZONE.outputs[0].display_name,
+                zone_id: OTHER_ZONE.zone_id,
+                output_id: OTHER_ZONE.outputs[0].output_id,
+              },
+              {
+                display_name: OTHER_ZONE.outputs[1].display_name,
+                zone_id: OTHER_ZONE.zone_id,
+                output_id: OTHER_ZONE.outputs[1].output_id,
+              },
+              {
+                display_name: YET_ANOTHER_ZONE.outputs[0].display_name,
+                zone_id: YET_ANOTHER_ZONE.zone_id,
+                output_id: YET_ANOTHER_ZONE.outputs[0].output_id,
+              },
+            ],
           },
         },
         {
           event: "state",
           data: {
             state: RoonState.LOST,
-            zones: [],
+            zones: [
+              {
+                display_name: ZONE.display_name,
+                zone_id: ZONE.zone_id,
+              },
+              {
+                display_name: OTHER_ZONE.display_name,
+                zone_id: OTHER_ZONE.zone_id,
+              },
+              {
+                display_name: YET_ANOTHER_ZONE.display_name,
+                zone_id: YET_ANOTHER_ZONE.zone_id,
+              },
+            ],
+            outputs: [
+              {
+                display_name: ZONE.outputs[0].display_name,
+                zone_id: ZONE.zone_id,
+                output_id: ZONE.outputs[0].output_id,
+              },
+              {
+                display_name: ZONE.outputs[1].display_name,
+                zone_id: ZONE.zone_id,
+                output_id: ZONE.outputs[1].output_id,
+              },
+              {
+                display_name: OTHER_ZONE.outputs[0].display_name,
+                zone_id: OTHER_ZONE.zone_id,
+                output_id: OTHER_ZONE.outputs[0].output_id,
+              },
+              {
+                display_name: OTHER_ZONE.outputs[1].display_name,
+                zone_id: OTHER_ZONE.zone_id,
+                output_id: OTHER_ZONE.outputs[1].output_id,
+              },
+              {
+                display_name: YET_ANOTHER_ZONE.outputs[0].display_name,
+                zone_id: YET_ANOTHER_ZONE.zone_id,
+                output_id: YET_ANOTHER_ZONE.outputs[0].output_id,
+              },
+            ],
           },
         },
         {
           event: "state",
           data: {
             state: RoonState.SYNCING,
-            zones: [],
+            zones: [
+              {
+                display_name: ZONE.display_name,
+                zone_id: ZONE.zone_id,
+              },
+              {
+                display_name: OTHER_ZONE.display_name,
+                zone_id: OTHER_ZONE.zone_id,
+              },
+              {
+                display_name: YET_ANOTHER_ZONE.display_name,
+                zone_id: YET_ANOTHER_ZONE.zone_id,
+              },
+            ],
+            outputs: [
+              {
+                display_name: ZONE.outputs[0].display_name,
+                zone_id: ZONE.zone_id,
+                output_id: ZONE.outputs[0].output_id,
+              },
+              {
+                display_name: ZONE.outputs[1].display_name,
+                zone_id: ZONE.zone_id,
+                output_id: ZONE.outputs[1].output_id,
+              },
+              {
+                display_name: OTHER_ZONE.outputs[0].display_name,
+                zone_id: OTHER_ZONE.zone_id,
+                output_id: OTHER_ZONE.outputs[0].output_id,
+              },
+              {
+                display_name: OTHER_ZONE.outputs[1].display_name,
+                zone_id: OTHER_ZONE.zone_id,
+                output_id: OTHER_ZONE.outputs[1].output_id,
+              },
+              {
+                display_name: YET_ANOTHER_ZONE.outputs[0].display_name,
+                zone_id: YET_ANOTHER_ZONE.zone_id,
+                output_id: YET_ANOTHER_ZONE.outputs[0].output_id,
+              },
+            ],
           },
         },
         {
           event: "state",
           data: {
             state: RoonState.SYNC,
-            zones: [],
+            zones: [
+              {
+                display_name: ZONE.display_name,
+                zone_id: ZONE.zone_id,
+              },
+              {
+                display_name: OTHER_ZONE.display_name,
+                zone_id: OTHER_ZONE.zone_id,
+              },
+              {
+                display_name: YET_ANOTHER_ZONE.display_name,
+                zone_id: YET_ANOTHER_ZONE.zone_id,
+              },
+            ],
+            outputs: [
+              {
+                display_name: ZONE.outputs[0].display_name,
+                zone_id: ZONE.zone_id,
+                output_id: ZONE.outputs[0].output_id,
+              },
+              {
+                display_name: ZONE.outputs[1].display_name,
+                zone_id: ZONE.zone_id,
+                output_id: ZONE.outputs[1].output_id,
+              },
+              {
+                display_name: OTHER_ZONE.outputs[0].display_name,
+                zone_id: OTHER_ZONE.zone_id,
+                output_id: OTHER_ZONE.outputs[0].output_id,
+              },
+              {
+                display_name: OTHER_ZONE.outputs[1].display_name,
+                zone_id: OTHER_ZONE.zone_id,
+                output_id: OTHER_ZONE.outputs[1].output_id,
+              },
+              {
+                display_name: YET_ANOTHER_ZONE.outputs[0].display_name,
+                zone_id: YET_ANOTHER_ZONE.zone_id,
+                output_id: YET_ANOTHER_ZONE.outputs[0].output_id,
+              },
+            ],
           },
         },
       ]);
@@ -970,6 +1452,33 @@ describe("zone-manager.ts test suite", () => {
               {
                 display_name: YET_ANOTHER_ZONE.display_name,
                 zone_id: YET_ANOTHER_ZONE.zone_id,
+              },
+            ],
+            outputs: [
+              {
+                display_name: ZONE.outputs[0].display_name,
+                zone_id: ZONE.zone_id,
+                output_id: ZONE.outputs[0].output_id,
+              },
+              {
+                display_name: ZONE.outputs[1].display_name,
+                zone_id: ZONE.zone_id,
+                output_id: ZONE.outputs[1].output_id,
+              },
+              {
+                display_name: OTHER_ZONE.outputs[0].display_name,
+                zone_id: OTHER_ZONE.zone_id,
+                output_id: OTHER_ZONE.outputs[0].output_id,
+              },
+              {
+                display_name: OTHER_ZONE.outputs[1].display_name,
+                zone_id: OTHER_ZONE.zone_id,
+                output_id: OTHER_ZONE.outputs[1].output_id,
+              },
+              {
+                display_name: YET_ANOTHER_ZONE.outputs[0].display_name,
+                zone_id: YET_ANOTHER_ZONE.zone_id,
+                output_id: YET_ANOTHER_ZONE.outputs[0].output_id,
               },
             ],
           },

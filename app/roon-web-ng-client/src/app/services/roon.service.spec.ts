@@ -14,6 +14,7 @@ import {
 } from "@model";
 import { RoonService } from "./roon.service";
 
+// FIXME: this test suite is not relevant anymore, need to be rewritten
 describe("RoonServiceService", () => {
   let service: RoonService;
 
@@ -85,6 +86,7 @@ describe("RoonServiceService", () => {
       roonStateListener({
         state: RoonState.SYNC,
         zones: zoneDescriptions,
+        outputs: [],
       });
     }
     const $zd = service.zones();
@@ -93,6 +95,7 @@ describe("RoonServiceService", () => {
       roonStateListener({
         state: RoonState.LOST,
         zones: [],
+        outputs: [],
       });
     }
     expect($zd()).toEqual([]);
@@ -104,10 +107,12 @@ describe("RoonServiceService", () => {
       roonStateListener({
         state: RoonState.SYNCING,
         zones: [],
+        outputs: [],
       });
       roonStateListener({
         state: RoonState.SYNC,
         zones: [],
+        outputs: [],
       });
     }
     const states = service.roonState();
@@ -116,10 +121,12 @@ describe("RoonServiceService", () => {
       roonStateListener({
         state: RoonState.STARTING,
         zones: [],
+        outputs: [],
       });
       roonStateListener({
         state: RoonState.LOST,
         zones: [],
+        outputs: [],
       });
     }
     expect(states()).toBe(RoonState.LOST);
@@ -131,6 +138,7 @@ describe("RoonServiceService", () => {
       roonStateListener({
         state: RoonState.SYNC,
         zones: zoneDescriptions,
+        outputs: [],
       });
     }
     const states = service.roonState();
@@ -141,6 +149,7 @@ describe("RoonServiceService", () => {
       roonStateListener({
         state: RoonState.SYNC,
         zones: [],
+        outputs: [],
       });
     }
     expect(states()).toEqual(otherStates());
@@ -152,6 +161,7 @@ describe("RoonServiceService", () => {
       roonStateListener({
         state: RoonState.SYNC,
         zones: zoneDescriptions,
+        outputs: [],
       });
     }
     if (zoneStateListener) {
@@ -169,6 +179,7 @@ describe("RoonServiceService", () => {
       roonStateListener({
         state: RoonState.SYNC,
         zones: zoneDescriptions,
+        outputs: [],
       });
     }
     if (zoneStateListener) {
@@ -207,6 +218,7 @@ describe("RoonServiceService", () => {
       roonStateListener({
         state: RoonState.SYNC,
         zones: zoneDescriptions,
+        outputs: [],
       });
     }
     if (queueStateListener) {

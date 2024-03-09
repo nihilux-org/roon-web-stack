@@ -5,6 +5,7 @@ import { MatDialog, MatDialogContent, MatDialogRef } from "@angular/material/dia
 import { MatDivider } from "@angular/material/divider";
 import { MatIcon } from "@angular/material/icon";
 import { MatSlider, MatSliderThumb } from "@angular/material/slider";
+import { ZoneGroupingDialogComponent } from "@components/zone-grouping-dialog/zone-grouping-dialog.component";
 import { ZoneTransferDialogComponent } from "@components/zone-transfer-dialog/zone-transfer-dialog.component";
 import { CommandType, MuteCommand, MuteType, Output, VolumeCommand, VolumeStrategy } from "@model";
 import { RoonService } from "@services/roon.service";
@@ -13,7 +14,7 @@ import { SettingsService } from "@services/settings.service";
 @Component({
   selector: "nr-zone-volume-dialog",
   standalone: true,
-  imports: [MatDivider, MatIcon, MatIconButton, MatSlider, MatSliderThumb, MatDialogContent],
+  imports: [MatDialogContent, MatDivider, MatIcon, MatIconButton, MatSlider, MatSliderThumb],
   templateUrl: "./zone-volume-dialog.component.html",
   styleUrl: "./zone-volume-dialog.component.scss",
 })
@@ -23,6 +24,7 @@ export class ZoneVolumeDialogComponent {
   private readonly _roonService: RoonService;
   readonly $outputs: Signal<Output[]>;
   readonly $isSmallScreen: Signal<boolean>;
+  readonly $canGroup: Signal<boolean>;
 
   constructor(
     dialog: MatDialog,
@@ -44,6 +46,10 @@ export class ZoneVolumeDialogComponent {
       }
     );
     this.$isSmallScreen = settingsService.isSmallScreen();
+    this.$canGroup = computed(() => {
+      const outputs = this.$outputs();
+      return outputs.length > 0 && outputs[0].can_group_with_output_ids.length > 0;
+    });
   }
 
   onVolumeStep(event: MouseEvent, output_id: string, decrement?: boolean) {
@@ -99,6 +105,15 @@ export class ZoneVolumeDialogComponent {
   onOpenTransferDialog() {
     this._dialogRef.close();
     this._dialog.open(ZoneTransferDialogComponent, {
+      autoFocus: false,
+      restoreFocus: false,
+    });
+  }
+
+  onOpenGroupDialog() {
+    this._dialogRef.close();
+    this._dialog.open(ZoneGroupingDialogComponent, {
+      autoFocus: false,
       restoreFocus: false,
     });
   }

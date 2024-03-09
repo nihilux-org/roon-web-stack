@@ -275,6 +275,7 @@ describe("roon-web-client-factory.ts test suite", () => {
       {
         state: RoonState.LOST,
         zones: [],
+        outputs: [],
       },
       eventSourceMock
     );
@@ -282,6 +283,7 @@ describe("roon-web-client-factory.ts test suite", () => {
       {
         state: RoonState.SYNCING,
         zones: [],
+        outputs: [],
       },
       eventSourceMock
     );
@@ -293,6 +295,7 @@ describe("roon-web-client-factory.ts test suite", () => {
       {
         state: RoonState.LOST,
         zones: [],
+        outputs: [],
       },
       eventSourceMock
     );
@@ -300,6 +303,7 @@ describe("roon-web-client-factory.ts test suite", () => {
       {
         state: RoonState.SYNCING,
         zones: [],
+        outputs: [],
       },
       eventSourceMock
     );
@@ -309,10 +313,12 @@ describe("roon-web-client-factory.ts test suite", () => {
       {
         state: RoonState.LOST,
         zones: [],
+        outputs: [],
       },
       {
         state: RoonState.SYNCING,
         zones: [],
+        outputs: [],
       },
       SYNC_API_STATE_WITH_TWO_ZONES,
     ]);
@@ -357,6 +363,7 @@ describe("roon-web-client-factory.ts test suite", () => {
       {
         state: RoonState.LOST,
         zones: [],
+        outputs: [],
       },
       eventSourceMock
     );
@@ -381,6 +388,7 @@ describe("roon-web-client-factory.ts test suite", () => {
       {
         state: RoonState.LOST,
         zones: [],
+        outputs: [],
       },
       eventSourceMock
     );
@@ -1327,6 +1335,18 @@ const SYNC_API_STATE_WITH_TWO_ZONES: ApiState = {
     },
     {
       display_name: "other_display_name",
+      zone_id: "other_zone_id",
+    },
+  ],
+  outputs: [
+    {
+      display_name: "output_display_name",
+      output_id: "output_id",
+      zone_id,
+    },
+    {
+      display_name: "other_output_display_name",
+      output_id: "other_output_id",
       zone_id: "other_zone_id",
     },
   ],

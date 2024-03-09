@@ -7,7 +7,6 @@ import {
   QueueTrack,
   RoonState,
   Zone,
-  ZoneDescription,
   ZoneNowPlaying,
 } from "@model";
 import { dataConverter } from "./data-converter";
@@ -318,19 +317,6 @@ describe("data-converter test suite", () => {
     expect(threeLineTrack.disk?.title).toEqual(threeLineItem.three_line.line3);
   });
 
-  it("dataConverter#convertZoneManagerState should wrap the received ZoneManagerState and ZoneDescription[] in a ApiState instance", () => {
-    const state = RoonState.LOST;
-    const zones: ZoneDescription[] = [
-      {
-        zone_id: "zone_id",
-        display_name: "display_name",
-      },
-    ];
-    const apiState = dataConverter.buildApiState(state, zones);
-    expect(apiState.state).toBe(state);
-    expect(apiState.zones).toBe(zones);
-  });
-
   it("dataConverter#toRoonSseMessage should return a ZoneSseMessage when called with a ZoneState", () => {
     const zone: Zone = {
       display_name: "display_name",
@@ -354,6 +340,7 @@ describe("data-converter test suite", () => {
     const apiState: ApiState = {
       state: RoonState.SYNC,
       zones: [],
+      outputs: [],
     };
     const roonSseMessage = dataConverter.toRoonSseMessage(apiState);
     expect(roonSseMessage.event).toEqual("state");

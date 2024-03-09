@@ -2,9 +2,13 @@
   h2 {
     padding-bottom: 18px;
   }
-  mat-divider {
-    min-width: 250px;
+  mat-dialog-actions {
+    button {
+      margin: 0 8px 8px 0;
+    }
   }
+}
+.zone-grouping {
   .from-zone {
     display: flex;
     margin-bottom: 20px;
@@ -12,13 +16,8 @@
       margin-right: 10px;
     }
   }
-  button {
-    margin-bottom: 20px;
-  }
-  mat-dialog-actions {
-    button {
-      margin: 0 8px 8px 0;
-    }
+  mat-divider {
+    min-width: 250px;
   }
 }
 

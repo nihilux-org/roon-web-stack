@@ -2,7 +2,9 @@ import { concatWith, from, Observable, Subject } from "rxjs";
 import { dataConverter, queueManagerFactory } from "@data";
 import { logger, roon } from "@infrastructure";
 import {
+  ApiState,
   Output,
+  OutputDescription,
   OutputListener,
   QueueManager,
   RoonApiTransportOutputs,
@@ -25,7 +27,7 @@ interface ZoneData {
   };
   displayName: string;
   queueManager?: QueueManager;
-  zone?: Zone;
+  zone: Zone;
 }
 
 class InternalZoneManager implements ZoneManager {
@@ -66,12 +68,18 @@ class InternalZoneManager implements ZoneManager {
   };
 
   private readonly zoneListener: ZoneListener = (core, response, body) => {
+    let zoneRemoved = false;
+    let zoneAdded = false;
+    let zoneChanged = false;
     switch (response) {
       case "Changed":
-        this.dispatchZonesRemoved(body);
-        this.dispatchZonesAdded(body);
-        this.dispatchZonesChanged(body);
+        zoneRemoved = this.dispatchZonesRemoved(body);
+        zoneAdded = this.dispatchZonesAdded(body);
+        zoneChanged = this.dispatchZonesChanged(body);
         this.dispatchZonesSeeked(body);
+        if (zoneRemoved || zoneAdded || zoneChanged) {
+          this.updateState(RoonState.SYNC);
+        }
         break;
       case "Subscribed":
         this.dispatchZonesSubscribed(body);
@@ -95,41 +103,43 @@ class InternalZoneManager implements ZoneManager {
     this.stop();
   };
 
-  private dispatchZonesRemoved = (body: RoonApiTransportZones): void => {
+  private dispatchZonesRemoved = (body: RoonApiTransportZones): boolean => {
     const zoneRemoved = body.zones_removed ?? [];
-    zoneRemoved.forEach((zone_id: string) => {
+    for (const zone_id of zoneRemoved) {
       this.zoneData.get(zone_id)?.queueManager?.stop();
       this.zoneData.delete(zone_id);
-    });
-    if (zoneRemoved.length > 0) {
-      this.updateState(RoonState.SYNC);
     }
+    return zoneRemoved.length > 0;
   };
 
-  private dispatchZonesAdded = (body: RoonApiTransportZones): void => {
+  private dispatchZonesAdded = (body: RoonApiTransportZones): boolean => {
     const zoneAdded = body.zones_added ?? [];
-    zoneAdded.forEach((z: Zone) => {
+    for (const z of zoneAdded) {
       if (this.initZone(z)) {
         this.dispatch(z);
       }
-    });
-    if (zoneAdded.length > 0) {
-      this.updateState(RoonState.SYNC);
     }
+    return zoneAdded.length > 0;
   };
 
-  private dispatchZonesChanged = (body: RoonApiTransportZones): void => {
-    body.zones_changed?.forEach((z: Zone) => {
+  private dispatchZonesChanged = (body: RoonApiTransportZones): boolean => {
+    const zoneChanged = body.zones_changed ?? [];
+    let hasZoneChanged = false;
+    for (const z of zoneChanged) {
       const zd = this.zoneData.get(z.zone_id);
       if (zd) {
+        hasZoneChanged = true;
         zd.zone = z;
+        zd.displayName = z.display_name;
         this.dispatch(zd.zone);
       }
-    });
+    }
+    return hasZoneChanged;
   };
 
   private dispatchZonesSeeked = (body: RoonApiTransportZones): void => {
-    body.zones_seek_changed?.forEach((zs) => {
+    const zoneSeeked = body.zones_seek_changed ?? [];
+    for (const zs of zoneSeeked) {
       const zd = this.zoneData.get(zs.zone_id);
       if (zd?.zone) {
         const updatedZone: Zone = { ...zd.zone };
@@ -145,7 +155,7 @@ class InternalZoneManager implements ZoneManager {
         zd.zone = updatedZone;
         this.dispatch(zd.zone);
       }
-    });
+    }
   };
 
   private serverPairedFactory = (resolve: () => void): ServerListener => {
@@ -164,19 +174,17 @@ class InternalZoneManager implements ZoneManager {
 
   private readonly reconnect = () => {
     for (const zd of this.zoneData.values()) {
-      if (zd.backup) {
+      if (zd.backup?.zone) {
         zd.zone = zd.backup.zone;
-        if (zd.zone) {
-          zd.queueManager = queueManagerFactory.build(zd.zone, this.roonEventSource, 150);
-          void zd.queueManager
-            .start()
-            .then(() => {
-              delete zd.backup?.queue;
-            })
-            .catch((err) => {
-              logger.error(err);
-            });
-        }
+        zd.queueManager = queueManagerFactory.build(zd.zone, this.roonEventSource, 150);
+        void zd.queueManager
+          .start()
+          .then(() => {
+            delete zd.backup?.queue;
+          })
+          .catch((err) => {
+            logger.error(err);
+          });
       }
     }
     if (this._state !== RoonState.SYNC) {
@@ -206,9 +214,7 @@ class InternalZoneManager implements ZoneManager {
     zones.forEach(this.initZone);
     this.updateState(RoonState.SYNC);
     for (const zd of this.zoneData.values()) {
-      if (zd.zone) {
-        this.dispatch(zd.zone);
-      }
+      this.dispatch(zd.zone);
     }
   };
 
@@ -264,29 +270,42 @@ class InternalZoneManager implements ZoneManager {
     this.roonEventSource.complete();
   };
 
+  private buildApiState = (): ApiState => {
+    const zones: ZoneDescription[] = [];
+    const outputs: OutputDescription[] = [];
+    for (const [zone_id, zoneData] of this.zoneData) {
+      zones.push({
+        zone_id,
+        display_name: zoneData.displayName,
+      });
+      for (const output of zoneData.zone.outputs) {
+        outputs.push({
+          output_id: output.output_id,
+          zone_id,
+          display_name: output.display_name,
+        });
+      }
+    }
+    return {
+      state: this._state,
+      zones,
+      outputs,
+    };
+  };
+
   private updateState = (state: RoonState): void => {
     this._state = state;
-    this.roonEventSource.next(dataConverter.toRoonSseMessage(dataConverter.buildApiState(state, this.zones())));
+    this.roonEventSource.next(dataConverter.toRoonSseMessage(this.buildApiState()));
   };
 
   events = (): Observable<RoonSseMessage> => {
-    const initValues: RoonSseMessage[] = [
-      {
-        event: "state",
-        data: {
-          state: this._state,
-          zones: this.zones(),
-        },
-      },
-    ];
+    const initValues: RoonSseMessage[] = [dataConverter.toRoonSseMessage(this.buildApiState())];
     for (const zd of this.zoneData.values()) {
-      if (zd.zone) {
-        initValues.push(dataConverter.toRoonSseMessage(zd.zone));
-        if (zd.queueManager?.isStarted()) {
-          initValues.push(zd.queueManager.queue());
-        } else if (zd.backup?.queue) {
-          initValues.push(zd.backup.queue);
-        }
+      initValues.push(dataConverter.toRoonSseMessage(zd.zone));
+      if (zd.queueManager?.isStarted()) {
+        initValues.push(zd.queueManager.queue());
+      } else if (zd.backup?.queue) {
+        initValues.push(zd.backup.queue);
       }
     }
     return from(initValues).pipe(concatWith(this.roonEventSource));

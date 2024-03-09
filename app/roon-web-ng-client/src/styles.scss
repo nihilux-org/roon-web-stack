@@ -15,6 +15,7 @@ $roon-cqrs-web-ng-client-dark-theme: mat.define-dark-theme((
 ));
 
 @include mat.button-theme($roon-cqrs-web-ng-client-dark-theme);
+@include mat.checkbox-theme($roon-cqrs-web-ng-client-dark-theme);
 @include mat.core-theme($roon-cqrs-web-ng-client-dark-theme);
 @include mat.dialog-theme($roon-cqrs-web-ng-client-dark-theme);
 @include mat.divider-theme($roon-cqrs-web-ng-client-dark-theme);
@@ -39,6 +40,7 @@ $roon-cqrs-web-ng-client-light-theme: mat.define-light-theme((
 
 .light-theme {
   @include mat.button-color($roon-cqrs-web-ng-client-light-theme);
+  @include mat.checkbox-color($roon-cqrs-web-ng-client-light-theme);
   @include mat.core-color($roon-cqrs-web-ng-client-light-theme);
   @include mat.dialog-color($roon-cqrs-web-ng-client-light-theme);
   @include mat.divider-color($roon-cqrs-web-ng-client-light-theme);
@@ -76,5 +78,15 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .browse-dialog-title {
   .mat-mdc-unelevated-button {
     font-size: mat.font-size($roon-cqrs-web-ng-client-typography, headline-6);
+  }
+}
+
+.zone-grouping {
+  .mdc-form-field>label {
+    display: flex;
+    align-items: center;
+    mat-icon {
+      margin-right: 6px;
+    }
   }
 }

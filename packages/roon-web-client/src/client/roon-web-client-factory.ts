@@ -135,7 +135,7 @@ class InternalRoonWebClient implements RoonWebClient {
     if (this._apiState && this._apiState.state !== RoonState.STOPPED) {
       listener(this._apiState);
     } else if (this._apiState === undefined) {
-      listener({ state: RoonState.STARTING, zones: [] });
+      listener({ state: RoonState.STARTING, zones: [], outputs: [] });
     }
     this._roonStateListeners.push(listener);
   };
@@ -363,7 +363,7 @@ class InternalRoonWebClient implements RoonWebClient {
     delete this._apiState;
     this._zones.clear();
     for (const stateListener of this._roonStateListeners) {
-      stateListener({ state: RoonState.STOPPED, zones: [] });
+      stateListener({ state: RoonState.STOPPED, zones: [], outputs: [] });
     }
     this._roonStateListeners.splice(0, Infinity);
     this._commandStateListeners.splice(0, Infinity);

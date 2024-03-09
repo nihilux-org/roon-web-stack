@@ -1,6 +1,7 @@
 import { loggerMock, nanoidMock } from "@mock";
 import { roonMock } from "../infrastructure/roon-extension.mock";
 import { controlExecutorMock } from "./command-executor/control-command-executor.mock";
+import { groupCommandExecutorMock } from "./command-executor/group-command-executor.mock";
 import { muteCommandExecutorMock } from "./command-executor/mute-command-executor.mock";
 import { playFromHereCommandExecutorMock } from "./command-executor/play-from-here-command-executor.mock";
 import { transferZoneCommandExecutorMock } from "./command-executor/transfer-zone-command-executor.mock";
@@ -12,6 +13,7 @@ import {
   CommandResult,
   CommandState,
   CommandType,
+  GroupCommand,
   MuteCommand,
   MuteType,
   Output,
@@ -61,17 +63,19 @@ describe("command-dispatcher.ts test suite", () => {
     const promise: Promise<void> = new Promise((resolve) => {
       controlChannel.subscribe((n: CommandState) => {
         notifications.push(n);
-        if (notifications.length === commands.length) {
+        if (notifications.length === commands.length - 2) {
           resolve();
         }
       });
     });
 
-    commands.forEach((c: Command) => {
-      commandDispatcher.dispatch(c, controlChannel);
-    });
+    commands
+      .filter((c) => c.type !== CommandType.GROUP)
+      .forEach((c: Command) => {
+        commandDispatcher.dispatch(c, controlChannel);
+      });
     await promise;
-    expect(nanoid_counter).toEqual(commands.length);
+    expect(nanoid_counter).toEqual(commands.length - 2);
     notifications.forEach((notification: CommandState, index: number) => {
       const command_id = `${index + 1}`;
       expect(notification).toEqual({
@@ -95,7 +99,8 @@ describe("command-dispatcher.ts test suite", () => {
         c.type !== CommandType.VOLUME &&
         c.type !== CommandType.MUTE &&
         c.type !== CommandType.PLAY_FROM_HERE &&
-        c.type !== CommandType.TRANSFER_ZONE
+        c.type !== CommandType.TRANSFER_ZONE &&
+        c.type !== CommandType.GROUP
     );
     controlExecutorMock.mockImplementation(() => Promise.resolve());
     const notifications: CommandState[] = [];
@@ -226,6 +231,30 @@ describe("command-dispatcher.ts test suite", () => {
         server,
         zone,
       });
+    });
+  });
+
+  it("command-dispatcher#dispatch should call group-command-executor with any GroupCommand", async () => {
+    const groupCommands: GroupCommand[] = commands
+      .filter((c: Command) => c.type === CommandType.GROUP)
+      .map((c: Command) => c as unknown as GroupCommand);
+    const notifications: CommandState[] = [];
+    const commandIds: string[] = [];
+    const promise: Promise<void> = new Promise((resolve) => {
+      controlChannel.subscribe((cn: CommandState) => {
+        notifications.push(cn);
+        if (notifications.length === groupCommands.length) {
+          resolve();
+        }
+      });
+    });
+    groupCommands.forEach((c: Command) => {
+      commandIds.push(commandDispatcher.dispatch(c, controlChannel));
+    });
+    await promise;
+    expect(commandIds).toHaveLength(groupCommands.length);
+    groupCommands.forEach((command, index) => {
+      expect(groupCommandExecutorMock).toHaveBeenNthCalledWith(index + 1, command, server);
     });
   });
 });
@@ -371,6 +400,42 @@ const commands: Command[] = [
     data: {
       zone_id,
       to_zone_id: "to_zone_id",
+    },
+  },
+  {
+    type: CommandType.GROUP,
+    data: {
+      outputs: [
+        {
+          output_id: "output_id",
+          display_name: "display_name",
+          zone_id: "zone_id",
+        },
+        {
+          output_id: "other_output_id",
+          display_name: "other_display_name",
+          zone_id: "other_zone_id",
+        },
+      ],
+      mode: "group",
+    },
+  },
+  {
+    type: CommandType.GROUP,
+    data: {
+      outputs: [
+        {
+          output_id: "output_id",
+          display_name: "display_name",
+          zone_id: "zone_id",
+        },
+        {
+          output_id: "other_output_id",
+          display_name: "other_display_name",
+          zone_id: "other_zone_id",
+        },
+      ],
+      mode: "ungroup",
     },
   },
 ];
