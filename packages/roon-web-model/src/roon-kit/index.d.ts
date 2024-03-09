@@ -4,6 +4,8 @@
  done to fix issues in these typings.
  New typings might be added to integrate missing part of the roon API in the future
  */
+import { OutputDescription } from "../api-model";
+
 export type EmptyObject = {
   [K in unknown]: never;
 };
@@ -321,7 +323,7 @@ export interface RoonApiTransport {
   convenience_switch(output: Output, opts: RoonApiTransportConvenienceSwitchOptions | EmptyObject): Promise<void>;
   get_outputs(): Promise<RoonApiTransportOutputs>;
   get_zones(): Promise<RoonApiTransportZones>;
-  group_outputs(outputs: Output[]): Promise<void>;
+  group_outputs(outputs: Output[] | OutputDescription[]): Promise<void>;
   mute(output: Output, how: RoonMuteHow): Promise<void>;
   mute_all(how: RoonMuteHow): Promise<void>;
   pause_all(): Promise<void>;
@@ -333,7 +335,7 @@ export interface RoonApiTransport {
   subscribe_zones(cb: RoonApiTransportZonesSubscriptionCallback): void;
   toggle_standby(output: Output, opts: RoonApiTransportStandbyOptions): Promise<void>;
   transfer_zone(fromZone: Zone | Output, toZone: Zone | Output): Promise<void>;
-  ungroup_outputs(outputs: Output[]): Promise<void>;
+  ungroup_outputs(outputs: Output[] | OutputDescription[]): Promise<void>;
   zone_by_zone_id(zone_id: string): Zone | null;
   zone_by_output_id(output_id: string): Output | null;
   zone_by_object(zone: Zone | Output): Zone;

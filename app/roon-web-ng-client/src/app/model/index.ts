@@ -1,4 +1,4 @@
-import { CommandResult, Output, QueueTrack, Track } from "@model";
+import { CommandState, Output, Track } from "@model";
 
 export interface ZoneProgression {
   length: string;
@@ -40,11 +40,6 @@ export interface TrackImage {
   isReady: boolean;
 }
 
-export const EMPTY_QUEUE_TRACK: QueueTrack = {
-  title: "__empty_queue_track__",
-  queue_item_id: -1,
-};
-
 export interface NavigationEvent {
   item_key?: string;
   input?: string;
@@ -70,4 +65,6 @@ export enum VisibilityState {
   HIDDEN = "HIDDEN",
 }
 
-export type CommandCallback = (commandState: CommandResult) => void;
+export type CommandCallback = (commandState: CommandState) => void;
+
+export type OutputCallback = (output_id: string, zone_id: string) => void;

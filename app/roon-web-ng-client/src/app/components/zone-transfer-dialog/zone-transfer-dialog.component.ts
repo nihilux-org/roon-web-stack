@@ -44,8 +44,8 @@ export class ZoneTransferDialogComponent {
   }
 
   onTransferZoneSelected(to_zone_id: string) {
-    const commandCallback: CommandCallback = (commandResult) => {
-      if (commandResult === CommandResult.APPLIED) {
+    const commandCallback: CommandCallback = (commandState) => {
+      if (commandState.state === CommandResult.APPLIED) {
         this._settingsService.saveDisplayedZoneId(to_zone_id);
       }
     };

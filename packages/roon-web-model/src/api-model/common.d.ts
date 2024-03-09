@@ -11,6 +11,7 @@ import {
 import {
   CommandSseMessage,
   CommandState,
+  OutputDescription,
   OutputListener,
   Queue,
   QueueSseMessage,
@@ -40,7 +41,6 @@ export interface Track extends Playable {
 }
 
 export interface DataConverter {
-  buildApiState: (state: RoonState, zones: ZoneDescription[]) => ApiState;
   convertZone: (zone: Zone) => ZoneState;
   convertQueue: (queue: Queue) => QueueState;
   toRoonSseMessage: (data: Zone | Queue | ApiState | CommandState) => RoonSseMessage;
@@ -75,6 +75,7 @@ export interface SseMessageData {}
 export interface ApiState extends SseMessageData {
   state: RoonState;
   zones: ZoneDescription[];
+  outputs: OutputDescription[];
 }
 
 export interface SseStateMessage extends SseMessage<ApiState> {

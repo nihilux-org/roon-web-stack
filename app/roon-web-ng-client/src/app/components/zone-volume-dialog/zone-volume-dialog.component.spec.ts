@@ -26,7 +26,9 @@ describe("ZoneVolumeDialogComponent", () => {
   let fixture: ComponentFixture<ZoneVolumeDialogComponent>;
 
   beforeEach(async () => {
-    $zone = signal({} as ZoneState);
+    $zone = signal({
+      outputs: [],
+    } as unknown as ZoneState);
     commands = [];
     roonService = {
       command: jest.fn().mockImplementation((c: Command) => commands.push(c)),

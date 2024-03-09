@@ -1,5 +1,6 @@
 import { Observable } from "rxjs";
 import {
+  Output,
   RoonApiTransportOutputs,
   RoonApiTransportZones,
   RoonPlaybackState,
@@ -10,6 +11,8 @@ import {
 import { RoonSseMessage, SseMessage, SseMessageData, Track } from "./index";
 
 export interface ZoneDescription extends Pick<Zone, "display_name" | "zone_id"> {}
+
+export interface OutputDescription extends Pick<Output, "display_name" | "zone_id" | "output_id"> {}
 
 export interface ZoneListener {
   (core: RoonServer, response: RoonSubscriptionResponse, body: RoonApiTransportZones): void;

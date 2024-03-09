@@ -7,6 +7,7 @@ import {
   Command,
   CommandState,
   CommandStateListener,
+  OutputDescription,
   QueueState,
   QueueStateListener,
   RoonApiBrowseLoadResponse,
@@ -18,7 +19,7 @@ import {
   ZoneState,
   ZoneStateListener,
 } from "@model";
-import { CommandCallback, VisibilityState } from "@model/client";
+import { CommandCallback, OutputCallback, VisibilityState } from "@model/client";
 import { roonWebClientFactory, UPDATE_NEEDED_ERROR_MESSAGE } from "@nihilux/roon-web-client";
 import { VisibilityService } from "@services/visibility.service";
 
@@ -33,8 +34,9 @@ export class RoonService implements OnDestroy {
   private readonly _$roonState: WritableSignal<ApiState>;
   private readonly _commandStateListener: CommandStateListener;
   private readonly _commandCallbacks: Map<string, CommandCallback>;
+  private readonly _outputCallbacks: Map<string, OutputCallback>;
   private readonly _zoneStateListener: ZoneStateListener;
-  private readonly _zoneStates?: Map<
+  private readonly _zoneStates: Map<
     string,
     {
       $zone?: WritableSignal<ZoneState>;
@@ -50,20 +52,30 @@ export class RoonService implements OnDestroy {
     this._$roonState = signal({
       state: RoonState.STARTING,
       zones: [],
+      outputs: [],
     });
     this._roonClient = roonWebClientFactory.build(new URL(window.location.href));
     this._roonStateListener = (state: ApiState): void => {
       this._$roonState.set(state);
       if (state.state === RoonState.STOPPED) {
         this.reconnect();
+      } else if (state.state === RoonState.SYNC) {
+        for (const [output_id, oc] of this._outputCallbacks) {
+          const zone_id = state.outputs.find((o) => o.output_id === output_id)?.zone_id;
+          if (zone_id) {
+            oc(output_id, zone_id);
+            this._outputCallbacks.delete(output_id);
+          }
+        }
       }
     };
     this._commandCallbacks = new Map<string, CommandCallback>();
+    this._outputCallbacks = new Map<string, OutputCallback>();
     this._commandStateListener = (notification: CommandState): void => {
       const commandCallback = this._commandCallbacks.get(notification.command_id);
       if (commandCallback) {
         this._commandCallbacks.delete(notification.command_id);
-        commandCallback(notification.state);
+        commandCallback(notification);
       }
     };
     this._zoneStates = new Map<
@@ -74,7 +86,7 @@ export class RoonService implements OnDestroy {
       }
     >();
     this._zoneStateListener = (state: ZoneState): void => {
-      const zs = this._zoneStates?.get(state.zone_id);
+      const zs = this._zoneStates.get(state.zone_id);
       if (zs) {
         if (zs.$zone) {
           zs.$zone.set(state);
@@ -82,13 +94,13 @@ export class RoonService implements OnDestroy {
           zs.$zone = signal(state);
         }
       } else {
-        this._zoneStates?.set(state.zone_id, {
+        this._zoneStates.set(state.zone_id, {
           $zone: signal(state),
         });
       }
     };
     this._queueStateListener = (state: QueueState): void => {
-      const zs = this._zoneStates?.get(state.zone_id);
+      const zs = this._zoneStates.get(state.zone_id);
       if (zs) {
         if (zs.$queue) {
           zs.$queue.set(state);
@@ -96,7 +108,7 @@ export class RoonService implements OnDestroy {
           zs.$queue = signal(state);
         }
       } else {
-        this._zoneStates?.set(state.zone_id, {
+        this._zoneStates.set(state.zone_id, {
           $queue: signal(state),
         });
       }
@@ -161,10 +173,17 @@ export class RoonService implements OnDestroy {
     });
   };
 
+  outputs: () => Signal<OutputDescription[]> = () => {
+    this.ensureStarted();
+    return computed(() => {
+      return this._$roonState().outputs;
+    });
+  };
+
   zoneState: ($zoneId: Signal<string>) => Signal<ZoneState> = ($zoneId: Signal<string>) => {
     this.ensureStarted();
     return computed(() => {
-      const zs = this._zoneStates?.get($zoneId());
+      const zs = this._zoneStates.get($zoneId());
       if (zs?.$zone) {
         return zs.$zone();
       } else {
@@ -178,7 +197,7 @@ export class RoonService implements OnDestroy {
   queueState: ($zoneId: Signal<string>) => Signal<QueueState> = ($zoneId: Signal<string>) => {
     this.ensureStarted();
     return computed(() => {
-      const zs = this._zoneStates?.get($zoneId());
+      const zs = this._zoneStates.get($zoneId());
       if (zs?.$queue) {
         return zs.$queue();
       } else {
@@ -286,6 +305,13 @@ export class RoonService implements OnDestroy {
   version: () => string = () => {
     this.ensureStarted();
     return this._roonClient.version();
+  };
+
+  registerOutputCallback: (output_id: string, callback: OutputCallback) => void = (
+    output_id: string,
+    callback: OutputCallback
+  ) => {
+    this._outputCallbacks.set(output_id, callback);
   };
 
   ngOnDestroy() {

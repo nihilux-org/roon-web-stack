@@ -181,6 +181,7 @@ describe("client-manager.ts test suite", () => {
       data: {
         state: RoonState.SYNC,
         zones: [],
+        outputs: [],
       },
     });
     client.command({} as unknown as Command);
@@ -196,6 +197,7 @@ describe("client-manager.ts test suite", () => {
         data: {
           state: RoonState.SYNC,
           zones: [],
+          outputs: [],
         },
       },
       {

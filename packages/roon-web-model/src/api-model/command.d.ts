@@ -1,6 +1,7 @@
 import { Subject } from "rxjs";
 import { RoonServer, Zone } from "../roon-kit";
 import { SseMessage, SseMessageData } from "./common";
+import { OutputDescription } from "./zone";
 
 export const enum CommandResult {
   APPLIED = "APPLIED",
@@ -28,6 +29,7 @@ export const enum CommandType {
   VOLUME = "VOLUME",
   MUTE = "MUTE",
   // other actions
+  GROUP = "GROUP",
   PLAY_FROM_HERE = "PLAY_FROM_HERE",
   TRANSFER_ZONE = "TRANSFER_ZONE",
 }
@@ -121,7 +123,21 @@ export interface TransferZoneCommand {
   };
 }
 
-export type Command = ControlCommand | VolumeCommand | MuteCommand | PlayFromHereCommand | TransferZoneCommand;
+export interface GroupCommand {
+  type: CommandType.GROUP;
+  data: {
+    outputs: OutputDescription[];
+    mode: "group" | "ungroup";
+  };
+}
+
+export type Command =
+  | ControlCommand
+  | VolumeCommand
+  | MuteCommand
+  | PlayFromHereCommand
+  | TransferZoneCommand
+  | GroupCommand;
 
 export type ControlCommand =
   | PlayCommand

@@ -10,11 +10,9 @@ import {
   QueueState,
   QueueTrack,
   RoonSseMessage,
-  RoonState,
   SseStateMessage,
   Track,
   Zone,
-  ZoneDescription,
   ZoneNicePlaying,
   ZoneNowPlaying,
   ZoneSseMessage,
@@ -51,11 +49,6 @@ const toControlSseMessage = (data: ApiState): SseStateMessage => ({
 const toCommandSseControlMessage = (data: CommandState): CommandSseMessage => ({
   event: "command_state",
   data,
-});
-
-const buildApiState = (state: RoonState, zones: ZoneDescription[]): ApiState => ({
-  state,
-  zones,
 });
 
 const convertZone = (zone: Zone): ZoneState => {
@@ -200,7 +193,6 @@ const toTwoDigitString = (toFormat: number): string => {
 };
 
 export const dataConverter: DataConverter = {
-  buildApiState,
   convertZone,
   convertQueue,
   secondsToTimeString,

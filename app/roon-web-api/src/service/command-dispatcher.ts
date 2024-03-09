@@ -13,6 +13,7 @@ import {
   RoonServer,
 } from "@model";
 import { executor as controlExecutor } from "./command-executor/control-command-executor";
+import { executor as groupExecutor } from "./command-executor/group-command-executor";
 import { executor as muteExecutor } from "./command-executor/mute-command-executor";
 import { executor as playFromHereExecutor } from "./command-executor/play-from-here-command-executor";
 import { executor as transferZoneExecutor } from "./command-executor/transfer-zone-command-executor";
@@ -40,6 +41,10 @@ const dispatch = (command: Command, controlChannel: Subject<CommandState>): stri
       break;
     case CommandType.TRANSFER_ZONE:
       executeCommand(command_id, command, findZone(command.data.zone_id), transferZoneExecutor, controlChannel);
+      break;
+    case CommandType.GROUP:
+      executeCommand(command_id, command, roon.server(), groupExecutor, controlChannel);
+      break;
   }
   return command_id;
 };

@@ -1,6 +1,9 @@
 <mat-dialog-content class="volume-panel">
   <div class="volume-header">
     <button tabindex="0" mat-icon-button (click)="onOpenTransferDialog()"><mat-icon fontIcon="sync_alt" /></button>
+    @if ($canGroup()) {
+      <button tabindex="0" mat-icon-button (click)="onOpenGroupDialog()"><mat-icon fontIcon="link" /></button>
+    }
   </div>
   <mat-divider />
   @for (output of $outputs(); track output.output_id; let count = $count; let index = $index) {

@@ -31,8 +31,7 @@ Translations will be community driven: I can't write translations for other lang
 This will not translate the content of what's returned by the `api`, what's coming from `roon` is driven by what you choose in `roon` settings.
 
 ### 3. All the missing features  
-Here's an unordered list, just to give an idea:
-- Zone and Output management (limited to what's available in [node roon api](https://github.com/RoonLabs/node-roon-api))
+Here's an unordered list, just to give ideas:
 - Offer more layout flexibility via `settings`:
   - ability to display more than one zone at the same time
   - minimalist theme
