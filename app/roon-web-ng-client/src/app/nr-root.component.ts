@@ -20,6 +20,7 @@ export class NrRootComponent {
   private readonly _settingsService: SettingsService;
   readonly $hasSelectedZone: Signal<boolean>;
   readonly $state: Signal<RoonState>;
+  readonly $isGrouping: Signal<boolean>;
 
   constructor(roonService: RoonService, settingsService: SettingsService) {
     this._roonService = roonService;
@@ -34,5 +35,6 @@ export class NrRootComponent {
         return false;
       }
     });
+    this.$isGrouping = this._roonService.isGrouping();
   }
 }

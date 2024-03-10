@@ -18,20 +18,27 @@
         }
       }
       @case ("SYNC") {
-        @if ($hasSelectedZone()) {
-          @defer {
-            <nr-zone-container />
-          } @loading (minimum 500ms) {
-            <div class="loading-spinner">
-              <h1>loading application</h1>
-              <mat-progress-spinner diameter="350" strokeWidth="15" color="primary" mode="indeterminate" />
+        @if ($isGrouping()) {
+          <div class="loading-spinner">
+            <h1>Zone grouping in progress</h1>
+            <mat-progress-spinner diameter="350" strokeWidth="15" color="primary" mode="indeterminate" />
+          </div>
+        } @else {
+          @if ($hasSelectedZone()) {
+            @defer {
+              <nr-zone-container />
+            } @loading (minimum 500ms) {
+              <div class="loading-spinner">
+                <h1>loading application</h1>
+                <mat-progress-spinner diameter="350" strokeWidth="15" color="primary" mode="indeterminate" />
+              </div>
+            }
+          } @else {
+            <div class="no-zone-to-display">
+              <h1>Choose a zone to display</h1>
+              <nr-zone-selector />
             </div>
           }
-        } @else {
-          <div class="no-zone-to-display">
-            <h1>Choose a zone to display</h1>
-            <nr-zone-selector />
-          </div>
         }
       }
       @case("LOST") {
