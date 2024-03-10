@@ -101,42 +101,46 @@ export class ZoneGroupingDialogComponent {
 
   onSave() {
     this._dialogRef.close();
-    const outputsToGroup: OutputDescription[] = [this.mainOutput];
-    const outputToUngroup: OutputDescription[] = [this.mainOutput];
-    for (const go of this.$groupedOutputs()) {
-      if (go.state === "checked") {
-        outputsToGroup.push(go);
-      } else if (go.state === "indeterminate") {
-        outputToUngroup.push(go);
+    let hasChanged = this.$groupedOutputs().reduce((acc, od) => acc || od.state === "indeterminate", false);
+    hasChanged = hasChanged || this.$canGroupOutputs().reduce((acc, od) => acc || od.state === "checked", false);
+    if (hasChanged) {
+      const outputsToGroup: OutputDescription[] = [this.mainOutput];
+      const outputToUngroup: OutputDescription[] = [this.mainOutput];
+      for (const go of this.$groupedOutputs()) {
+        if (go.state === "checked") {
+          outputsToGroup.push(go);
+        } else if (go.state === "indeterminate") {
+          outputToUngroup.push(go);
+        }
       }
-    }
-    for (const go of this.$canGroupOutputs()) {
-      if (go.state === "checked") {
-        outputsToGroup.push(go);
+      for (const go of this.$canGroupOutputs()) {
+        if (go.state === "checked") {
+          outputsToGroup.push(go);
+        }
       }
-    }
-    const commands: GroupCommand[] = [];
-    if (outputToUngroup.length > 1) {
-      commands.push({
-        type: CommandType.GROUP,
-        data: {
-          outputs: outputToUngroup,
-          mode: "ungroup",
-        },
-      });
-    }
-    if (outputsToGroup.length > 1) {
-      commands.push({
-        type: CommandType.GROUP,
-        data: {
-          outputs: outputsToGroup,
-          mode: "group",
-        },
-      });
-    }
-    if (commands.length > 0) {
-      for (const [idx, command] of commands.entries()) {
-        this._roonService.command(command, this.buildCommandCallback(idx, commands.length));
+      const commands: GroupCommand[] = [];
+      if (outputToUngroup.length > 1) {
+        commands.push({
+          type: CommandType.GROUP,
+          data: {
+            outputs: outputToUngroup,
+            mode: "ungroup",
+          },
+        });
+      }
+      if (outputsToGroup.length > 1) {
+        commands.push({
+          type: CommandType.GROUP,
+          data: {
+            outputs: outputsToGroup,
+            mode: "group",
+          },
+        });
+      }
+      if (commands.length > 0) {
+        for (const [idx, command] of commands.entries()) {
+          this._roonService.command(command, this.buildCommandCallback(idx, commands.length));
+        }
       }
     }
   }
