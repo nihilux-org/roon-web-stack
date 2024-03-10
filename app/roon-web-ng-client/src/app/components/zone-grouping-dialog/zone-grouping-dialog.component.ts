@@ -37,17 +37,21 @@ export class ZoneGroupingDialogComponent {
     this._dialogRef = dialogRef;
     this._roonService = roonService;
     this._settingsService = settingsService;
-    const outputs = this._roonService.outputs()();
+    const outputs = this._roonService.roonState()().outputs;
     const zoneState = this._roonService.zoneState(this._settingsService.displayedZoneId())();
     // safe because the ZoneGroupingDialogComponent can't be open if current zone hasn't at least 1 output
     this.mainOutput = zoneState.outputs[0];
     this.$groupedOutputs = signal(
       zoneState.outputs
         .filter((o) => o.output_id !== this.mainOutput.output_id)
-        .map((o) => ({
-          ...o,
-          state: "checked",
-        }))
+        .map(
+          (o) =>
+            ({
+              ...o,
+              state: "checked",
+            }) as GroupOutputDescription
+        )
+        .sort((o1, o2) => o1.display_name.localeCompare(o2.display_name))
     );
     this.$canGroupOutputs = signal(
       zoneState.outputs[0].can_group_with_output_ids

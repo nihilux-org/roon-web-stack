@@ -2,19 +2,19 @@ import { MockBuilder, MockRender } from "ng-mocks";
 import { signal, WritableSignal } from "@angular/core";
 import { ComponentFixture } from "@angular/core/testing";
 import { MatDialogRef } from "@angular/material/dialog";
-import { Command, ZoneDescription } from "@model";
+import { ApiState, Command, RoonState } from "@model";
 import { CommandCallback } from "@model/client";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
 import { ZoneTransferDialogComponent } from "./zone-transfer-dialog.component";
 
 describe("ZoneTransferDialogComponent", () => {
-  let $zones: WritableSignal<ZoneDescription[]>;
+  let $roonState: WritableSignal<ApiState>;
   let $displayedZoneId: WritableSignal<string>;
   let commands: Command[];
   let commandCallbacks: CommandCallback[];
   let roonService: {
-    zones: jest.Mock;
+    roonState: jest.Mock;
     command: jest.Mock;
   };
   let settingsService: {
@@ -26,12 +26,16 @@ describe("ZoneTransferDialogComponent", () => {
   let fixture: ComponentFixture<ZoneTransferDialogComponent>;
 
   beforeEach(async () => {
-    $zones = signal([]);
+    $roonState = signal({
+      state: RoonState.SYNC,
+      zones: [],
+      outputs: [],
+    });
     $displayedZoneId = signal("zone_id");
     commands = [];
     commandCallbacks = [];
     roonService = {
-      zones: jest.fn().mockImplementation(() => $zones),
+      roonState: jest.fn().mockImplementation(() => $roonState),
       command: jest.fn().mockImplementation((command: Command, callback: CommandCallback) => {
         commands.push(command);
         commandCallbacks.push(callback);

@@ -1,3 +1,4 @@
+import { deepEqual } from "fast-equals";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -66,13 +67,18 @@ export class RoonBrowseDialogComponent implements OnInit {
     this.$dialogTitle = signal([]);
     this.$loading = signal(true);
     const $isOneColumn = settingsService.isOneColumn();
-    this.$itemsInTitle = computed(() => {
-      if ($isOneColumn()) {
-        return 2;
-      } else {
-        return 3;
+    this.$itemsInTitle = computed(
+      () => {
+        if ($isOneColumn()) {
+          return 2;
+        } else {
+          return 3;
+        }
+      },
+      {
+        equal: deepEqual,
       }
-    });
+    );
   }
 
   ngOnInit() {

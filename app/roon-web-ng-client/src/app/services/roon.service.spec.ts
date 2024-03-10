@@ -56,7 +56,6 @@ describe("RoonServiceService", () => {
 
   it("should throw an error on any method other thant #start if #start has not been called and awaited", () => {
     const error = new Error("you must wait for RoonService#start to complete before calling any other methods");
-    expect(() => service.zones()).toThrow(error);
     expect(() => service.zoneState($zoneId)()).toThrow(error);
     expect(() => service.queueState($zoneId)()).toThrow(error);
   });
@@ -80,28 +79,7 @@ describe("RoonServiceService", () => {
     expect(queueStateListener).not.toBeUndefined();
   });
 
-  it("#zones should return the last received zones via the internal EventSource", async () => {
-    await service.start();
-    if (roonStateListener) {
-      roonStateListener({
-        state: RoonState.SYNC,
-        zones: zoneDescriptions,
-        outputs: [],
-      });
-    }
-    const $zd = service.zones();
-    expect($zd()).toBe(zoneDescriptions);
-    if (roonStateListener) {
-      roonStateListener({
-        state: RoonState.LOST,
-        zones: [],
-        outputs: [],
-      });
-    }
-    expect($zd()).toEqual([]);
-  });
-
-  it("#roonState should return a Signal<RoonState> with the last received value and updating as new events are received by the internal RoonCqrsClient", async () => {
+  it("#roonState should return a Signal<ApiState> with the last received value and updating as new events are received by the internal RoonCqrsClient", async () => {
     await service.start();
     if (roonStateListener) {
       roonStateListener({
@@ -111,12 +89,26 @@ describe("RoonServiceService", () => {
       });
       roonStateListener({
         state: RoonState.SYNC,
-        zones: [],
+        zones: [
+          {
+            zone_id: "zone_id",
+            display_name: "display_name",
+          },
+        ],
         outputs: [],
       });
     }
-    const states = service.roonState();
-    expect(states()).toBe(RoonState.SYNC);
+    const $states = service.roonState();
+    expect($states()).toEqual({
+      state: RoonState.SYNC,
+      zones: [
+        {
+          zone_id: "zone_id",
+          display_name: "display_name",
+        },
+      ],
+      outputs: [],
+    });
     if (roonStateListener) {
       roonStateListener({
         state: RoonState.STARTING,
@@ -129,10 +121,14 @@ describe("RoonServiceService", () => {
         outputs: [],
       });
     }
-    expect(states()).toBe(RoonState.LOST);
+    expect($states()).toEqual({
+      state: RoonState.LOST,
+      zones: [],
+      outputs: [],
+    });
   });
 
-  it("#roonState should return a different Signal<RoonState> at each call", async () => {
+  it("#roonState should return the same Signal<ApiState> at each call", async () => {
     await service.start();
     if (roonStateListener) {
       roonStateListener({
@@ -143,16 +139,7 @@ describe("RoonServiceService", () => {
     }
     const states = service.roonState();
     const otherStates = service.roonState();
-    expect(states).not.toBe(otherStates);
-    expect(states()).toEqual(otherStates());
-    if (roonStateListener) {
-      roonStateListener({
-        state: RoonState.SYNC,
-        zones: [],
-        outputs: [],
-      });
-    }
-    expect(states()).toEqual(otherStates());
+    expect(states).toBe(otherStates);
   });
 
   it("#zoneState should return a unique Signal<ZoneState> at each call for a given $zoneId but propagating the same value", async () => {
