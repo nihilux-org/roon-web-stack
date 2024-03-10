@@ -132,22 +132,39 @@ export class ZoneGroupingDialogComponent {
     }
     if (commands.length > 0) {
       for (const [idx, command] of commands.entries()) {
-        if (idx === commands.length - 1) {
-          this._roonService.command(command, this.buildCommandCallback());
-        } else {
-          this._roonService.command(command);
-        }
+        this._roonService.command(command, this.buildCommandCallback(idx, commands.length));
       }
     }
   }
 
-  private buildCommandCallback(): CommandCallback {
-    return (commandState) => {
-      if (commandState.state === CommandResult.APPLIED) {
-        this._roonService.registerOutputCallback(this.mainOutput.output_id, (_, zone_id) => {
-          this._settingsService.saveDisplayedZoneId(zone_id);
-        });
-      }
-    };
+  private buildCommandCallback(idx: number, total: number): CommandCallback {
+    if (total > 1 && idx === 0) {
+      return (commandState) => {
+        if (commandState.state === CommandResult.APPLIED) {
+          this._roonService.startGrouping();
+        }
+      };
+    } else if (total > 1 && idx === 1) {
+      return (commandState) => {
+        if (commandState.state === CommandResult.APPLIED) {
+          this._roonService.registerOutputCallback(this.mainOutput.output_id, (_, zone_id) => {
+            this._settingsService.saveDisplayedZoneId(zone_id);
+            this._roonService.endGrouping();
+          });
+        } else {
+          this._roonService.endGrouping();
+        }
+      };
+    } else {
+      return (commandState) => {
+        if (commandState.state === CommandResult.APPLIED) {
+          this._roonService.startGrouping();
+          this._roonService.registerOutputCallback(this.mainOutput.output_id, (_, zone_id) => {
+            this._settingsService.saveDisplayedZoneId(zone_id);
+            this._roonService.endGrouping();
+          });
+        }
+      };
+    }
   }
 }

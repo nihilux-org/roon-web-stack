@@ -32,6 +32,9 @@ export class RoonService implements OnDestroy {
   private readonly _roonClient: RoonWebClient;
   private readonly _roonStateListener: RoonStateListener;
   private readonly _$roonState: WritableSignal<ApiState>;
+  private readonly _$zones: Signal<ZoneDescription[]>;
+  private readonly _$outputs: Signal<OutputDescription[]>;
+  private readonly _$isGrouping: WritableSignal<boolean>;
   private readonly _commandStateListener: CommandStateListener;
   private readonly _commandCallbacks: Map<string, CommandCallback>;
   private readonly _outputCallbacks: Map<string, OutputCallback>;
@@ -54,6 +57,7 @@ export class RoonService implements OnDestroy {
       zones: [],
       outputs: [],
     });
+    this._$isGrouping = signal(false);
     this._roonClient = roonWebClientFactory.build(new URL(window.location.href));
     this._roonStateListener = (state: ApiState): void => {
       this._$roonState.set(state);
@@ -138,6 +142,12 @@ export class RoonService implements OnDestroy {
           });
       }
     });
+    this._$zones = computed(() => {
+      return this._$roonState().zones.sort((z1, z2) => z1.display_name.localeCompare(z2.display_name));
+    });
+    this._$outputs = computed(() => {
+      return this._$roonState().outputs.sort((o1, o2) => o1.display_name.localeCompare(o2.display_name));
+    });
   }
 
   start: () => Promise<void> = async () => {
@@ -168,16 +178,12 @@ export class RoonService implements OnDestroy {
 
   zones: () => Signal<ZoneDescription[]> = () => {
     this.ensureStarted();
-    return computed(() => {
-      return this._$roonState().zones.sort((z1, z2) => z1.display_name.localeCompare(z2.display_name));
-    });
+    return this._$zones;
   };
 
   outputs: () => Signal<OutputDescription[]> = () => {
     this.ensureStarted();
-    return computed(() => {
-      return this._$roonState().outputs;
-    });
+    return this._$outputs;
   };
 
   zoneState: ($zoneId: Signal<string>) => Signal<ZoneState> = ($zoneId: Signal<string>) => {
@@ -316,6 +322,18 @@ export class RoonService implements OnDestroy {
 
   ngOnDestroy() {
     this._visibilitySubscription.unsubscribe();
+  }
+
+  startGrouping() {
+    this._$isGrouping.set(true);
+  }
+
+  endGrouping() {
+    this._$isGrouping.set(false);
+  }
+
+  isGrouping(): Signal<boolean> {
+    return this._$isGrouping;
   }
 
   private reconnect: () => void = () => {
