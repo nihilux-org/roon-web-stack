@@ -1,3 +1,4 @@
+import { deepEqual } from "fast-equals";
 import { defer, from, Observable, retry, Subscription, timer } from "rxjs";
 import { computed, Injectable, OnDestroy, Signal, signal, WritableSignal } from "@angular/core";
 import {
@@ -7,7 +8,6 @@ import {
   Command,
   CommandState,
   CommandStateListener,
-  OutputDescription,
   QueueState,
   QueueStateListener,
   RoonApiBrowseLoadResponse,
@@ -15,7 +15,6 @@ import {
   RoonState,
   RoonStateListener,
   RoonWebClient,
-  ZoneDescription,
   ZoneState,
   ZoneStateListener,
 } from "@model";
@@ -32,8 +31,6 @@ export class RoonService implements OnDestroy {
   private readonly _roonClient: RoonWebClient;
   private readonly _roonStateListener: RoonStateListener;
   private readonly _$roonState: WritableSignal<ApiState>;
-  private readonly _$zones: Signal<ZoneDescription[]>;
-  private readonly _$outputs: Signal<OutputDescription[]>;
   private readonly _$isGrouping: WritableSignal<boolean>;
   private readonly _commandStateListener: CommandStateListener;
   private readonly _commandCallbacks: Map<string, CommandCallback>;
@@ -52,18 +49,21 @@ export class RoonService implements OnDestroy {
   private _isRefreshing: boolean;
 
   constructor(visibilityService: VisibilityService) {
-    this._$roonState = signal({
-      state: RoonState.STARTING,
-      zones: [],
-      outputs: [],
-    });
+    this._$roonState = signal(
+      {
+        state: RoonState.STARTING,
+        zones: [],
+        outputs: [],
+      },
+      {
+        equal: deepEqual,
+      }
+    );
     this._$isGrouping = signal(false);
     this._roonClient = roonWebClientFactory.build(new URL(window.location.href));
     this._roonStateListener = (state: ApiState): void => {
       this._$roonState.set(state);
-      if (state.state === RoonState.STOPPED) {
-        this.reconnect();
-      } else if (state.state === RoonState.SYNC) {
+      if (state.state === RoonState.SYNC) {
         for (const [output_id, oc] of this._outputCallbacks) {
           const zone_id = state.outputs.find((o) => o.output_id === output_id)?.zone_id;
           if (zone_id) {
@@ -71,6 +71,8 @@ export class RoonService implements OnDestroy {
             this._outputCallbacks.delete(output_id);
           }
         }
+      } else if (state.state === RoonState.STOPPED) {
+        this.reconnect();
       }
     };
     this._commandCallbacks = new Map<string, CommandCallback>();
@@ -142,12 +144,6 @@ export class RoonService implements OnDestroy {
           });
       }
     });
-    this._$zones = computed(() => {
-      return this._$roonState().zones.sort((z1, z2) => z1.display_name.localeCompare(z2.display_name));
-    });
-    this._$outputs = computed(() => {
-      return this._$roonState().outputs.sort((o1, o2) => o1.display_name.localeCompare(o2.display_name));
-    });
   }
 
   start: () => Promise<void> = async () => {
@@ -170,20 +166,8 @@ export class RoonService implements OnDestroy {
       });
   };
 
-  roonState: () => Signal<RoonState> = () => {
-    return computed(() => {
-      return this._$roonState().state;
-    });
-  };
-
-  zones: () => Signal<ZoneDescription[]> = () => {
-    this.ensureStarted();
-    return this._$zones;
-  };
-
-  outputs: () => Signal<OutputDescription[]> = () => {
-    this.ensureStarted();
-    return this._$outputs;
+  roonState: () => Signal<ApiState> = () => {
+    return this._$roonState;
   };
 
   zoneState: ($zoneId: Signal<string>) => Signal<ZoneState> = ($zoneId: Signal<string>) => {

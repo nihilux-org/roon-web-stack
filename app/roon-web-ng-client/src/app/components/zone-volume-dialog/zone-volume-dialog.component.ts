@@ -1,5 +1,5 @@
 import { deepEqual } from "fast-equals";
-import { Component, computed, Signal } from "@angular/core";
+import { ChangeDetectionStrategy, Component, computed, Signal } from "@angular/core";
 import { MatIconButton } from "@angular/material/button";
 import { MatDialog, MatDialogContent, MatDialogRef } from "@angular/material/dialog";
 import { MatDivider } from "@angular/material/divider";
@@ -17,6 +17,7 @@ import { SettingsService } from "@services/settings.service";
   imports: [MatDialogContent, MatDivider, MatIcon, MatIconButton, MatSlider, MatSliderThumb],
   templateUrl: "./zone-volume-dialog.component.html",
   styleUrl: "./zone-volume-dialog.component.scss",
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ZoneVolumeDialogComponent {
   private readonly _dialog: MatDialog;
@@ -39,7 +40,7 @@ export class ZoneVolumeDialogComponent {
     this.$outputs = computed(
       () => {
         const $zone = roonService.zoneState($displayedZoneId);
-        return $zone().outputs;
+        return $zone().outputs.sort((o1, o2) => o1.display_name.localeCompare(o2.display_name));
       },
       {
         equal: deepEqual,

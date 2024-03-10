@@ -288,8 +288,8 @@ class InternalZoneManager implements ZoneManager {
     }
     return {
       state: this._state,
-      zones,
-      outputs,
+      zones: zones.sort((z1, z2) => z1.display_name.localeCompare(z2.display_name)),
+      outputs: outputs.sort((o1, o2) => o1.display_name.localeCompare(o2.display_name)),
     };
   };
 

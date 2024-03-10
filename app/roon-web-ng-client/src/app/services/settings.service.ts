@@ -1,3 +1,4 @@
+import { deepEqual } from "fast-equals";
 import { Subscription } from "rxjs";
 import { BreakpointObserver, Breakpoints } from "@angular/cdk/layout";
 import {
@@ -37,10 +38,14 @@ export class SettingsService implements OnDestroy {
 
   constructor(rendererFactory: RendererFactory2, breakPointObserver: BreakpointObserver) {
     this._breakpointObserver = breakPointObserver;
-    this._$displayedZoneId = signal(localStorage.getItem(SettingsService.DISPLAYED_ZONE_ID_KEY) ?? "");
+    this._$displayedZoneId = signal(localStorage.getItem(SettingsService.DISPLAYED_ZONE_ID_KEY) ?? "", {
+      equal: deepEqual,
+    });
     this._$chosenTheme = signal(localStorage.getItem(SettingsService.CHOSEN_THEME_KEY) ?? "BROWSER");
     this._$displayQueueTrack = signal(this.loadBooleanFromLocalStorage(SettingsService.DISPLAY_QUEUE_TRACK_KEY, true));
-    this._$breakpoints = signal(this.computeInitialBreakpoints());
+    this._$breakpoints = signal(this.computeInitialBreakpoints(), {
+      equal: deepEqual,
+    });
     this._$displayMode = signal((localStorage.getItem(SettingsService.DISPLAY_MODE_KEY) ?? "WIDE") as DisplayMode);
     const renderer = rendererFactory.createRenderer(null, null);
     // FIXME?: should this be more semantically placed in nr-root.component?
@@ -102,35 +107,45 @@ export class SettingsService implements OnDestroy {
   }
 
   isOneColumn(): Signal<boolean> {
-    return computed(() => {
-      const breakpoints = this._$breakpoints();
-      let isOneColumn = false;
-      for (const breakpoint of SettingsService.WATCH_BREAKPOINTS) {
-        if (breakpoint !== Breakpoints.WebPortrait && breakpoints[breakpoint]) {
-          isOneColumn = true;
-          break;
+    return computed(
+      () => {
+        const breakpoints = this._$breakpoints();
+        let isOneColumn = false;
+        for (const breakpoint of SettingsService.WATCH_BREAKPOINTS) {
+          if (breakpoint !== Breakpoints.WebPortrait && breakpoints[breakpoint]) {
+            isOneColumn = true;
+            break;
+          }
         }
+        return isOneColumn;
+      },
+      {
+        equal: deepEqual,
       }
-      return isOneColumn;
-    });
+    );
   }
 
   isSmallScreen(): Signal<boolean> {
-    return computed(() => {
-      const breakpoints = this._$breakpoints();
-      let isSmallScreen = false;
-      for (const breakpoint of SettingsService.WATCH_BREAKPOINTS) {
-        if (
-          breakpoint !== Breakpoints.WebPortrait &&
-          breakpoint !== Breakpoints.TabletPortrait &&
-          breakpoints[breakpoint]
-        ) {
-          isSmallScreen = true;
-          break;
+    return computed(
+      () => {
+        const breakpoints = this._$breakpoints();
+        let isSmallScreen = false;
+        for (const breakpoint of SettingsService.WATCH_BREAKPOINTS) {
+          if (
+            breakpoint !== Breakpoints.WebPortrait &&
+            breakpoint !== Breakpoints.TabletPortrait &&
+            breakpoints[breakpoint]
+          ) {
+            isSmallScreen = true;
+            break;
+          }
         }
+        return isSmallScreen;
+      },
+      {
+        equal: deepEqual,
       }
-      return isSmallScreen;
-    });
+    );
   }
 
   saveDisplayMode(displayMode: DisplayMode) {

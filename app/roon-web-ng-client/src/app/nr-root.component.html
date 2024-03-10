@@ -1,6 +1,6 @@
 <main class="main">
   <div class="content">
-    @switch ($state()) {
+    @switch ($state().state) {
       @case ("STARTING") {
         @defer (on timer(1s)) {
           <div class="extension-not-enabled">

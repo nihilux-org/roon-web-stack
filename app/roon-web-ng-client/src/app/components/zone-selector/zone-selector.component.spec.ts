@@ -1,22 +1,26 @@
 import { MockProvider } from "ng-mocks";
 import { signal, WritableSignal } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { ZoneDescription } from "@model";
+import { ApiState, RoonState } from "@model";
 import { RoonService } from "@services/roon.service";
 import { ZoneSelectorComponent } from "./zone-selector.component";
 
 describe("ZoneSelectorComponent", () => {
   let component: ZoneSelectorComponent;
   let fixture: ComponentFixture<ZoneSelectorComponent>;
-  let $zones: WritableSignal<ZoneDescription[]>;
+  let $roonState: WritableSignal<ApiState>;
 
   beforeEach(async () => {
-    $zones = signal([]);
+    $roonState = signal({
+      state: RoonState.SYNC,
+      zones: [],
+      outputs: [],
+    });
     await TestBed.configureTestingModule({
       imports: [ZoneSelectorComponent],
       providers: [
         MockProvider(RoonService, {
-          zones: () => $zones,
+          roonState: () => $roonState,
         }),
       ],
     }).compileComponents();

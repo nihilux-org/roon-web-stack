@@ -33,7 +33,7 @@ export class ZoneTransferDialogComponent {
     this._roonService = roonService;
     this._settingsService = settingsService;
     this._currentZoneId = this._settingsService.displayedZoneId()();
-    const zones = this._roonService.zones()();
+    const zones = this._roonService.roonState()().zones;
     this.currentZone =
       zones.find((zd) => {
         return zd.zone_id === this._currentZoneId;

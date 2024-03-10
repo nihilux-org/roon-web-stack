@@ -1,3 +1,4 @@
+import { deepEqual } from "fast-equals";
 import { animate, style, transition, trigger } from "@angular/animations";
 import { CdkFixedSizeVirtualScroll, CdkVirtualForOf, CdkVirtualScrollViewport } from "@angular/cdk/scrolling";
 import {
@@ -71,15 +72,20 @@ export class ZoneQueueComponent implements AfterViewInit {
   constructor(roonService: RoonService, settingsService: SettingsService) {
     this._roonService = roonService;
     this.$zoneId = settingsService.displayedZoneId();
-    this.$queue = computed(() => {
-      const queueState = this._roonService.queueState(this.$zoneId)();
-      const currentTrack = this.$trackDisplay();
-      if (queueState.tracks.length > 0 && currentTrack.title === queueState.tracks[0].title) {
-        return [...queueState.tracks].splice(1);
-      } else {
-        return queueState.tracks;
+    this.$queue = computed(
+      () => {
+        const queueState = this._roonService.queueState(this.$zoneId)();
+        const currentTrack = this.$trackDisplay();
+        if (queueState.tracks.length > 0 && currentTrack.title === queueState.tracks[0].title) {
+          return [...queueState.tracks].splice(1);
+        } else {
+          return queueState.tracks;
+        }
+      },
+      {
+        equal: deepEqual,
       }
-    });
+    );
     this.$displayQueueTrack = settingsService.displayQueueTrack();
     this.hasBeenDisplay = false;
   }
