@@ -352,9 +352,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@angular/cdk@npm:17.2.2":
-  version: 17.2.2
-  resolution: "@angular/cdk@npm:17.2.2"
+"@angular/cdk@npm:17.3.0":
+  version: 17.3.0
+  resolution: "@angular/cdk@npm:17.3.0"
   dependencies:
     parse5: "npm:^7.1.2"
     tslib: "npm:^2.3.0"
@@ -365,7 +365,7 @@ __metadata:
   dependenciesMeta:
     parse5:
       optional: true
-  checksum: 10c0/043b255ae0466ad070abf3dfcc0c46cd16154eec45722b680e9d6eaecd04db30afc88ed85726ce72cfb9008e48aa924f504d5964c23bd9c6f1a7ab6667799562
+  checksum: 10c0/8f8e931a33f4bd95118e23fd9b059057b066b3d87b3e2f7d279e96381c8566e3bff40a485d59ef7103c8ba4138717de719593aaf28e8ffc7d5404c70f1e3bebf
   languageName: node
   linkType: hard
 
@@ -472,9 +472,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@angular/material@npm:17.2.2":
-  version: 17.2.2
-  resolution: "@angular/material@npm:17.2.2"
+"@angular/material@npm:17.3.0":
+  version: 17.3.0
+  resolution: "@angular/material@npm:17.3.0"
   dependencies:
     "@material/animation": "npm:15.0.0-canary.7f224ddd4.0"
     "@material/auto-init": "npm:15.0.0-canary.7f224ddd4.0"
@@ -526,13 +526,13 @@ __metadata:
     tslib: "npm:^2.3.0"
   peerDependencies:
     "@angular/animations": ^17.0.0 || ^18.0.0
-    "@angular/cdk": 17.2.2
+    "@angular/cdk": 17.3.0
     "@angular/common": ^17.0.0 || ^18.0.0
     "@angular/core": ^17.0.0 || ^18.0.0
     "@angular/forms": ^17.0.0 || ^18.0.0
     "@angular/platform-browser": ^17.0.0 || ^18.0.0
     rxjs: ^6.5.3 || ^7.4.0
-  checksum: 10c0/03ecac7bc02e55789170ccf6e0fe76b90484c889b02614251783f9e7baf810ade8287ae63ee8f54afb470fe510bd6fcd4f8a6b896cf0454a4fdc5d71a5ca6afe
+  checksum: 10c0/2f9c6d5e03ada31ef46cbabeebf7e781c17722099b91c1a9029353f759f086ae5a2e2ec049eb8e8ab40e3f99e82ef049d5d602e2534e5dbb15726a9a779f48ae
   languageName: node
   linkType: hard
 
@@ -3744,14 +3744,14 @@ __metadata:
     "@angular-eslint/schematics": "npm:17.2.1"
     "@angular-eslint/template-parser": "npm:17.2.1"
     "@angular/animations": "npm:17.3.0"
-    "@angular/cdk": "npm:17.2.2"
+    "@angular/cdk": "npm:17.3.0"
     "@angular/cli": "npm:17.3.0"
     "@angular/common": "npm:17.3.0"
     "@angular/compiler": "npm:17.3.0"
     "@angular/compiler-cli": "npm:17.3.0"
     "@angular/core": "npm:17.3.0"
     "@angular/forms": "npm:17.3.0"
-    "@angular/material": "npm:17.2.2"
+    "@angular/material": "npm:17.3.0"
     "@angular/platform-browser": "npm:17.3.0"
     "@angular/platform-browser-dynamic": "npm:17.3.0"
     "@nihilux/roon-web-client": "workspace:*"
