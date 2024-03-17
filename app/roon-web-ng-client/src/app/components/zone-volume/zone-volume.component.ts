@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, ViewChild } from "@angular/core";
+import { ChangeDetectionStrategy, Component, Input, Signal, ViewChild } from "@angular/core";
 import { MatButtonModule, MatIconButton } from "@angular/material/button";
 import { MatDialog } from "@angular/material/dialog";
 import { MatDivider } from "@angular/material/divider";
@@ -6,7 +6,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatSliderModule } from "@angular/material/slider";
 import { ZoneVolumeDialogComponent } from "@components/zone-volume-dialog/zone-volume-dialog.component";
-import { ZoneCommands } from "@model/client";
+import { DisplayMode, ZoneCommands } from "@model/client";
 import { SettingsService } from "@services/settings.service";
 
 @Component({
@@ -21,10 +21,12 @@ export class ZoneVolumeComponent {
   @Input({ required: true }) zoneCommands!: ZoneCommands;
   @ViewChild("volumeButton") _volumeButton!: MatIconButton;
   private readonly _dialog: MatDialog;
-  private readonly _$isSmallScreen;
+  private readonly _$displayMode: Signal<DisplayMode>;
+  private readonly _$isSmallScreen: Signal<boolean>;
 
   constructor(dialog: MatDialog, settingsService: SettingsService) {
     this._dialog = dialog;
+    this._$displayMode = settingsService.displayMode();
     this._$isSmallScreen = settingsService.isSmallScreen();
   }
 
@@ -53,10 +55,12 @@ export class ZoneVolumeComponent {
       }
       this._dialog.open(ZoneVolumeDialogComponent, {
         position: {
-          top: `${buttonElementRect.top - topDelta}px`,
+          top: `${Math.max(buttonElementRect.top - topDelta, 0)}px`,
           left: this._$isSmallScreen() ? "1%" : `${buttonElementRect.left}px`,
         },
-        minWidth: this._$isSmallScreen() ? "99%" : "500px",
+        width: this._$isSmallScreen() ? "99%" : this._$displayMode() === DisplayMode.COMPACT ? "48vw" : "500px",
+        maxWidth: "500px",
+        maxHeight: "99vh",
         restoreFocus: false,
         autoFocus: false,
       });

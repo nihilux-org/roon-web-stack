@@ -27,5 +27,5 @@
       </button>
     }
   </div>
-  <nr-zone-selector class="zones" responsive="true" [class.is-small-screen]="$isSmallScreen()"/>
+  <nr-zone-selector class="zones" [withoutLabel]="$isSmallScreen()" [class.is-small-screen]="$isSmallScreen()"/>
 </div>

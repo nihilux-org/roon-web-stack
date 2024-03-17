@@ -1,4 +1,4 @@
-@if ($asButton()) {
+@if (withoutLabel) {
   <button tabindex="0" mat-icon-button [matMenuTriggerFor]="zoneSelector"><mat-icon fontIcon="speaker" /></button>
 } @else {
   <button tabindex="0" mat-button [matMenuTriggerFor]="zoneSelector"><mat-icon fontIcon="speaker" />{{$label()}}</button>
