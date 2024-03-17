@@ -1,9 +1,14 @@
 .volume-header {
   margin: 5px;
+  padding: 0;
 }
 .volume-output-name {
-  margin: 12px;
-  display: inline-block;
+  padding: 12px;
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  width: 95%;
 }
 .volume-control {
   display: flex;

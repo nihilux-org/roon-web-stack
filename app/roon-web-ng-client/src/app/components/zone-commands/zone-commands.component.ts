@@ -1,10 +1,11 @@
-import { ChangeDetectionStrategy, Component, Input, Signal } from "@angular/core";
+import { deepEqual } from "fast-equals";
+import { ChangeDetectionStrategy, Component, computed, Input, Signal } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { ZoneSelectorComponent } from "@components/zone-selector/zone-selector.component";
 import { ZoneVolumeComponent } from "@components/zone-volume/zone-volume.component";
 import { Command, CommandType } from "@model";
-import { ZoneCommands, ZoneCommandState } from "@model/client";
+import { DisplayMode, ZoneCommands, ZoneCommandState } from "@model/client";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
 
@@ -23,7 +24,16 @@ export class ZoneCommandsComponent {
 
   constructor(roonService: RoonService, settingsService: SettingsService) {
     this._roonService = roonService;
-    this.$isSmallScreen = settingsService.isSmallScreen();
+    const $displayMode = settingsService.displayMode();
+    const $isSmallScreen = settingsService.isSmallScreen();
+    this.$isSmallScreen = computed(
+      () => {
+        return $isSmallScreen() || $displayMode() === DisplayMode.COMPACT;
+      },
+      {
+        equal: deepEqual,
+      }
+    );
   }
 
   onCommandClick(clickedCommand: string) {
