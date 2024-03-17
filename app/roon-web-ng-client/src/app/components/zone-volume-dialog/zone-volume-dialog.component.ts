@@ -1,7 +1,7 @@
 import { deepEqual } from "fast-equals";
 import { ChangeDetectionStrategy, Component, computed, Signal } from "@angular/core";
 import { MatIconButton } from "@angular/material/button";
-import { MatDialog, MatDialogContent, MatDialogRef } from "@angular/material/dialog";
+import { MatDialog, MatDialogContent, MatDialogRef, MatDialogTitle } from "@angular/material/dialog";
 import { MatDivider } from "@angular/material/divider";
 import { MatIcon } from "@angular/material/icon";
 import { MatSlider, MatSliderThumb } from "@angular/material/slider";
@@ -14,7 +14,7 @@ import { SettingsService } from "@services/settings.service";
 @Component({
   selector: "nr-zone-volume-dialog",
   standalone: true,
-  imports: [MatDialogContent, MatDivider, MatIcon, MatIconButton, MatSlider, MatSliderThumb],
+  imports: [MatDialogContent, MatDivider, MatIcon, MatIconButton, MatSlider, MatSliderThumb, MatDialogTitle],
   templateUrl: "./zone-volume-dialog.component.html",
   styleUrl: "./zone-volume-dialog.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
