@@ -173,7 +173,7 @@ const getClient = (
       logger.warn(err.message);
     }
     return {
-      badRequestReply: res.status(400).send(),
+      badRequestReply: res.status(403).send(),
     };
   }
 };

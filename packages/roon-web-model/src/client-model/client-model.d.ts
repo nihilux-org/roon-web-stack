@@ -19,6 +19,8 @@ export interface RoonWebClient {
   offZoneState: (listener: ZoneStateListener) => void;
   onQueueState: (listener: QueueStateListener) => void;
   offQueueState: (listener: QueueStateListener) => void;
+  onClientState: (listener: ClientStateListener) => void;
+  offClientState: (listener: ClientStateListener) => void;
   command: (command: Command) => Promise<string>;
   browse: (options: ClientRoonApiBrowseOptions) => Promise<RoonApiBrowseResponse>;
   load: (options: ClientRoonApiBrowseLoadOptions) => Promise<RoonApiBrowseLoadResponse>;
@@ -29,6 +31,8 @@ export interface RoonWebClient {
 export interface RoonWebClientFactory {
   build: (apiUrl: URL) => RoonWebClient;
 }
+
+export type ClientState = "started" | "outdated" | "not-started" | "to-refresh";
 
 export interface ClientRoonApiBrowseOptions extends Omit<RoonApiBrowseOptions, "multi_session_key"> {}
 
@@ -41,3 +45,5 @@ export type CommandStateListener = (commandState: CommandState) => void;
 export type ZoneStateListener = (zoneState: ZoneState) => void;
 
 export type QueueStateListener = (queueState: QueueState) => void;
+
+export type ClientStateListener = (clientState: ClientState) => void;

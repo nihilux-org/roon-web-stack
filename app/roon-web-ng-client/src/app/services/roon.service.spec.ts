@@ -1,126 +1,110 @@
-import { roonCqrsClientMock, roonWebClientFactoryMock } from "@mock/roon-cqrs-client.mock";
+import { roonWorkerMock } from "@mock/worker.utils.mock";
 
-import { signal } from "@angular/core";
+import { signal, WritableSignal } from "@angular/core";
 import { TestBed } from "@angular/core/testing";
 import {
-  CommandStateListener,
+  ClientRoonApiBrowseLoadOptions,
+  ClientRoonApiBrowseOptions,
+  Command,
   QueueState,
-  QueueStateListener,
   RoonState,
-  RoonStateListener,
   ZoneDescription,
   ZoneState,
-  ZoneStateListener,
 } from "@model";
+import { ApiStateWorkerEvent } from "@model/client";
 import { RoonService } from "./roon.service";
 
 // FIXME: this test suite is not relevant anymore, need to be rewritten
 describe("RoonServiceService", () => {
   let service: RoonService;
+  let $zoneId: WritableSignal<string>;
 
-  let roonStateListener: RoonStateListener | undefined;
-  let commandStateListener: CommandStateListener | undefined;
-  let zoneStateListener: ZoneStateListener | undefined;
-  let queueStateListener: QueueStateListener | undefined;
   beforeEach(() => {
-    roonStateListener = undefined;
-    commandStateListener = undefined;
-    zoneStateListener = undefined;
-    queueStateListener = undefined;
-    jest.clearAllMocks();
+    $zoneId = signal(zone_id);
+    roonWorkerMock.clearMessages();
     TestBed.configureTestingModule({});
     service = TestBed.inject(RoonService);
-    roonCqrsClientMock.onRoonState.mockImplementation((listener: RoonStateListener) => {
-      roonStateListener = listener;
-    });
-    roonCqrsClientMock.onCommandState.mockImplementation((listener: CommandStateListener) => {
-      commandStateListener = listener;
-    });
-    roonCqrsClientMock.onZoneState.mockImplementation((listener: ZoneStateListener) => {
-      zoneStateListener = listener;
-    });
-    roonCqrsClientMock.onQueueState.mockImplementation((listener: QueueStateListener) => {
-      queueStateListener = listener;
-    });
-    roonCqrsClientMock.start.mockImplementation(() => Promise.resolve());
   });
 
   it("should be created", () => {
     expect(service).toBeTruthy();
   });
 
-  it("should create a RoonCqrsClient during constructor call", () => {
-    expect(roonWebClientFactoryMock.build).toHaveBeenCalledTimes(1);
-    expect(roonWebClientFactoryMock.build).toHaveBeenCalledWith(new URL("http://localhost:3000"));
-  });
-
-  it("should throw an error on any method other thant #start if #start has not been called and awaited", () => {
+  it("should throw an error on any method depending on roonWorker if #start has not been called and awaited", () => {
     const error = new Error("you must wait for RoonService#start to complete before calling any other methods");
-    expect(() => service.zoneState($zoneId)()).toThrow(error);
-    expect(() => service.queueState($zoneId)()).toThrow(error);
+    expect(() => service.zoneState($zoneId)).toThrow(error);
+    expect(() => service.queueState($zoneId)).toThrow(error);
+    expect(() => {
+      service.command({} as Command);
+    }).toThrow(error);
+    expect(() => service.library("zone_id")).toThrow(error);
+    expect(() => service.explore("zone_id")).toThrow(error);
+    expect(() => service.previous("zone_id")).toThrow(error);
+    expect(() => service.navigate("zone_id")).toThrow(error);
+    expect(() => service.browse({} as ClientRoonApiBrowseOptions)).toThrow(error);
+    expect(() => service.load({} as ClientRoonApiBrowseLoadOptions)).toThrow(error);
+    expect(() => service.version()).not.toThrow();
+    expect(() => service.isGrouping()).not.toThrow();
+    expect(() => {
+      service.startGrouping();
+    }).not.toThrow();
+    expect(() => {
+      service.endGrouping();
+    }).not.toThrow();
   });
 
-  it("#start should binds event listeners and return a the Promise returned by its internal RoonCqrsClient#start", async () => {
+  it("#start should send a message to roonWorker to start client, bind the roonWorker on message listener", async () => {
+    expect(roonWorkerMock.onmessage).toBeUndefined();
     await service.start();
-    expect(roonStateListener).not.toBeUndefined();
-    expect(commandStateListener).not.toBeUndefined();
-    expect(zoneStateListener).not.toBeUndefined();
-    expect(queueStateListener).not.toBeUndefined();
-  });
-
-  it("#start should binds event listeners even if the internal RoonCqrsClient#start returns a rejected Promise", () => {
-    const startError = new Error("error");
-    roonCqrsClientMock.start.mockImplementation(() => Promise.reject(startError));
-    const startPromise = service.start();
-    void expect(startPromise).rejects.not.toBe(startError);
-    expect(roonStateListener).not.toBeUndefined();
-    expect(commandStateListener).not.toBeUndefined();
-    expect(zoneStateListener).not.toBeUndefined();
-    expect(queueStateListener).not.toBeUndefined();
+    expect(roonWorkerMock.onmessage).not.toBeUndefined();
+    expect(roonWorkerMock.messages).toHaveLength(2);
+    expect(roonWorkerMock.messages).toEqual([
+      {
+        event: "worker-client",
+        data: {
+          action: "start-client",
+          url: "http://localhost/",
+          isDesktop: true,
+        },
+      },
+      {
+        event: "worker-api",
+        data: {
+          id: 0,
+          type: "version",
+          data: undefined,
+        },
+      },
+    ]);
   });
 
   it("#roonState should return a Signal<ApiState> with the last received value and updating as new events are received by the internal RoonCqrsClient", async () => {
     await service.start();
-    if (roonStateListener) {
-      roonStateListener({
-        state: RoonState.SYNCING,
-        zones: [],
-        outputs: [],
-      });
-      roonStateListener({
+    roonWorkerMock.clearMessages();
+    const syncStateEvent: ApiStateWorkerEvent = {
+      event: "state",
+      data: {
         state: RoonState.SYNC,
-        zones: [
-          {
-            zone_id: "zone_id",
-            display_name: "display_name",
-          },
-        ],
+        zones: zoneDescriptions,
         outputs: [],
-      });
-    }
+      },
+    };
+    roonWorkerMock.dispatchEvent(syncStateEvent);
     const $states = service.roonState();
     expect($states()).toEqual({
       state: RoonState.SYNC,
-      zones: [
-        {
-          zone_id: "zone_id",
-          display_name: "display_name",
-        },
-      ],
+      zones: zoneDescriptions,
       outputs: [],
     });
-    if (roonStateListener) {
-      roonStateListener({
-        state: RoonState.STARTING,
-        zones: [],
-        outputs: [],
-      });
-      roonStateListener({
+    const lostStateEvent: ApiStateWorkerEvent = {
+      event: "state",
+      data: {
         state: RoonState.LOST,
         zones: [],
         outputs: [],
-      });
-    }
+      },
+    };
+    roonWorkerMock.dispatchEvent(lostStateEvent);
     expect($states()).toEqual({
       state: RoonState.LOST,
       zones: [],
@@ -130,13 +114,6 @@ describe("RoonServiceService", () => {
 
   it("#roonState should return the same Signal<ApiState> at each call", async () => {
     await service.start();
-    if (roonStateListener) {
-      roonStateListener({
-        state: RoonState.SYNC,
-        zones: zoneDescriptions,
-        outputs: [],
-      });
-    }
     const states = service.roonState();
     const otherStates = service.roonState();
     expect(states).toBe(otherStates);
@@ -144,82 +121,48 @@ describe("RoonServiceService", () => {
 
   it("#zoneState should return a unique Signal<ZoneState> at each call for a given $zoneId but propagating the same value", async () => {
     await service.start();
-    if (roonStateListener) {
-      roonStateListener({
-        state: RoonState.SYNC,
-        zones: zoneDescriptions,
-        outputs: [],
-      });
-    }
-    if (zoneStateListener) {
-      zoneStateListener(ZONE_STATE);
-    }
-    const $states = service.zoneState($zoneId);
-    const $otherStates = service.zoneState($zoneId);
-    expect($states).not.toBe($otherStates);
-    expect($states()).toEqual($otherStates());
+    roonWorkerMock.clearMessages();
+    roonWorkerMock.dispatchEvent({
+      event: "zone",
+      data: ZONE_STATE,
+    });
+    roonWorkerMock.dispatchEvent({
+      event: "zone",
+      data: OTHER_ZONE_STATE,
+    });
+    const $zoneState = service.zoneState($zoneId);
+    const $otherZoneState = service.zoneState($zoneId);
+    expect($zoneState).not.toBe($otherZoneState);
+    expect($zoneState()).toEqual(ZONE_STATE);
+    expect($zoneState()).toEqual($otherZoneState());
+    $zoneId.set(OTHER_ZONE_STATE.zone_id);
+    expect($zoneState()).toEqual(OTHER_ZONE_STATE);
+    expect($zoneState()).toEqual($otherZoneState());
   });
 
   it("#queueState should return a Signal<QueueState>, bound to the zone described by given zone_id, with the last received value and updating as new events are received by the internal RoonCqrsClient", async () => {
     await service.start();
-    if (roonStateListener) {
-      roonStateListener({
-        state: RoonState.SYNC,
-        zones: zoneDescriptions,
-        outputs: [],
-      });
-    }
-    if (zoneStateListener) {
-      zoneStateListener(ZONE_STATE);
-    }
-    if (queueStateListener) {
-      queueStateListener({
-        ...OTHER_QUEUE_STATE,
-        tracks: [...OTHER_QUEUE_STATE.tracks, ...OTHER_QUEUE_STATE.tracks],
-      });
-      queueStateListener(OTHER_QUEUE_STATE);
-      queueStateListener(QUEUE_STATE);
-    }
-    const states = service.queueState(signal(other_zone_id));
-    expect(states()).toBe(OTHER_QUEUE_STATE);
-    if (queueStateListener) {
-      queueStateListener({
-        ...OTHER_ZONE_STATE,
-        tracks: [],
-      });
-      queueStateListener({
-        ...OTHER_QUEUE_STATE,
-        tracks: [...OTHER_QUEUE_STATE.tracks, ...OTHER_QUEUE_STATE.tracks],
-      });
-    }
-    expect(states()).toEqual({
-      ...OTHER_QUEUE_STATE,
-      tracks: [...OTHER_QUEUE_STATE.tracks, ...OTHER_QUEUE_STATE.tracks],
+    roonWorkerMock.clearMessages();
+    roonWorkerMock.dispatchEvent({
+      event: "queue",
+      data: QUEUE_STATE,
     });
-    expect(service.queueState($zoneId)()).toBe(QUEUE_STATE);
-  });
-
-  it("#queueState should return the same Signal<QueueState> at each call for a given zone_id", async () => {
-    await service.start();
-    if (roonStateListener) {
-      roonStateListener({
-        state: RoonState.SYNC,
-        zones: zoneDescriptions,
-        outputs: [],
-      });
-    }
-    if (queueStateListener) {
-      queueStateListener(QUEUE_STATE);
-    }
-    const $states = service.queueState($zoneId);
-    const $otherStates = service.queueState($zoneId);
-    expect($states).not.toBe($otherStates);
-    expect($states()).toEqual($otherStates());
+    roonWorkerMock.dispatchEvent({
+      event: "queue",
+      data: OTHER_QUEUE_STATE,
+    });
+    const $queueState = service.queueState($zoneId);
+    const $otherQueueState = service.queueState($zoneId);
+    expect($queueState).not.toBe($otherQueueState);
+    expect($queueState()).toEqual(QUEUE_STATE);
+    expect($queueState()).toEqual($otherQueueState());
+    $zoneId.set(OTHER_QUEUE_STATE.zone_id);
+    expect($queueState()).toEqual(OTHER_QUEUE_STATE);
+    expect($queueState()).toEqual($otherQueueState());
   });
 });
 
 const zone_id = "zone_id";
-const $zoneId = signal(zone_id);
 const other_zone_id = "other_zone_id";
 const zoneDescriptions: ZoneDescription[] = [
   {

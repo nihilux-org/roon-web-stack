@@ -72,6 +72,10 @@ export interface SseMessage<T extends SseMessageData> {
 
 export interface SseMessageData {}
 
+export interface Ping extends SseMessageData {
+  next: number;
+}
+
 export interface ApiState extends SseMessageData {
   state: RoonState;
   zones: ZoneDescription[];
@@ -82,4 +86,8 @@ export interface SseStateMessage extends SseMessage<ApiState> {
   event: "state";
 }
 
-export type RoonSseMessage = QueueSseMessage | ZoneSseMessage | SseStateMessage | CommandSseMessage;
+export interface PingSseMessage extends SseMessage<Ping> {
+  event: "ping";
+}
+
+export type RoonSseMessage = QueueSseMessage | ZoneSseMessage | SseStateMessage | CommandSseMessage | PingSseMessage;

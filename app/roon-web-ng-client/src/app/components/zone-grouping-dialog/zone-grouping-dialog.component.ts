@@ -138,14 +138,15 @@ export class ZoneGroupingDialogComponent {
         });
       }
       if (commands.length > 0) {
+        const output_id = this.mainOutput.output_id;
         for (const [idx, command] of commands.entries()) {
-          this._roonService.command(command, this.buildCommandCallback(idx, commands.length));
+          this._roonService.command(command, this.buildCommandCallback(idx, commands.length, output_id));
         }
       }
     }
   }
 
-  private buildCommandCallback(idx: number, total: number): CommandCallback {
+  private buildCommandCallback(idx: number, total: number, output_id: string): CommandCallback {
     if (total > 1 && idx === 0) {
       return (commandState) => {
         if (commandState.state === CommandResult.APPLIED) {
@@ -155,8 +156,11 @@ export class ZoneGroupingDialogComponent {
     } else if (total > 1 && idx === 1) {
       return (commandState) => {
         if (commandState.state === CommandResult.APPLIED) {
-          this._roonService.registerOutputCallback(this.mainOutput.output_id, (_, zone_id) => {
-            this._settingsService.saveDisplayedZoneId(zone_id);
+          this._roonService.registerOutputCallback((outputs) => {
+            const zone_id = outputs.find((o) => o.output_id === output_id)?.zone_id;
+            if (zone_id) {
+              this._settingsService.saveDisplayedZoneId(zone_id);
+            }
             this._roonService.endGrouping();
           });
         } else {
@@ -167,8 +171,11 @@ export class ZoneGroupingDialogComponent {
       return (commandState) => {
         if (commandState.state === CommandResult.APPLIED) {
           this._roonService.startGrouping();
-          this._roonService.registerOutputCallback(this.mainOutput.output_id, (_, zone_id) => {
-            this._settingsService.saveDisplayedZoneId(zone_id);
+          this._roonService.registerOutputCallback((outputs) => {
+            const zone_id = outputs.find((o) => o.output_id === output_id)?.zone_id;
+            if (zone_id) {
+              this._settingsService.saveDisplayedZoneId(zone_id);
+            }
             this._roonService.endGrouping();
           });
         }

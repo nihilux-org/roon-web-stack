@@ -150,19 +150,24 @@ export class ZoneContainerComponent implements OnDestroy, AfterViewInit {
       return DEFAULT_ZONE_PROGRESSION;
     });
     this.$imageSize = signal(-1);
-    this.$image = computed(() => {
-      const src = this.$trackDisplay().image_key;
-      const imageSize = this.$imageSize();
-      if (src && imageSize !== -1) {
-        return {
-          src: src,
-          imageSize: imageSize,
-          isReady: true,
-        };
-      } else {
-        return ZoneContainerComponent.NOT_READY_IMAGE;
+    this.$image = computed(
+      () => {
+        const src = this.$trackDisplay().image_key;
+        const imageSize = this.$imageSize();
+        if (src && imageSize !== -1) {
+          return {
+            src: src,
+            imageSize: imageSize,
+            isReady: true,
+          };
+        } else {
+          return ZoneContainerComponent.NOT_READY_IMAGE;
+        }
+      },
+      {
+        equal: deepEqual,
       }
-    });
+    );
     this.$isOneColumn = computed(() => {
       let isOneColumn = false;
       switch (this._settingsService.displayMode()()) {

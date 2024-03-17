@@ -2,9 +2,12 @@ import {
   ApiState,
   ClientRoonApiBrowseLoadOptions,
   ClientRoonApiBrowseOptions,
+  ClientState,
+  ClientStateListener,
   Command,
   CommandState,
   CommandStateListener,
+  Ping,
   QueueState,
   QueueStateListener,
   RoonApiBrowseLoadResponse,
@@ -22,8 +25,6 @@ interface ZoneStates {
   queue?: QueueState;
 }
 
-export const UPDATE_NEEDED_ERROR_MESSAGE = "api updated, need to reload the app!";
-
 class InternalRoonWebClient implements RoonWebClient {
   private static readonly X_ROON_WEB_STACK_VERSION_HEADER = "x-roon-web-stack-version";
   private static readonly CLIENT_NOT_STARTED_ERROR_MESSAGE = "client has not been started";
@@ -34,6 +35,7 @@ class InternalRoonWebClient implements RoonWebClient {
   private readonly _commandStateListeners: CommandStateListener[];
   private readonly _zoneStateListeners: ZoneStateListener[];
   private readonly _queueStateListeners: QueueStateListener[];
+  private readonly _clientStateListeners: ClientStateListener[];
   private readonly _apiHost: URL;
   private _abortController?: AbortController;
   private _roonWebStackVersion?: string;
@@ -41,6 +43,7 @@ class InternalRoonWebClient implements RoonWebClient {
   private _isClosed: boolean;
   private _mustRefresh: boolean;
   private _libraryItemKey?: string;
+  private _pingInterval?: ReturnType<typeof setTimeout>;
 
   constructor(apiHost: URL) {
     this._apiHost = apiHost;
@@ -49,8 +52,9 @@ class InternalRoonWebClient implements RoonWebClient {
     this._commandStateListeners = [];
     this._zoneStateListeners = [];
     this._queueStateListeners = [];
+    this._clientStateListeners = [];
     this._isClosed = true;
-    this._mustRefresh = true;
+    this._mustRefresh = false;
   }
 
   start: () => Promise<void> = async () => {
@@ -66,7 +70,7 @@ class InternalRoonWebClient implements RoonWebClient {
       const version = versionResponse.headers.get(InternalRoonWebClient.X_ROON_WEB_STACK_VERSION_HEADER);
       if (versionResponse.status === 204 && version) {
         if (this._roonWebStackVersion && this._roonWebStackVersion !== version) {
-          throw new Error(UPDATE_NEEDED_ERROR_MESSAGE);
+          this.onClientStateMessage("outdated");
         } else {
           this._roonWebStackVersion = version;
         }
@@ -92,6 +96,7 @@ class InternalRoonWebClient implements RoonWebClient {
           this.connectEventSource();
           this._isClosed = false;
           this._mustRefresh = false;
+          this.onClientStateMessage("started");
           return;
         }
       }
@@ -108,11 +113,15 @@ class InternalRoonWebClient implements RoonWebClient {
     return this.start();
   };
 
-  refresh: () => Promise<void> = () => {
+  refresh: () => Promise<void> = async () => {
     if (this._mustRefresh) {
-      return this.restart();
-    } else {
-      return Promise.resolve();
+      this._mustRefresh = false;
+      try {
+        await this.restart();
+      } catch (err) {
+        this._mustRefresh = true;
+        throw err;
+      }
     }
   };
 
@@ -190,6 +199,17 @@ class InternalRoonWebClient implements RoonWebClient {
     }
   };
 
+  onClientState: (listener: ClientStateListener) => void = (listener: ClientStateListener) => {
+    this._clientStateListeners.push(listener);
+  };
+
+  offClientState: (listener: ClientStateListener) => void = (listener: ClientStateListener) => {
+    const listenerIndex = this._clientStateListeners.indexOf(listener);
+    if (listenerIndex !== -1) {
+      this._clientStateListeners.splice(listenerIndex, 1);
+    }
+  };
+
   command: (command: Command) => Promise<string> = async (command: Command): Promise<string> => {
     this.ensureStared();
     const commandUrl = new URL(`${this._clientPath}/command`, this._apiHost);
@@ -201,7 +221,7 @@ class InternalRoonWebClient implements RoonWebClient {
       },
       body: JSON.stringify(command),
     });
-    const response = await fetch(req);
+    const response = await this.fetchRefreshed(req);
     if (response.status === 202) {
       const json: CommandJsonResponse = (await response.json()) as unknown as CommandJsonResponse;
       return json.command_id;
@@ -222,7 +242,7 @@ class InternalRoonWebClient implements RoonWebClient {
       },
       body: JSON.stringify(options),
     });
-    const response = await fetch(req);
+    const response = await this.fetchRefreshed(req);
     if (response.status === 200) {
       return (await response.json()) as unknown as RoonApiBrowseResponse;
     } else {
@@ -243,7 +263,7 @@ class InternalRoonWebClient implements RoonWebClient {
       },
       body: JSON.stringify(options),
     });
-    const response = await fetch(req);
+    const response = await this.fetchRefreshed(req);
     if (response.status === 200) {
       return (await response.json()) as unknown as RoonApiBrowseLoadResponse;
     } else {
@@ -298,6 +318,7 @@ class InternalRoonWebClient implements RoonWebClient {
       this._eventSource.addEventListener("command_state", this.onCommandStateMessage);
       this._eventSource.addEventListener("zone", this.onZoneMessage);
       this._eventSource.addEventListener("queue", this.onQueueMessage);
+      this._eventSource.addEventListener("ping", this.onPingMessage);
       this._eventSource.onerror = () => {
         this._mustRefresh = true;
       };
@@ -357,6 +378,28 @@ class InternalRoonWebClient implements RoonWebClient {
     }
   };
 
+  private onPingMessage = (m: MessageEvent<string>): void => {
+    const ping: Ping | undefined = parseJson(m.data);
+    if (ping) {
+      if (this._pingInterval) {
+        clearTimeout(this._pingInterval);
+      }
+      this._pingInterval = setTimeout(
+        () => {
+          delete this._pingInterval;
+          this._mustRefresh = true;
+        },
+        ping.next * 1.5 * 1000
+      );
+    }
+  };
+
+  private onClientStateMessage = (clientState: ClientState): void => {
+    for (const clientStateListener of this._clientStateListeners) {
+      clientStateListener(clientState);
+    }
+  };
+
   private closeClient = (): void => {
     this._eventSource?.close();
     delete this._eventSource;
@@ -370,6 +413,17 @@ class InternalRoonWebClient implements RoonWebClient {
     this._zoneStateListeners.splice(0, Infinity);
     this._queueStateListeners.splice(0, Infinity);
     this._isClosed = true;
+  };
+
+  private fetchRefreshed = async (req: Request): Promise<Response> => {
+    const response = await fetch(req);
+    if (response.status === 403) {
+      this._mustRefresh = true;
+      await this.refresh();
+      return this.fetchRefreshed(req);
+    } else {
+      return response;
+    }
   };
 }
 

@@ -1,7 +1,7 @@
 import { MockBuilder, MockRender } from "ng-mocks";
 import { signal, WritableSignal } from "@angular/core";
 import { ComponentFixture } from "@angular/core/testing";
-import { RoonState, ZoneDescription } from "@model";
+import { ApiState, RoonState } from "@model";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
 import { NrRootComponent } from "./nr-root.component";
@@ -10,22 +10,26 @@ describe("NrRootComponent", () => {
   let component: NrRootComponent;
   let fixture: ComponentFixture<NrRootComponent>;
   let $displayedZoneId: WritableSignal<string>;
-  let $state: WritableSignal<RoonState>;
-  let $zones: WritableSignal<ZoneDescription[]>;
+  let $state: WritableSignal<ApiState>;
+  let $isGrouping: WritableSignal<boolean>;
   let roonService: {
     roonState: jest.Mock;
-    zones: jest.Mock;
+    isGrouping: jest.Mock;
   };
   let settingsService: {
     displayedZonedId: jest.Mock;
   };
 
   beforeEach(async () => {
-    $state = signal(RoonState.STARTING);
-    $zones = signal(ZONES);
+    $state = signal({
+      state: RoonState.STARTING,
+      zones: [],
+      outputs: [],
+    });
+    $isGrouping = signal(false);
     roonService = {
       roonState: jest.fn().mockImplementation(() => $state),
-      zones: jest.fn().mockImplementation(() => $zones),
+      isGrouping: jest.fn().mockImplementation(() => $isGrouping),
     };
     $displayedZoneId = signal(zone_id);
     settingsService = {
@@ -44,14 +48,3 @@ describe("NrRootComponent", () => {
 });
 
 const zone_id = "zone_id";
-
-const ZONES: ZoneDescription[] = [
-  {
-    zone_id,
-    display_name: "display_name",
-  },
-  {
-    zone_id: "other_zone_id",
-    display_name: "other_display_name",
-  },
-];

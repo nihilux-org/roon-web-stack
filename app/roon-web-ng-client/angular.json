@@ -36,7 +36,8 @@
 						"styles": [
 							"src/styles.scss"
 						],
-						"scripts": []
+            "scripts": [],
+            "webWorkerTsConfig": "tsconfig.worker.json"
 					},
 					"configurations": {
 						"production": {
@@ -82,7 +83,10 @@
 					}
 				},
 				"test": {
-					"builder": "@angular-builders/jest:run"
+          "builder": "@angular-builders/jest:run",
+          "options": {
+            "webWorkerTsConfig": ["tsconfig.worker.json"]
+          }
 				},
 				"lint": {
 					"builder": "@angular-eslint/builder:lint",
