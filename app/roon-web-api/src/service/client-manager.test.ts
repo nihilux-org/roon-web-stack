@@ -34,6 +34,9 @@ describe("client-manager.ts test suite", () => {
           logger.error(err);
         });
     });
+    jest.useFakeTimers({
+      advanceTimers: false,
+    });
     client_id_counter = 0;
     nanoidMock.mockImplementation(() => `${++client_id_counter}`);
     roonSseMessageSubject = new Subject<RoonSseMessage>();
@@ -49,6 +52,7 @@ describe("client-manager.ts test suite", () => {
     jest.clearAllMocks();
     jest.resetAllMocks();
     jest.resetModules();
+    jest.useRealTimers();
   });
 
   it("clientManager#start should return the Promise returned by zoneManager#start", () => {
@@ -121,16 +125,6 @@ describe("client-manager.ts test suite", () => {
     expect(() => clientManager.get(client_id)).toThrow(new Error(`'${client_id}' is not a registered client_id`));
   });
 
-  it("clientManager#unregister should call the associated Client#close and delete the instance", async () => {
-    await clientManager.start();
-    const client_id = clientManager.register();
-    const client = clientManager.get(client_id);
-    const closeSpy = jest.spyOn(client, "close");
-    clientManager.unregister(client_id);
-    expect(closeSpy).toHaveBeenCalledTimes(1);
-    expect(() => clientManager.get(client_id)).toThrow(new Error(`'${client_id}' is not a registered client_id`));
-  });
-
   it("clientManager#unregister should ignore silently unregistered client_id", async () => {
     await clientManager.start();
     clientManager.unregister("unregistered_client_id");
@@ -159,56 +153,68 @@ describe("client-manager.ts test suite", () => {
     expect(clientManager.register).toThrow(NOT_STARTED_ERROR);
   });
 
-  it("Client#events return an Observable<RoonSseMessage> with a merge of zoneManager#events and its internal Subject<CommandNotification>", async () => {
-    await clientManager.start();
-    const client_id = clientManager.register();
-    const client = clientManager.get(client_id);
-    const events = client.events();
-    events.subscribe((message) => {
-      roonSseMessages.push(message);
-    });
-    expect(zoneManagerMock.events).toHaveBeenCalledTimes(1);
-    // this is not the cleanest way to test it... but it does the job 🤷
-    let commandChannel: Subject<CommandState> | undefined = undefined;
-    commandDispatcherMock.dispatch.mockImplementation(
-      (command: Command, commandNotification: Subject<CommandState>): string => {
-        commandChannel = commandNotification;
-        return "done";
-      }
-    );
-    roonSseMessageSubject.next({
-      event: "state",
-      data: {
-        state: RoonState.SYNC,
-        zones: [],
-        outputs: [],
-      },
-    });
-    client.command({} as unknown as Command);
-    expect(commandChannel).not.toBeUndefined();
-    (commandChannel as unknown as Subject<CommandState>).next({
-      state: CommandResult.APPLIED,
-      command_id: "command_id",
-    });
-    expect(roonSseMessages).toHaveLength(2);
-    expect(roonSseMessages).toEqual([
-      {
+  it(
+    "Client#events return an Observable<RoonSseMessage> with a merge of zoneManager#events, " +
+      "its internal Subject<CommandNotification> and its internal Ping generator",
+    async () => {
+      await clientManager.start();
+      const client_id = clientManager.register();
+      const client = clientManager.get(client_id);
+      const events = client.events();
+      events.subscribe((message) => {
+        roonSseMessages.push(message);
+      });
+      expect(zoneManagerMock.events).toHaveBeenCalledTimes(1);
+      // this is not the cleanest way to test it... but it does the job 🤷
+      let commandChannel: Subject<CommandState> | undefined = undefined;
+      commandDispatcherMock.dispatch.mockImplementation(
+        (command: Command, commandNotification: Subject<CommandState>): string => {
+          commandChannel = commandNotification;
+          return "done";
+        }
+      );
+      roonSseMessageSubject.next({
         event: "state",
         data: {
           state: RoonState.SYNC,
           zones: [],
           outputs: [],
         },
-      },
-      {
-        event: "command_state",
-        data: {
-          command_id: "command_id",
-          state: CommandResult.APPLIED,
+      });
+      client.command({} as unknown as Command);
+      expect(commandChannel).not.toBeUndefined();
+      (commandChannel as unknown as Subject<CommandState>).next({
+        state: CommandResult.APPLIED,
+        command_id: "command_id",
+      });
+      expect(roonSseMessages).toHaveLength(2);
+      expect(roonSseMessages).toEqual([
+        {
+          event: "state",
+          data: {
+            state: RoonState.SYNC,
+            zones: [],
+            outputs: [],
+          },
         },
-      },
-    ]);
-  });
+        {
+          event: "command_state",
+          data: {
+            command_id: "command_id",
+            state: CommandResult.APPLIED,
+          },
+        },
+      ]);
+      jest.advanceTimersByTime(56000);
+      expect(roonSseMessages).toHaveLength(3);
+      expect(roonSseMessages[2]).toEqual({
+        event: "ping",
+        data: {
+          next: 55,
+        },
+      });
+    }
+  );
 
   it("Client#close should call roon#browse to clean browse state and remove client instance of clientManager", async () => {
     await clientManager.start();

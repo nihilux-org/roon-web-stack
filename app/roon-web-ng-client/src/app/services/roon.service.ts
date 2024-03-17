@@ -1,26 +1,44 @@
 import { deepEqual } from "fast-equals";
-import { defer, from, Observable, retry, Subscription, timer } from "rxjs";
+import { DeviceDetectorService } from "ngx-device-detector";
+import { Observable, Subscription } from "rxjs";
 import { computed, Injectable, OnDestroy, Signal, signal, WritableSignal } from "@angular/core";
 import {
   ApiState,
   ClientRoonApiBrowseLoadOptions,
   ClientRoonApiBrowseOptions,
+  ClientState,
   Command,
   CommandState,
-  CommandStateListener,
   QueueState,
-  QueueStateListener,
   RoonApiBrowseLoadResponse,
   RoonApiBrowseResponse,
   RoonState,
-  RoonStateListener,
-  RoonWebClient,
   ZoneState,
-  ZoneStateListener,
 } from "@model";
-import { CommandCallback, OutputCallback, VisibilityState } from "@model/client";
-import { roonWebClientFactory, UPDATE_NEEDED_ERROR_MESSAGE } from "@nihilux/roon-web-client";
+import {
+  ApiResultCallback,
+  BrowseApiResult,
+  BrowseWorkerApiRequest,
+  CommandApiResult,
+  CommandCallback,
+  CommandWorkerApiRequest,
+  ExploreWorkerApiRequest,
+  LibraryWorkerApiRequest,
+  LoadApiResult,
+  LoadWorkerApiRequest,
+  NavigateWorkerApiRequest,
+  OutputCallback,
+  PreviousWorkerApiRequest,
+  RawApiResult,
+  RawWorkerApiRequest,
+  RawWorkerEvent,
+  VersionApiResult,
+  VersionWorkerApiRequest,
+  VisibilityState,
+  WorkerClientActionMessage,
+} from "@model/client";
 import { VisibilityService } from "@services/visibility.service";
+import { buildRoonWorker } from "@services/worker.utils";
 
 @Injectable({
   providedIn: "root",
@@ -28,14 +46,10 @@ import { VisibilityService } from "@services/visibility.service";
 export class RoonService implements OnDestroy {
   private static readonly THIS_IS_A_BUG_ERROR_MSG = "this is a bug!";
 
-  private readonly _roonClient: RoonWebClient;
-  private readonly _roonStateListener: RoonStateListener;
+  private readonly _deviceDetectorService: DeviceDetectorService;
   private readonly _$roonState: WritableSignal<ApiState>;
   private readonly _$isGrouping: WritableSignal<boolean>;
-  private readonly _commandStateListener: CommandStateListener;
   private readonly _commandCallbacks: Map<string, CommandCallback>;
-  private readonly _outputCallbacks: Map<string, OutputCallback>;
-  private readonly _zoneStateListener: ZoneStateListener;
   private readonly _zoneStates: Map<
     string,
     {
@@ -43,12 +57,20 @@ export class RoonService implements OnDestroy {
       $queue?: WritableSignal<QueueState>;
     }
   >;
-  private readonly _queueStateListener: QueueStateListener;
   private readonly _visibilitySubscription: Subscription;
+  private readonly _apiStringCallbacks: Map<number, ApiResultCallback<string>>;
+  private readonly _apiBrowseCallbacks: Map<number, ApiResultCallback<RoonApiBrowseResponse>>;
+  private readonly _apiLoadCallbacks: Map<number, ApiResultCallback<RoonApiBrowseLoadResponse>>;
+  private _workerApiRequestId: number;
   private _isStarted: boolean;
-  private _isRefreshing: boolean;
+  private _outputCallback?: OutputCallback;
+  private _worker?: Worker;
+  private _version: string;
+  private _startResolve?: () => void;
+  private _startReject?: (err: Error) => void;
 
-  constructor(visibilityService: VisibilityService) {
+  constructor(deviceDetectorService: DeviceDetectorService, visibilityService: VisibilityService) {
+    this._deviceDetectorService = deviceDetectorService;
     this._$roonState = signal(
       {
         state: RoonState.STARTING,
@@ -60,30 +82,7 @@ export class RoonService implements OnDestroy {
       }
     );
     this._$isGrouping = signal(false);
-    this._roonClient = roonWebClientFactory.build(new URL(window.location.href));
-    this._roonStateListener = (state: ApiState): void => {
-      this._$roonState.set(state);
-      if (state.state === RoonState.SYNC) {
-        for (const [output_id, oc] of this._outputCallbacks) {
-          const zone_id = state.outputs.find((o) => o.output_id === output_id)?.zone_id;
-          if (zone_id) {
-            oc(output_id, zone_id);
-            this._outputCallbacks.delete(output_id);
-          }
-        }
-      } else if (state.state === RoonState.STOPPED) {
-        this.reconnect();
-      }
-    };
     this._commandCallbacks = new Map<string, CommandCallback>();
-    this._outputCallbacks = new Map<string, OutputCallback>();
-    this._commandStateListener = (notification: CommandState): void => {
-      const commandCallback = this._commandCallbacks.get(notification.command_id);
-      if (commandCallback) {
-        this._commandCallbacks.delete(notification.command_id);
-        commandCallback(notification);
-      }
-    };
     this._zoneStates = new Map<
       string,
       {
@@ -91,79 +90,61 @@ export class RoonService implements OnDestroy {
         $queue?: WritableSignal<QueueState>;
       }
     >();
-    this._zoneStateListener = (state: ZoneState): void => {
-      const zs = this._zoneStates.get(state.zone_id);
-      if (zs) {
-        if (zs.$zone) {
-          zs.$zone.set(state);
-        } else {
-          zs.$zone = signal(state);
-        }
-      } else {
-        this._zoneStates.set(state.zone_id, {
-          $zone: signal(state),
-        });
-      }
-    };
-    this._queueStateListener = (state: QueueState): void => {
-      const zs = this._zoneStates.get(state.zone_id);
-      if (zs) {
-        if (zs.$queue) {
-          zs.$queue.set(state);
-        } else {
-          zs.$queue = signal(state);
-        }
-      } else {
-        this._zoneStates.set(state.zone_id, {
-          $queue: signal(state),
-        });
-      }
-    };
     this._isStarted = false;
-    this._isRefreshing = false;
     this._visibilitySubscription = visibilityService.observeVisibility((visibilityState) => {
-      if (this._isStarted && visibilityState === VisibilityState.VISIBLE && !this._isRefreshing) {
-        this._isRefreshing = true;
-        const refreshSub = defer(() => this._roonClient.refresh())
-          .pipe(
-            retry({
-              // FIXME?: 2 should be good... it's a pain to test on mobile, let's keep 5 to be sure?
-              count: 5,
-            })
-          )
-          .subscribe({
-            next: () => {
-              this._isRefreshing = false;
-              refreshSub.unsubscribe();
-            },
-            // FIXME?: if refresh breaks, isn't reloading everything a little extreme?
-            error: () => {
-              refreshSub.unsubscribe();
-              window.location.reload();
-            },
-          });
+      if (visibilityState === VisibilityState.VISIBLE) {
+        this.refresh();
       }
     });
+    this._apiStringCallbacks = new Map<number, ApiResultCallback<string>>();
+    this._apiBrowseCallbacks = new Map<number, ApiResultCallback<RoonApiBrowseResponse>>();
+    this._apiLoadCallbacks = new Map<number, ApiResultCallback<RoonApiBrowseLoadResponse>>();
+    this._workerApiRequestId = 0;
+    this._version = "unknown";
   }
 
   start: () => Promise<void> = async () => {
-    this._roonClient.onRoonState(this._roonStateListener);
-    this._roonClient.onCommandState(this._commandStateListener);
-    this._roonClient.onZoneState(this._zoneStateListener);
-    this._roonClient.onQueueState(this._queueStateListener);
-    return this._roonClient
-      .start()
-      .then(() => {
-        this._isStarted = true;
-      })
-      .catch((err) => {
-        if (err instanceof Error && err.message === UPDATE_NEEDED_ERROR_MESSAGE) {
-          window.location.reload();
-        } else {
-          // eslint-disable-next-line no-console
-          console.error("startup-error", err);
-        }
-      });
+    const startPromise = new Promise<void>((resolve, reject) => {
+      this._startResolve = resolve;
+      this._startReject = reject;
+    });
+    this._worker = buildRoonWorker();
+    this._worker.onmessage = (m: MessageEvent<RawWorkerEvent>) => {
+      this.dispatchWorkerEvent(m);
+    };
+    const isDesktop = this._deviceDetectorService.isDesktop() && !this._deviceDetectorService.isTablet();
+    const startMessage: WorkerClientActionMessage = {
+      event: "worker-client",
+      data: {
+        action: "start-client",
+        url: window.location.href,
+        isDesktop,
+      },
+    };
+    this._worker.postMessage(startMessage);
+    try {
+      await startPromise;
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error("error during app startup");
+      throw err;
+    }
+    const id = this.nextWorkerApiRequestId();
+    const apiRequest: VersionWorkerApiRequest = {
+      id,
+      type: "version",
+      data: undefined,
+    };
+    const apiResultCallback: ApiResultCallback<string> = {
+      next: (versionApiResult) => {
+        this._version = versionApiResult;
+      },
+    };
+    this._apiStringCallbacks.set(id, apiResultCallback);
+    this._worker.postMessage({
+      event: "worker-api",
+      data: apiRequest,
+    });
   };
 
   roonState: () => Signal<ApiState> = () => {
@@ -202,61 +183,62 @@ export class RoonService implements OnDestroy {
     command: Command,
     commandCallback?: CommandCallback
   ) => {
-    this.ensureStarted();
-    this._roonClient
-      .command(command)
-      .then((commandId) => {
-        if (commandCallback) {
-          this._commandCallbacks.set(commandId, commandCallback);
-        }
-      })
-      .catch((err) => {
-        // eslint-disable-next-line no-console
-        console.error(err);
-      });
+    const worker = this.ensureStarted();
+    const id = this.nextWorkerApiRequestId();
+    const apiRequest: CommandWorkerApiRequest = {
+      type: "command",
+      id,
+      data: command,
+    };
+    if (commandCallback) {
+      const apiResultCallback: ApiResultCallback<string> = {
+        next: (command_id: string) => {
+          this._commandCallbacks.set(command_id, commandCallback);
+        },
+      };
+      this._apiStringCallbacks.set(id, apiResultCallback);
+    }
+    worker.postMessage({
+      event: "worker-api",
+      data: apiRequest,
+    });
   };
 
   library: (zone_id: string) => Observable<RoonApiBrowseLoadResponse> = (zone_id: string) => {
-    this.ensureStarted();
-    return from(this._roonClient.library(zone_id));
+    const worker = this.ensureStarted();
+    const id = this.nextWorkerApiRequestId();
+    const apiRequest: LibraryWorkerApiRequest = {
+      id,
+      type: "library",
+      data: zone_id,
+    };
+    return this.buildLoadResponseObservable(worker, apiRequest);
   };
 
   explore: (zone_id: string) => Observable<RoonApiBrowseLoadResponse> = (zone_id: string) => {
-    this.ensureStarted();
-    return from(
-      this._roonClient
-        .browse({
-          hierarchy: "browse",
-          zone_or_output_id: zone_id,
-        })
-        .then(() => {
-          return this._roonClient.load({
-            hierarchy: "browse",
-            level: 0,
-          });
-        })
-    );
+    const worker = this.ensureStarted();
+    const apiRequest: ExploreWorkerApiRequest = {
+      id: this.nextWorkerApiRequestId(),
+      type: "explore",
+      data: zone_id,
+    };
+    return this.buildLoadResponseObservable(worker, apiRequest);
   };
 
   previous: (zone_id: string, levels?: number) => Observable<RoonApiBrowseLoadResponse> = (
     zone_id: string,
     levels?: number
   ) => {
-    this.ensureStarted();
-    return from(
-      this._roonClient
-        .browse({
-          hierarchy: "browse",
-          pop_levels: levels ?? 1,
-          zone_or_output_id: zone_id,
-        })
-        .then((previousBrowseResponse) => {
-          return this._roonClient.load({
-            hierarchy: "browse",
-            level: previousBrowseResponse.list?.level,
-          });
-        })
-    );
+    const worker = this.ensureStarted();
+    const apiRequest: PreviousWorkerApiRequest = {
+      id: this.nextWorkerApiRequestId(),
+      type: "previous",
+      data: {
+        levels,
+        zone_id,
+      },
+    };
+    return this.buildLoadResponseObservable(worker, apiRequest);
   };
 
   navigate: (zone_id: string, item_key?: string, input?: string) => Observable<RoonApiBrowseLoadResponse> = (
@@ -264,44 +246,75 @@ export class RoonService implements OnDestroy {
     item_key?: string,
     input?: string
   ) => {
-    this.ensureStarted();
-    return from(
-      this._roonClient
-        .browse({
-          hierarchy: "browse",
-          item_key,
-          input,
-          zone_or_output_id: zone_id,
-        })
-        .then((browseResponse) => {
-          return this._roonClient.load({
-            hierarchy: "browse",
-            level: browseResponse.list?.level,
-          });
-        })
-    );
+    const worker = this.ensureStarted();
+    const apiRequest: NavigateWorkerApiRequest = {
+      id: this.nextWorkerApiRequestId(),
+      type: "navigate",
+      data: {
+        item_key,
+        zone_id,
+        input,
+      },
+    };
+    return this.buildLoadResponseObservable(worker, apiRequest);
   };
 
   browse: (options: ClientRoonApiBrowseOptions) => Promise<RoonApiBrowseResponse> = (options) => {
-    this.ensureStarted();
-    return this._roonClient.browse(options);
+    const worker = this.ensureStarted();
+    const id = this.nextWorkerApiRequestId();
+    const apiRequest: BrowseWorkerApiRequest = {
+      id,
+      type: "browse",
+      data: options,
+    };
+    return new Promise((resolve, reject) => {
+      const apiResultCallback: ApiResultCallback<RoonApiBrowseResponse> = {
+        next: (browseApiResult) => {
+          resolve(browseApiResult);
+        },
+        error: (error) => {
+          reject(error);
+        },
+      };
+      this._apiBrowseCallbacks.set(id, apiResultCallback);
+      worker.postMessage({
+        event: "worker-api",
+        data: apiRequest,
+      });
+    });
   };
 
   load: (options: ClientRoonApiBrowseLoadOptions) => Promise<RoonApiBrowseLoadResponse> = (options) => {
-    this.ensureStarted();
-    return this._roonClient.load(options);
+    const worker = this.ensureStarted();
+    const id = this.nextWorkerApiRequestId();
+    const apiRequest: LoadWorkerApiRequest = {
+      id,
+      type: "load",
+      data: options,
+    };
+    return new Promise((resolve, reject) => {
+      const apiResultCallback: ApiResultCallback<RoonApiBrowseLoadResponse> = {
+        next: (browseApiResult) => {
+          resolve(browseApiResult);
+        },
+        error: (error) => {
+          reject(error);
+        },
+      };
+      this._apiLoadCallbacks.set(id, apiResultCallback);
+      worker.postMessage({
+        event: "worker-api",
+        data: apiRequest,
+      });
+    });
   };
 
   version: () => string = () => {
-    this.ensureStarted();
-    return this._roonClient.version();
+    return this._version;
   };
 
-  registerOutputCallback: (output_id: string, callback: OutputCallback) => void = (
-    output_id: string,
-    callback: OutputCallback
-  ) => {
-    this._outputCallbacks.set(output_id, callback);
+  registerOutputCallback: (callback: OutputCallback) => void = (callback: OutputCallback) => {
+    this._outputCallback = callback;
   };
 
   ngOnDestroy() {
@@ -321,25 +334,207 @@ export class RoonService implements OnDestroy {
   }
 
   private reconnect: () => void = () => {
-    const retrySub = defer(() => this._roonClient.restart())
-      .pipe(
-        retry({
-          delay: (err) => {
-            if (err instanceof Error && err.message === UPDATE_NEEDED_ERROR_MESSAGE) {
-              window.location.reload();
-            }
-            return timer(5000);
-          },
-        })
-      )
-      .subscribe(() => {
-        retrySub.unsubscribe();
-      });
+    if (this._worker) {
+      const message: WorkerClientActionMessage = {
+        event: "worker-client",
+        data: {
+          action: "restart-client",
+        },
+      };
+      this._worker.postMessage(message);
+    }
   };
 
-  private ensureStarted() {
-    if (!this._isStarted) {
+  private refresh: () => void = () => {
+    if (this._worker) {
+      const message: WorkerClientActionMessage = {
+        event: "worker-client",
+        data: {
+          action: "refresh-client",
+        },
+      };
+      this._worker.postMessage(message);
+    }
+  };
+
+  private ensureStarted(): Worker {
+    if (!this._isStarted || !this._worker) {
       throw new Error("you must wait for RoonService#start to complete before calling any other methods");
     }
+    return this._worker;
+  }
+
+  private dispatchWorkerEvent(m: MessageEvent<RawWorkerEvent>) {
+    switch (m.data.event) {
+      case "state":
+        this.onRoonState(m.data.data);
+        break;
+      case "zone":
+        this.onZoneState(m.data.data);
+        break;
+      case "queue":
+        this.onQueueState(m.data.data);
+        break;
+      case "command":
+        this.onCommandState(m.data.data);
+        break;
+      case "clientState":
+        this.onClientState(m.data.data);
+        break;
+      case "apiResult":
+        this.onApiResult(m.data.data);
+        break;
+    }
+  }
+
+  private onRoonState(state: ApiState) {
+    this._$roonState.set(state);
+    if (state.state === RoonState.SYNC) {
+      if (this._outputCallback) {
+        this._outputCallback(state.outputs);
+        delete this._outputCallback;
+      }
+    } else if (state.state === RoonState.STOPPED) {
+      this.reconnect();
+    }
+  }
+
+  private onZoneState(state: ZoneState) {
+    const zs = this._zoneStates.get(state.zone_id);
+    if (zs) {
+      if (zs.$zone) {
+        zs.$zone.set(state);
+      } else {
+        zs.$zone = signal(state);
+      }
+    } else {
+      this._zoneStates.set(state.zone_id, {
+        $zone: signal(state),
+      });
+    }
+  }
+
+  private onQueueState(state: QueueState) {
+    const zs = this._zoneStates.get(state.zone_id);
+    if (zs) {
+      if (zs.$queue) {
+        zs.$queue.set(state);
+      } else {
+        zs.$queue = signal(state);
+      }
+    } else {
+      this._zoneStates.set(state.zone_id, {
+        $queue: signal(state),
+      });
+    }
+  }
+
+  private onCommandState(notification: CommandState) {
+    const commandCallback = this._commandCallbacks.get(notification.command_id);
+    if (commandCallback) {
+      this._commandCallbacks.delete(notification.command_id);
+      commandCallback(notification);
+    }
+  }
+
+  private onClientState(clientState: ClientState) {
+    switch (clientState) {
+      case "outdated":
+        window.location.reload();
+        break;
+      case "started":
+        if (this._startResolve) {
+          this._isStarted = true;
+          this._startResolve();
+          delete this._startResolve;
+          delete this._startReject;
+        }
+        break;
+      case "not-started":
+        if (this._startReject) {
+          this._isStarted = false;
+          this._startReject(new Error());
+          delete this._startResolve;
+          delete this._startReject;
+        }
+        break;
+    }
+  }
+
+  private onApiResult(apiResultEvent: RawApiResult) {
+    switch (apiResultEvent.type) {
+      case "browse":
+        this.onBrowseApiResult(apiResultEvent);
+        break;
+      case "command":
+        this.onStringApiResult(apiResultEvent);
+        break;
+      case "load":
+        this.onLoadApiResult(apiResultEvent);
+        break;
+      case "version":
+        this.onStringApiResult(apiResultEvent);
+        break;
+    }
+  }
+
+  private onBrowseApiResult(apiResult: BrowseApiResult) {
+    const callback = this._apiBrowseCallbacks.get(apiResult.id);
+    if (callback) {
+      if (apiResult.data) {
+        callback.next(apiResult.data);
+      } else if (apiResult.error && callback.error) {
+        callback.error(apiResult.error);
+      }
+      this._apiBrowseCallbacks.delete(apiResult.id);
+    }
+  }
+
+  private onLoadApiResult(apiResult: LoadApiResult) {
+    const callback = this._apiLoadCallbacks.get(apiResult.id);
+    if (callback) {
+      if (apiResult.data) {
+        callback.next(apiResult.data);
+      } else if (apiResult.error && callback.error) {
+        callback.error(apiResult.error);
+      }
+      this._apiLoadCallbacks.delete(apiResult.id);
+    }
+  }
+
+  private onStringApiResult(apiResult: CommandApiResult | VersionApiResult) {
+    const callback = this._apiStringCallbacks.get(apiResult.id);
+    if (callback) {
+      if (apiResult.data) {
+        callback.next(apiResult.data);
+      } else if (apiResult.error && callback.error) {
+        callback.error(apiResult.error);
+      }
+      this._apiStringCallbacks.delete(apiResult.id);
+    }
+  }
+
+  private buildLoadResponseObservable(worker: Worker, apiRequest: RawWorkerApiRequest) {
+    return new Observable<RoonApiBrowseLoadResponse>((subscriber) => {
+      const apiResultCallback: ApiResultCallback<RoonApiBrowseLoadResponse> = {
+        next: (loadResponse) => {
+          subscriber.next(loadResponse);
+          subscriber.complete();
+        },
+        error: (error) => {
+          subscriber.error(error);
+          subscriber.complete();
+        },
+      };
+      this._apiLoadCallbacks.set(apiRequest.id, apiResultCallback);
+      worker.postMessage({
+        event: "worker-api",
+        data: apiRequest,
+      });
+    });
+  }
+
+  private nextWorkerApiRequestId() {
+    return this._workerApiRequestId++;
   }
 }

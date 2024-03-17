@@ -6,15 +6,18 @@ export const resetEventSourceMocks: () => void = (): void => {
 
 export class EventSourceMock {
   private readonly listeners: Map<string, EventListener>;
+  private _state: number;
   private _onerror?: () => void;
 
   constructor() {
     this.listeners = new Map<string, EventListener>();
+    this._state = 1;
   }
 
   close = jest.fn().mockImplementation(() => {
+    this._state = 0;
     this.listeners.clear();
-    return Promise.resolve();
+    return;
   });
 
   addEventListener = jest.fn().mockImplementation((type: string, listener: EventListener): void => {
@@ -37,7 +40,18 @@ export class EventSourceMock {
   }
 
   set onerror(listener: () => void) {
-    this._onerror = listener;
+    this._onerror = () => {
+      this._state = 0;
+      listener();
+    };
+  }
+
+  get OPEN(): number {
+    return 1;
+  }
+
+  get readyState(): number {
+    return this._state;
   }
 }
 

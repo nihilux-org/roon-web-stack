@@ -5,11 +5,14 @@ import {
   ApiState,
   ClientRoonApiBrowseLoadOptions,
   ClientRoonApiBrowseOptions,
+  ClientState,
+  ClientStateListener,
   Command,
   CommandResult,
   CommandState,
   CommandStateListener,
   CommandType,
+  Ping,
   QueueState,
   QueueStateListener,
   RoonApiBrowseLoadOptions,
@@ -21,7 +24,7 @@ import {
   ZoneState,
   ZoneStateListener,
 } from "@model";
-import { roonWebClientFactory, UPDATE_NEEDED_ERROR_MESSAGE } from "./roon-web-client-factory";
+import { roonWebClientFactory } from "./roon-web-client-factory";
 
 const API_URL = new URL("http://test.test:3000");
 
@@ -34,6 +37,8 @@ describe("roon-web-client-factory.ts test suite", () => {
   let publishedZoneStates: ZoneState[];
   let queueStateListener: QueueStateListener;
   let publishedQueueStates: QueueState[];
+  let clientStateListener: ClientStateListener;
+  let publishedClientStates: ClientState[];
   beforeEach(() => {
     enableFetchMocks();
     Object.defineProperty(global, "fetch", {
@@ -58,6 +63,15 @@ describe("roon-web-client-factory.ts test suite", () => {
     queueStateListener = (state: QueueState) => {
       publishedQueueStates.push(state);
     };
+    publishedClientStates = [];
+    clientStateListener = (state: ClientState) => {
+      publishedClientStates.push(state);
+    };
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
   });
 
   it("roonWebClientFactory#build should return a new RoonWebClient at each call", () => {
@@ -96,6 +110,12 @@ describe("roon-web-client-factory.ts test suite", () => {
       client.offQueueState(queueStateListener);
     }).not.toThrow(error);
     expect(() => {
+      client.onClientState(clientStateListener);
+    }).not.toThrow(error);
+    expect(() => {
+      client.offClientState(clientStateListener);
+    }).not.toThrow(error);
+    expect(() => {
       client.version();
     }).toThrow(error);
     void expect(client.stop()).rejects.toEqual(error);
@@ -106,31 +126,39 @@ describe("roon-web-client-factory.ts test suite", () => {
     void expect(client.library(zone_id)).rejects.toEqual(error);
   });
 
-  it("RoonWebClient#start should call GET '/api/version', call POST '/api/register', save the returned Location header as client_path, load Explore and Library item_key and open an EventSource on '${client_path}/events'", async () => {
-    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
-    const client = roonWebClientFactory.build(API_URL);
-    await client.start();
-    expect(fetchMock.mock.calls).toHaveLength(4);
-    const versionUrl = new URL("/api/version", API_URL);
-    const versionRequest = fetchMock.mock.calls[0][0] as Request;
-    expect(versionRequest.url).toEqual(versionUrl.toString());
-    expect(versionRequest.method).toEqual("GET");
-    const registerUrl = new URL("/api/register", API_URL);
-    const registerRequest = fetchMock.mock.calls[1][0] as Request;
-    expect(registerRequest.url).toEqual(registerUrl.toString());
-    expect(registerRequest.method).toEqual("POST");
-    expect(registerRequest.headers.get("Accept")).toEqual("application/json");
-    expect(eventSourceMocks.size).toEqual(1);
-    expect(eventSourceMocks.has(EVENTS_URL.toString())).toBe(true);
-    expect(eventSourceMockConstructor).toHaveBeenCalledTimes(1);
-    expect(eventSourceMockConstructor).toHaveBeenCalledWith(EVENTS_URL);
-    const eventSourceMock: EventSourceMock | undefined = eventSourceMocks.get(EVENTS_URL.toString());
-    expect(eventSourceMock?.onerror).not.toBeUndefined();
-    expect(eventSourceMock?.getEventListener("state")).not.toBeUndefined();
-    expect(eventSourceMock?.getEventListener("command_state")).not.toBeUndefined();
-    expect(eventSourceMock?.getEventListener("zone")).not.toBeUndefined();
-    expect(eventSourceMock?.getEventListener("queue")).not.toBeUndefined();
-  });
+  it(
+    "RoonWebClient#start should call GET '/api/version', call POST '/api/register', save the returned Location header as client_path, " +
+      "load Explore and Library item_key and open an EventSource on '${client_path}/events' and " +
+      "publish the 'started' clientState",
+    async () => {
+      fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+      const client = roonWebClientFactory.build(API_URL);
+      client.onClientState(clientStateListener);
+      await client.start();
+      expect(fetchMock.mock.calls).toHaveLength(4);
+      const versionUrl = new URL("/api/version", API_URL);
+      const versionRequest = fetchMock.mock.calls[0][0] as Request;
+      expect(versionRequest.url).toEqual(versionUrl.toString());
+      expect(versionRequest.method).toEqual("GET");
+      const registerUrl = new URL("/api/register", API_URL);
+      const registerRequest = fetchMock.mock.calls[1][0] as Request;
+      expect(registerRequest.url).toEqual(registerUrl.toString());
+      expect(registerRequest.method).toEqual("POST");
+      expect(registerRequest.headers.get("Accept")).toEqual("application/json");
+      expect(eventSourceMocks.size).toEqual(1);
+      expect(eventSourceMocks.has(EVENTS_URL.toString())).toBe(true);
+      expect(eventSourceMockConstructor).toHaveBeenCalledTimes(1);
+      expect(eventSourceMockConstructor).toHaveBeenCalledWith(EVENTS_URL);
+      const eventSourceMock: EventSourceMock | undefined = eventSourceMocks.get(EVENTS_URL.toString());
+      expect(eventSourceMock?.onerror).not.toBeUndefined();
+      expect(eventSourceMock?.getEventListener("state")).not.toBeUndefined();
+      expect(eventSourceMock?.getEventListener("command_state")).not.toBeUndefined();
+      expect(eventSourceMock?.getEventListener("zone")).not.toBeUndefined();
+      expect(eventSourceMock?.getEventListener("queue")).not.toBeUndefined();
+      expect(publishedClientStates).toHaveLength(1);
+      expect(publishedClientStates).toEqual(["started"]);
+    }
+  );
 
   it("RoonWebClient#start should return a rejected Promise without calling POST '/api/register' if any error occurred during the call of GET '/api/version'", () => {
     const error = new Error("network error");
@@ -160,7 +188,7 @@ describe("roon-web-client-factory.ts test suite", () => {
     expect(fetchMock.mock.calls).toHaveLength(1);
   });
 
-  it("RoonWebClient#start should return a rejected Promise without calling POST '/api/register' if the status of the response of GET '/api/version' does not have a 'x-roon-web-stack-version' header", () => {
+  it("RoonWebClient#start should return a rejected Promise without calling POST '/api/register' if the response of GET '/api/version' does not have a 'x-roon-web-stack-version' header", () => {
     fetchMock.once((req: Request): Promise<MockResponseInit> => {
       if (req.method === "GET" && req.url === new URL("/api/version", API_URL).toString()) {
         return Promise.resolve({
@@ -914,6 +942,50 @@ describe("roon-web-client-factory.ts test suite", () => {
   );
 
   it(
+    "RoonWebClient#command should auto-refresh client state if a 403 is returned while calling POST '${client_path}/command' " +
+      "and then call POST '${client_path}/command' again",
+    async () => {
+      const command_id = "command_id";
+      fetchMock
+        .once(mockVersionGet)
+        .once(mockRegisterPost)
+        .once(mockLibraryBrowsePost)
+        .once(mockLibraryLoadPost)
+        .once((req: Request) => {
+          if (req.method === "POST" && req.url === new URL(`${client_path}/command`, API_URL).toString()) {
+            return Promise.resolve({
+              status: 403,
+            });
+          } else {
+            return Promise.reject(new Error("error"));
+          }
+        })
+        .once(mockVersionGet)
+        .once(mockRegisterPost)
+        .once(mockLibraryBrowsePost)
+        .once(mockLibraryLoadPost)
+        .once((req: Request) => {
+          if (req.method === "POST" && req.url === new URL(`${client_path}/command`, API_URL).toString()) {
+            return Promise.resolve({
+              body: JSON.stringify({
+                command_id,
+              }),
+              status: 202,
+            });
+          } else {
+            return Promise.reject(new Error("error"));
+          }
+        });
+      const client = roonWebClientFactory.build(API_URL);
+      await client.start();
+      const refreshSpy = jest.spyOn(client, "refresh");
+      const returnedCommandId = await client.command(COMMAND);
+      expect(returnedCommandId).toEqual(command_id);
+      expect(refreshSpy).toHaveBeenCalledTimes(1);
+    }
+  );
+
+  it(
     "RoonWebClient#browse should call POST '${client_path}/browse' " +
       "with the given ClientRoonApiBrowseOptions serialized as JSON in in the body and return a Promise containing the returned RoonApiBrowseResponse",
     async () => {
@@ -1006,6 +1078,50 @@ describe("roon-web-client-factory.ts test suite", () => {
       await client.start();
       const responsePromise = client.browse(options);
       void expect(responsePromise).rejects.toEqual(new Error("unable to browse content"));
+    }
+  );
+
+  it(
+    "RoonWebClient#browse should auto-refresh client state if a 403 is returned during the call of POST '${client_path}/browse' " +
+      "and then call POST '${client_path}/browse' again",
+    async () => {
+      const options: RoonApiBrowseOptions = {
+        hierarchy: "browse",
+      };
+      const roonApiBrowseResponse: RoonApiBrowseResponse = {
+        action: "action",
+      };
+      fetchMock
+        .once(mockVersionGet)
+        .once(mockRegisterPost)
+        .once(mockLibraryBrowsePost)
+        .once(mockLibraryLoadPost)
+        .once((req) => {
+          if (req.method === "POST" && req.url === new URL(`${client_path}/browse`, API_URL).toString()) {
+            return Promise.resolve({
+              status: 403,
+            });
+          } else {
+            return Promise.reject(new Error("error"));
+          }
+        })
+        .once(mockVersionGet)
+        .once(mockRegisterPost)
+        .once(mockLibraryBrowsePost)
+        .once(mockLibraryLoadPost)
+        .once((req) => {
+          if (req.method === "POST" && req.url === new URL(`${client_path}/browse`, API_URL).toString()) {
+            return Promise.resolve(JSON.stringify(roonApiBrowseResponse));
+          } else {
+            return Promise.reject(new Error("error"));
+          }
+        });
+      const client = roonWebClientFactory.build(API_URL);
+      await client.start();
+      const refreshSpy = jest.spyOn(client, "refresh");
+      const response = await client.browse(options);
+      expect(response).toEqual(roonApiBrowseResponse);
+      expect(refreshSpy).toHaveBeenCalledTimes(1);
     }
   );
 
@@ -1127,6 +1243,61 @@ describe("roon-web-client-factory.ts test suite", () => {
   );
 
   it(
+    "RoonWebClient#load should auto-refresh client state if a 403 is returned duuring the call of POST '${client_path}/load' " +
+      "and then call POST '${client_path}/load' again",
+    async () => {
+      const options: RoonApiBrowseLoadOptions = {
+        hierarchy: "browse",
+        level: 42,
+      };
+      const roonApiLoadResponse: RoonApiBrowseLoadResponse = {
+        offset: 420,
+        list: {
+          title: "title",
+          count: 42,
+          level: 420,
+        },
+        items: [
+          {
+            title: "title",
+          },
+        ],
+      };
+      fetchMock
+        .once(mockVersionGet)
+        .once(mockRegisterPost)
+        .once(mockLibraryBrowsePost)
+        .once(mockLibraryLoadPost)
+        .once((req) => {
+          if (req.method === "POST" && req.url === new URL(`${client_path}/load`, API_URL).toString()) {
+            return Promise.resolve({
+              status: 403,
+            });
+          } else {
+            return Promise.reject(new Error("error"));
+          }
+        })
+        .once(mockVersionGet)
+        .once(mockRegisterPost)
+        .once(mockLibraryBrowsePost)
+        .once(mockLibraryLoadPost)
+        .once((req) => {
+          if (req.method === "POST" && req.url === new URL(`${client_path}/load`, API_URL).toString()) {
+            return Promise.resolve(JSON.stringify(roonApiLoadResponse));
+          } else {
+            return Promise.reject(new Error("error"));
+          }
+        });
+      const client = roonWebClientFactory.build(API_URL);
+      await client.start();
+      const refreshSpy = jest.spyOn(client, "refresh");
+      const response = await client.load(options);
+      expect(response).toEqual(roonApiLoadResponse);
+      expect(refreshSpy).toHaveBeenCalledTimes(1);
+    }
+  );
+
+  it(
     "RoonWebClient#library should call RoonWebClient#browse with given 'zone_id' and preloaded Library 'item_key' " +
       "and then call RoonWebClient#load with returned level",
     async () => {
@@ -1223,25 +1394,34 @@ describe("roon-web-client-factory.ts test suite", () => {
     void expect(secondRestart).resolves;
   });
 
-  it("RoonWebClient#restart should return a rejected Promise with expected message if the api version has changed since the first call to #start", async () => {
-    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
-    const client = roonWebClientFactory.build(API_URL);
-    await client.start();
-    fetchMock.once((req) => {
-      if (req.method === "GET" && req.url === new URL("/api/version", API_URL).toString()) {
-        return Promise.resolve({
-          headers: {
-            "x-roon-web-stack-version": "new_version",
-          },
-          status: 204,
-        });
-      } else {
-        return Promise.reject(new Error("error"));
-      }
-    });
-    const newVersionRestart = client.restart();
-    void expect(newVersionRestart).rejects.toEqual(new Error(UPDATE_NEEDED_ERROR_MESSAGE));
-  });
+  it(
+    "RoonWebClient#restart should return a fulfilled Promise after publishing an 'outdated' ClientState " +
+      "if the api version has changed since the first call to #start",
+    async () => {
+      fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+      const client = roonWebClientFactory.build(API_URL);
+      await client.start();
+      fetchMock
+        .once((req) => {
+          if (req.method === "GET" && req.url === new URL("/api/version", API_URL).toString()) {
+            return Promise.resolve({
+              headers: {
+                "x-roon-web-stack-version": "new_version",
+              },
+              status: 204,
+            });
+          } else {
+            return Promise.reject(new Error("error"));
+          }
+        })
+        .once(mockRegisterPost)
+        .once(mockLibraryBrowsePost)
+        .once(mockLibraryLoadPost);
+      client.onClientState(clientStateListener);
+      await client.restart();
+      expect(publishedClientStates).toEqual(["outdated", "started"]);
+    }
+  );
 
   it("RoonWebClient#version should return the version returned by the API in 'x-roon-web-stack-version' header of the response of GET '/api/version'", async () => {
     fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
@@ -1250,27 +1430,86 @@ describe("roon-web-client-factory.ts test suite", () => {
     expect(client.version()).toEqual(VERSION);
   });
 
-  it("RoonWebClient#refresh should not call #refresh if no error has happened on the underlying SSE request", async () => {
+  it("RoonWebClient#refresh should not call #restart if no error has happened on the underlying SSE request", async () => {
     fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
     const client = roonWebClientFactory.build(API_URL);
     await client.start();
-    const refreshSpy = jest.spyOn(client, "restart");
+    const restartSpy = jest.spyOn(client, "restart");
     await client.refresh();
-    expect(refreshSpy).toHaveBeenCalledTimes(0);
+    expect(restartSpy).toHaveBeenCalledTimes(0);
   });
 
-  it("RoonWebClient#refresh should call #refresh if an error has happened on the underlying SSE request", async () => {
+  it("RoonWebClient#refresh should call #restart if an error has happened on the underlying SSE request", async () => {
     fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
     const client = roonWebClientFactory.build(API_URL);
     await client.start();
-    const refreshSpy = jest.spyOn(client, "restart");
+    const restartSpy = jest.spyOn(client, "restart");
     fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
     const eventSource = eventSourceMocks.get(EVENTS_URL.toString());
     if (eventSource && eventSource.onerror) {
       eventSource.onerror();
     }
     await client.refresh();
+    expect(restartSpy).toHaveBeenCalledTimes(1);
+    await client.refresh();
+    expect(restartSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it("RoonWebClient#refresh should let the client marked as to refresh if any error happen during #restart", async () => {
+    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    const client = roonWebClientFactory.build(API_URL);
+    await client.start();
+    const restartSpy = jest.spyOn(client, "restart");
+    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost);
+    const eventSource = eventSourceMocks.get(EVENTS_URL.toString());
+    if (eventSource && eventSource.onerror) {
+      eventSource.onerror();
+    }
+    let error: Error | undefined = undefined;
+    try {
+      await client.refresh();
+    } catch (err) {
+      if (err instanceof Error) {
+        error = err;
+      }
+    }
+    expect(error).not.toBeUndefined();
+    expect(restartSpy).toHaveBeenCalledTimes(1);
+    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    await client.refresh();
+    expect(restartSpy).toHaveBeenCalledTimes(2);
+    await client.refresh();
+    expect(restartSpy).toHaveBeenCalledTimes(2);
+  });
+
+  it("RoonWebClient should mark client to be refreshed if a new Ping is not received after expected time", async () => {
+    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    const client = roonWebClientFactory.build(API_URL);
+    await client.start();
+    const refreshSpy = jest.spyOn(client, "refresh");
+    const restartSpy = jest.spyOn(client, "restart");
+    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    const eventSource = eventSourceMocks.get(EVENTS_URL.toString());
+    const ping: Ping = {
+      next: 1,
+    };
+    sendPingEvent(ping, eventSource);
+    jest.advanceTimersByTime(1.5 * 1000 - 1);
+    expect(refreshSpy).toHaveBeenCalledTimes(0);
+    await client.refresh();
     expect(refreshSpy).toHaveBeenCalledTimes(1);
+    expect(restartSpy).toHaveBeenCalledTimes(0);
+    sendPingEvent(ping, eventSource);
+    jest.advanceTimersByTime(1.5 * 1000 - 1);
+    expect(refreshSpy).toHaveBeenCalledTimes(1);
+    await client.refresh();
+    expect(refreshSpy).toHaveBeenCalledTimes(2);
+    expect(restartSpy).toHaveBeenCalledTimes(0);
+    jest.advanceTimersByTime(1);
+    expect(refreshSpy).toHaveBeenCalledTimes(2);
+    await client.refresh();
+    expect(refreshSpy).toHaveBeenCalledTimes(3);
+    expect(restartSpy).toHaveBeenCalledTimes(1);
   });
 });
 
@@ -1319,6 +1558,16 @@ const sendQueueEvent = (queueState: QueueState, eventSourceMock?: EventSourceMoc
     eventSourceMock.dispatchEvent(
       new MessageEvent<string>("queue", {
         data: JSON.stringify(queueState),
+      })
+    );
+  }
+};
+
+const sendPingEvent = (ping: Ping, eventSourceMock?: EventSourceMock): void => {
+  if (eventSourceMock) {
+    eventSourceMock.dispatchEvent(
+      new MessageEvent<string>("ping", {
+        data: JSON.stringify(ping),
       })
     );
   }

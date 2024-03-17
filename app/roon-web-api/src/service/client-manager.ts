@@ -1,5 +1,5 @@
 import { nanoid } from "nanoid";
-import { map, mergeWith, Observable, Subject } from "rxjs";
+import { interval, map, mergeWith, Observable, Subject } from "rxjs";
 import { dataConverter, zoneManager } from "@data";
 import { logger, roon } from "@infrastructure";
 import {
@@ -29,9 +29,18 @@ class InternalClient implements Client {
 
   events = (): Observable<RoonSseMessage> => {
     if (this.eventChannel === undefined) {
+      const pingPeriod = 55;
+      const pingObservable: Observable<RoonSseMessage> = interval(pingPeriod * 1000).pipe(
+        map(() => ({
+          event: "ping",
+          data: {
+            next: pingPeriod,
+          },
+        }))
+      );
       this.eventChannel = this.commandChannel
         .pipe(map(dataConverter.toRoonSseMessage))
-        .pipe(mergeWith(zoneManager.events()));
+        .pipe(mergeWith(zoneManager.events(), pingObservable));
     }
     return this.eventChannel;
   };
