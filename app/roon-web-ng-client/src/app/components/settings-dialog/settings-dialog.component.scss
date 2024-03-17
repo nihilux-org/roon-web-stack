@@ -6,6 +6,7 @@
     .setting {
       display: flex;
       align-items: center;
+      padding-bottom: 20px;
       label {
         margin-right: 10px;
         width: 120px;
@@ -21,18 +22,21 @@
         flex-direction: column;
       }
     }
-    .setting:not(:last-of-type) {
-      padding-bottom: 20px;
-    }
   }
   mat-dialog-actions {
     justify-content: flex-end;
     padding: 0 24px 20px 0;
   }
   .version {
-    text-align: right;
     font-style: italic;
     font-size: smaller;
     cursor: default;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 130px;
+  }
+  .version.small-screen {
+    padding-left: 0;
   }
 }

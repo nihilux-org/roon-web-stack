@@ -62,4 +62,9 @@ export class SettingsDialogComponent {
   onSave() {
     this._dialogRef.close();
   }
+
+  onReload() {
+    this.onSave();
+    window.location.reload();
+  }
 }
