@@ -126,6 +126,7 @@ const refreshClient = (): void => {
         },
         error: () => {
           refreshSub.unsubscribe();
+          _isRefreshing = false;
           const message: ApiStateWorkerEvent = {
             event: "state",
             data: {
@@ -137,8 +138,6 @@ const refreshClient = (): void => {
             },
           };
           postMessage(message);
-          _isRefreshing = false;
-          startHealthCheck();
         },
       });
   }
