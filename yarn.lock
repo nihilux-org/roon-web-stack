@@ -2562,15 +2562,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gquittet/graceful-server@npm:4.0.8":
-  version: 4.0.8
-  resolution: "@gquittet/graceful-server@npm:4.0.8"
+"@gquittet/graceful-server@npm:4.0.9":
+  version: 4.0.9
+  resolution: "@gquittet/graceful-server@npm:4.0.9"
   dependencies:
     fsevents: "npm:^2.3.2"
   dependenciesMeta:
     fsevents:
       optional: true
-  checksum: 10c0/8e5d885b009d28b6cf5ab5a73909c8830c99f626805aaa32a6ab232a3706ec6257697611fec2b27d4a7fa823adac76b6898b343af052152e4c52479db780f927
+  checksum: 10c0/c50e5ba13114208f4319ac4c51eda9700706b0b9b6825f776fb843e10b1182c1d4cabdf2f8b576aee3442629d9ba6016a7dafda36c34d83bb7c7d53444d6d290
   languageName: node
   linkType: hard
 
@@ -3767,7 +3767,7 @@ __metadata:
   dependencies:
     "@fastify/compress": "npm:7.0.0"
     "@fastify/static": "npm:7.0.1"
-    "@gquittet/graceful-server": "npm:4.0.8"
+    "@gquittet/graceful-server": "npm:4.0.9"
     "@nihilux/roon-web-model": "workspace:*"
     "@types/jest": "npm:29.5.12"
     "@types/node": "npm:20.11.28"
