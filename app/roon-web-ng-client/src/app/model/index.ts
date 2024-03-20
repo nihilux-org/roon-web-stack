@@ -205,7 +205,7 @@ export type RawWorkerEvent =
 
 export interface ApiResult<T> {
   data?: T;
-  error?: Error;
+  error?: unknown;
   id: number;
 }
 
@@ -233,5 +233,5 @@ export interface ApiResultWorkerEvent extends WorkerEvent<RawApiResult> {
 
 export interface ApiResultCallback<U extends RoonApiBrowseResponse | RoonApiBrowseLoadResponse | string> {
   next: (u: U) => void;
-  error?: (error: Error) => void;
+  error?: (error: unknown) => void;
 }

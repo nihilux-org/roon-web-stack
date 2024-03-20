@@ -52,7 +52,7 @@ describe("zone-manager.ts test suite", () => {
         .then((module) => {
           zoneManager = module.zoneManager as unknown as ZoneManager;
         })
-        .catch((err: Error) => {
+        .catch((err: unknown) => {
           logger.error(err);
         });
     });

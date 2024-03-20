@@ -91,7 +91,7 @@ class InternalClientManager implements ClientManager {
         hierarchy: "browse",
         pop_all: true,
         set_display_offset: true,
-      }).catch((err) => {
+      }).catch((err: unknown) => {
         logger.error(err, "error while cleaning client '%s' state", c.id());
       });
     });

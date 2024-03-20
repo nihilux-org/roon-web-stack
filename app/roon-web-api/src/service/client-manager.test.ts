@@ -30,7 +30,7 @@ describe("client-manager.ts test suite", () => {
         .then((module) => {
           clientManager = module.clientManager;
         })
-        .catch((err: Error) => {
+        .catch((err: unknown) => {
           logger.error(err);
         });
     });

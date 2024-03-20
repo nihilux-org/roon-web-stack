@@ -97,7 +97,7 @@ const startClient = (url: string, isDesktop: boolean): void => {
       postMessage(message);
       startHealthCheck();
     })
-    .catch((err) => {
+    .catch((err: unknown) => {
       // eslint-disable-next-line no-console
       console.error("error during RoonClient start", err);
       const message: ClientStateWorkerEvent = {
@@ -173,7 +173,7 @@ const consumerApiRequest = (apiRequest: RawWorkerApiRequest): void => {
           };
           postApiResult(message);
         })
-        .catch((error: Error) => {
+        .catch((error: unknown) => {
           const message: BrowseApiResult = {
             error,
             type,
@@ -193,7 +193,7 @@ const consumerApiRequest = (apiRequest: RawWorkerApiRequest): void => {
           };
           postApiResult(message);
         })
-        .catch((error: Error) => {
+        .catch((error: unknown) => {
           const message: CommandApiResult = {
             type,
             id,
@@ -222,7 +222,7 @@ const consumerApiRequest = (apiRequest: RawWorkerApiRequest): void => {
           };
           postApiResult(message);
         })
-        .catch((error: Error) => {
+        .catch((error: unknown) => {
           const message: LoadApiResult = {
             type: "load",
             error,
@@ -242,7 +242,7 @@ const consumerApiRequest = (apiRequest: RawWorkerApiRequest): void => {
           };
           postApiResult(message);
         })
-        .catch((error: Error) => {
+        .catch((error: unknown) => {
           const message: LoadApiResult = {
             type: "load",
             error,
@@ -262,7 +262,7 @@ const consumerApiRequest = (apiRequest: RawWorkerApiRequest): void => {
           };
           postApiResult(message);
         })
-        .catch((error: Error) => {
+        .catch((error: unknown) => {
           const message: LoadApiResult = {
             type,
             error,
@@ -293,7 +293,7 @@ const consumerApiRequest = (apiRequest: RawWorkerApiRequest): void => {
           };
           postApiResult(message);
         })
-        .catch((error: Error) => {
+        .catch((error: unknown) => {
           const message: LoadApiResult = {
             type: "load",
             error,
@@ -323,7 +323,7 @@ const consumerApiRequest = (apiRequest: RawWorkerApiRequest): void => {
           };
           postApiResult(message);
         })
-        .catch((error: Error) => {
+        .catch((error: unknown) => {
           const message: LoadApiResult = {
             type: "load",
             id,

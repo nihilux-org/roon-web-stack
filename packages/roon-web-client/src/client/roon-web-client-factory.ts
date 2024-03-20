@@ -126,8 +126,8 @@ class InternalRoonWebClient implements RoonWebClient {
   };
 
   stop: () => Promise<void> = async () => {
-    this.ensureStared();
-    const unregisterUrl = new URL(`${this._clientPath}/unregister`, this._apiHost);
+    const clientPath = this.ensureStared();
+    const unregisterUrl = new URL(`${clientPath}/unregister`, this._apiHost);
     const unregisterRequest = new Request(unregisterUrl, {
       method: "POST",
       mode: "cors",
@@ -211,8 +211,8 @@ class InternalRoonWebClient implements RoonWebClient {
   };
 
   command: (command: Command) => Promise<string> = async (command: Command): Promise<string> => {
-    this.ensureStared();
-    const commandUrl = new URL(`${this._clientPath}/command`, this._apiHost);
+    const clientPath = this.ensureStared();
+    const commandUrl = new URL(`${clientPath}/command`, this._apiHost);
     const req = new Request(commandUrl, {
       method: "POST",
       headers: {
@@ -232,8 +232,8 @@ class InternalRoonWebClient implements RoonWebClient {
   browse: (options: ClientRoonApiBrowseOptions) => Promise<RoonApiBrowseResponse> = async (
     options: ClientRoonApiBrowseOptions
   ): Promise<RoonApiBrowseResponse> => {
-    this.ensureStared();
-    const browseUrl = new URL(`${this._clientPath}/browse`, this._apiHost);
+    const clientPath = this.ensureStared();
+    const browseUrl = new URL(`${clientPath}/browse`, this._apiHost);
     const req = new Request(browseUrl, {
       method: "POST",
       headers: {
@@ -253,8 +253,8 @@ class InternalRoonWebClient implements RoonWebClient {
   load: (options: ClientRoonApiBrowseLoadOptions) => Promise<RoonApiBrowseLoadResponse> = async (
     options: ClientRoonApiBrowseLoadOptions
   ): Promise<RoonApiBrowseLoadResponse> => {
-    this.ensureStared();
-    const loadUrl = new URL(`${this._clientPath}/load`, this._apiHost);
+    const clientPath = this.ensureStared();
+    const loadUrl = new URL(`${clientPath}/load`, this._apiHost);
     const req = new Request(loadUrl, {
       method: "POST",
       headers: {
@@ -304,15 +304,17 @@ class InternalRoonWebClient implements RoonWebClient {
     }
   };
 
-  private ensureStared: () => void = () => {
+  private ensureStared: () => string = () => {
     if (this._clientPath === undefined) {
       throw new Error(InternalRoonWebClient.CLIENT_NOT_STARTED_ERROR_MESSAGE);
     }
+    return this._clientPath;
   };
 
   private connectEventSource: () => void = (): void => {
     if (this._eventSource === undefined) {
-      const eventSourceUrl = new URL(`${this._clientPath}/events`, this._apiHost);
+      const clientPath = this.ensureStared();
+      const eventSourceUrl = new URL(`${clientPath}/events`, this._apiHost);
       this._eventSource = new EventSource(eventSourceUrl);
       this._eventSource.addEventListener("state", this.onApiStateMessage);
       this._eventSource.addEventListener("command_state", this.onCommandStateMessage);

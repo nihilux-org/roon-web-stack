@@ -273,7 +273,11 @@ export class RoonService implements OnDestroy {
           resolve(browseApiResult);
         },
         error: (error) => {
-          reject(error);
+          if (error instanceof Error) {
+            reject(error);
+          } else {
+            reject(new Error("unknown error"));
+          }
         },
       };
       this._apiBrowseCallbacks.set(id, apiResultCallback);
@@ -298,7 +302,11 @@ export class RoonService implements OnDestroy {
           resolve(browseApiResult);
         },
         error: (error) => {
-          reject(error);
+          if (error instanceof Error) {
+            reject(error);
+          } else {
+            reject(new Error("unknown error"));
+          }
         },
       };
       this._apiLoadCallbacks.set(id, apiResultCallback);

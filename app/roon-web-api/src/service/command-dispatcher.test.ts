@@ -93,6 +93,45 @@ describe("command-dispatcher.ts test suite", () => {
     });
   });
 
+  it("command-dispatcher#dispatch should handle non Error thrown by executor", async () => {
+    const error = "error";
+    zone_by_zone_id.mockImplementation(() => {
+      // eslint-disable-next-line @typescript-eslint/no-throw-literal
+      throw error;
+    });
+    const notifications: CommandState[] = [];
+    const promise: Promise<void> = new Promise((resolve) => {
+      controlChannel.subscribe((n: CommandState) => {
+        notifications.push(n);
+        if (notifications.length === commands.length - 2) {
+          resolve();
+        }
+      });
+    });
+
+    commands
+      .filter((c) => c.type !== CommandType.GROUP)
+      .forEach((c: Command) => {
+        commandDispatcher.dispatch(c, controlChannel);
+      });
+    await promise;
+    expect(nanoid_counter).toEqual(commands.length - 2);
+    notifications.forEach((notification: CommandState, index: number) => {
+      const command_id = `${index + 1}`;
+      expect(notification).toEqual({
+        command_id,
+        state: CommandResult.REJECTED,
+      });
+      expect(loggerMock.error).toHaveBeenNthCalledWith(
+        parseInt(command_id, 10),
+        error,
+        "error while dispatching command '%s': '%s'",
+        command_id,
+        JSON.stringify(commands[index])
+      );
+    });
+  });
+
   it("command-dispatcher#dispatch should call control-command-executor command executor with any ControlCommand", async () => {
     const controlCommands = commands.filter(
       (c) =>
