@@ -182,7 +182,7 @@ class InternalZoneManager implements ZoneManager {
           .then(() => {
             delete zd.backup?.queue;
           })
-          .catch((err) => {
+          .catch((err: unknown) => {
             logger.error(err);
           });
       }
@@ -227,7 +227,7 @@ class InternalZoneManager implements ZoneManager {
         queueManager,
         zone: z,
       });
-      void queueManager.start().catch((err) => {
+      void queueManager.start().catch((err: unknown) => {
         logger.error(err);
       });
       return true;

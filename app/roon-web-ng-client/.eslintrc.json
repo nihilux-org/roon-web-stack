@@ -75,7 +75,13 @@
         "import/first": "error",
         "import/newline-after-import": "error",
         "import/no-duplicates": "error",
-        "import/no-unassigned-import": "error"
+        "import/no-unassigned-import": "error",
+        "@typescript-eslint/restrict-template-expressions": [
+          "error",
+          {
+            "allowNumber": true
+          }
+        ]
       }
     },
     {

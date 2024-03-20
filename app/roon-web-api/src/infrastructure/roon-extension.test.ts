@@ -27,7 +27,7 @@ describe("roon-extension.ts test suite", () => {
         .then((module) => {
           roon = module.roon;
         })
-        .catch((err: Error) => {
+        .catch((err: unknown) => {
           logger.error(err);
         });
     });

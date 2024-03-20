@@ -65,12 +65,12 @@ const executeCommand: <T extends Command, U extends ExecutionContext>(
       };
       controlChannel.next(commandNotification);
     })
-    .catch((err: Error) => {
+    .catch((err: unknown) => {
       logger.error(err, "error while dispatching command '%s': '%s'", command_id, JSON.stringify(command));
       const commandNotification: CommandState = {
         command_id,
         state: CommandResult.REJECTED,
-        cause: err.message,
+        cause: err instanceof Error ? err.message : undefined,
       };
       controlChannel.next(commandNotification);
     });

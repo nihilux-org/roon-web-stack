@@ -96,7 +96,7 @@ const getImage = async (
 
 const browse = async (options: RoonApiBrowseOptions | EmptyObject): Promise<RoonApiBrowseResponse> => {
   const server = await extension.get_core();
-  return server.services.RoonApiBrowse.browse(options).catch((err) => {
+  return server.services.RoonApiBrowse.browse(options).catch((err: unknown) => {
     logger.error(err, "error during roon#browse");
     throw err;
   });
@@ -104,7 +104,7 @@ const browse = async (options: RoonApiBrowseOptions | EmptyObject): Promise<Roon
 
 const load = async (options: RoonApiBrowseLoadOptions): Promise<RoonApiBrowseLoadResponse> => {
   const server = await extension.get_core();
-  return server.services.RoonApiBrowse.load(options).catch((err) => {
+  return server.services.RoonApiBrowse.load(options).catch((err: unknown) => {
     logger.error(err, "error during roon#load");
     throw err;
   });

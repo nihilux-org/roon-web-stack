@@ -174,7 +174,7 @@ export class RoonBrowseListComponent implements OnChanges {
                   menuClosedSub.unsubscribe();
                   navigationSub.unsubscribe();
                 })
-                .catch((err: Error) => {
+                .catch((err: unknown) => {
                   // eslint-disable-next-line no-console
                   console.error(err);
                 });
@@ -249,7 +249,7 @@ class RoonListDataSource extends DataSource<Item | undefined> {
           .then(() => {
             this._itemSubject.next(this._loadedItems);
           })
-          .catch((err) => {
+          .catch((err: unknown) => {
             // eslint-disable-next-line no-console
             console.error(err);
           });
