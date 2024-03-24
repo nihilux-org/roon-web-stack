@@ -67,7 +67,6 @@ export class RoonService implements OnDestroy {
   private _worker?: Worker;
   private _version: string;
   private _startResolve?: () => void;
-  private _startReject?: (err: Error) => void;
 
   constructor(deviceDetectorService: DeviceDetectorService, visibilityService: VisibilityService) {
     this._deviceDetectorService = deviceDetectorService;
@@ -104,9 +103,8 @@ export class RoonService implements OnDestroy {
   }
 
   start: () => Promise<void> = async () => {
-    const startPromise = new Promise<void>((resolve, reject) => {
+    const startPromise = new Promise<void>((resolve) => {
       this._startResolve = resolve;
-      this._startReject = reject;
     });
     this._worker = buildRoonWorker();
     this._worker.onmessage = (m: MessageEvent<RawWorkerEvent>) => {
@@ -451,19 +449,15 @@ export class RoonService implements OnDestroy {
         window.location.reload();
         break;
       case "started":
+      case "not-started":
         if (this._startResolve) {
+          if (clientState === "not-started") {
+            // eslint-disable-next-line no-console
+            console.error("startup failed, is roon-web-stack-extension enabled in roon settings?");
+          }
           this._isStarted = true;
           this._startResolve();
           delete this._startResolve;
-          delete this._startReject;
-        }
-        break;
-      case "not-started":
-        if (this._startReject) {
-          this._isStarted = false;
-          this._startReject(new Error());
-          delete this._startResolve;
-          delete this._startReject;
         }
         break;
     }
