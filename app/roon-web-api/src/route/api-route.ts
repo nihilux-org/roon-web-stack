@@ -16,15 +16,12 @@ interface ClientIdParam {
   client_id: string;
 }
 
-interface ImageParam {
-  image_key: string;
-}
-
 interface ImageQuery {
   height: string;
   width: string;
   scale: string;
   format: string;
+  image_key: string;
 }
 
 const apiRoute: FastifyPluginAsync = async (server: FastifyInstance): Promise<void> => {
@@ -98,9 +95,11 @@ const apiRoute: FastifyPluginAsync = async (server: FastifyInstance): Promise<vo
       return badRequestReply;
     }
   });
-  server.get<{ Params: ImageParam; Querystring: ImageQuery }>("/image/:image_key", async (req, reply) => {
-    const image_key = req.params.image_key;
-    const { width, height, scale, format } = req.query;
+  server.get<{ Querystring: ImageQuery }>("/image", async (req, reply) => {
+    const { image_key, width, height, scale, format } = req.query;
+    if (!image_key) {
+      return reply.status(400).send();
+    }
     let widthOption: number | undefined = undefined;
     let heightOption: number | undefined = undefined;
     let scaleOption: RoonImageScale | undefined = undefined;

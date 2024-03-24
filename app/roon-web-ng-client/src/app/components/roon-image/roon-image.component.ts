@@ -22,7 +22,7 @@ import {
       useValue: (config: ImageLoaderConfig) => {
         const height = config.loaderParams?.["height"] as number;
         const width = config.loaderParams?.["width"] as number;
-        return `/api/image/${config.src}?width=${width}&height=${height}&scale=fit`;
+        return `/api/image?width=${width}&height=${height}&scale=fit&image_key=${config.src}`;
       },
     },
   ],
