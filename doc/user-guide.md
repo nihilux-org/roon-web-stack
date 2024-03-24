@@ -83,25 +83,11 @@ I will implement a fallback image later (need to find a way that doesn't break a
 To avoid to overwhelm your `roon` server, images are cached in the browser via standard `http` headers for one day.
 Any change will appear 24 hours after the last time the image has been loaded in the browser.
 
-### Where are the cover images of the Live Radio?
-
-They were there until version `2.0.27`... disappear with `2.0.28` and have not came back since.
-
-Sorry about that, but as with every strange behavior regarding images, that what's returned by the `roon` api 🤷.
-
 ### Where are the parts of Beethoven's 9th (or any parts with any content)?
 
 I think you start to see the pattern... but `parts` are not exposed through `roon` api...  
 It's a pain for classical music, as they're widely used and useful for this genre.  
 I miss them too, but can't invent them.
-
-### Why are some artist name incorrect
-
-There's a strange behavior with artists' name while browsing content form Tidal or Qobuz: they're returned as `[[some_kind_of_id|Artist Name]]`.
-
-I've implemented a workaround to display them correctly, but it's not battle tested. From the `code`, only artists' name that contains `[[...]]` could be impacted, but once again, testing is light. 
-
-Please open a `github` issue for further investigation if you find artists' name that are incorrectly displayed.
 
 ### Sometimes during browsing, navigation get kind of crazy, why?
 
