@@ -398,6 +398,18 @@ describe("zone-manager.ts test suite", () => {
     zoneManager.events().subscribe((message) => messages.push(message));
     expect(messages).toHaveLength(5);
     expect(messages).toEqual([
+      ZONE_MESSAGE,
+      QUEUE_MESSAGE,
+      {
+        event: "zone",
+        data: OTHER_ZONE_STATE,
+      },
+      {
+        event: "queue",
+        data: {
+          zone_id: OTHER_ZONE.zone_id,
+        },
+      },
       {
         event: "state",
         data: {
@@ -435,18 +447,6 @@ describe("zone-manager.ts test suite", () => {
               output_id: OTHER_ZONE.outputs[1].output_id,
             },
           ],
-        },
-      },
-      ZONE_MESSAGE,
-      QUEUE_MESSAGE,
-      {
-        event: "zone",
-        data: OTHER_ZONE_STATE,
-      },
-      {
-        event: "queue",
-        data: {
-          zone_id: OTHER_ZONE.zone_id,
         },
       },
     ]);
@@ -554,6 +554,18 @@ describe("zone-manager.ts test suite", () => {
     });
     expect(messages).toHaveLength(7);
     expect(messages).toEqual([
+      ZONE_MESSAGE,
+      QUEUE_MESSAGE,
+      {
+        event: "zone",
+        data: OTHER_ZONE_STATE,
+      },
+      {
+        event: "queue",
+        data: {
+          zone_id: OTHER_ZONE.zone_id,
+        },
+      },
       {
         event: "state",
         data: {
@@ -591,18 +603,6 @@ describe("zone-manager.ts test suite", () => {
               output_id: OTHER_ZONE.outputs[1].output_id,
             },
           ],
-        },
-      },
-      ZONE_MESSAGE,
-      QUEUE_MESSAGE,
-      {
-        event: "zone",
-        data: OTHER_ZONE_STATE,
-      },
-      {
-        event: "queue",
-        data: {
-          zone_id: OTHER_ZONE.zone_id,
         },
       },
       ZONE_MESSAGE,
@@ -777,6 +777,8 @@ describe("zone-manager.ts test suite", () => {
     } as unknown as RoonApiTransportOutputs);
     expect(messages).toHaveLength(4);
     expect(messages).toEqual([
+      ZONE_MESSAGE,
+      QUEUE_MESSAGE,
       {
         event: "state",
         data: {
@@ -802,8 +804,6 @@ describe("zone-manager.ts test suite", () => {
           ],
         },
       },
-      ZONE_MESSAGE,
-      QUEUE_MESSAGE,
       ZONE_MESSAGE,
     ]);
   });
@@ -827,6 +827,8 @@ describe("zone-manager.ts test suite", () => {
     } as unknown as RoonApiTransportOutputs);
     expect(messages).toHaveLength(4);
     expect(messages).toEqual([
+      ZONE_MESSAGE,
+      QUEUE_MESSAGE,
       {
         event: "state",
         data: {
@@ -852,8 +854,6 @@ describe("zone-manager.ts test suite", () => {
           ],
         },
       },
-      ZONE_MESSAGE,
-      QUEUE_MESSAGE,
       ZONE_MESSAGE,
     ]);
   });
@@ -1436,6 +1436,11 @@ describe("zone-manager.ts test suite", () => {
         messages.push(s);
       });
       expect(messages).toEqual([
+        ZONE_MESSAGE,
+        QUEUE_MESSAGE,
+        OTHER_ZONE_MESSAGE,
+        OTHER_QUEUE_MESSAGE,
+        YET_ANOTHER_ZONE_MESSAGE,
         {
           event: "state",
           data: {
@@ -1483,11 +1488,6 @@ describe("zone-manager.ts test suite", () => {
             ],
           },
         },
-        ZONE_MESSAGE,
-        QUEUE_MESSAGE,
-        OTHER_ZONE_MESSAGE,
-        OTHER_QUEUE_MESSAGE,
-        YET_ANOTHER_ZONE_MESSAGE,
       ]);
     }
   );
