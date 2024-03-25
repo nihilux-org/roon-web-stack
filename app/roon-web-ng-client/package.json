@@ -56,6 +56,6 @@
     "ng-mocks": "14.12.1",
     "prettier": "3.2.5",
     "typescript": "5.3.3",
-    "webpack-dev-middleware": "^6.1.2"
+    "webpack-dev-middleware": "^7.1.1"
   }
 }
