@@ -40,8 +40,8 @@
     "@nihilux/roon-web-model": "workspace:*",
     "@types/jest": "29.5.12",
     "@types/node": "20.11.30",
-    "@typescript-eslint/eslint-plugin": "7.3.1",
-    "@typescript-eslint/parser": "7.3.1",
+    "@typescript-eslint/eslint-plugin": "7.4.0",
+    "@typescript-eslint/parser": "7.4.0",
     "eslint": "8.57.0",
     "eslint-config-prettier": "9.1.0",
     "eslint-config-standard": "17.1.0",
@@ -56,6 +56,6 @@
     "ng-mocks": "14.12.1",
     "prettier": "3.2.5",
     "typescript": "5.3.3",
-    "webpack-dev-middleware": "^6.1.2"
+    "webpack-dev-middleware": "^7.1.1"
   }
 }
