@@ -205,12 +205,12 @@ describe("client-manager.ts test suite", () => {
           },
         },
       ]);
-      jest.advanceTimersByTime(56000);
+      jest.advanceTimersByTime(46000);
       expect(roonSseMessages).toHaveLength(3);
       expect(roonSseMessages[2]).toEqual({
         event: "ping",
         data: {
-          next: 55,
+          next: 45,
         },
       });
     }
