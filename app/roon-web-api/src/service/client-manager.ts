@@ -29,7 +29,7 @@ class InternalClient implements Client {
 
   events = (): Observable<RoonSseMessage> => {
     if (this.eventChannel === undefined) {
-      const pingPeriod = 55;
+      const pingPeriod = 45;
       const pingObservable: Observable<RoonSseMessage> = interval(pingPeriod * 1000).pipe(
         map(() => ({
           event: "ping",
