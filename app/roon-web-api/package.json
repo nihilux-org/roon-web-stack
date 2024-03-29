@@ -13,7 +13,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@fastify/compress": "7.0.0",
+    "@fastify/compress": "7.0.2",
     "@fastify/static": "7.0.1",
     "@gquittet/graceful-server": "4.0.9",
     "fastify": "4.26.2",
