@@ -96,7 +96,7 @@ describe("command-dispatcher.ts test suite", () => {
   it("command-dispatcher#dispatch should handle non Error thrown by executor", async () => {
     const error = "error";
     zone_by_zone_id.mockImplementation(() => {
-      // eslint-disable-next-line @typescript-eslint/no-throw-literal
+      // eslint-disable-next-line @typescript-eslint/only-throw-error
       throw error;
     });
     const notifications: CommandState[] = [];
