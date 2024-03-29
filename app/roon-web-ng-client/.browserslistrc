@@ -1,10 +1,9 @@
 last 5 Chrome version
-last 2 Firefox version
-last 2 Edge major versions
-last 2 Safari major version
-iOS >= 15
+last 3 Firefox version
+last 3 Edge major versions
+last 5 Safari major version
+iOS >= 12
 Firefox ESR
-not IE 9-11
 last 2 version
 > 0.5%
-not dead
+not dead, not IE 9-11, not op_mini all, not kaios 2.5
