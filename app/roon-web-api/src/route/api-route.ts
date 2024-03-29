@@ -74,6 +74,7 @@ const apiRoute: FastifyPluginAsync = async (server: FastifyInstance): Promise<vo
   server.get<{ Params: ClientIdParam }>("/:client_id/events", (req, reply) => {
     const { client, badRequestReply } = getClient(req, reply);
     if (client) {
+      reply = reply.header("x-accel-buffering", "no");
       const events = client.events();
       const sub = events.subscribe({
         next: (message) => {
