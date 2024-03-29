@@ -94,8 +94,8 @@ const startClient = (url: string, isDesktop: boolean): void => {
         event: "clientState",
         data: "started",
       };
-      postMessage(message);
       startHealthCheck();
+      postMessage(message);
     })
     .catch((err: unknown) => {
       // eslint-disable-next-line no-console

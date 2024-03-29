@@ -13,6 +13,17 @@ export const roonWorkerMock = {
           data: "started",
         },
       } as MessageEvent<RawWorkerEvent>);
+    } else if (m.event === "worker-api" && m.data.type === "version") {
+      onMessageListener({
+        data: {
+          event: "apiResult",
+          data: {
+            id: m.data.id,
+            type: "version",
+            data: "version",
+          },
+        },
+      } as MessageEvent<RawWorkerEvent>);
     }
   }),
   set onmessage(listener: (m: MessageEvent<RawWorkerEvent>) => void) {

@@ -299,7 +299,7 @@ class InternalZoneManager implements ZoneManager {
   };
 
   events = (): Observable<RoonSseMessage> => {
-    const initValues: RoonSseMessage[] = [];
+    const initValues: RoonSseMessage[] = [dataConverter.toRoonSseMessage(this.buildApiState())];
     for (const zd of this.zoneData.values()) {
       initValues.push(dataConverter.toRoonSseMessage(zd.zone));
       if (zd.queueManager?.isStarted()) {
@@ -308,7 +308,6 @@ class InternalZoneManager implements ZoneManager {
         initValues.push(zd.backup.queue);
       }
     }
-    initValues.push(dataConverter.toRoonSseMessage(this.buildApiState()));
     return from(initValues).pipe(concatWith(this.roonEventSource));
   };
 
