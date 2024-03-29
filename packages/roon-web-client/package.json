@@ -1,6 +1,6 @@
 {
   "name": "@nihilux/roon-web-client",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "main": "bin/roon-web-client.js",
   "typings": "bin/src/index.d.ts",
   "license": "MIT",
