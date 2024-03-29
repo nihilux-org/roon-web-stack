@@ -14,7 +14,6 @@ import {
 import { ApiStateWorkerEvent } from "@model/client";
 import { RoonService } from "./roon.service";
 
-// FIXME: this test suite is not relevant anymore, need to be rewritten
 describe("RoonServiceService", () => {
   let service: RoonService;
   let $zoneId: WritableSignal<string>;
@@ -53,7 +52,7 @@ describe("RoonServiceService", () => {
     }).not.toThrow();
   });
 
-  it("#start should send a message to roonWorker to start client, bind the roonWorker on message listener", async () => {
+  it("#start should send a message to roonWorker to start client, bind the roonWorker on message listener and return a Promise waiting the resolution of version request", async () => {
     expect(roonWorkerMock.onmessage).toBeUndefined();
     await service.start();
     expect(roonWorkerMock.onmessage).not.toBeUndefined();

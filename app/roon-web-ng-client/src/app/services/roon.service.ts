@@ -133,9 +133,16 @@ export class RoonService implements OnDestroy {
       type: "version",
       data: undefined,
     };
+    const versionPromise = new Promise<void>((resolve) => {
+      this._startResolve = resolve;
+    });
     const apiResultCallback: ApiResultCallback<string> = {
       next: (versionApiResult) => {
         this._version = versionApiResult;
+        if (this._startResolve) {
+          this._startResolve();
+          delete this._startResolve;
+        }
       },
     };
     this._apiStringCallbacks.set(id, apiResultCallback);
@@ -143,6 +150,7 @@ export class RoonService implements OnDestroy {
       event: "worker-api",
       data: apiRequest,
     });
+    return versionPromise;
   };
 
   roonState: () => Signal<ApiState> = () => {
