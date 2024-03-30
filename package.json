@@ -10,7 +10,7 @@
     "app/*"
   ],
   "engines": {
-    "node": ">= 20.11.1"
+    "node": ">= 20.12.0"
   },
   "repository": {
     "type": "git",
