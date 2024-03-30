@@ -15,6 +15,7 @@
   align-items: center;
   justify-content: space-between;
   margin: 10px 5px;
+  touch-action: manipulation;
   .volume-value {
     display: inline-block;
     width: 2rem;
