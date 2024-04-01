@@ -17,6 +17,8 @@ import { SettingsService } from "@services/settings.service";
 })
 export class ZoneSelectorComponent {
   @Input({ required: false, transform: booleanAttribute }) withoutLabel: boolean;
+  @Input({ required: false }) xPosition: "before" | "after";
+  @Input({ required: false }) yPosition: "below" | "above";
   private readonly _settingsService: SettingsService;
   private readonly _$zoneId: Signal<string>;
   private readonly _$roonState: Signal<ApiState>;
@@ -26,6 +28,8 @@ export class ZoneSelectorComponent {
   constructor(roonService: RoonService, settingsService: SettingsService) {
     this._settingsService = settingsService;
     this.withoutLabel = false;
+    this.xPosition = "before";
+    this.yPosition = "above";
     this._$zoneId = this._settingsService.displayedZoneId();
     this._$roonState = roonService.roonState();
     this.$zones = computed(
