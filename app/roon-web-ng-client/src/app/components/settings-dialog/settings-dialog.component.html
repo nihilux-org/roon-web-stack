@@ -4,10 +4,12 @@
     @if (!$isOneColumn()) {
       <div class="setting">
         <label for="display-mode-selector">Display mode:</label>
-        <mat-radio-group id="display-mode-selector" aria-label="Select a display mode" [value]="displayMode()()" (change)="setDisplayMode($event)">
-          <mat-radio-button [value]="'WIDE'" color="primary">Wide</mat-radio-button>
-          <mat-radio-button [value]="'COMPACT'" color="primary">Compact</mat-radio-button>
-        </mat-radio-group>
+        <button mat-button id="display-mode-selector" [matMenuTriggerFor]="displayModeSelector"><mat-icon fontIcon="display_settings" />{{displayModeLabel(displayMode()())}}</button>
+        <mat-menu #displayModeSelector="matMenu" yPosition="below" xPosition="after">
+          @for (dm of displayModes(); track dm.dm) {
+            <button tabindex="0" mat-menu-item (click)="setDisplayMode(dm.dm)"><mat-icon fontIcon="display_settings" />{{dm.label}}</button>
+          }
+        </mat-menu>
       </div>
     }
     <div class="setting">
@@ -20,7 +22,7 @@
     </div>
     <div class="setting">
       <label for="zone-selector">Displayed zone:</label>
-      <nr-zone-selector id="zone-selector" aria-label="Choose a zone to display" />
+      <nr-zone-selector id="zone-selector" aria-label="Choose a zone to display" yPosition="below" xPosition="after" />
     </div>
   </div>
   <div class="version" [class.small-screen]="$isSmallScreen()">
