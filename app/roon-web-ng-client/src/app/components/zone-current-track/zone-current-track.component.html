@@ -1,0 +1,15 @@
+@if ($trackDisplay().title !== EMPTY_TRACK.title) {
+  <div class="current-track" [class.is-one-column]="$isOneColumn()">
+    <h1>{{$trackDisplay().title}}</h1>
+    @if ($trackDisplay().disk?.title || $trackDisplay().artist) {
+      <p>
+        @if ($trackDisplay().disk?.title) {
+          <span class="current-track-album">on {{$trackDisplay().disk?.title}}</span>
+        }
+        @if ($trackDisplay().artist) {
+          <span class="current-track-artist">by {{$trackDisplay().artist}}</span>
+        }
+      </p>
+    }
+  </div>
+}

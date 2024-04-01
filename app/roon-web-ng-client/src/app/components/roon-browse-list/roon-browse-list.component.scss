@@ -37,9 +37,7 @@
           min-width: 0;
           text-align: left;
           span {
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
+            @include nr.block-overflow-ellipsis();
           }
         }
         .roon-item-info.roon-item-prompt {

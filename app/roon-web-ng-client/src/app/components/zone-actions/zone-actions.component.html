@@ -1,0 +1,11 @@
+@if ($isSmallScreen()) {
+  <button tabindex="0" mat-icon-button (click)="toggleDisplayQueueTrack()"><mat-icon fontIcon="queue_music" /></button>
+  <button tabindex="0" mat-icon-button (click)="openBrowseDialog('explore')"><mat-icon fontIcon="explore" /></button>
+  <button tabindex="0" mat-icon-button (click)="openBrowseDialog('library')"><mat-icon fontIcon="list_alt" /></button>
+  <button tabindex="0" mat-icon-button (click)="openSettingsDialog()"><mat-icon fontIcon="settings" /></button>
+} @else {
+  <button tabindex="0" mat-button (click)="toggleDisplayQueueTrack()"><mat-icon fontIcon="queue_music" />Queue</button>
+  <button tabindex="0" mat-button (click)="openBrowseDialog('explore')"><mat-icon fontIcon="explore" />Browse</button>
+  <button tabindex="0" mat-button (click)="openBrowseDialog('library')"><mat-icon fontIcon="list_alt" />Library</button>
+  <button tabindex="0" mat-icon-button (click)="openSettingsDialog()"><mat-icon fontIcon="settings" /></button>
+}

@@ -1,0 +1,15 @@
+import { Component, Input, Signal } from "@angular/core";
+import { EMPTY_TRACK, TrackDisplay } from "@model/client";
+
+@Component({
+  selector: "nr-zone-current-track",
+  standalone: true,
+  imports: [],
+  templateUrl: "./zone-current-track.component.html",
+  styleUrl: "./zone-current-track.component.scss",
+})
+export class ZoneCurrentTrackComponent {
+  @Input({ required: true }) $isOneColumn!: Signal<boolean>;
+  @Input({ required: true }) $trackDisplay!: Signal<TrackDisplay>;
+  protected readonly EMPTY_TRACK = EMPTY_TRACK;
+}

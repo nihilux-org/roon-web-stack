@@ -58,9 +58,9 @@ export class ZoneVolumeComponent {
           top: `${Math.max(buttonElementRect.top - topDelta, 0)}px`,
           left: this._$isSmallScreen() ? "1%" : `${buttonElementRect.left}px`,
         },
-        width: this._$isSmallScreen() ? "99%" : this._$displayMode() === DisplayMode.COMPACT ? "48vw" : "500px",
+        width: this._$isSmallScreen() ? "98svw" : this._$displayMode() === DisplayMode.COMPACT ? "48svw" : "500px",
         maxWidth: "500px",
-        maxHeight: "99vh",
+        maxHeight: "99svh",
         restoreFocus: false,
         autoFocus: false,
       });

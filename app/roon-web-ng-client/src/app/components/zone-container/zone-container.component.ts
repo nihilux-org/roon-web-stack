@@ -1,5 +1,6 @@
 import { deepEqual } from "fast-equals";
 import { Subscription } from "rxjs";
+import { animate, style, transition, trigger } from "@angular/animations";
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -13,7 +14,9 @@ import {
   WritableSignal,
 } from "@angular/core";
 import { RoonImageComponent } from "@components/roon-image/roon-image.component";
+import { ZoneActionsComponent } from "@components/zone-actions/zone-actions.component";
 import { ZoneCommandsComponent } from "@components/zone-commands/zone-commands.component";
+import { ZoneCurrentTrackComponent } from "@components/zone-current-track/zone-current-track.component";
 import { ZoneProgressionComponent } from "@components/zone-progression/zone-progression.component";
 import { ZoneQueueComponent } from "@components/zone-queue/zone-queue.component";
 import { ZoneSelectorComponent } from "@components/zone-selector/zone-selector.component";
@@ -41,10 +44,29 @@ import { SettingsService } from "@services/settings.service";
     ZoneSelectorComponent,
     ZoneQueueComponent,
     RoonImageComponent,
+    ZoneActionsComponent,
+    ZoneCurrentTrackComponent,
   ],
   templateUrl: "./zone-container.component.html",
   styleUrl: "./zone-container.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
+  animations: [
+    trigger("hideQueueTrack", [
+      transition(":leave", [
+        style({
+          opacity: 1,
+          flexGrow: 1,
+        }),
+        animate(
+          "0.2s ease-out",
+          style({
+            opacity: 0,
+            flexGrow: 0,
+          })
+        ),
+      ]),
+    ]),
+  ],
 })
 export class ZoneContainerComponent implements OnDestroy, AfterViewInit {
   private static readonly NOT_READY_IMAGE: TrackImage = {
@@ -66,6 +88,8 @@ export class ZoneContainerComponent implements OnDestroy, AfterViewInit {
   readonly $isOneColumn: Signal<boolean>;
   readonly $isCompact: Signal<boolean>;
   readonly $isWide: Signal<boolean>;
+  readonly $displayQueueTrack: Signal<boolean>;
+  hasBeenDisplayed: boolean;
   protected readonly EMPTY_TRACK = EMPTY_TRACK;
 
   constructor(
@@ -168,24 +192,15 @@ export class ZoneContainerComponent implements OnDestroy, AfterViewInit {
         equal: deepEqual,
       }
     );
-    this.$isOneColumn = computed(() => {
-      let isOneColumn = false;
-      switch (this._settingsService.displayMode()()) {
-        case DisplayMode.COMPACT:
-          isOneColumn = this._settingsService.isOneColumn()() || !this._settingsService.displayQueueTrack();
-          break;
-        case DisplayMode.WIDE:
-          isOneColumn = this._settingsService.isOneColumn()() || !this._settingsService.displayQueueTrack()();
-          break;
-      }
-      return isOneColumn;
-    });
+    this.$isOneColumn = this._settingsService.isOneColumn();
     this.$isCompact = computed(() => {
-      return this._settingsService.displayMode()() === DisplayMode.COMPACT && !this._settingsService.isOneColumn()();
+      return this._settingsService.displayMode()() === DisplayMode.COMPACT;
     });
     this.$isWide = computed(() => {
-      return this._settingsService.displayMode()() === DisplayMode.WIDE || this._settingsService.isOneColumn()();
+      return this._settingsService.displayMode()() === DisplayMode.WIDE;
     });
+    this.$displayQueueTrack = this._settingsService.displayQueueTrack();
+    this.hasBeenDisplayed = false;
   }
 
   ngAfterViewInit(): void {
@@ -204,6 +219,7 @@ export class ZoneContainerComponent implements OnDestroy, AfterViewInit {
         firstResize = false;
       }
     });
+    this.hasBeenDisplayed = true;
   }
 
   ngOnDestroy() {

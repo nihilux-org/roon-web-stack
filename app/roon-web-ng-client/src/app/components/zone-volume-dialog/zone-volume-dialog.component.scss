@@ -1,13 +1,12 @@
+@use "../styles/mixins" as nr;
+
 .volume-header {
   margin: 5px;
   padding: 0;
 }
 .volume-output-name {
+  @include nr.block-overflow-ellipsis();
   padding: 12px;
-  display: block;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
   width: 95%;
 }
 .volume-control {

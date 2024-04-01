@@ -1,58 +1,38 @@
-@if ($trackDisplay().title !== EMPTY_TRACK.title) {
-  <div class="current-track" [class.is-one-column]="$isOneColumn()">
-    <h1>{{$trackDisplay().title}}</h1>
-    @if ($trackDisplay().disk?.title || $trackDisplay().artist) {
-      <p>
-        @if ($trackDisplay().disk?.title) {
-          <span class="current-track-album">on {{$trackDisplay().disk?.title}}</span>
-        }
-        @if ($trackDisplay().artist) {
-          <span class="current-track-artist">by {{$trackDisplay().artist}}</span>
-        }
-      </p>
-    }
-  </div>
-}
-@if ($displayQueueTrack()) {
-  <div class="queue" [class.is-one-column]="$isOneColumn()" [@.disabled]="!hasBeenDisplay" @toggleQueueTrack (@toggleQueueTrack.done)="onQueueTrackOpened()">
-    @if ($queue().length > 0) {
-      <cdk-virtual-scroll-viewport itemSize="101" minBufferPx="100" maxBufferPx="610">
-        <ol>
-            <li *cdkVirtualFor="let track of $queue(); let last = last; let index = $index;">
-              <button tabindex="0" (click)="openActionMenu(track.queue_item_id)" class="track">
-                @if (track.image_key) {
-                  <nr-roon-image priority="false" [alt]="track.title + ' cover'" height="70" width="70" [src]="track.image_key!" />
-                } @else {
-                  <div class="track-image-placeholder"></div>
-                }
-                <div class="track-info">
-                  <span class="track-title">{{track.title}}</span>
-                  @if (track.disk?.title) {
-                    <span class="track-album">on {{track.disk?.title}}</span>
-                  }
-                  @if (track.artist) {
-                    <span class="track-artist">by {{track.artist}}</span>
-                  }
-                </div>
-              </button>
-              <div [matMenuTriggerFor]="actionMenu" [matMenuTriggerData]="track.queue_item_id"></div>
-              @if (!last) {
-                <mat-divider [inset]="true" [vertical]="false" />
+<div class="queue" [@.disabled]="disableAnimation" @displayQueueTrack (@displayQueueTrack.done)="onQueueTrackDisplayed()">
+  @if ($queue().length > 0) {
+    <cdk-virtual-scroll-viewport itemSize="101" minBufferPx="100" maxBufferPx="610">
+      <ol>
+          <li *cdkVirtualFor="let track of $queue(); let last = last; let index = $index;">
+            <button tabindex="0" (click)="openActionMenu(track.queue_item_id)" class="track">
+              @if (track.image_key) {
+                <nr-roon-image priority="false" [alt]="track.title + ' cover'" height="70" width="70" [src]="track.image_key!" />
+              } @else {
+                <div class="track-image-placeholder"></div>
               }
-            </li>
-        </ol>
-      </cdk-virtual-scroll-viewport>
-    } @else {
-      <div class="track">
-        <div class="track-info">
-          <span class="track-title">Nothing in queue, go add some music or enjoy Roon radio!</span>
-        </div>
+              <div class="track-info">
+                <span class="track-title">{{track.title}}</span>
+                @if (track.disk?.title) {
+                  <span class="track-album">on {{track.disk?.title}}</span>
+                }
+                @if (track.artist) {
+                  <span class="track-artist">by {{track.artist}}</span>
+                }
+              </div>
+            </button>
+            <div [matMenuTriggerFor]="actionMenu" [matMenuTriggerData]="track.queue_item_id"></div>
+            @if (!last) {
+              <mat-divider [inset]="true" [vertical]="false" />
+            }
+          </li>
+      </ol>
+    </cdk-virtual-scroll-viewport>
+  } @else {
+    <div class="track">
+      <div class="track-info">
+        <span class="track-title">Nothing in queue, go add some music or enjoy Roon radio!</span>
       </div>
-    }
-  </div>
-}
-<div class="queue-commands">
-  <nr-zone-queue-commands />
+    </div>
+  }
 </div>
 <mat-menu #actionMenu="matMenu" xPosition="before" yPosition="above">
   <ng-template matMenuContent let-queueItemId="queue_item_id">

@@ -112,7 +112,7 @@ export class SettingsService implements OnDestroy {
         const breakpoints = this._$breakpoints();
         let isOneColumn = false;
         for (const breakpoint of SettingsService.WATCH_BREAKPOINTS) {
-          if (breakpoint !== Breakpoints.WebPortrait && breakpoints[breakpoint]) {
+          if (breakpoints[breakpoint]) {
             isOneColumn = true;
             break;
           }
