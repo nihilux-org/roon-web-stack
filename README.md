@@ -114,7 +114,7 @@ As a reminder, this is how to enable an extension in `roon` settings:
 
 ## How to build it from source
 
-First, you'll need the last `lts` version of `node` (newer might work, not tested though). Currently, the [CI](./.github/workflows/ci.yml) and the [CD](./.github/workflows/cd.yml) are using what's defined in the main `package.json`: `node >= 20.11.1`. This will follow availability of node `lts` in `github` actions.
+First, you'll need the last `lts` version of `node` (newer might work, not tested though). Currently, the [CI](./.github/workflows/ci.yml) and the [CD](./.github/workflows/cd.yml) are using what's defined in the main `package.json`: `node >= 20.12.0`. This will follow availability of node `lts` in `github` actions.
 How you install `node` is your story, after all you want to build from sources.
 
 Checkout the code and `cd` in the directory.

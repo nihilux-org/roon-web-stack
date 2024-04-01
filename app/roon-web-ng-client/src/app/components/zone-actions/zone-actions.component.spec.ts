@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { ZoneQueueCommandsComponent } from "./zone-queue-commands.component";
+import { ZoneActionsComponent } from "./zone-actions.component";
 
 describe("ZoneQueueCommandsComponent", () => {
-  let component: ZoneQueueCommandsComponent;
-  let fixture: ComponentFixture<ZoneQueueCommandsComponent>;
+  let component: ZoneActionsComponent;
+  let fixture: ComponentFixture<ZoneActionsComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ZoneQueueCommandsComponent],
+      imports: [ZoneActionsComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(ZoneQueueCommandsComponent);
+    fixture = TestBed.createComponent(ZoneActionsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

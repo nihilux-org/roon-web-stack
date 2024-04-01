@@ -1,6 +1,7 @@
-import { MockBuilder, MockedComponentFixture, MockRender } from "ng-mocks";
+import { MockBuilder, MockedComponentFixture, MockRender, ngMocks } from "ng-mocks";
 import { Subject } from "rxjs";
 import { signal, WritableSignal } from "@angular/core";
+import { BrowserAnimationsModule, NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { Output, Zone, ZoneState } from "@model";
 import { DisplayMode } from "@model/client";
 import { ResizeService } from "@services/resize.service";
@@ -29,6 +30,7 @@ describe("ZoneContainerComponent", () => {
   let resizeService: {
     observeElement: jest.Mock;
   };
+  ngMocks.globalReplace(BrowserAnimationsModule, NoopAnimationsModule);
 
   beforeEach(async () => {
     $displayedZoneId = signal("zone_id");
@@ -52,7 +54,8 @@ describe("ZoneContainerComponent", () => {
     await MockBuilder(ZoneContainerComponent)
       .mock(SettingsService, settingsService as Partial<SettingsService>)
       .mock(RoonService, roonService as Partial<RoonService>)
-      .mock(ResizeService, resizeService as Partial<ResizeService>);
+      .mock(ResizeService, resizeService as Partial<ResizeService>)
+      .keep(BrowserAnimationsModule);
     fixture = MockRender(ZoneContainerComponent);
     component = fixture.componentInstance as ZoneContainerComponent;
     fixture.detectChanges();

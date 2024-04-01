@@ -1,3 +1,5 @@
+@use "../styles/mixins" as nr;
+
 :host {
   .settings {
     display: flex;
@@ -24,8 +26,7 @@
     }
   }
   mat-dialog-actions {
-    justify-content: flex-end;
-    padding: 0 24px 20px 0;
+    @include nr.mat-dialog-action-bottom-right();
   }
   .version {
     font-style: italic;

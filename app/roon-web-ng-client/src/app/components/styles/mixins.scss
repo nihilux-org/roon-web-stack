@@ -16,3 +16,14 @@
   padding-block: 0;
   padding-inline: 0;
 }
+
+@mixin block-overflow-ellipsis {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+@mixin mat-dialog-action-bottom-right {
+  padding: 0 24px 20px 0;
+}

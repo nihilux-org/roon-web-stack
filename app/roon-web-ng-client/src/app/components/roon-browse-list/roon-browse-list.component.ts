@@ -62,12 +62,12 @@ export class RoonBrowseListComponent implements OnChanges {
   @ViewChild(CdkVirtualScrollViewport) _virtualScroll!: CdkVirtualScrollViewport;
   @ViewChildren(MatMenuTrigger) _menuTriggers!: QueryList<MatMenuTrigger>;
   dataSource?: RoonListDataSource;
-  readonly $isSmallScreen: Signal<boolean>;
+  readonly $isOneColumn: Signal<boolean>;
 
   constructor(roonService: RoonService, settingsService: SettingsService) {
     this._roonService = roonService;
     this._inputValues = new Map<string, string>();
-    this.$isSmallScreen = settingsService.isSmallScreen();
+    this.$isOneColumn = settingsService.isOneColumn();
   }
 
   ngOnChanges(changes: SimpleChanges) {

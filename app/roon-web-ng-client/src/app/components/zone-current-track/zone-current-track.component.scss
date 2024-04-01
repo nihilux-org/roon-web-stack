@@ -1,0 +1,25 @@
+@use "../styles/mixins" as nr;
+
+:host {
+  width: 100%;
+  span {
+    @include nr.block-overflow-ellipsis();
+  }
+  .current-track {
+    padding: 0 25px;
+    margin-bottom: 20px;
+    cursor: default;
+    h1 {
+      margin: 10px 0 5px 0;
+    }
+    p {
+      margin: 0;
+    }
+    span {
+      padding-left: 5px;
+      line-height: 2.0rem;
+      font-size: 1.8rem;
+      min-width: 0;
+    }
+  }
+}
