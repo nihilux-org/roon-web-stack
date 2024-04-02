@@ -1,17 +1,6 @@
 <h2 mat-dialog-title class="browse-settings-title">Settings</h2>
 <mat-dialog-content>
   <div class="settings">
-    @if (!$isOneColumn()) {
-      <div class="setting">
-        <label for="display-mode-selector">Display mode:</label>
-        <button mat-button id="display-mode-selector" [matMenuTriggerFor]="displayModeSelector"><mat-icon fontIcon="display_settings" />{{displayModeLabel(displayMode()())}}</button>
-        <mat-menu #displayModeSelector="matMenu" yPosition="below" xPosition="after">
-          @for (dm of displayModes(); track dm.dm) {
-            <button tabindex="0" mat-menu-item (click)="setDisplayMode(dm.dm)"><mat-icon fontIcon="display_settings" />{{dm.label}}</button>
-          }
-        </mat-menu>
-      </div>
-    }
     <div class="setting">
       <label for="theme-selector">Theme:</label>
       <mat-radio-group id="theme-selector" aria-label="Select a theme" [value]="chosenTheme()()" (change)="setChosenTheme($event)" [class.small-screen]="$isSmallScreen()">
@@ -20,6 +9,17 @@
         <mat-radio-button [value]="'BROWSER'" color="primary">Browser</mat-radio-button>
       </mat-radio-group>
     </div>
+    @if (!$isOneColumn()) {
+      <div class="setting">
+        <label for="display-mode-selector">Display mode:</label>
+        <button mat-button id="display-mode-selector" [matMenuTriggerFor]="displayModeSelector"><mat-icon fontIcon="display_settings" />{{displayModeLabel(displayMode()())}}</button>
+        <mat-menu #displayModeSelector="matMenu" yPosition="below" xPosition="after">
+          @for (dm of displayModes(); track dm.id) {
+            <button tabindex="0" mat-menu-item (click)="setDisplayMode(dm.id)"><mat-icon fontIcon="display_settings" />{{dm.label}}</button>
+          }
+        </mat-menu>
+      </div>
+    }
     <div class="setting">
       <label for="zone-selector">Displayed zone:</label>
       <nr-zone-selector id="zone-selector" aria-label="Choose a zone to display" yPosition="below" xPosition="after" />

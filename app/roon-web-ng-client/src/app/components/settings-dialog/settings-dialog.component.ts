@@ -81,9 +81,9 @@ export class SettingsDialogComponent {
   }
 
   displayModes() {
-    const displayModes: { dm: DisplayMode; label: string }[] = [];
-    for (const [dm, label] of this._displayModeLabels) {
-      displayModes.push({ dm, label });
+    const displayModes: { id: DisplayMode; label: string }[] = [];
+    for (const [id, label] of this._displayModeLabels) {
+      displayModes.push({ id, label });
     }
     return displayModes;
   }
