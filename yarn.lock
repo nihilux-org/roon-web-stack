@@ -2648,9 +2648,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fastify/static@npm:7.0.2":
-  version: 7.0.2
-  resolution: "@fastify/static@npm:7.0.2"
+"@fastify/static@npm:7.0.3":
+  version: 7.0.3
+  resolution: "@fastify/static@npm:7.0.3"
   dependencies:
     "@fastify/accept-negotiator": "npm:^1.0.0"
     "@fastify/send": "npm:^2.0.0"
@@ -2658,7 +2658,7 @@ __metadata:
     fastify-plugin: "npm:^4.0.0"
     fastq: "npm:^1.17.0"
     glob: "npm:^10.3.4"
-  checksum: 10c0/d3ae2b32e440d874740526a6317c1e098282ae9274b00645dff4627e21ac1bfce173042341afd584ef0c866688a98ad9d4e5122ced447a9cf024370bceefa6c3
+  checksum: 10c0/4445b9f463f063acf66f1d399132722a642872b74cad88bc8c7c7fa34ae4938c325c50ee7411536e5ddc131710dcbe44068d1aaa9cdbd2542d153ecae70e72ee
   languageName: node
   linkType: hard
 
@@ -3866,7 +3866,7 @@ __metadata:
   resolution: "@nihilux/roon-web-api@workspace:app/roon-web-api"
   dependencies:
     "@fastify/compress": "npm:7.0.3"
-    "@fastify/static": "npm:7.0.2"
+    "@fastify/static": "npm:7.0.3"
     "@gquittet/graceful-server": "npm:4.0.9"
     "@nihilux/roon-web-model": "workspace:*"
     "@types/jest": "npm:29.5.12"
