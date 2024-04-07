@@ -1,10 +1,25 @@
 :host {
   display: flex;
   justify-content: flex-end;
-  align-items: center;
   margin: 15px 0 0;
-  width: 100%;
-  button:not(:last-of-type) {
-    margin-right: 20px;
+  .actions {
+    display: flex;
+    flex-wrap: wrap-reverse;
+    justify-content: flex-end;
+    align-items: center;
+    flex-grow: 1;
+    span {
+      display: inline-block;
+      min-width: 130px;
+    }
+    span.is-small-screen {
+      min-width: 50px;
+    }
+  }
+  .settings {
+    margin-left: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }

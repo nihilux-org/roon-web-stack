@@ -1,5 +1,6 @@
 import { ApiState, Command, CommandState, QueueState, ZoneState } from "../api-model";
 import {
+  RoonApiBrowseHierarchy,
   RoonApiBrowseLoadOptions,
   RoonApiBrowseLoadResponse,
   RoonApiBrowseOptions,
@@ -24,7 +25,7 @@ export interface RoonWebClient {
   command: (command: Command) => Promise<string>;
   browse: (options: ClientRoonApiBrowseOptions) => Promise<RoonApiBrowseResponse>;
   load: (options: ClientRoonApiBrowseLoadOptions) => Promise<RoonApiBrowseLoadResponse>;
-  library: (zone_id: string) => Promise<RoonApiBrowseLoadResponse>;
+  loadPath: (zone_id: string, path: RoonPath) => Promise<RoonApiBrowseLoadResponse>;
   version: () => string;
 }
 
@@ -47,3 +48,8 @@ export type ZoneStateListener = (zoneState: ZoneState) => void;
 export type QueueStateListener = (queueState: QueueState) => void;
 
 export type ClientStateListener = (clientState: ClientState) => void;
+
+export interface RoonPath {
+  hierarchy: RoonApiBrowseHierarchy;
+  path: string[];
+}

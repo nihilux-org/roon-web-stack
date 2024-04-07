@@ -1,11 +1,13 @@
-import { ChangeDetectionStrategy, Component, Signal } from "@angular/core";
-import { MatButton } from "@angular/material/button";
+import { CdkDrag, CdkDragDrop, CdkDragHandle, CdkDropList, moveItemInArray } from "@angular/cdk/drag-drop";
+import { ChangeDetectionStrategy, Component, computed, Signal } from "@angular/core";
+import { MatButton, MatIconButton } from "@angular/material/button";
 import { MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle } from "@angular/material/dialog";
 import { MatIcon } from "@angular/material/icon";
 import { MatMenu, MatMenuItem, MatMenuTrigger } from "@angular/material/menu";
 import { MatRadioButton, MatRadioChange, MatRadioGroup } from "@angular/material/radio";
+import { MatTab, MatTabGroup } from "@angular/material/tabs";
 import { ZoneSelectorComponent } from "@components/zone-selector/zone-selector.component";
-import { ChosenTheme, DisplayMode } from "@model/client";
+import { Action, ChosenTheme, DefaultActions, DisplayMode } from "@model/client";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
 
@@ -13,16 +15,22 @@ import { SettingsService } from "@services/settings.service";
   selector: "nr-settings-dialog",
   standalone: true,
   imports: [
+    CdkDrag,
+    CdkDragHandle,
+    CdkDropList,
     MatButton,
     MatDialogActions,
     MatDialogContent,
     MatDialogTitle,
     MatIcon,
+    MatIconButton,
     MatMenu,
     MatMenuItem,
     MatMenuTrigger,
     MatRadioButton,
     MatRadioGroup,
+    MatTab,
+    MatTabGroup,
     ZoneSelectorComponent,
   ],
   templateUrl: "./settings-dialog.component.html",
@@ -36,6 +44,8 @@ export class SettingsDialogComponent {
   readonly $isSmallScreen: Signal<boolean>;
   readonly $isOneColumn: Signal<boolean>;
   readonly version: string;
+  readonly $actions: Signal<Action[]>;
+  readonly $availableActions: Signal<Action[]>;
   constructor(
     settingsService: SettingsService,
     roonService: RoonService,
@@ -49,6 +59,11 @@ export class SettingsDialogComponent {
     this._displayModeLabels = new Map<DisplayMode, string>();
     this._displayModeLabels.set(DisplayMode.COMPACT, "Compact");
     this._displayModeLabels.set(DisplayMode.WIDE, "Wide");
+    this.$actions = this._settingsService.actions();
+    this.$availableActions = computed(() => {
+      const actions = this.$actions();
+      return DefaultActions.filter((a) => !actions.includes(a));
+    });
   }
 
   chosenTheme() {
@@ -86,5 +101,26 @@ export class SettingsDialogComponent {
       displayModes.push({ id, label });
     }
     return displayModes;
+  }
+
+  addAction(action: Action) {
+    const actions = this.$actions();
+    actions.push(action);
+    this._settingsService.saveActions(actions);
+  }
+
+  removeAction(action: Action) {
+    const actions = this.$actions();
+    const index = actions.indexOf(action);
+    if (index >= 0) {
+      actions.splice(index, 1);
+    }
+    this._settingsService.saveActions(actions);
+  }
+
+  onActionsReordered(dropEvent: CdkDragDrop<Action[]>) {
+    const actions = this.$actions();
+    moveItemInArray(actions, dropEvent.previousIndex, dropEvent.currentIndex);
+    this._settingsService.saveActions(actions);
   }
 }

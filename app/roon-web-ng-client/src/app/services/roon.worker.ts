@@ -27,15 +27,15 @@ let _refreshInterval: ReturnType<typeof setInterval> | undefined = undefined;
 addEventListener("message", (m: MessageEvent<WorkerActionMessage>) => {
   switch (m.data.event) {
     case "worker-client":
-      consumeClientActionMessage(m.data.data);
+      onClientActionMessage(m.data.data);
       break;
     case "worker-api":
-      consumerApiRequest(m.data.data);
+      onApiRequest(m.data.data);
       break;
   }
 });
 
-const consumeClientActionMessage = (clientAction: WorkerClientAction): void => {
+const onClientActionMessage = (clientAction: WorkerClientAction): void => {
   switch (clientAction.action) {
     case "start-client":
       startClient(clientAction.url, clientAction.isDesktop);
@@ -159,7 +159,7 @@ const restartClient = (): void => {
     });
 };
 
-const consumerApiRequest = (apiRequest: RawWorkerApiRequest): void => {
+const onApiRequest = (apiRequest: RawWorkerApiRequest): void => {
   const { type, id } = apiRequest;
   switch (type) {
     case "browse":
@@ -202,55 +202,6 @@ const consumerApiRequest = (apiRequest: RawWorkerApiRequest): void => {
           postApiResult(message);
         });
       break;
-    case "explore":
-      void _roonClient
-        .browse({
-          hierarchy: "browse",
-          zone_or_output_id: apiRequest.data,
-        })
-        .then(() => {
-          return _roonClient.load({
-            hierarchy: "browse",
-            level: 0,
-          });
-        })
-        .then((data) => {
-          const message: LoadApiResult = {
-            type: "load",
-            data,
-            id,
-          };
-          postApiResult(message);
-        })
-        .catch((error: unknown) => {
-          const message: LoadApiResult = {
-            type: "load",
-            error,
-            id,
-          };
-          postApiResult(message);
-        });
-      break;
-    case "library":
-      void _roonClient
-        .library(apiRequest.data)
-        .then((data) => {
-          const message: LoadApiResult = {
-            data,
-            type: "load",
-            id,
-          };
-          postApiResult(message);
-        })
-        .catch((error: unknown) => {
-          const message: LoadApiResult = {
-            type: "load",
-            error,
-            id,
-          };
-          postApiResult(message);
-        });
-      break;
     case "load":
       void _roonClient
         .load(apiRequest.data)
@@ -274,14 +225,14 @@ const consumerApiRequest = (apiRequest: RawWorkerApiRequest): void => {
     case "navigate":
       void _roonClient
         .browse({
-          hierarchy: "browse",
+          hierarchy: apiRequest.data.hierarchy,
           item_key: apiRequest.data.item_key,
           input: apiRequest.data.input,
           zone_or_output_id: apiRequest.data.zone_id,
         })
         .then((browseResponse) => {
           return _roonClient.load({
-            hierarchy: "browse",
+            hierarchy: apiRequest.data.hierarchy,
             level: browseResponse.list?.level,
           });
         })
@@ -305,13 +256,13 @@ const consumerApiRequest = (apiRequest: RawWorkerApiRequest): void => {
     case "previous":
       void _roonClient
         .browse({
-          hierarchy: "browse",
+          hierarchy: apiRequest.data.hierarchy,
           pop_levels: apiRequest.data.levels ?? 1,
           zone_or_output_id: apiRequest.data.zone_id,
         })
         .then((browseResponse) => {
           return _roonClient.load({
-            hierarchy: "browse",
+            hierarchy: apiRequest.data.hierarchy,
             level: browseResponse.list?.level,
           });
         })
@@ -339,6 +290,25 @@ const consumerApiRequest = (apiRequest: RawWorkerApiRequest): void => {
         id,
       });
       break;
+    case "load-path":
+      void _roonClient
+        .loadPath(apiRequest.data.zone_id, apiRequest.data.path)
+        .then((data) => {
+          const message: LoadApiResult = {
+            type: "load",
+            id,
+            data,
+          };
+          postApiResult(message);
+        })
+        .catch((error: unknown) => {
+          const message: LoadApiResult = {
+            type: "load",
+            id,
+            error,
+          };
+          postApiResult(message);
+        });
   }
 };
 

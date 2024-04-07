@@ -12,6 +12,7 @@ import {
   QueueStateListener,
   RoonApiBrowseLoadResponse,
   RoonApiBrowseResponse,
+  RoonPath,
   RoonState,
   RoonStateListener,
   RoonWebClient,
@@ -23,6 +24,11 @@ import {
 interface ZoneStates {
   zone?: ZoneState;
   queue?: QueueState;
+}
+
+interface LoadPath extends RoonPath {
+  levelToLoad: number;
+  item_key?: string;
 }
 
 class InternalRoonWebClient implements RoonWebClient {
@@ -42,7 +48,6 @@ class InternalRoonWebClient implements RoonWebClient {
   private _clientPath?: string;
   private _isClosed: boolean;
   private _mustRefresh: boolean;
-  private _libraryItemKey?: string;
   private _pingInterval?: ReturnType<typeof setTimeout>;
 
   constructor(apiHost: URL) {
@@ -92,7 +97,6 @@ class InternalRoonWebClient implements RoonWebClient {
         const locationHeader = registerResponse.headers.get("Location");
         if (locationHeader) {
           this._clientPath = locationHeader;
-          await this.loadLibraryItemKey();
           this.connectEventSource();
           this._isClosed = false;
           this._mustRefresh = false;
@@ -271,19 +275,6 @@ class InternalRoonWebClient implements RoonWebClient {
     }
   };
 
-  library: (zone_id: string) => Promise<RoonApiBrowseLoadResponse> = async (zone_id) => {
-    this.ensureStared();
-    const browseLibraryResponse = await this.browse({
-      hierarchy: "browse",
-      item_key: this._libraryItemKey,
-      zone_or_output_id: zone_id,
-    });
-    return this.load({
-      hierarchy: "browse",
-      level: browseLibraryResponse.list?.level,
-    });
-  };
-
   version: () => string = () => {
     if (this._roonWebStackVersion) {
       return this._roonWebStackVersion;
@@ -292,15 +283,42 @@ class InternalRoonWebClient implements RoonWebClient {
     }
   };
 
-  private loadLibraryItemKey: () => Promise<void> = async () => {
-    const exploreBrowseResponse = await this.browse({ hierarchy: "browse" });
-    const exploreLoadResponse = await this.load({ hierarchy: "browse", level: exploreBrowseResponse.list?.level });
-    const libraryItemKey = exploreLoadResponse.items.length ? exploreLoadResponse.items[0].item_key : undefined;
-    if (libraryItemKey) {
-      this._libraryItemKey = libraryItemKey;
-      return Promise.resolve();
+  loadPath: (zone_id: string, path: RoonPath) => Promise<RoonApiBrowseLoadResponse> = async (
+    zone_id: string,
+    path: RoonPath
+  ): Promise<RoonApiBrowseLoadResponse> => {
+    const loadPath: LoadPath = {
+      ...path,
+      levelToLoad: 0,
+    };
+    return this._loadPath(zone_id, loadPath);
+  };
+
+  private _loadPath: (zone_id: string, path: LoadPath) => Promise<RoonApiBrowseLoadResponse> = async (
+    zone_id: string,
+    path: LoadPath
+  ): Promise<RoonApiBrowseLoadResponse> => {
+    const browseResponse = await this.browse({
+      hierarchy: path.hierarchy,
+      item_key: path.item_key,
+      zone_or_output_id: zone_id,
+    });
+    const loadResponse = await this.load({
+      hierarchy: path.hierarchy,
+      level: browseResponse.list?.level,
+    });
+    if (path.path.length !== path.levelToLoad) {
+      const item_key = loadResponse.items.find((i) => i.title === path.path[path.levelToLoad])?.item_key;
+      if (item_key) {
+        path.item_key = item_key;
+        path.levelToLoad = path.levelToLoad + 1;
+        return this._loadPath(zone_id, path);
+      } else {
+        const pathString = path.path.reduce((s, p) => `${s} -> ${p}`);
+        throw new Error(`invalid path: '${path.hierarchy}' - '${pathString}' not found`);
+      }
     } else {
-      return Promise.reject(new Error("can't initialize Library item_key"));
+      return loadResponse;
     }
   };
 

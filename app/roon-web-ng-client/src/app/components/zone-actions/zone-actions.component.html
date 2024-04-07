@@ -1,11 +1,23 @@
 @if ($isSmallScreen()) {
-  <button tabindex="0" mat-icon-button (click)="toggleDisplayQueueTrack()"><mat-icon fontIcon="queue_music" /></button>
-  <button tabindex="0" mat-icon-button (click)="openBrowseDialog('explore')"><mat-icon fontIcon="explore" /></button>
-  <button tabindex="0" mat-icon-button (click)="openBrowseDialog('library')"><mat-icon fontIcon="list_alt" /></button>
-  <button tabindex="0" mat-icon-button (click)="openSettingsDialog()"><mat-icon fontIcon="settings" /></button>
+  <div class="actions">
+    @for (action of $actions(); track action.id) {
+      <span class="is-small-screen">
+        <button tabindex="0" mat-icon-button (click)="executeAction(action)"><mat-icon [fontIcon]="action.button.icon" /></button>
+      </span>
+    }
+  </div>
+  <div class="settings">
+    <button tabindex="0" mat-icon-button (click)="openSettingsDialog()"><mat-icon fontIcon="settings" /></button>
+  </div>
 } @else {
-  <button tabindex="0" mat-button (click)="toggleDisplayQueueTrack()"><mat-icon fontIcon="queue_music" />Queue</button>
-  <button tabindex="0" mat-button (click)="openBrowseDialog('explore')"><mat-icon fontIcon="explore" />Browse</button>
-  <button tabindex="0" mat-button (click)="openBrowseDialog('library')"><mat-icon fontIcon="list_alt" />Library</button>
-  <button tabindex="0" mat-icon-button (click)="openSettingsDialog()"><mat-icon fontIcon="settings" /></button>
+  <div class="actions">
+    @for (action of $actions(); track action.id) {
+      <span>
+        <button tabindex="0" mat-button (click)="executeAction(action)"><mat-icon [fontIcon]="action.button.icon" />{{action.button.label}}</button>
+      </span>
+    }
+  </div>
+  <div class="settings">
+      <button tabindex="0" mat-icon-button (click)="openSettingsDialog()"><mat-icon fontIcon="settings" /></button>
+  </div>
 }

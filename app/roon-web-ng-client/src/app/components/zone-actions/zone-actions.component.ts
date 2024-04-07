@@ -5,7 +5,7 @@ import { MatIcon } from "@angular/material/icon";
 import { RoonBrowseDialogComponent } from "@components/roon-browse-dialog/roon-browse-dialog.component";
 import { SettingsDialogComponent } from "@components/settings-dialog/settings-dialog.component";
 import { ZoneQueueDialogComponent } from "@components/zone-queue-dialog/zone-queue-dialog.component";
-import { TrackDisplay } from "@model/client";
+import { Action, ActionType, LoadAction, TrackDisplay } from "@model/client";
 import { SettingsService } from "@services/settings.service";
 
 @Component({
@@ -22,43 +22,65 @@ export class ZoneActionsComponent {
   private readonly _settingsService: SettingsService;
   private readonly $isOneColumn: Signal<boolean>;
   readonly $isSmallScreen: Signal<boolean>;
+  readonly $actions: Signal<Action[]>;
 
   constructor(dialog: MatDialog, settingsService: SettingsService) {
     this._dialog = dialog;
     this._settingsService = settingsService;
     this.$isOneColumn = this._settingsService.isOneColumn();
     this.$isSmallScreen = this._settingsService.isSmallScreen();
+    this.$actions = this._settingsService.actions();
   }
 
-  openBrowseDialog(firstPage: string) {
+  executeAction(action: Action) {
+    switch (action.type) {
+      case ActionType.LOAD:
+        this.openBrowseDialog(action);
+        break;
+      case ActionType.QUEUE:
+        this.toggleDisplayQueueTrack();
+        break;
+    }
+  }
+
+  private openBrowseDialog(action: LoadAction) {
     const config: MatDialogConfig = {
       restoreFocus: false,
       data: {
-        firstPage,
+        path: action.path,
       },
-      autoFocus: firstPage === "library" ? "input:first-of-type" : "button.roon-list-item:first-of-type",
+      autoFocus: action.id === "library-action" ? "input:first-of-type" : "button.roon-list-item:first-of-type",
       height: "90svh",
       maxHeight: "90svh",
       width: "90svw",
       maxWidth: "90svw",
     };
+    if (this.$isOneColumn()) {
+      config.height = "95svh";
+      config.maxHeight = "95svh";
+      config.width = "95svw";
+      config.maxWidth = "95svw";
+    }
     this._dialog.open(RoonBrowseDialogComponent, config);
   }
 
   openSettingsDialog() {
     this._dialog.open(SettingsDialogComponent, {
       restoreFocus: false,
+      width: "500px",
+      maxWidth: "95svw",
+      maxHeight: "95svh",
     });
   }
 
-  toggleDisplayQueueTrack() {
+  private toggleDisplayQueueTrack() {
     if (this.$isOneColumn()) {
       this._dialog.open(ZoneQueueDialogComponent, {
         restoreFocus: false,
         height: "95svh",
         maxHeight: "95svh",
-        width: "90svw",
-        maxWidth: "90svw",
+        width: "95svw",
+        maxWidth: "95svw",
         data: {
           $trackDisplay: this.$trackDisplay,
         },

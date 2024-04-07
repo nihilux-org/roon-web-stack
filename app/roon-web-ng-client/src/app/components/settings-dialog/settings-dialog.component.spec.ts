@@ -2,7 +2,8 @@ import { MockBuilder, MockRender } from "ng-mocks";
 import { signal, WritableSignal } from "@angular/core";
 import { ComponentFixture } from "@angular/core/testing";
 import { MatDialogRef } from "@angular/material/dialog";
-import { ChosenTheme, DisplayMode } from "@model/client";
+import { MatTab } from "@angular/material/tabs";
+import { Action, ChosenTheme, DefaultActions, DisplayMode } from "@model/client";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
 import { SettingsDialogComponent } from "./settings-dialog.component";
@@ -12,6 +13,7 @@ describe("SettingsDialogComponent", () => {
   let $displayMode: WritableSignal<DisplayMode>;
   let $isSmallScreen: WritableSignal<boolean>;
   let $isOneColumn: WritableSignal<boolean>;
+  let $actions: WritableSignal<Action[]>;
   let settingsService: {
     chosenTheme: jest.Mock;
     saveIsDarkTheme: jest.Mock;
@@ -19,6 +21,8 @@ describe("SettingsDialogComponent", () => {
     saveDisplayMode: jest.Mock;
     isSmallScreen: jest.Mock;
     isOneColumn: jest.Mock;
+    actions: jest.Mock;
+    saveActions: jest.Mock;
   };
   let version: string;
   let roonService: {
@@ -33,6 +37,7 @@ describe("SettingsDialogComponent", () => {
     $displayMode = signal(DisplayMode.WIDE);
     $isSmallScreen = signal(false);
     $isOneColumn = signal(false);
+    $actions = signal(DefaultActions);
     settingsService = {
       chosenTheme: jest.fn().mockImplementation(() => $chosenTheme),
       saveIsDarkTheme: jest.fn().mockImplementation((chosenTheme: ChosenTheme) => {
@@ -44,6 +49,10 @@ describe("SettingsDialogComponent", () => {
       }),
       isSmallScreen: jest.fn().mockImplementation(() => $isSmallScreen),
       isOneColumn: jest.fn().mockImplementation(() => $isOneColumn),
+      actions: jest.fn().mockImplementation(() => $actions),
+      saveActions: jest.fn().mockImplementation((actions: Action[]) => {
+        $actions.set(actions);
+      }),
     };
     version = "version";
     roonService = {
@@ -55,7 +64,8 @@ describe("SettingsDialogComponent", () => {
       .mock(RoonService, roonService as Partial<RoonService>)
       .mock(MatDialogRef<SettingsDialogComponent>, {
         close: closeDialog,
-      });
+      })
+      .keep(MatTab);
     fixture = MockRender(SettingsDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

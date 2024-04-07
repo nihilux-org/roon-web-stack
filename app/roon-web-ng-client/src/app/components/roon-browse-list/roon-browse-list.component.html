@@ -6,7 +6,7 @@
     <ol>
       <li *cdkVirtualFor="let item of dataSource; let last = last; let index = index">
         @if (item) {
-          <button tabindex="0" (click)="!item.input_prompt ? onItemClicked(item.item_key, item.hint) : true" class="roon-list-item">
+          <button tabindex="0" (click)="!item.input_prompt ? onItemClicked(index, item.item_key, item.hint) : true" class="roon-list-item">
             @if (item.image_key || content.list.image_key) {
               <nr-roon-image [src]="item.image_key ?? content.list.image_key!" [alt]="item.title + ' cover'" height="70" width="70" priority="false" />
             } @else if(!$isOneColumn()) {
@@ -22,9 +22,9 @@
               @if (item.input_prompt) {
                 <mat-form-field appearance="outline">
                   <mat-label>{{item.input_prompt.prompt}}</mat-label>
-                  <input matInput (change)="onPromptInputChange(item.item_key + '_prompt_input', $event)" (keyup.enter)="onItemClicked(item.item_key, item.hint, true)"/>
+                  <input matInput (change)="onPromptInputChange(item.item_key + '_prompt_input', $event)" (keyup.enter)="onItemClicked(index, item.item_key, item.hint, true)"/>
                 </mat-form-field>
-                <button mat-button (click)="onItemClicked(item.item_key, item.hint, true)">{{item.input_prompt.action}}</button>
+                <button mat-button (click)="onItemClicked(index, item.item_key, item.hint, true)">{{item.input_prompt.action}}</button>
               }
             </div>
             @if (item.hint === "action_list") {

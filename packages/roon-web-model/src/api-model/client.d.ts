@@ -13,7 +13,6 @@ export interface Client {
   command: (command: Command) => string;
   browse: (options: RoonApiBrowseOptions) => Promise<RoonApiBrowseResponse>;
   load: (options: RoonApiBrowseLoadOptions) => Promise<RoonApiBrowseLoadResponse>;
-  id: () => string;
 }
 
 export interface ClientManager {

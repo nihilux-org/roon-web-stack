@@ -221,10 +221,46 @@ describe("client-manager.ts test suite", () => {
     const client_id = clientManager.register();
     const client = clientManager.get(client_id);
     client.close();
-    expect(roonMock.browse).toHaveBeenCalledTimes(1);
-    expect(roonMock.browse).toHaveBeenCalledWith({
+    expect(roonMock.browse).toHaveBeenCalledTimes(7);
+    expect(roonMock.browse).toHaveBeenNthCalledWith(1, {
+      multi_session_key: client_id,
+      hierarchy: "albums",
+      pop_all: true,
+      set_display_offset: true,
+    });
+    expect(roonMock.browse).toHaveBeenNthCalledWith(2, {
+      multi_session_key: client_id,
+      hierarchy: "artists",
+      pop_all: true,
+      set_display_offset: true,
+    });
+    expect(roonMock.browse).toHaveBeenNthCalledWith(3, {
       multi_session_key: client_id,
       hierarchy: "browse",
+      pop_all: true,
+      set_display_offset: true,
+    });
+    expect(roonMock.browse).toHaveBeenNthCalledWith(4, {
+      multi_session_key: client_id,
+      hierarchy: "composers",
+      pop_all: true,
+      set_display_offset: true,
+    });
+    expect(roonMock.browse).toHaveBeenNthCalledWith(5, {
+      multi_session_key: client_id,
+      hierarchy: "genres",
+      pop_all: true,
+      set_display_offset: true,
+    });
+    expect(roonMock.browse).toHaveBeenNthCalledWith(6, {
+      multi_session_key: client_id,
+      hierarchy: "internet_radio",
+      pop_all: true,
+      set_display_offset: true,
+    });
+    expect(roonMock.browse).toHaveBeenNthCalledWith(7, {
+      multi_session_key: client_id,
+      hierarchy: "playlists",
       pop_all: true,
       set_display_offset: true,
     });
@@ -237,13 +273,7 @@ describe("client-manager.ts test suite", () => {
     const client = clientManager.get(client_id);
     roonMock.browse.mockImplementation(() => Promise.reject(new Error("network error")));
     client.close();
-    expect(roonMock.browse).toHaveBeenCalledTimes(1);
-    expect(roonMock.browse).toHaveBeenCalledWith({
-      multi_session_key: client_id,
-      hierarchy: "browse",
-      pop_all: true,
-      set_display_offset: true,
-    });
+    expect(roonMock.browse).toHaveBeenCalledTimes(7);
     expect(() => clientManager.get(client_id)).toThrow(new Error(`'${client_id}' is not a registered client_id`));
   });
 

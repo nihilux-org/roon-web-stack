@@ -19,6 +19,7 @@ import {
   RoonApiBrowseLoadResponse,
   RoonApiBrowseOptions,
   RoonApiBrowseResponse,
+  RoonPath,
   RoonState,
   RoonStateListener,
   ZoneState,
@@ -123,7 +124,6 @@ describe("roon-web-client-factory.ts test suite", () => {
     void expect(client.command(COMMAND)).rejects.toEqual(error);
     void expect(client.browse({} as unknown as ClientRoonApiBrowseOptions)).rejects.toEqual(error);
     void expect(client.load({} as unknown as ClientRoonApiBrowseLoadOptions)).rejects.toEqual(error);
-    void expect(client.library(zone_id)).rejects.toEqual(error);
   });
 
   it(
@@ -131,11 +131,11 @@ describe("roon-web-client-factory.ts test suite", () => {
       "load Explore and Library item_key and open an EventSource on '${client_path}/events' and " +
       "publish the 'started' clientState",
     async () => {
-      fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+      fetchMock.once(mockVersionGet).once(mockRegisterPost);
       const client = roonWebClientFactory.build(API_URL);
       client.onClientState(clientStateListener);
       await client.start();
-      expect(fetchMock.mock.calls).toHaveLength(4);
+      expect(fetchMock.mock.calls).toHaveLength(2);
       const versionUrl = new URL("/api/version", API_URL);
       const versionRequest = fetchMock.mock.calls[0][0] as Request;
       expect(versionRequest.url).toEqual(versionUrl.toString());
@@ -248,54 +248,8 @@ describe("roon-web-client-factory.ts test suite", () => {
     expect(eventSourceMocks.size).toEqual(0);
   });
 
-  it("RoonWebClient#start should return a rejected Promise without calling '${client_path}/events' if any error occurred during the browse call to load Library item_key", () => {
-    const error = new Error("network error");
-    fetchMock
-      .once(mockVersionGet)
-      .once(mockRegisterPost)
-      .once((): Promise<MockResponseInit> => Promise.reject(error));
-    const client = roonWebClientFactory.build(API_URL);
-    const startPromise = client.start();
-    void expect(startPromise).rejects.toEqual(error);
-    expect(eventSourceMocks.size).toEqual(0);
-  });
-
-  it("RoonWebClient#start should return a rejected Promise without calling '${client_path}/events' if any error occurred during the load call to load Library item_key", () => {
-    const error = new Error("network error");
-    fetchMock
-      .once(mockVersionGet)
-      .once(mockRegisterPost)
-      .once(mockLibraryBrowsePost)
-      .once((): Promise<MockResponseInit> => Promise.reject(error));
-    const client = roonWebClientFactory.build(API_URL);
-    const startPromise = client.start();
-    void expect(startPromise).rejects.toEqual(error);
-    expect(eventSourceMocks.size).toEqual(0);
-  });
-
-  it("RoonWebClient#start should return a rejected Promise without calling '${client_path}/events' the load call to load Library item_key is not present in the load response", () => {
-    fetchMock
-      .once(mockVersionGet)
-      .once(mockRegisterPost)
-      .once(mockLibraryBrowsePost)
-      .once(
-        (): Promise<MockResponseInit> =>
-          Promise.resolve({
-            status: 200,
-            body: JSON.stringify({
-              ...LIBRARY_LOAD_RESPONSE,
-              items: [],
-            }),
-          })
-      );
-    const client = roonWebClientFactory.build(API_URL);
-    const startPromise = client.start();
-    void expect(startPromise).rejects.toEqual(new Error("can't initialize Library item_key"));
-    expect(eventSourceMocks.size).toEqual(0);
-  });
-
   it("RoonWebClient#onRoonState should always replay the last known ApiState and forward incoming events", async () => {
-    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    fetchMock.once(mockVersionGet).once(mockRegisterPost);
     const client = roonWebClientFactory.build(API_URL);
     await client.start();
     const eventSourceMock = eventSourceMocks.get(EVENTS_URL.toString());
@@ -356,7 +310,7 @@ describe("roon-web-client-factory.ts test suite", () => {
   });
 
   it("RoonWebClient#onRoonState should gracefully ignore incoming events with malformed JSON", async () => {
-    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    fetchMock.once(mockVersionGet).once(mockRegisterPost);
     const client = roonWebClientFactory.build(API_URL);
     await client.start();
     const eventSourceMock = eventSourceMocks.get(EVENTS_URL.toString());
@@ -373,7 +327,7 @@ describe("roon-web-client-factory.ts test suite", () => {
   });
 
   it("RoonWebClient#offRoonState should unregister the given RoonStateListener without impact on the other registered listeners", async () => {
-    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    fetchMock.once(mockVersionGet).once(mockRegisterPost);
     const client = roonWebClientFactory.build(API_URL);
     await client.start();
     const eventSourceMock = eventSourceMocks.get(EVENTS_URL.toString());
@@ -400,7 +354,7 @@ describe("roon-web-client-factory.ts test suite", () => {
   });
 
   it("RoonWebClient#offRoonState should ignore silently unregistered listeners", async () => {
-    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    fetchMock.once(mockVersionGet).once(mockRegisterPost);
     const client = roonWebClientFactory.build(API_URL);
     await client.start();
     const eventSourceMock = eventSourceMocks.get(EVENTS_URL.toString());
@@ -424,7 +378,7 @@ describe("roon-web-client-factory.ts test suite", () => {
   });
 
   it("RoonWebClient#onCommandState should never replay the last known CommandState and just forward incoming events", async () => {
-    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    fetchMock.once(mockVersionGet).once(mockRegisterPost);
     const client = roonWebClientFactory.build(API_URL);
     await client.start();
     const eventSourceMock = eventSourceMocks.get(EVENTS_URL.toString());
@@ -472,7 +426,7 @@ describe("roon-web-client-factory.ts test suite", () => {
   });
 
   it("RoonWebClient#onCommandState should gracefully ignore incoming events with malformed JSON", async () => {
-    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    fetchMock.once(mockVersionGet).once(mockRegisterPost);
     const client = roonWebClientFactory.build(API_URL);
     await client.start();
     const eventSourceMock = eventSourceMocks.get(EVENTS_URL.toString());
@@ -494,7 +448,7 @@ describe("roon-web-client-factory.ts test suite", () => {
   });
 
   it("RoonWebClient#offCommandState should unregister the given CommandStateListener without impact on the other registered listeners", async () => {
-    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    fetchMock.once(mockVersionGet).once(mockRegisterPost);
     const client = roonWebClientFactory.build(API_URL);
     await client.start();
     const eventSourceMock = eventSourceMocks.get(EVENTS_URL.toString());
@@ -526,7 +480,7 @@ describe("roon-web-client-factory.ts test suite", () => {
   });
 
   it("RoonWebClient#offCommandState should ignore silently unregistered listeners", async () => {
-    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    fetchMock.once(mockVersionGet).once(mockRegisterPost);
     const client = roonWebClientFactory.build(API_URL);
     await client.start();
     const eventSourceMock = eventSourceMocks.get(EVENTS_URL.toString());
@@ -555,7 +509,7 @@ describe("roon-web-client-factory.ts test suite", () => {
   });
 
   it("RoonWebClient#onZoneState should always replay last known ZoneState for each zone and forward incoming events", async () => {
-    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    fetchMock.once(mockVersionGet).once(mockRegisterPost);
     const client = roonWebClientFactory.build(API_URL);
     await client.start();
     const eventSourceMock = eventSourceMocks.get(EVENTS_URL.toString());
@@ -587,7 +541,7 @@ describe("roon-web-client-factory.ts test suite", () => {
   });
 
   it("RoonWebClient#onZoneState should gracefully ignore incoming events with malformed JSON", async () => {
-    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    fetchMock.once(mockVersionGet).once(mockRegisterPost);
     const client = roonWebClientFactory.build(API_URL);
     await client.start();
     const eventSourceMock = eventSourceMocks.get(EVENTS_URL.toString());
@@ -606,7 +560,7 @@ describe("roon-web-client-factory.ts test suite", () => {
   });
 
   it("RoonWebClient#offZoneState should unregister the given ZoneStateListener without impact on the other registered listeners", async () => {
-    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    fetchMock.once(mockVersionGet).once(mockRegisterPost);
     const client = roonWebClientFactory.build(API_URL);
     await client.start();
     const eventSourceMock = eventSourceMocks.get(EVENTS_URL.toString());
@@ -626,7 +580,7 @@ describe("roon-web-client-factory.ts test suite", () => {
   });
 
   it("RoonWebClient#offZoneState should ignore silently unregistered listeners", async () => {
-    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    fetchMock.once(mockVersionGet).once(mockRegisterPost);
     const client = roonWebClientFactory.build(API_URL);
     await client.start();
     const eventSourceMock = eventSourceMocks.get(EVENTS_URL.toString());
@@ -643,7 +597,7 @@ describe("roon-web-client-factory.ts test suite", () => {
   });
 
   it("RoonWebClient#onQueueState should always replay last known QueueState for each zone and forward incoming events", async () => {
-    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    fetchMock.once(mockVersionGet).once(mockRegisterPost);
     const client = roonWebClientFactory.build(API_URL);
     await client.start();
     const eventSourceMock = eventSourceMocks.get(EVENTS_URL.toString());
@@ -685,7 +639,7 @@ describe("roon-web-client-factory.ts test suite", () => {
   });
 
   it("RoonWebClient#onQueueState should gracefully ignore incoming events with malformed JSON", async () => {
-    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    fetchMock.once(mockVersionGet).once(mockRegisterPost);
     const client = roonWebClientFactory.build(API_URL);
     await client.start();
     const eventSourceMock = eventSourceMocks.get(EVENTS_URL.toString());
@@ -704,7 +658,7 @@ describe("roon-web-client-factory.ts test suite", () => {
   });
 
   it("RoonWebClient#offQueueState should unregister the given QueueStateListener without impact on the other registered listeners", async () => {
-    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    fetchMock.once(mockVersionGet).once(mockRegisterPost);
     const client = roonWebClientFactory.build(API_URL);
     await client.start();
     const eventSourceMock = eventSourceMocks.get(EVENTS_URL.toString());
@@ -724,7 +678,7 @@ describe("roon-web-client-factory.ts test suite", () => {
   });
 
   it("RoonWebClient#offQueueState should ignore silently unregistered listeners", async () => {
-    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    fetchMock.once(mockVersionGet).once(mockRegisterPost);
     const client = roonWebClientFactory.build(API_URL);
     await client.start();
     const eventSourceMock = eventSourceMocks.get(EVENTS_URL.toString());
@@ -744,8 +698,6 @@ describe("roon-web-client-factory.ts test suite", () => {
     fetchMock
       .once(mockVersionGet)
       .once(mockRegisterPost)
-      .once(mockLibraryBrowsePost)
-      .once(mockLibraryLoadPost)
       .once((req: Request) => {
         if (req.method === "POST" && req.url === new URL(`${client_path}/unregister`, API_URL).toString()) {
           return Promise.resolve({
@@ -770,12 +722,12 @@ describe("roon-web-client-factory.ts test suite", () => {
     expect(publishedRoonStates).toHaveLength(2);
     expect(publishedZoneStates).toHaveLength(4);
     await client.stop();
-    expect(fetchMock.mock.calls).toHaveLength(5);
-    const sentRequest = fetchMock.mock.calls[4][0] as Request;
+    expect(fetchMock.mock.calls).toHaveLength(3);
+    const sentRequest = fetchMock.mock.calls[2][0] as Request;
     expect(sentRequest.url).toEqual(new URL(`${client_path}/unregister`, API_URL).toString());
     expect(sentRequest.method).toEqual("POST");
     expect(eventSourceMock?.close).toHaveBeenCalledTimes(1);
-    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    fetchMock.once(mockVersionGet).once(mockRegisterPost);
     await client.start();
     client.onRoonState(roonStateListener);
     client.onZoneState(zoneStateListener);
@@ -788,8 +740,6 @@ describe("roon-web-client-factory.ts test suite", () => {
     fetchMock
       .once(mockVersionGet)
       .once(mockRegisterPost)
-      .once(mockLibraryBrowsePost)
-      .once(mockLibraryLoadPost)
       .once((req: Request) => {
         if (req.method === "POST" && req.url === new URL(`${client_path}/unregister`, API_URL).toString()) {
           return Promise.reject(error);
@@ -805,8 +755,8 @@ describe("roon-web-client-factory.ts test suite", () => {
     sendZoneEvent(OTHER_ZONE_STATE, eventSourceMock);
     const stopPromise = client.stop();
     void expect(stopPromise).rejects.toEqual(error);
-    expect(fetchMock.mock.calls).toHaveLength(5);
-    const sentRequest = fetchMock.mock.calls[4][0] as Request;
+    expect(fetchMock.mock.calls).toHaveLength(3);
+    const sentRequest = fetchMock.mock.calls[2][0] as Request;
     expect(sentRequest.url).toEqual(new URL(`${client_path}/unregister`, API_URL).toString());
     expect(sentRequest.method).toEqual("POST");
   });
@@ -816,8 +766,6 @@ describe("roon-web-client-factory.ts test suite", () => {
     fetchMock
       .once(mockVersionGet)
       .once(mockRegisterPost)
-      .once(mockLibraryBrowsePost)
-      .once(mockLibraryLoadPost)
       .once((req: Request) => {
         if (req.method === "POST" && req.url === new URL(`${client_path}/unregister`, API_URL).toString()) {
           return Promise.resolve({
@@ -839,8 +787,8 @@ describe("roon-web-client-factory.ts test suite", () => {
     expect(publishedZoneStates).toHaveLength(2);
     const stopPromise = client.stop();
     void expect(stopPromise).rejects.toEqual(error);
-    expect(fetchMock.mock.calls).toHaveLength(5);
-    const sentRequest = fetchMock.mock.calls[4][0] as Request;
+    expect(fetchMock.mock.calls).toHaveLength(3);
+    const sentRequest = fetchMock.mock.calls[2][0] as Request;
     expect(sentRequest.url).toEqual(new URL(`${client_path}/unregister`, API_URL).toString());
     expect(sentRequest.method).toEqual("POST");
     expect(eventSourceMock?.close).toHaveBeenCalledTimes(0);
@@ -859,8 +807,6 @@ describe("roon-web-client-factory.ts test suite", () => {
       fetchMock
         .once(mockVersionGet)
         .once(mockRegisterPost)
-        .once(mockLibraryBrowsePost)
-        .once(mockLibraryLoadPost)
         .once((req: Request) => {
           if (req.method === "POST" && req.url === new URL(`${client_path}/command`, API_URL).toString()) {
             return Promise.resolve({
@@ -877,8 +823,8 @@ describe("roon-web-client-factory.ts test suite", () => {
       await client.start();
       const returnedCommandId = await client.command(COMMAND);
       expect(returnedCommandId).toEqual(command_id);
-      expect(fetchMock.mock.calls).toHaveLength(5);
-      const sentRequest = fetchMock.mock.calls[4][0] as Request;
+      expect(fetchMock.mock.calls).toHaveLength(3);
+      const sentRequest = fetchMock.mock.calls[2][0] as Request;
       expect(sentRequest.url).toEqual(new URL(`${client_path}/command`, API_URL).toString());
       expect(sentRequest.method).toEqual("POST");
       expect(sentRequest.headers.get("Accept")).toEqual("application/json");
@@ -896,8 +842,6 @@ describe("roon-web-client-factory.ts test suite", () => {
       fetchMock
         .once(mockVersionGet)
         .once(mockRegisterPost)
-        .once(mockLibraryBrowsePost)
-        .once(mockLibraryLoadPost)
         .once((req: Request) => {
           if (req.method === "POST" && req.url === new URL(`${client_path}/command`, API_URL).toString()) {
             return Promise.reject(error);
@@ -920,8 +864,6 @@ describe("roon-web-client-factory.ts test suite", () => {
       fetchMock
         .once(mockVersionGet)
         .once(mockRegisterPost)
-        .once(mockLibraryBrowsePost)
-        .once(mockLibraryLoadPost)
         .once((req: Request) => {
           if (req.method === "POST" && req.url === new URL(`${client_path}/command`, API_URL).toString()) {
             return Promise.resolve({
@@ -949,8 +891,6 @@ describe("roon-web-client-factory.ts test suite", () => {
       fetchMock
         .once(mockVersionGet)
         .once(mockRegisterPost)
-        .once(mockLibraryBrowsePost)
-        .once(mockLibraryLoadPost)
         .once((req: Request) => {
           if (req.method === "POST" && req.url === new URL(`${client_path}/command`, API_URL).toString()) {
             return Promise.resolve({
@@ -962,8 +902,6 @@ describe("roon-web-client-factory.ts test suite", () => {
         })
         .once(mockVersionGet)
         .once(mockRegisterPost)
-        .once(mockLibraryBrowsePost)
-        .once(mockLibraryLoadPost)
         .once((req: Request) => {
           if (req.method === "POST" && req.url === new URL(`${client_path}/command`, API_URL).toString()) {
             return Promise.resolve({
@@ -998,8 +936,6 @@ describe("roon-web-client-factory.ts test suite", () => {
       fetchMock
         .once(mockVersionGet)
         .once(mockRegisterPost)
-        .once(mockLibraryBrowsePost)
-        .once(mockLibraryLoadPost)
         .once((req) => {
           if (req.method === "POST" && req.url === new URL(`${client_path}/browse`, API_URL).toString()) {
             return Promise.resolve(JSON.stringify(roonApiBrowseResponse));
@@ -1011,8 +947,8 @@ describe("roon-web-client-factory.ts test suite", () => {
       await client.start();
       const response = await client.browse(options);
       expect(response).toEqual(roonApiBrowseResponse);
-      expect(fetchMock.mock.calls).toHaveLength(5);
-      const sentRequest = fetchMock.mock.calls[4][0] as Request;
+      expect(fetchMock.mock.calls).toHaveLength(3);
+      const sentRequest = fetchMock.mock.calls[2][0] as Request;
       expect(sentRequest.url).toEqual(new URL(`${client_path}/browse`, API_URL).toString());
       expect(sentRequest.method).toEqual("POST");
       expect(sentRequest.headers.get("Accept")).toEqual("application/json");
@@ -1033,8 +969,6 @@ describe("roon-web-client-factory.ts test suite", () => {
       fetchMock
         .once(mockVersionGet)
         .once(mockRegisterPost)
-        .once(mockLibraryBrowsePost)
-        .once(mockLibraryLoadPost)
         .once((req) => {
           if (req.method === "POST" && req.url === new URL(`${client_path}/browse`, API_URL).toString()) {
             return Promise.reject(error);
@@ -1062,8 +996,6 @@ describe("roon-web-client-factory.ts test suite", () => {
       fetchMock
         .once(mockVersionGet)
         .once(mockRegisterPost)
-        .once(mockLibraryBrowsePost)
-        .once(mockLibraryLoadPost)
         .once((req) => {
           if (req.method === "POST" && req.url === new URL(`${client_path}/browse`, API_URL).toString()) {
             return Promise.resolve({
@@ -1094,8 +1026,6 @@ describe("roon-web-client-factory.ts test suite", () => {
       fetchMock
         .once(mockVersionGet)
         .once(mockRegisterPost)
-        .once(mockLibraryBrowsePost)
-        .once(mockLibraryLoadPost)
         .once((req) => {
           if (req.method === "POST" && req.url === new URL(`${client_path}/browse`, API_URL).toString()) {
             return Promise.resolve({
@@ -1107,8 +1037,6 @@ describe("roon-web-client-factory.ts test suite", () => {
         })
         .once(mockVersionGet)
         .once(mockRegisterPost)
-        .once(mockLibraryBrowsePost)
-        .once(mockLibraryLoadPost)
         .once((req) => {
           if (req.method === "POST" && req.url === new URL(`${client_path}/browse`, API_URL).toString()) {
             return Promise.resolve(JSON.stringify(roonApiBrowseResponse));
@@ -1149,8 +1077,6 @@ describe("roon-web-client-factory.ts test suite", () => {
       fetchMock
         .once(mockVersionGet)
         .once(mockRegisterPost)
-        .once(mockLibraryBrowsePost)
-        .once(mockLibraryLoadPost)
         .once((req) => {
           if (req.method === "POST" && req.url === new URL(`${client_path}/load`, API_URL).toString()) {
             return Promise.resolve(JSON.stringify(roonApiLoadResponse));
@@ -1162,8 +1088,8 @@ describe("roon-web-client-factory.ts test suite", () => {
       await client.start();
       const response = await client.load(options);
       expect(response).toEqual(roonApiLoadResponse);
-      expect(fetchMock.mock.calls).toHaveLength(5);
-      const sentRequest = fetchMock.mock.calls[4][0] as Request;
+      expect(fetchMock.mock.calls).toHaveLength(3);
+      const sentRequest = fetchMock.mock.calls[2][0] as Request;
       expect(sentRequest.url).toEqual(new URL(`${client_path}/load`, API_URL).toString());
       expect(sentRequest.method).toEqual("POST");
       expect(sentRequest.headers.get("Accept")).toEqual("application/json");
@@ -1184,8 +1110,6 @@ describe("roon-web-client-factory.ts test suite", () => {
       fetchMock
         .once(mockVersionGet)
         .once(mockRegisterPost)
-        .once(mockLibraryBrowsePost)
-        .once(mockLibraryLoadPost)
         .once((req) => {
           if (req.method === "POST" && req.url === new URL(`${client_path}/load`, API_URL).toString()) {
             return Promise.reject(error);
@@ -1223,8 +1147,6 @@ describe("roon-web-client-factory.ts test suite", () => {
       fetchMock
         .once(mockVersionGet)
         .once(mockRegisterPost)
-        .once(mockLibraryBrowsePost)
-        .once(mockLibraryLoadPost)
         .once((req) => {
           if (req.method === "POST" && req.url === new URL(`${client_path}/load`, API_URL).toString()) {
             return Promise.resolve({
@@ -1242,8 +1164,244 @@ describe("roon-web-client-factory.ts test suite", () => {
     }
   );
 
+  it("RoonWebClient#loadPath should recursively call RoonWebClient#browse and RoonWebClient#load in the given hierarchy until the searched path is found", async () => {
+    const path: RoonPath = {
+      hierarchy: "browse",
+      path: ["Tidal", "Playlists"],
+    };
+    const firstBrowseResponse: RoonApiBrowseResponse = {
+      action: "list",
+      list: {
+        level: 1,
+        title: "title",
+        count: 42,
+      },
+    };
+    const firstLoadResponse: RoonApiBrowseLoadResponse = {
+      list: {
+        level: 1,
+        title: "title",
+        count: 42,
+      },
+      offset: 0,
+      items: [
+        {
+          title: "title",
+        },
+        {
+          title: "Tidal",
+          item_key: "tidal_item_key",
+        },
+        {
+          title: "other_title",
+        },
+      ],
+    };
+    const secondBrowseResponse: RoonApiBrowseResponse = {
+      action: "list",
+      list: {
+        level: 2,
+        title: "title",
+        count: 42,
+      },
+    };
+    const secondLoadResponse: RoonApiBrowseLoadResponse = {
+      list: {
+        level: 1,
+        title: "title",
+        count: 42,
+      },
+      offset: 0,
+      items: [
+        {
+          title: "title",
+        },
+        {
+          title: "other_title",
+        },
+        {
+          title: "Playlists",
+          item_key: "tidal_playlist_item_key",
+        },
+      ],
+    };
+    const thirdBrowseResponse: RoonApiBrowseResponse = {
+      action: "list",
+      list: {
+        level: 3,
+        title: "title",
+        count: 42,
+      },
+    };
+    const thirdLoadResponse: RoonApiBrowseLoadResponse = {
+      list: {
+        level: 1,
+        title: "title",
+        count: 42,
+      },
+      offset: 0,
+      items: [
+        {
+          title: "playlist_title",
+        },
+        {
+          title: "other_playlist_title",
+        },
+        {
+          title: "yet_another_playlist_title",
+        },
+      ],
+    };
+    fetchMock
+      .once(mockVersionGet)
+      .once(mockRegisterPost)
+      .once((req) => {
+        if (req.method === "POST" && req.url === new URL(`${client_path}/browse`, API_URL).toString()) {
+          return Promise.resolve({
+            status: 200,
+            body: JSON.stringify(firstBrowseResponse),
+          });
+        } else {
+          return Promise.reject(new Error("error"));
+        }
+      })
+      .once((req) => {
+        if (req.method === "POST" && req.url === new URL(`${client_path}/load`, API_URL).toString()) {
+          return Promise.resolve({
+            status: 200,
+            body: JSON.stringify(firstLoadResponse),
+          });
+        } else {
+          return Promise.reject(new Error("error"));
+        }
+      })
+      .once((req) => {
+        if (req.method === "POST" && req.url === new URL(`${client_path}/browse`, API_URL).toString()) {
+          return Promise.resolve({
+            status: 200,
+            body: JSON.stringify(secondBrowseResponse),
+          });
+        } else {
+          return Promise.reject(new Error("error"));
+        }
+      })
+      .once((req) => {
+        if (req.method === "POST" && req.url === new URL(`${client_path}/load`, API_URL).toString()) {
+          return Promise.resolve({
+            status: 200,
+            body: JSON.stringify(secondLoadResponse),
+          });
+        } else {
+          return Promise.reject(new Error("error"));
+        }
+      })
+      .once((req) => {
+        if (req.method === "POST" && req.url === new URL(`${client_path}/browse`, API_URL).toString()) {
+          return Promise.resolve({
+            status: 200,
+            body: JSON.stringify(thirdBrowseResponse),
+          });
+        } else {
+          return Promise.reject(new Error("error"));
+        }
+      })
+      .once((req) => {
+        if (req.method === "POST" && req.url === new URL(`${client_path}/load`, API_URL).toString()) {
+          return Promise.resolve({
+            status: 200,
+            body: JSON.stringify(thirdLoadResponse),
+          });
+        } else {
+          return Promise.reject(new Error("error"));
+        }
+      });
+    const client = roonWebClientFactory.build(API_URL);
+    await client.start();
+    const browseSpy = jest.spyOn(client, "browse");
+    const loadSpy = jest.spyOn(client, "load");
+    const response = await client.loadPath(zone_id, path);
+    expect(response).toEqual(thirdLoadResponse);
+    expect(browseSpy).toHaveBeenCalledTimes(3);
+    expect(loadSpy).toHaveBeenCalledTimes(3);
+  });
+
+  it("RoonWebClient#loadPath should throw an error if a path element is not found at expected level in the given hierarchy", async () => {
+    const path: RoonPath = {
+      hierarchy: "browse",
+      path: ["Tidal", "Another path that won't be searched"],
+    };
+    const firstBrowseResponse: RoonApiBrowseResponse = {
+      action: "list",
+      list: {
+        level: 1,
+        title: "title",
+        count: 42,
+      },
+    };
+    const firstLoadResponse: RoonApiBrowseLoadResponse = {
+      list: {
+        level: 1,
+        title: "title",
+        count: 42,
+      },
+      offset: 0,
+      items: [
+        {
+          title: "title",
+        },
+        {
+          title: "not_Tidal",
+          item_key: "tidal_item_key",
+        },
+        {
+          title: "other_title",
+        },
+      ],
+    };
+    fetchMock
+      .once(mockVersionGet)
+      .once(mockRegisterPost)
+      .once((req) => {
+        if (req.method === "POST" && req.url === new URL(`${client_path}/browse`, API_URL).toString()) {
+          return Promise.resolve({
+            status: 200,
+            body: JSON.stringify(firstBrowseResponse),
+          });
+        } else {
+          return Promise.reject(new Error("error"));
+        }
+      })
+      .once((req) => {
+        if (req.method === "POST" && req.url === new URL(`${client_path}/load`, API_URL).toString()) {
+          return Promise.resolve({
+            status: 200,
+            body: JSON.stringify(firstLoadResponse),
+          });
+        } else {
+          return Promise.reject(new Error("error"));
+        }
+      });
+    const client = roonWebClientFactory.build(API_URL);
+    await client.start();
+    const browseSpy = jest.spyOn(client, "browse");
+    const loadSpy = jest.spyOn(client, "load");
+    let loadPathError: Error | undefined = undefined;
+    try {
+      await client.loadPath(zone_id, path);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        loadPathError = err;
+      }
+    }
+    expect(loadPathError).toEqual(
+      new Error("invalid path: 'browse' - 'Tidal -> Another path that won't be searched' not found")
+    );
+    expect(browseSpy).toHaveBeenCalledTimes(1);
+    expect(loadSpy).toHaveBeenCalledTimes(1);
+  });
+
   it(
-    "RoonWebClient#load should auto-refresh client state if a 403 is returned duuring the call of POST '${client_path}/load' " +
+    "RoonWebClient#load should auto-refresh client state if a 403 is returned during the call of POST '${client_path}/load' " +
       "and then call POST '${client_path}/load' again",
     async () => {
       const options: RoonApiBrowseLoadOptions = {
@@ -1266,8 +1424,6 @@ describe("roon-web-client-factory.ts test suite", () => {
       fetchMock
         .once(mockVersionGet)
         .once(mockRegisterPost)
-        .once(mockLibraryBrowsePost)
-        .once(mockLibraryLoadPost)
         .once((req) => {
           if (req.method === "POST" && req.url === new URL(`${client_path}/load`, API_URL).toString()) {
             return Promise.resolve({
@@ -1279,8 +1435,6 @@ describe("roon-web-client-factory.ts test suite", () => {
         })
         .once(mockVersionGet)
         .once(mockRegisterPost)
-        .once(mockLibraryBrowsePost)
-        .once(mockLibraryLoadPost)
         .once((req) => {
           if (req.method === "POST" && req.url === new URL(`${client_path}/load`, API_URL).toString()) {
             return Promise.resolve(JSON.stringify(roonApiLoadResponse));
@@ -1297,68 +1451,8 @@ describe("roon-web-client-factory.ts test suite", () => {
     }
   );
 
-  it(
-    "RoonWebClient#library should call RoonWebClient#browse with given 'zone_id' and preloaded Library 'item_key' " +
-      "and then call RoonWebClient#load with returned level",
-    async () => {
-      const roonBrowseResponse: RoonApiBrowseResponse = {
-        action: "list",
-        list: {
-          level: 42,
-          count: 420,
-          title: "title",
-        },
-      };
-      const roonLoadResponse: RoonApiBrowseLoadResponse = {
-        offset: 42,
-        items: [],
-        list: {
-          title: "title",
-          count: 42,
-          level: 420,
-        },
-      };
-      fetchMock
-        .once(mockVersionGet)
-        .once(mockRegisterPost)
-        .once(mockLibraryBrowsePost)
-        .once(mockLibraryLoadPost)
-        .once((req) => {
-          if (req.method === "POST" && req.url === new URL(`${client_path}/browse`, API_URL).toString()) {
-            return Promise.resolve(JSON.stringify(roonBrowseResponse));
-          } else {
-            return Promise.reject(new Error("error"));
-          }
-        })
-        .once((req) => {
-          if (req.method === "POST" && req.url === new URL(`${client_path}/load`, API_URL).toString()) {
-            return Promise.resolve(JSON.stringify(roonLoadResponse));
-          } else {
-            return Promise.reject(new Error("error"));
-          }
-        });
-      const client = roonWebClientFactory.build(API_URL);
-      await client.start();
-      const browseSpy = jest.spyOn(client, "browse");
-      const loadSpy = jest.spyOn(client, "load");
-      const response = await client.library(zone_id);
-      expect(response).toEqual(roonLoadResponse);
-      expect(browseSpy).toHaveBeenCalledTimes(1);
-      expect(browseSpy).toHaveBeenCalledWith({
-        hierarchy: "browse",
-        item_key: library_item_key,
-        zone_or_output_id: zone_id,
-      });
-      expect(loadSpy).toHaveBeenCalledTimes(1);
-      expect(loadSpy).toHaveBeenCalledWith({
-        hierarchy: "browse",
-        level: roonBrowseResponse.list?.level,
-      });
-    }
-  );
-
   it("RoonWebClient#restart should cleanup and call RoonWebClient#start", async () => {
-    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    fetchMock.once(mockVersionGet).once(mockRegisterPost);
     const client = roonWebClientFactory.build(API_URL);
     await client.start();
     const startSpy = jest.spyOn(client, "start");
@@ -1370,14 +1464,14 @@ describe("roon-web-client-factory.ts test suite", () => {
       },
       "close"
     );
-    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    fetchMock.once(mockVersionGet).once(mockRegisterPost);
     await client.restart();
     expect(startSpy).toHaveBeenCalledTimes(1);
     expect(eventSourceCloseSpy).toHaveBeenCalledTimes(1);
   });
 
   it("RoonWebClient#restart should cancel ongoing restarts", async () => {
-    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    fetchMock.once(mockVersionGet).once(mockRegisterPost);
     const client = roonWebClientFactory.build(API_URL);
     await client.start();
     fetchMock
@@ -1385,9 +1479,7 @@ describe("roon-web-client-factory.ts test suite", () => {
         return new Promise(() => {});
       })
       .once(mockVersionGet)
-      .once(mockRegisterPost)
-      .once(mockLibraryBrowsePost)
-      .once(mockLibraryLoadPost);
+      .once(mockRegisterPost);
     const firstRestart = client.restart();
     const secondRestart = client.restart();
     void expect(firstRestart).rejects.toEqual(new DOMException("The operation was aborted", "ABORT_ERROR"));
@@ -1398,7 +1490,7 @@ describe("roon-web-client-factory.ts test suite", () => {
     "RoonWebClient#restart should return a fulfilled Promise after publishing an 'outdated' ClientState " +
       "if the api version has changed since the first call to #start",
     async () => {
-      fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+      fetchMock.once(mockVersionGet).once(mockRegisterPost);
       const client = roonWebClientFactory.build(API_URL);
       await client.start();
       fetchMock
@@ -1414,9 +1506,7 @@ describe("roon-web-client-factory.ts test suite", () => {
             return Promise.reject(new Error("error"));
           }
         })
-        .once(mockRegisterPost)
-        .once(mockLibraryBrowsePost)
-        .once(mockLibraryLoadPost);
+        .once(mockRegisterPost);
       client.onClientState(clientStateListener);
       await client.restart();
       expect(publishedClientStates).toEqual(["outdated", "started"]);
@@ -1424,14 +1514,14 @@ describe("roon-web-client-factory.ts test suite", () => {
   );
 
   it("RoonWebClient#version should return the version returned by the API in 'x-roon-web-stack-version' header of the response of GET '/api/version'", async () => {
-    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    fetchMock.once(mockVersionGet).once(mockRegisterPost);
     const client = roonWebClientFactory.build(API_URL);
     await client.start();
     expect(client.version()).toEqual(VERSION);
   });
 
   it("RoonWebClient#refresh should not call #restart if no error has happened on the underlying SSE request", async () => {
-    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    fetchMock.once(mockVersionGet).once(mockRegisterPost);
     const client = roonWebClientFactory.build(API_URL);
     await client.start();
     const restartSpy = jest.spyOn(client, "restart");
@@ -1440,11 +1530,11 @@ describe("roon-web-client-factory.ts test suite", () => {
   });
 
   it("RoonWebClient#refresh should call #restart if an error has happened on the underlying SSE request", async () => {
-    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    fetchMock.once(mockVersionGet).once(mockRegisterPost);
     const client = roonWebClientFactory.build(API_URL);
     await client.start();
     const restartSpy = jest.spyOn(client, "restart");
-    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    fetchMock.once(mockVersionGet).once(mockRegisterPost);
     const eventSource = eventSourceMocks.get(EVENTS_URL.toString());
     if (eventSource && eventSource.onerror) {
       eventSource.onerror();
@@ -1456,11 +1546,11 @@ describe("roon-web-client-factory.ts test suite", () => {
   });
 
   it("RoonWebClient#refresh should let the client marked as to refresh if any error happen during #restart", async () => {
-    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    fetchMock.once(mockVersionGet).once(mockRegisterPost);
     const client = roonWebClientFactory.build(API_URL);
     await client.start();
     const restartSpy = jest.spyOn(client, "restart");
-    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost);
+    fetchMock.once(mockVersionGet);
     const eventSource = eventSourceMocks.get(EVENTS_URL.toString());
     if (eventSource && eventSource.onerror) {
       eventSource.onerror();
@@ -1475,7 +1565,7 @@ describe("roon-web-client-factory.ts test suite", () => {
     }
     expect(error).not.toBeUndefined();
     expect(restartSpy).toHaveBeenCalledTimes(1);
-    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    fetchMock.once(mockVersionGet).once(mockRegisterPost);
     await client.refresh();
     expect(restartSpy).toHaveBeenCalledTimes(2);
     await client.refresh();
@@ -1483,12 +1573,12 @@ describe("roon-web-client-factory.ts test suite", () => {
   });
 
   it("RoonWebClient should mark client to be refreshed if a new Ping is not received after expected time", async () => {
-    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    fetchMock.once(mockVersionGet).once(mockRegisterPost);
     const client = roonWebClientFactory.build(API_URL);
     await client.start();
     const refreshSpy = jest.spyOn(client, "refresh");
     const restartSpy = jest.spyOn(client, "restart");
-    fetchMock.once(mockVersionGet).once(mockRegisterPost).once(mockLibraryBrowsePost).once(mockLibraryLoadPost);
+    fetchMock.once(mockVersionGet).once(mockRegisterPost);
     const eventSource = eventSourceMocks.get(EVENTS_URL.toString());
     const ping: Ping = {
       next: 1,
@@ -1713,32 +1803,6 @@ const OTHER_QUEUE_STATE: QueueState = {
   ],
 };
 
-const LIBRARY_BROWSE_RESPONSE: RoonApiBrowseResponse = {
-  action: "list",
-  list: {
-    title: "Explore",
-    level: 42,
-    count: 7,
-  },
-};
-
-const library_item_key = "library_item_key";
-
-const LIBRARY_LOAD_RESPONSE: RoonApiBrowseLoadResponse = {
-  offset: 42,
-  items: [
-    {
-      title: "library_title",
-      item_key: library_item_key,
-    },
-  ],
-  list: {
-    title: "title",
-    count: 42,
-    level: 421,
-  },
-};
-
 const mockVersionGet: MockResponseInitFunction = (req: Request) => {
   if (req.method === "GET" && req.url === new URL("/api/version", API_URL).toString()) {
     return Promise.resolve({
@@ -1763,28 +1827,4 @@ const mockRegisterPost: MockResponseInitFunction = (req: Request) => {
   } else {
     return Promise.reject(new Error("error"));
   }
-};
-
-const mockLibraryBrowsePost: MockResponseInitFunction = (req: Request) => {
-  if (req.method === "POST" && req.url === new URL(`${client_path}/browse`, API_URL).toString()) {
-    return Promise.resolve({
-      status: 200,
-      body: JSON.stringify(LIBRARY_BROWSE_RESPONSE),
-    });
-  } else {
-    return Promise.reject(new Error("error"));
-  }
-};
-
-const mockLibraryLoadPost: MockResponseInitFunction = async (req: Request) => {
-  if (req.method === "POST" && req.url === new URL(`${client_path}/load`, API_URL).toString()) {
-    const options = (await req.json()) as unknown as RoonApiBrowseLoadOptions;
-    if (options.level === 42 && options.hierarchy === "browse") {
-      return Promise.resolve({
-        status: 200,
-        body: JSON.stringify(LIBRARY_LOAD_RESPONSE),
-      });
-    }
-  }
-  return Promise.reject(new Error("error"));
 };
