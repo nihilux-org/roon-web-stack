@@ -1,34 +1,70 @@
 <h2 mat-dialog-title class="browse-settings-title">Settings</h2>
 <mat-dialog-content>
-  <div class="settings">
-    <div class="setting">
-      <label for="theme-selector">Theme:</label>
-      <mat-radio-group id="theme-selector" aria-label="Select a theme" [value]="chosenTheme()()" (change)="setChosenTheme($event)" [class.small-screen]="$isSmallScreen()">
-        <mat-radio-button [value]="'DARK'" color="primary">Dark</mat-radio-button>
-        <mat-radio-button [value]="'LIGHT'" color="primary">Light</mat-radio-button>
-        <mat-radio-button [value]="'BROWSER'" color="primary">Browser</mat-radio-button>
-      </mat-radio-group>
-    </div>
-    @if (!$isOneColumn()) {
-      <div class="setting">
-        <label for="display-mode-selector">Display mode:</label>
-        <button mat-button id="display-mode-selector" [matMenuTriggerFor]="displayModeSelector"><mat-icon fontIcon="display_settings" />{{displayModeLabel(displayMode()())}}</button>
-        <mat-menu #displayModeSelector="matMenu" yPosition="below" xPosition="after">
-          @for (dm of displayModes(); track dm.id) {
-            <button tabindex="0" mat-menu-item (click)="setDisplayMode(dm.id)"><mat-icon fontIcon="display_settings" />{{dm.label}}</button>
-          }
-        </mat-menu>
+  <mat-tab-group>
+    <mat-tab label="General" bodyClass="settings-tab">
+      <div class="settings">
+        <div class="setting">
+          <label for="theme-selector">Theme:</label>
+          <mat-radio-group id="theme-selector" aria-label="Select a theme" [value]="chosenTheme()()" (change)="setChosenTheme($event)" [class.small-screen]="$isSmallScreen()">
+            <mat-radio-button [value]="'DARK'" color="primary">Dark</mat-radio-button>
+            <mat-radio-button [value]="'LIGHT'" color="primary">Light</mat-radio-button>
+            <mat-radio-button [value]="'BROWSER'" color="primary">Browser</mat-radio-button>
+          </mat-radio-group>
+        </div>
+        @if (!$isOneColumn()) {
+          <div class="setting">
+            <label for="display-mode-selector">Display mode:</label>
+            <button mat-button id="display-mode-selector" [matMenuTriggerFor]="displayModeSelector">
+              <mat-icon fontIcon="display_settings" />{{displayModeLabel(displayMode()())}}
+            </button>
+            <mat-menu #displayModeSelector="matMenu" yPosition="below" xPosition="after">
+              @for (dm of displayModes(); track dm.id) {
+                <button tabindex="0" mat-menu-item (click)="setDisplayMode(dm.id)"><mat-icon fontIcon="display_settings" />{{dm.label}}</button>
+              }
+            </mat-menu>
+          </div>
+        }
+        <div class="setting">
+          <label for="zone-selector">Displayed zone:</label>
+          <nr-zone-selector id="zone-selector" aria-label="Choose a zone to display" yPosition="below" xPosition="after" />
+        </div>
       </div>
-    }
-    <div class="setting">
-      <label for="zone-selector">Displayed zone:</label>
-      <nr-zone-selector id="zone-selector" aria-label="Choose a zone to display" yPosition="below" xPosition="after" />
-    </div>
-  </div>
-  <div class="version" [class.small-screen]="$isSmallScreen()">
-    <button mat-button (click)="onReload()"><mat-icon fontIcon="refresh" />Reload app</button>
-    <span>version: {{version}}</span>
-  </div>
+      <div class="version" [class.small-screen]="$isSmallScreen()">
+        <button mat-button (click)="onReload()"><mat-icon fontIcon="refresh" />Reload app</button>
+        <span>version: {{version}}</span>
+      </div>
+    </mat-tab>
+    <mat-tab label="Actions" bodyClass="settings-tab">
+      <div class="settings actions">
+        <div class="actions-configuration">
+          <button mat-button id="actions-selector" [matMenuTriggerFor]="actionSelector" [disabled]="$availableActions().length === 0">
+            <mat-icon fontIcon="action_key" />Choose an Action to add
+          </button>
+          <mat-menu #actionSelector="matMenu" yPosition="below" xPosition="after">
+            @for (da of $availableActions(); track da.id) {
+              <button tabindex="0" mat-menu-item (click)="addAction(da)"><mat-icon [fontIcon]="da.button.icon" />{{da.button.label}}</button>
+            }
+          </mat-menu>
+        </div>
+        <div class="active-actions-container">
+          <div cdkDropList (cdkDropListDropped)="onActionsReordered($event)" class="active-actions">
+            @for (da of $actions(); track da.id) {
+              <div class="active-action" cdkDrag>
+                <span class="active-action-label">
+                  <mat-icon [fontIcon]="da.button.icon" />
+                  <span>{{da.button.label}}</span>
+                </span>
+                <span>
+                  <button mat-icon-button (click)="removeAction(da)"><mat-icon fontIcon="cancel" /></button>
+                  <button mat-icon-button cdkDragHandle><mat-icon fontIcon="reorder" /></button>
+                </span>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
   <button mat-button (click)="onSave()"><mat-icon fontIcon="save" />Save</button>

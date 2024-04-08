@@ -7,6 +7,7 @@ import {
   ClientRoonApiBrowseOptions,
   Command,
   QueueState,
+  RoonPath,
   RoonState,
   ZoneDescription,
   ZoneState,
@@ -36,10 +37,9 @@ describe("RoonServiceService", () => {
     expect(() => {
       service.command({} as Command);
     }).toThrow(error);
-    expect(() => service.library("zone_id")).toThrow(error);
-    expect(() => service.explore("zone_id")).toThrow(error);
-    expect(() => service.previous("zone_id")).toThrow(error);
-    expect(() => service.navigate("zone_id")).toThrow(error);
+    expect(() => service.loadPath("zone_id", {} as RoonPath)).toThrow(error);
+    expect(() => service.previous("zone_id", "browse")).toThrow(error);
+    expect(() => service.navigate("zone_id", "browse")).toThrow(error);
     expect(() => service.browse({} as ClientRoonApiBrowseOptions)).toThrow(error);
     expect(() => service.load({} as ClientRoonApiBrowseLoadOptions)).toThrow(error);
     expect(() => service.version()).not.toThrow();

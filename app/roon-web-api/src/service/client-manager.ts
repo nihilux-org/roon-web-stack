@@ -7,6 +7,7 @@ import {
   ClientManager,
   Command,
   CommandState,
+  RoonApiBrowseHierarchy,
   RoonApiBrowseLoadOptions,
   RoonApiBrowseLoadResponse,
   RoonApiBrowseOptions,
@@ -18,10 +19,10 @@ import { commandDispatcher } from "@service";
 class InternalClient implements Client {
   private readonly client_id: string;
   private readonly commandChannel: Subject<CommandState>;
-  private readonly onCloseListener: (client: Client) => void;
+  private readonly onCloseListener: (client: InternalClient) => void;
   private eventChannel?: Observable<RoonSseMessage>;
 
-  constructor(client_id: string, onCloseListener: (client: Client) => void) {
+  constructor(client_id: string, onCloseListener: (client: InternalClient) => void) {
     this.client_id = client_id;
     this.commandChannel = new Subject<CommandState>();
     this.onCloseListener = onCloseListener;
@@ -66,6 +67,27 @@ class InternalClient implements Client {
   id = (): string => {
     return this.client_id;
   };
+
+  cleanHierarchies = (): void => {
+    this.cleanHierarchy("albums");
+    this.cleanHierarchy("artists");
+    this.cleanHierarchy("browse");
+    this.cleanHierarchy("composers");
+    this.cleanHierarchy("genres");
+    this.cleanHierarchy("internet_radio");
+    this.cleanHierarchy("playlists");
+  };
+
+  private cleanHierarchy = (hierarchy: RoonApiBrowseHierarchy): void => {
+    // this seems to be the closest thing to a close browsing session in roon API
+    this.browse({
+      hierarchy,
+      pop_all: true,
+      set_display_offset: true,
+    }).catch((err: unknown) => {
+      logger.error(err, "error while cleaning client '%s' state", this.client_id);
+    });
+  };
 }
 
 const generateClientId = (): string => {
@@ -73,27 +95,20 @@ const generateClientId = (): string => {
 };
 
 class InternalClientManager implements ClientManager {
-  private readonly clients: Map<string, Client>;
+  private readonly clients: Map<string, InternalClient>;
   private isStarted: boolean;
 
   constructor() {
-    this.clients = new Map<string, Client>();
+    this.clients = new Map<string, InternalClient>();
     this.isStarted = false;
   }
 
   register = (): string => {
     this.ensureStarted();
     const client_id = generateClientId();
-    const client = new InternalClient(client_id, (c: Client) => {
+    const client = new InternalClient(client_id, (c: InternalClient) => {
       this.clients.delete(c.id());
-      // this seems to be the closest thing to a close browsing session in roon API
-      c.browse({
-        hierarchy: "browse",
-        pop_all: true,
-        set_display_offset: true,
-      }).catch((err: unknown) => {
-        logger.error(err, "error while cleaning client '%s' state", c.id());
-      });
+      c.cleanHierarchies();
     });
     this.clients.set(client_id, client);
     return client_id;

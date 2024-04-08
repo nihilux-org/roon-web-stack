@@ -29,6 +29,7 @@ $roon-cqrs-web-ng-client-dark-theme: mat.define-dark-theme((
 @include mat.progress-spinner-theme($roon-cqrs-web-ng-client-dark-theme);
 @include mat.radio-theme($roon-cqrs-web-ng-client-dark-theme);
 @include mat.slider-theme($roon-cqrs-web-ng-client-dark-theme);
+@include mat.tabs-theme($roon-cqrs-web-ng-client-dark-theme);
 
 $roon-cqrs-web-ng-client-light-theme: mat.define-light-theme((
   color: (
@@ -54,10 +55,17 @@ $roon-cqrs-web-ng-client-light-theme: mat.define-light-theme((
   @include mat.progress-spinner-color($roon-cqrs-web-ng-client-light-theme);
   @include mat.radio-color($roon-cqrs-web-ng-client-light-theme);
   @include mat.slider-color($roon-cqrs-web-ng-client-light-theme);
+  @include mat.tabs-color($roon-cqrs-web-ng-client-light-theme);
 }
 
+.material-symbols-outlined {
+   font-variation-settings:
+     'FILL' 1,
+     'wght' 400,
+     'GRAD' 0,
+     'opsz' 24
+ }
 
-/* You can add global styles to this file, and also import other style files */
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
@@ -89,4 +97,8 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
       margin-right: 6px;
     }
   }
+}
+
+.settings-tab .mat-mdc-tab-body-content {
+  overflow: hidden;
 }

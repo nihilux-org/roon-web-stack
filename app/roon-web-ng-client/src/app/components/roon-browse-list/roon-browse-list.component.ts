@@ -2,10 +2,12 @@ import { BehaviorSubject, Observable, Subject, Subscription } from "rxjs";
 import { CollectionViewer, DataSource } from "@angular/cdk/collections";
 import { CdkFixedSizeVirtualScroll, CdkVirtualForOf, CdkVirtualScrollViewport } from "@angular/cdk/scrolling";
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
   Input,
+  numberAttribute,
   OnChanges,
   Output,
   QueryList,
@@ -21,7 +23,7 @@ import { MatIcon } from "@angular/material/icon";
 import { MatInput } from "@angular/material/input";
 import { MatMenu, MatMenuContent, MatMenuItem, MatMenuTrigger } from "@angular/material/menu";
 import { RoonImageComponent } from "@components/roon-image/roon-image.component";
-import { Item, RoonApiBrowseLoadResponse } from "@model";
+import { Item, RoonApiBrowseHierarchy, RoonApiBrowseLoadResponse } from "@model";
 import { NavigationEvent } from "@model/client";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
@@ -51,13 +53,15 @@ import { SettingsService } from "@services/settings.service";
   styleUrl: "./roon-browse-list.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RoonBrowseListComponent implements OnChanges {
+export class RoonBrowseListComponent implements OnChanges, AfterViewInit {
   private static readonly SUBTITLE_SPLITTER = /\s?\/?\s?\[\[\d*\|/;
   private readonly _roonService: RoonService;
   private readonly _inputValues: Map<string, string>;
   private _noActionClicked = true;
+  @Input({ required: true }) hierarchy!: RoonApiBrowseHierarchy;
   @Input({ required: true }) zoneId!: string;
   @Input({ required: true }) content!: RoonApiBrowseLoadResponse;
+  @Input({ required: true, transform: numberAttribute }) scrollIndex!: number;
   @Output() clickedItem = new EventEmitter<NavigationEvent>();
   @ViewChild(CdkVirtualScrollViewport) _virtualScroll!: CdkVirtualScrollViewport;
   @ViewChildren(MatMenuTrigger) _menuTriggers!: QueryList<MatMenuTrigger>;
@@ -71,13 +75,24 @@ export class RoonBrowseListComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
+    let updateDataSource = false;
     for (const changeKey in changes) {
       if (changeKey === "content") {
-        this.dataSource = new RoonListDataSource(this.content, this._roonService);
-        if (!changes[changeKey].isFirstChange()) {
-          this._virtualScroll.scrollToIndex(0, "instant");
-        }
+        updateDataSource = true;
+      } else if (changeKey === "hierarchy") {
+        updateDataSource = true;
       }
+    }
+    if (updateDataSource) {
+      this.dataSource = new RoonListDataSource(this.hierarchy, this.content, this._roonService);
+    }
+  }
+
+  ngAfterViewInit() {
+    if (this.scrollIndex > 10) {
+      setTimeout(() => {
+        this._virtualScroll.scrollToIndex(this.scrollIndex - 1, "instant");
+      });
     }
   }
 
@@ -102,11 +117,11 @@ export class RoonBrowseListComponent implements OnChanges {
     }
   }
 
-  onItemClicked(item_key?: string, hint?: string, hasInput?: boolean) {
+  onItemClicked(scrollIndex?: number, item_key?: string, hint?: string, hasInput?: boolean) {
     if (item_key && hint === "action_list") {
       this.onActionListClicked(item_key);
     } else if (item_key && hint === "action") {
-      this._roonService.navigate(this.zoneId, item_key).subscribe(() => {
+      this._roonService.navigate(this.zoneId, this.hierarchy, item_key).subscribe(() => {
         this.clickedItem.emit({});
       });
     } else if (item_key) {
@@ -117,13 +132,14 @@ export class RoonBrowseListComponent implements OnChanges {
       this.clickedItem.emit({
         item_key,
         input,
+        scrollIndex,
       });
     }
   }
 
   onActionClicked(item_key: string) {
     this._noActionClicked = false;
-    this._roonService.navigate(this.zoneId, item_key).subscribe(() => {});
+    this._roonService.navigate(this.zoneId, this.hierarchy, item_key).subscribe(() => {});
   }
 
   onPromptInputChange(inputId: string, event: Event) {
@@ -154,7 +170,7 @@ export class RoonBrowseListComponent implements OnChanges {
   ) {
     levelToPop++;
     navigationSub.add(
-      this._roonService.navigate(this.zoneId, item_key).subscribe((actionLoadResponse) => {
+      this._roonService.navigate(this.zoneId, this.hierarchy, item_key).subscribe((actionLoadResponse) => {
         if (actionLoadResponse.list.hint === "action_list") {
           menuTrigger.menuData = {
             actions: actionLoadResponse.items,
@@ -196,6 +212,7 @@ export class RoonBrowseListComponent implements OnChanges {
 
 class RoonListDataSource extends DataSource<Item | undefined> {
   private readonly _roonService: RoonService;
+  private readonly _hierarchy: RoonApiBrowseHierarchy;
   private readonly _pageSize: number;
   private readonly _level: number;
   private readonly _itemSubject: Subject<(Item | undefined)[]>;
@@ -203,9 +220,10 @@ class RoonListDataSource extends DataSource<Item | undefined> {
   private readonly _loadedItems: (Item | undefined)[];
   private readonly _loadedOffsets: Set<number>;
 
-  constructor(firstResponse: RoonApiBrowseLoadResponse, roonService: RoonService) {
+  constructor(hierarchy: RoonApiBrowseHierarchy, firstResponse: RoonApiBrowseLoadResponse, roonService: RoonService) {
     super();
     this._roonService = roonService;
+    this._hierarchy = hierarchy;
     this._pageSize = 100;
     this._level = firstResponse.list.level;
     this._itemSubject = new BehaviorSubject<(Item | undefined)[]>(firstResponse.items);
@@ -267,7 +285,7 @@ class RoonListDataSource extends DataSource<Item | undefined> {
 
   private loadPage: (offset: number) => Promise<void> = async (offset) => {
     const pageResponse = await this._roonService.load({
-      hierarchy: "browse",
+      hierarchy: this._hierarchy,
       level: this._level,
       offset,
     });

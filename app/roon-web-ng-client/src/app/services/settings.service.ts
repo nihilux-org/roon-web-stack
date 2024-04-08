@@ -11,7 +11,17 @@ import {
   signal,
   WritableSignal,
 } from "@angular/core";
-import { ChosenTheme, ClientBreakpoints, DisplayMode } from "@model/client";
+import {
+  Action,
+  BrowseAction,
+  ChosenTheme,
+  ClientBreakpoints,
+  DefaultActions,
+  DisplayMode,
+  LibraryAction,
+  RadiosAction,
+  ToggleQueueAction,
+} from "@model/client";
 
 @Injectable({
   providedIn: "root",
@@ -28,12 +38,14 @@ export class SettingsService implements OnDestroy {
   private static readonly CHOSEN_THEME_KEY = "nr.IS_DARK_THEME";
   private static readonly DISPLAY_QUEUE_TRACK_KEY = "nr.DISPLAY_QUEUE_TRACK";
   private static readonly DISPLAY_MODE_KEY = "nr.DISPLAY_MODE";
+  private static readonly ACTIONS_KEY = "nr.ACTIONS";
   private readonly _breakpointObserver: BreakpointObserver;
   private readonly _$displayedZoneId: WritableSignal<string>;
   private readonly _$chosenTheme: WritableSignal<string>;
   private readonly _$displayQueueTrack: WritableSignal<boolean>;
   private readonly _$breakpoints: WritableSignal<ClientBreakpoints>;
   private readonly _$displayMode: WritableSignal<DisplayMode>;
+  private readonly _$actions: WritableSignal<Action[]>;
   private _breakPointSubscription?: Subscription;
 
   constructor(rendererFactory: RendererFactory2, breakPointObserver: BreakpointObserver) {
@@ -47,6 +59,14 @@ export class SettingsService implements OnDestroy {
       equal: deepEqual,
     });
     this._$displayMode = signal((localStorage.getItem(SettingsService.DISPLAY_MODE_KEY) ?? "WIDE") as DisplayMode);
+    this._$actions = signal(
+      this.loadActionsFromLocalStorage(SettingsService.ACTIONS_KEY, [
+        ToggleQueueAction,
+        BrowseAction,
+        LibraryAction,
+        RadiosAction,
+      ])
+    );
     const renderer = rendererFactory.createRenderer(null, null);
     // FIXME?: should this be more semantically placed in nr-root.component?
     effect(() => {
@@ -157,6 +177,18 @@ export class SettingsService implements OnDestroy {
     return this._$displayMode;
   }
 
+  saveActions(actions: Action[]) {
+    localStorage.setItem(
+      SettingsService.ACTIONS_KEY,
+      actions.map((a) => a.id).reduce((ids, id) => `${ids};${id}`)
+    );
+    this._$actions.set([...actions]);
+  }
+
+  actions(): Signal<Action[]> {
+    return this._$actions;
+  }
+
   ngOnDestroy() {
     this._breakPointSubscription?.unsubscribe();
   }
@@ -176,5 +208,22 @@ export class SettingsService implements OnDestroy {
       breakpoints[breakpoint] = this._breakpointObserver.isMatched(breakpoint);
     }
     return breakpoints;
+  }
+
+  private loadActionsFromLocalStorage(key: string, defaultActions: Action[]) {
+    const storedValue = localStorage.getItem(key);
+    if (storedValue !== null) {
+      const ids: string[] = storedValue.split(";");
+      const actions = [];
+      for (const id of ids) {
+        const action = DefaultActions.find((a) => a.id === id);
+        if (action) {
+          actions.push(action);
+        }
+      }
+      return actions;
+    } else {
+      return defaultActions;
+    }
   }
 }

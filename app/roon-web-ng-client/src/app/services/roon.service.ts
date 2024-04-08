@@ -10,8 +10,10 @@ import {
   Command,
   CommandState,
   QueueState,
+  RoonApiBrowseHierarchy,
   RoonApiBrowseLoadResponse,
   RoonApiBrowseResponse,
+  RoonPath,
   RoonState,
   ZoneState,
 } from "@model";
@@ -22,9 +24,8 @@ import {
   CommandApiResult,
   CommandCallback,
   CommandWorkerApiRequest,
-  ExploreWorkerApiRequest,
-  LibraryWorkerApiRequest,
   LoadApiResult,
+  LoadPathWorkerApiRequest,
   LoadWorkerApiRequest,
   NavigateWorkerApiRequest,
   OutputCallback,
@@ -210,29 +211,29 @@ export class RoonService implements OnDestroy {
     });
   };
 
-  library: (zone_id: string) => Observable<RoonApiBrowseLoadResponse> = (zone_id: string) => {
-    const worker = this.ensureStarted();
-    const id = this.nextWorkerApiRequestId();
-    const apiRequest: LibraryWorkerApiRequest = {
-      id,
-      type: "library",
-      data: zone_id,
-    };
-    return this.buildLoadResponseObservable(worker, apiRequest);
-  };
-
-  explore: (zone_id: string) => Observable<RoonApiBrowseLoadResponse> = (zone_id: string) => {
-    const worker = this.ensureStarted();
-    const apiRequest: ExploreWorkerApiRequest = {
-      id: this.nextWorkerApiRequestId(),
-      type: "explore",
-      data: zone_id,
-    };
-    return this.buildLoadResponseObservable(worker, apiRequest);
-  };
-
-  previous: (zone_id: string, levels?: number) => Observable<RoonApiBrowseLoadResponse> = (
+  loadPath: (zone_id: string, path: RoonPath) => Observable<RoonApiBrowseLoadResponse> = (
     zone_id: string,
+    path: RoonPath
+  ) => {
+    const worker = this.ensureStarted();
+    const apiRequest: LoadPathWorkerApiRequest = {
+      id: this.nextWorkerApiRequestId(),
+      type: "load-path",
+      data: {
+        zone_id,
+        path,
+      },
+    };
+    return this.buildLoadResponseObservable(worker, apiRequest);
+  };
+
+  previous: (
+    zone_id: string,
+    hierarchy: RoonApiBrowseHierarchy,
+    levels?: number
+  ) => Observable<RoonApiBrowseLoadResponse> = (
+    zone_id: string,
+    hierarchy: RoonApiBrowseHierarchy,
     levels?: number
   ) => {
     const worker = this.ensureStarted();
@@ -242,13 +243,20 @@ export class RoonService implements OnDestroy {
       data: {
         levels,
         zone_id,
+        hierarchy,
       },
     };
     return this.buildLoadResponseObservable(worker, apiRequest);
   };
 
-  navigate: (zone_id: string, item_key?: string, input?: string) => Observable<RoonApiBrowseLoadResponse> = (
+  navigate: (
     zone_id: string,
+    hierarchy: RoonApiBrowseHierarchy,
+    item_key?: string,
+    input?: string
+  ) => Observable<RoonApiBrowseLoadResponse> = (
+    zone_id: string,
+    hierarchy: RoonApiBrowseHierarchy,
     item_key?: string,
     input?: string
   ) => {
@@ -258,6 +266,7 @@ export class RoonService implements OnDestroy {
       type: "navigate",
       data: {
         item_key,
+        hierarchy,
         zone_id,
         input,
       },
