@@ -89,7 +89,7 @@ export class RoonBrowseListComponent implements OnChanges, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    if (this.scrollIndex > 10) {
+    if (this.scrollIndex > 1) {
       setTimeout(() => {
         this._virtualScroll.scrollToIndex(this.scrollIndex - 1, "instant");
       });
