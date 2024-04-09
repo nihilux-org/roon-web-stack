@@ -7,14 +7,23 @@ import { MatIcon } from "@angular/material/icon";
 import { MatSlider, MatSliderThumb } from "@angular/material/slider";
 import { ZoneGroupingDialogComponent } from "@components/zone-grouping-dialog/zone-grouping-dialog.component";
 import { ZoneTransferDialogComponent } from "@components/zone-transfer-dialog/zone-transfer-dialog.component";
-import { CommandType, MuteCommand, MuteType, Output, VolumeCommand, VolumeStrategy } from "@model";
+import {
+  CommandType,
+  MuteCommand,
+  MuteGroupedZoneCommand,
+  MuteType,
+  Output,
+  VolumeCommand,
+  VolumeGroupedZoneCommand,
+  VolumeStrategy,
+} from "@model";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
 
 @Component({
   selector: "nr-zone-volume-dialog",
   standalone: true,
-  imports: [MatDialogContent, MatDivider, MatIcon, MatIconButton, MatSlider, MatSliderThumb, MatDialogTitle],
+  imports: [MatDialogContent, MatDialogTitle, MatDivider, MatIcon, MatIconButton, MatSlider, MatSliderThumb],
   templateUrl: "./zone-volume-dialog.component.html",
   styleUrl: "./zone-volume-dialog.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -26,6 +35,7 @@ export class ZoneVolumeDialogComponent {
   readonly $outputs: Signal<Output[]>;
   readonly $isSmallScreen: Signal<boolean>;
   readonly $canGroup: Signal<boolean>;
+  readonly $isGroup: Signal<boolean>;
 
   constructor(
     dialog: MatDialog,
@@ -51,6 +61,36 @@ export class ZoneVolumeDialogComponent {
       const outputs = this.$outputs();
       return outputs.length > 0 && outputs[0].can_group_with_output_ids.length > 0;
     });
+    this.$isGroup = computed(() => this.$outputs().length > 1);
+  }
+
+  onGroupedZoneStep(event: MouseEvent, decrement: boolean) {
+    event.stopPropagation();
+    const command: VolumeGroupedZoneCommand = {
+      type: CommandType.VOLUME_GROUPED_ZONE,
+      data: {
+        zone_id: this.$outputs()[0].zone_id,
+        decrement,
+      },
+    };
+    this._roonService.command(command);
+  }
+
+  onGroupedZoneMute(event: MouseEvent) {
+    event.stopPropagation();
+    const type: MuteType = this.isGroupedZoneMute() ? MuteType.UN_MUTE : MuteType.MUTE;
+    const command: MuteGroupedZoneCommand = {
+      type: CommandType.MUTE_GROUPED_ZONE,
+      data: {
+        zone_id: this.$outputs()[0].zone_id,
+        type,
+      },
+    };
+    this._roonService.command(command);
+  }
+
+  isGroupedZoneMute() {
+    return this.$outputs().reduce((isMuted, output) => isMuted && (output.volume?.is_muted ?? false), true);
   }
 
   onVolumeStep(event: MouseEvent, output_id: string, decrement?: boolean) {
@@ -63,7 +103,7 @@ export class ZoneVolumeDialogComponent {
         data: {
           zone_id: output.zone_id,
           output_id,
-          strategy: VolumeStrategy.RELATIVE_STEP,
+          strategy: VolumeStrategy.RELATIVE,
           value,
         },
       };

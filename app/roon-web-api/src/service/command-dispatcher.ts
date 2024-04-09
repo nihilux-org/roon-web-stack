@@ -15,9 +15,11 @@ import {
 import { executor as controlExecutor } from "./command-executor/control-command-executor";
 import { executor as groupExecutor } from "./command-executor/group-command-executor";
 import { executor as muteExecutor } from "./command-executor/mute-command-executor";
+import { executor as muteGroupedZoneExecutor } from "./command-executor/mute-grouped-zone-command-executor";
 import { executor as playFromHereExecutor } from "./command-executor/play-from-here-command-executor";
 import { executor as transferZoneExecutor } from "./command-executor/transfer-zone-command-executor";
 import { executor as volumeExecutor } from "./command-executor/volume-command-executor";
+import { executor as volumeGroupedZoneExecutor } from "./command-executor/volume-grouped-zone-command-executor";
 
 const dispatch = (command: Command, controlChannel: Subject<CommandState>): string => {
   const command_id = nanoid();
@@ -33,8 +35,14 @@ const dispatch = (command: Command, controlChannel: Subject<CommandState>): stri
     case CommandType.VOLUME:
       executeCommand(command_id, command, findZone(command.data.zone_id), volumeExecutor, controlChannel);
       break;
+    case CommandType.VOLUME_GROUPED_ZONE:
+      executeCommand(command_id, command, findZone(command.data.zone_id), volumeGroupedZoneExecutor, controlChannel);
+      break;
     case CommandType.MUTE:
       executeCommand(command_id, command, findZone(command.data.zone_id), muteExecutor, controlChannel);
+      break;
+    case CommandType.MUTE_GROUPED_ZONE:
+      executeCommand(command_id, command, findZone(command.data.zone_id), muteGroupedZoneExecutor, controlChannel);
       break;
     case CommandType.PLAY_FROM_HERE:
       executeCommand(command_id, command, findZone(command.data.zone_id), playFromHereExecutor, controlChannel);
