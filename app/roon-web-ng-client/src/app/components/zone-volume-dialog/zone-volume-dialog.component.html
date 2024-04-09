@@ -1,8 +1,21 @@
 <div mat-dialog-title class="volume-header">
-  <button tabindex="0" mat-icon-button (click)="onOpenTransferDialog()"><mat-icon fontIcon="sync_alt" /></button>
-  @if ($canGroup()) {
-    <button tabindex="0" mat-icon-button (click)="onOpenGroupDialog()"><mat-icon fontIcon="link" /></button>
-  }
+  <div>
+    <span>
+      <button tabindex="0" mat-icon-button (click)="onOpenTransferDialog()"><mat-icon fontIcon="sync_alt" /></button>
+      @if ($canGroup()) {
+        <button tabindex="0" mat-icon-button (click)="onOpenGroupDialog()"><mat-icon fontIcon="link" /></button>
+      }
+    </span>
+    @if ($isGroup()) {
+      <span>
+        <button tabindex="0" mat-icon-button (click)="onGroupedZoneMute($event)"><mat-icon [fontIcon]="isGroupedZoneMute() ? 'volume_off' : 'volume_up'" /></button>
+        <span class="volume-buttons">
+          <button tabindex="0" mat-icon-button (click)="onGroupedZoneStep($event, true)"><mat-icon fontIcon="do_not_disturb_on" /></button>
+          <button tabindex="0" mat-icon-button (click)="onGroupedZoneStep($event, false)"><mat-icon fontIcon="add_circle" /></button>
+        </span>
+      </span>
+    }
+  </div>
 </div>
 <mat-divider />
 <mat-dialog-content class="volume-panel">
@@ -16,19 +29,21 @@
     <div class="volume-control">
       @if (output.volume) {
         <button tabindex="0" mat-icon-button (click)="onOutputMute($event, output.output_id)"><mat-icon [fontIcon]="output.volume.is_muted ? 'volume_off' : 'volume_up'" /></button>
-        <span class="volume-value">{{sliderValue.valueAsNumber}}</span>
-        <span class="volume-slider" [class.is-small-screen]="$isSmallScreen()">
-          <sub>{{output.volume.hard_limit_min ?? output.volume.min ?? 0}}</sub>
-          <mat-slider
-            [max]="output.volume.hard_limit_max ?? output.volume.max ?? 100"
-            [min]="output.volume.hard_limit_min ?? output.volume.min ?? 0"
-            [step]="output.volume.step ?? 1"
-            (click)="$event.stopPropagation()"
-          >
-            <input matSliderThumb (valueChange)="onVolumeSliderChange($event, output.output_id)"  [value]="output.volume.value" #sliderValue>
-          </mat-slider>
-          <sub>{{output.volume.hard_limit_max ?? output.volume.max ?? 100}}</sub>
-        </span>
+        @if (output.volume.type !== "incremental") {
+          <span class="volume-value">{{sliderValue.valueAsNumber}}</span>
+          <span class="volume-slider" [class.is-small-screen]="$isSmallScreen()">
+            <sub>{{output.volume.hard_limit_min ?? output.volume.min ?? 0}}</sub>
+            <mat-slider
+              [max]="output.volume.hard_limit_max ?? output.volume.max ?? 100"
+              [min]="output.volume.hard_limit_min ?? output.volume.min ?? 0"
+              [step]="output.volume.step ?? 1"
+              (click)="$event.stopPropagation()"
+            >
+              <input matSliderThumb (valueChange)="onVolumeSliderChange($event, output.output_id)"  [value]="output.volume.value" #sliderValue>
+            </mat-slider>
+            <sub>{{output.volume.hard_limit_max ?? output.volume.max ?? 100}}</sub>
+          </span>
+        }
         <span class="volume-buttons">
           <button tabindex="0" mat-icon-button (click)="onVolumeStep($event, output.output_id, true)"><mat-icon fontIcon="do_not_disturb_on" /></button>
           <button tabindex="0" mat-icon-button (click)="onVolumeStep($event, output.output_id)"><mat-icon fontIcon="add_circle" /></button>

@@ -3,6 +3,12 @@
 .volume-header {
   margin: 5px;
   padding: 0;
+  display: flex;
+  > div {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
 }
 .volume-output-name {
   @include nr.block-overflow-ellipsis();

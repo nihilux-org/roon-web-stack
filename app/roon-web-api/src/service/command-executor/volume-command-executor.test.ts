@@ -84,7 +84,7 @@ describe("volume-command-executor.ts test suite", () => {
       });
   });
 
-  it("executor should return a rejected Promise when called with for an output which which is not one of the zone outputs", () => {
+  it("executor should return a rejected Promise when called with for an output which is not one of the zone outputs", () => {
     const volumeStrategies = [VolumeStrategy.ABSOLUTE, VolumeStrategy.RELATIVE, VolumeStrategy.RELATIVE_STEP];
     volumeStrategies
       .map(

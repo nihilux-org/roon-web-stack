@@ -3,9 +3,11 @@ import { roonMock } from "../infrastructure/roon-extension.mock";
 import { controlExecutorMock } from "./command-executor/control-command-executor.mock";
 import { groupCommandExecutorMock } from "./command-executor/group-command-executor.mock";
 import { muteCommandExecutorMock } from "./command-executor/mute-command-executor.mock";
+import { muteGroupedZoneCommandExecutorMock } from "./command-executor/mute-grouped-zone-command-executor.mock";
 import { playFromHereCommandExecutorMock } from "./command-executor/play-from-here-command-executor.mock";
 import { transferZoneCommandExecutorMock } from "./command-executor/transfer-zone-command-executor.mock";
-import { volumeCommandExecutor } from "./command-executor/volume-command-executor.mock";
+import { volumeCommandExecutorMock } from "./command-executor/volume-command-executor.mock";
+import { volumeGroupedZoneCommandExecutorMock } from "./command-executor/volume-grouped-zone-command-executor.mock";
 
 import { Subject } from "rxjs";
 import {
@@ -15,12 +17,14 @@ import {
   CommandType,
   GroupCommand,
   MuteCommand,
+  MuteGroupedZoneCommand,
   MuteType,
   Output,
   PlayFromHereCommand,
   RoonServer,
   TransferZoneCommand,
   VolumeCommand,
+  VolumeGroupedZoneCommand,
   VolumeStrategy,
   Zone,
 } from "@model";
@@ -136,7 +140,9 @@ describe("command-dispatcher.ts test suite", () => {
     const controlCommands = commands.filter(
       (c) =>
         c.type !== CommandType.VOLUME &&
+        c.type !== CommandType.VOLUME_GROUPED_ZONE &&
         c.type !== CommandType.MUTE &&
+        c.type !== CommandType.MUTE_GROUPED_ZONE &&
         c.type !== CommandType.PLAY_FROM_HERE &&
         c.type !== CommandType.TRANSFER_ZONE &&
         c.type !== CommandType.GROUP
@@ -185,7 +191,7 @@ describe("command-dispatcher.ts test suite", () => {
     await promise;
     expect(commandIds).toHaveLength(volumeCommands.length);
     volumeCommands.forEach((command, index) => {
-      expect(volumeCommandExecutor).toHaveBeenNthCalledWith(index + 1, command, {
+      expect(volumeCommandExecutorMock).toHaveBeenNthCalledWith(index + 1, command, {
         server,
         zone,
       });
@@ -267,6 +273,60 @@ describe("command-dispatcher.ts test suite", () => {
     expect(commandIds).toHaveLength(transferZoneCommands.length);
     transferZoneCommands.forEach((command, index) => {
       expect(transferZoneCommandExecutorMock).toHaveBeenNthCalledWith(index + 1, command, {
+        server,
+        zone,
+      });
+    });
+  });
+
+  it("command-dispatcher#dispatch should call volume-grouped-zone-command-executor with any VolumeGroupedZoneCommand", async () => {
+    const volumeGroupedZoneCommands: VolumeGroupedZoneCommand[] = commands
+      .filter((c: Command) => c.type === CommandType.VOLUME_GROUPED_ZONE)
+      .map((c: Command) => c as unknown as VolumeGroupedZoneCommand);
+    const notifications: CommandState[] = [];
+    const commandIds: string[] = [];
+    const promise: Promise<void> = new Promise((resolve) => {
+      controlChannel.subscribe((cn: CommandState) => {
+        notifications.push(cn);
+        if (notifications.length === volumeGroupedZoneCommands.length) {
+          resolve();
+        }
+      });
+    });
+    volumeGroupedZoneCommands.forEach((c: Command) => {
+      commandIds.push(commandDispatcher.dispatch(c, controlChannel));
+    });
+    await promise;
+    expect(commandIds).toHaveLength(volumeGroupedZoneCommands.length);
+    volumeGroupedZoneCommands.forEach((command, index) => {
+      expect(volumeGroupedZoneCommandExecutorMock).toHaveBeenNthCalledWith(index + 1, command, {
+        server,
+        zone,
+      });
+    });
+  });
+
+  it("command-dispatcher#dispatch should call mute-grouped-zone-command-executor with any MuteGroupedZoneCommand", async () => {
+    const muteGroupedZoneCommands: MuteGroupedZoneCommand[] = commands
+      .filter((c: Command) => c.type === CommandType.MUTE_GROUPED_ZONE)
+      .map((c: Command) => c as unknown as MuteGroupedZoneCommand);
+    const notifications: CommandState[] = [];
+    const commandIds: string[] = [];
+    const promise: Promise<void> = new Promise((resolve) => {
+      controlChannel.subscribe((cn: CommandState) => {
+        notifications.push(cn);
+        if (notifications.length === muteGroupedZoneCommands.length) {
+          resolve();
+        }
+      });
+    });
+    muteGroupedZoneCommands.forEach((c: Command) => {
+      commandIds.push(commandDispatcher.dispatch(c, controlChannel));
+    });
+    await promise;
+    expect(commandIds).toHaveLength(muteGroupedZoneCommands.length);
+    muteGroupedZoneCommands.forEach((command, index) => {
+      expect(muteGroupedZoneCommandExecutorMock).toHaveBeenNthCalledWith(index + 1, command, {
         server,
         zone,
       });
@@ -439,6 +499,41 @@ const commands: Command[] = [
     data: {
       zone_id,
       to_zone_id: "to_zone_id",
+    },
+  },
+  {
+    type: CommandType.MUTE_GROUPED_ZONE,
+    data: {
+      zone_id: "zone_id",
+      type: MuteType.MUTE,
+    },
+  },
+  {
+    type: CommandType.MUTE_GROUPED_ZONE,
+    data: {
+      zone_id: "zone_id",
+      type: MuteType.UN_MUTE,
+    },
+  },
+  {
+    type: CommandType.MUTE_GROUPED_ZONE,
+    data: {
+      zone_id: "zone_id",
+      type: MuteType.TOGGLE,
+    },
+  },
+  {
+    type: CommandType.VOLUME_GROUPED_ZONE,
+    data: {
+      zone_id: "zone_id",
+      decrement: true,
+    },
+  },
+  {
+    type: CommandType.VOLUME_GROUPED_ZONE,
+    data: {
+      zone_id: "zone_id",
+      decrement: false,
     },
   },
   {

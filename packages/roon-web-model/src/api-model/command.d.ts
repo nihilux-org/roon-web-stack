@@ -27,7 +27,9 @@ export const enum CommandType {
   NEXT = "NEXT",
   // volume actions
   VOLUME = "VOLUME",
+  VOLUME_GROUPED_ZONE = "VOLUME_GROUPED_ZONE",
   MUTE = "MUTE",
+  MUTE_GROUPED_ZONE = "MUTE_GROUPED_ZONE",
   // other actions
   GROUP = "GROUP",
   PLAY_FROM_HERE = "PLAY_FROM_HERE",
@@ -92,6 +94,14 @@ export interface VolumeCommand {
   };
 }
 
+export interface VolumeGroupedZoneCommand {
+  type: CommandType.VOLUME_GROUPED_ZONE;
+  data: {
+    zone_id: string;
+    decrement: boolean;
+  };
+}
+
 export const enum MuteType {
   TOGGLE = "TOGGLE",
   MUTE = "MUTE",
@@ -103,6 +113,14 @@ export interface MuteCommand {
   data: {
     zone_id: string;
     output_id: string;
+    type: MuteType;
+  };
+}
+
+export interface MuteGroupedZoneCommand {
+  type: CommandType.MUTE_GROUPED_ZONE;
+  data: {
+    zone_id: string;
     type: MuteType;
   };
 }
@@ -134,7 +152,9 @@ export interface GroupCommand {
 export type Command =
   | ControlCommand
   | VolumeCommand
+  | VolumeGroupedZoneCommand
   | MuteCommand
+  | MuteGroupedZoneCommand
   | PlayFromHereCommand
   | TransferZoneCommand
   | GroupCommand;
