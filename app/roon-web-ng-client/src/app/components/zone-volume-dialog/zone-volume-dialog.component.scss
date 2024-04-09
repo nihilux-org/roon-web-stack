@@ -4,6 +4,7 @@
   margin: 5px;
   padding: 0;
   display: flex;
+  touch-action: manipulation;
   > div {
     display: flex;
     justify-content: space-between;
