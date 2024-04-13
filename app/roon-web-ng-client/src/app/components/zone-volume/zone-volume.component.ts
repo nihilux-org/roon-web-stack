@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, Input, Signal, ViewChild } from "@angular/core";
+import { deepEqual } from "fast-equals";
+import { ChangeDetectionStrategy, Component, computed, Input, Signal, ViewChild } from "@angular/core";
 import { MatButtonModule, MatIconButton } from "@angular/material/button";
 import { MatDialog } from "@angular/material/dialog";
 import { MatDivider } from "@angular/material/divider";
@@ -6,7 +7,8 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatSliderModule } from "@angular/material/slider";
 import { ZoneVolumeDialogComponent } from "@components/zone-volume-dialog/zone-volume-dialog.component";
-import { DisplayMode, ZoneCommands } from "@model/client";
+import { Output } from "@model";
+import { DisplayMode } from "@model/client";
 import { SettingsService } from "@services/settings.service";
 
 @Component({
@@ -18,30 +20,38 @@ import { SettingsService } from "@services/settings.service";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ZoneVolumeComponent {
-  @Input({ required: true }) zoneCommands!: ZoneCommands;
+  @Input({ required: true }) $outputs!: Signal<Output[]>;
   @ViewChild("volumeButton") _volumeButton!: MatIconButton;
   private readonly _dialog: MatDialog;
   private readonly _$displayMode: Signal<DisplayMode>;
   private readonly _$isSmallScreen: Signal<boolean>;
+  readonly $isMuted: Signal<boolean>;
 
   constructor(dialog: MatDialog, settingsService: SettingsService) {
     this._dialog = dialog;
     this._$displayMode = settingsService.displayMode();
     this._$isSmallScreen = settingsService.isSmallScreen();
+    this.$isMuted = computed(
+      () => {
+        const outputs = this.$outputs();
+        if (outputs.length > 1) {
+          return outputs.reduce((isMuted, output) => isMuted && (output.volume?.is_muted ?? false), true);
+        } else if (outputs.length === 1) {
+          return outputs[0].volume?.is_muted ?? false;
+        } else {
+          return false;
+        }
+      },
+      {
+        equal: deepEqual,
+      }
+    );
   }
 
-  isMuted() {
-    if (this.zoneCommands.outputs.length > 1) {
-      return this.zoneCommands.outputs.reduce((isMuted, output) => isMuted && (output.volume?.is_muted ?? false), true);
-    } else if (this.zoneCommands.outputs.length === 1) {
-      return this.zoneCommands.outputs[0].volume?.is_muted ?? false;
-    } else {
-      return false;
-    }
-  }
+  isMuted() {}
 
   onVolumeDrawerOpen() {
-    const nbOutputs = this.zoneCommands.outputs.length;
+    const nbOutputs = this.$outputs().length;
     if (nbOutputs > 0) {
       const buttonElementRect = (
         this._volumeButton._elementRef.nativeElement as HTMLButtonElement

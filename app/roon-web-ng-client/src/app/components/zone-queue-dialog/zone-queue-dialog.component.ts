@@ -1,4 +1,4 @@
-import { Component, Inject, Signal } from "@angular/core";
+import { ChangeDetectionStrategy, Component, Inject, Signal } from "@angular/core";
 import { MatButton } from "@angular/material/button";
 import { MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogRef } from "@angular/material/dialog";
 import { MatIcon } from "@angular/material/icon";
@@ -11,6 +11,7 @@ import { TrackDisplay } from "@model/client";
   imports: [MatButton, MatDialogActions, MatDialogContent, MatIcon, ZoneQueueComponent],
   templateUrl: "./zone-queue-dialog.component.html",
   styleUrl: "./zone-queue-dialog.component.scss",
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ZoneQueueDialogComponent {
   private readonly _dialogRef: MatDialogRef<ZoneQueueDialogComponent>;

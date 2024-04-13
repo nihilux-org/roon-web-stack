@@ -23,8 +23,8 @@
       }
       <div class="zone-controls-compact">
         <nr-zone-actions />
-        <nr-zone-commands [zoneCommands]="$zoneCommands()" />
-        <nr-zone-progression [zoneProgression]="$zoneProgression()" />
+        <nr-zone-commands [$zoneCommands]="$zoneCommands" [$zoneOutputs]="$zoneOutputs" />
+        <nr-zone-progression [$zoneProgression]="$zoneProgression" />
       </div>
     </div>
   } @else if ($isWide()) {
@@ -38,6 +38,6 @@
   }
 </div>
 @if ($isWide() || $isOneColumn()) {
-  <nr-zone-commands [zoneCommands]="$zoneCommands()" />
-  <nr-zone-progression [zoneProgression]="$zoneProgression()" />
+  <nr-zone-commands [$zoneCommands]="$zoneCommands" [$zoneOutputs]="$zoneOutputs" />
+  <nr-zone-progression [$zoneProgression]="$zoneProgression" />
 }

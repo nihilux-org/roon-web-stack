@@ -1,28 +1,28 @@
 <div>
-  <nr-zone-volume [zoneCommands]="zoneCommands" class="volume" [class.is-small-screen]="$isSmallScreen()"/>
+  <nr-zone-volume [$outputs]="$zoneOutputs" class="volume" [class.is-small-screen]="$isSmallScreen()"/>
   <div class="buttons" [class.is-small-screen]="$isSmallScreen()">
-    @if (zoneCommands.previousTrack !== "ABSENT") {
-      <button tabindex="0" mat-icon-button aria-label="Previous track" [disabled]="zoneCommands.previousTrack ==='DISABLED'" (click)="onCommandClick('previousTrack')">
+    @if ($zoneCommands().previousTrack !== "ABSENT") {
+      <button tabindex="0" mat-icon-button aria-label="Previous track" [disabled]="$zoneCommands().previousTrack ==='DISABLED'" (click)="onCommandClick('previousTrack')">
         <mat-icon fontIcon="skip_previous" />
       </button>
     }
-    @if (zoneCommands.loading !== "ABSENT") {
-      <button tabindex="0" mat-mini-fab color="primary" aria-label="Loading" [disabled]="zoneCommands.loading ==='DISABLED'" (click)="onCommandClick('pause')">
+    @if ($zoneCommands().loading !== "ABSENT") {
+      <button tabindex="0" mat-mini-fab color="primary" aria-label="Loading" [disabled]="$zoneCommands().loading ==='DISABLED'" (click)="onCommandClick('pause')">
         <mat-icon fontIcon="rotate_right" />
       </button>
     }
-    @if (zoneCommands.play !== "ABSENT") {
-      <button tabindex="0" mat-mini-fab color="primary" aria-label="Play" [disabled]="zoneCommands.play ==='DISABLED'" (click)="onCommandClick('play')">
+    @if ($zoneCommands().play !== "ABSENT") {
+      <button tabindex="0" mat-mini-fab color="primary" aria-label="Play" [disabled]="$zoneCommands().play ==='DISABLED'" (click)="onCommandClick('play')">
         <mat-icon fontIcon="play_arrow" />
       </button>
     }
-    @if (zoneCommands.pause !== "ABSENT") {
-      <button tabindex="0" mat-mini-fab color="primary" aria-label="Pause" [disabled]="zoneCommands.pause ==='DISABLED'" (click)="onCommandClick('pause')">
+    @if ($zoneCommands().pause !== "ABSENT") {
+      <button tabindex="0" mat-mini-fab color="primary" aria-label="Pause" [disabled]="$zoneCommands().pause ==='DISABLED'" (click)="onCommandClick('pause')">
         <mat-icon fontIcon="pause" />
       </button>
     }
-    @if (zoneCommands.nextTrack !== "ABSENT") {
-      <button tabindex="0" mat-icon-button aria-label="Next track" [disabled]="zoneCommands.nextTrack ==='DISABLED'" (click)="onCommandClick('nextTrack')">
+    @if ($zoneCommands().nextTrack !== "ABSENT") {
+      <button tabindex="0" mat-icon-button aria-label="Next track" [disabled]="$zoneCommands().nextTrack ==='DISABLED'" (click)="onCommandClick('nextTrack')">
         <mat-icon fontIcon="skip_next" />
       </button>
     }

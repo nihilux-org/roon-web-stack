@@ -1,6 +1,6 @@
 import { MockBuilder, MockedComponentFixture, MockRender } from "ng-mocks";
-import { signal, WritableSignal } from "@angular/core";
-import { Command } from "@model";
+import { Signal, signal, WritableSignal } from "@angular/core";
+import { Command, Output } from "@model";
 import { DisplayMode, ZoneCommands, ZoneCommandState } from "@model/client";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
@@ -8,13 +8,18 @@ import { ZoneCommandsComponent } from "./zone-commands.component";
 
 describe("ZoneCommandsComponent", () => {
   let component: ZoneCommandsComponent;
-  let fixture: MockedComponentFixture<ZoneCommandsComponent, { zoneCommands: ZoneCommands }>;
+  let fixture: MockedComponentFixture<
+    ZoneCommandsComponent,
+    { $zoneCommands: Signal<ZoneCommands>; $zoneOutputs: Signal<Output[]> }
+  >;
   let commands: Command[];
   let roonService: {
     command: jest.Mock;
   };
   let $isSmallScreen: WritableSignal<boolean>;
   let $displayMode: WritableSignal<DisplayMode>;
+  let $zoneCommands: WritableSignal<ZoneCommands>;
+  let $zoneOutputs: WritableSignal<Output[]>;
   let settingsService: {
     isSmallScreen: jest.Mock;
     displayMode: jest.Mock;
@@ -33,11 +38,14 @@ describe("ZoneCommandsComponent", () => {
       isSmallScreen: jest.fn().mockImplementation(() => $isSmallScreen),
       displayMode: jest.fn().mockImplementation(() => $displayMode),
     };
+    $zoneCommands = signal(ZONE_COMMANDS);
+    $zoneOutputs = signal([]);
     await MockBuilder(ZoneCommandsComponent)
       .mock(RoonService, roonService as Partial<RoonService>)
       .mock(SettingsService, settingsService as Partial<SettingsService>);
     fixture = MockRender(ZoneCommandsComponent, {
-      zoneCommands: ZONE_COMMANDS,
+      $zoneCommands,
+      $zoneOutputs,
     });
     component = fixture.componentInstance as ZoneCommandsComponent;
     fixture.detectChanges();
@@ -55,5 +63,4 @@ const ZONE_COMMANDS: ZoneCommands = {
   pause: ZoneCommandState.ABSENT,
   play: ZoneCommandState.ABSENT,
   nextTrack: ZoneCommandState.ABSENT,
-  outputs: [],
 };

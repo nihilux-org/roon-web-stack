@@ -1,5 +1,5 @@
 <div>
   <button #volumeButton tabindex="0" mat-icon-button aria-label="Volume" (click)="onVolumeDrawerOpen()">
-    <mat-icon [fontIcon]="isMuted() ? 'volume_off' : 'volume_up'" />
+    <mat-icon [fontIcon]="$isMuted() ? 'volume_off' : 'volume_up'" />
   </button>
 </div>
