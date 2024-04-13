@@ -69,22 +69,17 @@ import { SettingsService } from "@services/settings.service";
   ],
 })
 export class ZoneContainerComponent implements OnDestroy, AfterViewInit {
-  private static readonly NOT_READY_IMAGE: TrackImage = {
-    src: "",
-    imageSize: -1,
-    isReady: false,
-  };
   private readonly _resizeService: ResizeService;
   private readonly _settingsService: SettingsService;
   private readonly _zoneContainerElement: ElementRef;
   private readonly _changeDetector: ChangeDetectorRef;
   private readonly _$zone: Signal<ZoneState>;
+  private readonly _$imageSize: WritableSignal<number>;
   private _resizeSubscription?: Subscription;
   readonly $trackDisplay: Signal<TrackDisplay>;
   readonly $zoneCommands: Signal<ZoneCommands>;
   readonly $zoneProgression: Signal<ZoneProgression>;
   readonly $image: Signal<TrackImage>;
-  readonly $imageSize: WritableSignal<number>;
   readonly $isOneColumn: Signal<boolean>;
   readonly $isCompact: Signal<boolean>;
   readonly $isWide: Signal<boolean>;
@@ -173,20 +168,17 @@ export class ZoneContainerComponent implements OnDestroy, AfterViewInit {
       }
       return DEFAULT_ZONE_PROGRESSION;
     });
-    this.$imageSize = signal(-1);
+    this._$imageSize = signal(-1);
     this.$image = computed(
       () => {
-        const src = this.$trackDisplay().image_key;
-        const imageSize = this.$imageSize();
-        if (src && imageSize !== -1) {
-          return {
-            src: src,
-            imageSize: imageSize,
-            isReady: true,
-          };
-        } else {
-          return ZoneContainerComponent.NOT_READY_IMAGE;
-        }
+        const src = this.$trackDisplay().image_key ?? "";
+        const size = this._$imageSize();
+        const isReady = src.length > 0 && size !== -1;
+        return {
+          src,
+          size,
+          isReady,
+        };
       },
       {
         equal: deepEqual,
@@ -207,13 +199,13 @@ export class ZoneContainerComponent implements OnDestroy, AfterViewInit {
     const zoneDisplayDiv = this._zoneContainerElement.nativeElement as HTMLDivElement;
     const zoneImageDiv = zoneDisplayDiv.getElementsByClassName("zone-image")[0] as HTMLDivElement;
     setTimeout(() => {
-      this.$imageSize.set(Math.min(zoneImageDiv.offsetWidth - 20, zoneImageDiv.offsetHeight - 20));
+      this._$imageSize.set(Math.min(zoneImageDiv.offsetWidth - 20, zoneImageDiv.offsetHeight - 20));
     }, 5);
     let firstResize = true;
     this._resizeSubscription = this._resizeService.observeElement(zoneImageDiv).subscribe((resizeEntry) => {
       if (!firstResize) {
         const borderBox = resizeEntry.borderBoxSize[0];
-        this.$imageSize.set(Math.min(borderBox.inlineSize - 20, borderBox.blockSize - 20));
+        this._$imageSize.set(Math.min(borderBox.inlineSize - 20, borderBox.blockSize - 20));
         this._changeDetector.detectChanges();
       } else {
         firstResize = false;

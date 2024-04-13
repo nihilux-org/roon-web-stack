@@ -8,6 +8,6 @@ export const EMPTY_TRACK: Track = {
 
 export interface TrackImage {
   src: string;
-  imageSize: number;
+  size: number;
   isReady: boolean;
 }
