@@ -1,5 +1,3 @@
-import { Output } from "@model";
-
 export interface ZoneCommands {
   zoneId: string;
   previousTrack: ZoneCommandState;
@@ -7,7 +5,6 @@ export interface ZoneCommands {
   play: ZoneCommandState;
   pause: ZoneCommandState;
   nextTrack: ZoneCommandState;
-  outputs: Output[];
 }
 
 export enum ZoneCommandState {

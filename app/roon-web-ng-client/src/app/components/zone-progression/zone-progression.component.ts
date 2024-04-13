@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
+import { ChangeDetectionStrategy, Component, Input, Signal } from "@angular/core";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
-import { DEFAULT_ZONE_PROGRESSION, ZoneProgression } from "@model/client";
+import { ZoneProgression } from "@model/client";
 
 @Component({
   selector: "nr-zone-progression",
@@ -11,5 +11,5 @@ import { DEFAULT_ZONE_PROGRESSION, ZoneProgression } from "@model/client";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ZoneProgressionComponent {
-  @Input({ required: true }) zoneProgression: ZoneProgression = DEFAULT_ZONE_PROGRESSION;
+  @Input({ required: true }) $zoneProgression!: Signal<ZoneProgression>;
 }

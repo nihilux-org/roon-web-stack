@@ -20,7 +20,7 @@ import { ZoneCurrentTrackComponent } from "@components/zone-current-track/zone-c
 import { ZoneProgressionComponent } from "@components/zone-progression/zone-progression.component";
 import { ZoneQueueComponent } from "@components/zone-queue/zone-queue.component";
 import { ZoneSelectorComponent } from "@components/zone-selector/zone-selector.component";
-import { ZoneState } from "@model";
+import { Output, ZoneState } from "@model";
 import {
   DEFAULT_ZONE_PROGRESSION,
   DisplayMode,
@@ -39,13 +39,13 @@ import { SettingsService } from "@services/settings.service";
   selector: "nr-zone-container",
   standalone: true,
   imports: [
-    ZoneCommandsComponent,
-    ZoneProgressionComponent,
-    ZoneSelectorComponent,
-    ZoneQueueComponent,
     RoonImageComponent,
     ZoneActionsComponent,
+    ZoneCommandsComponent,
     ZoneCurrentTrackComponent,
+    ZoneProgressionComponent,
+    ZoneQueueComponent,
+    ZoneSelectorComponent,
   ],
   templateUrl: "./zone-container.component.html",
   styleUrl: "./zone-container.component.scss",
@@ -79,6 +79,7 @@ export class ZoneContainerComponent implements OnDestroy, AfterViewInit {
   readonly $trackDisplay: Signal<TrackDisplay>;
   readonly $zoneCommands: Signal<ZoneCommands>;
   readonly $zoneProgression: Signal<ZoneProgression>;
+  readonly $zoneOutputs: Signal<Output[]>;
   readonly $image: Signal<TrackImage>;
   readonly $isOneColumn: Signal<boolean>;
   readonly $isCompact: Signal<boolean>;
@@ -150,7 +151,6 @@ export class ZoneContainerComponent implements OnDestroy, AfterViewInit {
           pause,
           nextTrack,
           nextAlbum,
-          outputs: zs.outputs,
         };
       },
       {
@@ -168,6 +168,14 @@ export class ZoneContainerComponent implements OnDestroy, AfterViewInit {
       }
       return DEFAULT_ZONE_PROGRESSION;
     });
+    this.$zoneOutputs = computed(
+      () => {
+        return this._$zone().outputs;
+      },
+      {
+        equal: deepEqual,
+      }
+    );
     this._$imageSize = signal(-1);
     this.$image = computed(
       () => {

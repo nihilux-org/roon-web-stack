@@ -4,7 +4,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { ZoneSelectorComponent } from "@components/zone-selector/zone-selector.component";
 import { ZoneVolumeComponent } from "@components/zone-volume/zone-volume.component";
-import { Command, CommandType } from "@model";
+import { Command, CommandType, Output } from "@model";
 import { DisplayMode, ZoneCommands, ZoneCommandState } from "@model/client";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
@@ -19,7 +19,8 @@ import { SettingsService } from "@services/settings.service";
 })
 export class ZoneCommandsComponent {
   private readonly _roonService: RoonService;
-  @Input({ required: true }) zoneCommands!: ZoneCommands;
+  @Input({ required: true }) $zoneCommands!: Signal<ZoneCommands>;
+  @Input({ required: true }) $zoneOutputs!: Signal<Output[]>;
   readonly $isSmallScreen: Signal<boolean>;
 
   constructor(roonService: RoonService, settingsService: SettingsService) {
@@ -56,10 +57,11 @@ export class ZoneCommandsComponent {
         break;
     }
     if (commandType) {
-      const zone_id = this.zoneCommands.zoneId;
+      const zoneCommands = this.$zoneCommands();
+      const zone_id = zoneCommands.zoneId;
       if (
         (commandType === CommandType.PREVIOUS || commandType === CommandType.NEXT) &&
-        this.zoneCommands.pause === ZoneCommandState.ACTIVE
+        zoneCommands.pause === ZoneCommandState.ACTIVE
       ) {
         this._roonService.command({
           type: CommandType.PAUSE,
