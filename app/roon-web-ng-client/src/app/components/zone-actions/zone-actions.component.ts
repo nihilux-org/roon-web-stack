@@ -1,17 +1,19 @@
-import { ChangeDetectionStrategy, Component, Input, Signal } from "@angular/core";
+import { ChangeDetectionStrategy, Component, computed, Input, Signal } from "@angular/core";
 import { MatButton, MatIconButton } from "@angular/material/button";
 import { MatDialog, MatDialogConfig } from "@angular/material/dialog";
 import { MatIcon } from "@angular/material/icon";
+import { FullScreenToggleComponent } from "@components/full-screen-toggle/full-screen-toggle.component";
 import { RoonBrowseDialogComponent } from "@components/roon-browse-dialog/roon-browse-dialog.component";
 import { SettingsDialogComponent } from "@components/settings-dialog/settings-dialog.component";
 import { ZoneQueueDialogComponent } from "@components/zone-queue-dialog/zone-queue-dialog.component";
 import { Action, ActionType, LoadAction, TrackDisplay } from "@model/client";
+import { FullscreenService } from "@services/fullscreen.service";
 import { SettingsService } from "@services/settings.service";
 
 @Component({
   selector: "nr-zone-actions",
   standalone: true,
-  imports: [MatButton, MatIcon, MatIconButton],
+  imports: [MatButton, MatIcon, MatIconButton, FullScreenToggleComponent],
   templateUrl: "./zone-actions.component.html",
   styleUrl: "./zone-actions.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -20,16 +22,21 @@ export class ZoneActionsComponent {
   @Input({ required: false }) $trackDisplay?: Signal<TrackDisplay>;
   private readonly _dialog: MatDialog;
   private readonly _settingsService: SettingsService;
-  private readonly $isOneColumn: Signal<boolean>;
+  private readonly _$isOneColumn: Signal<boolean>;
   readonly $isSmallScreen: Signal<boolean>;
   readonly $actions: Signal<Action[]>;
+  readonly $withFullscreen: Signal<boolean>;
 
-  constructor(dialog: MatDialog, settingsService: SettingsService) {
+  constructor(dialog: MatDialog, settingsService: SettingsService, fullScreenService: FullscreenService) {
     this._dialog = dialog;
     this._settingsService = settingsService;
-    this.$isOneColumn = this._settingsService.isOneColumn();
+    this._$isOneColumn = this._settingsService.isOneColumn();
     this.$isSmallScreen = this._settingsService.isSmallScreen();
     this.$actions = this._settingsService.actions();
+    const supportsFullScreen = fullScreenService.supportsFullScreen();
+    this.$withFullscreen = computed(() => {
+      return supportsFullScreen && this._$isOneColumn();
+    });
   }
 
   executeAction(action: Action) {
@@ -55,7 +62,7 @@ export class ZoneActionsComponent {
       width: "90svw",
       maxWidth: "90svw",
     };
-    if (this.$isOneColumn()) {
+    if (this._$isOneColumn()) {
       config.height = "95svh";
       config.maxHeight = "95svh";
       config.width = "95svw";
@@ -74,7 +81,7 @@ export class ZoneActionsComponent {
   }
 
   private toggleDisplayQueueTrack() {
-    if (this.$isOneColumn()) {
+    if (this._$isOneColumn()) {
       this._dialog.open(ZoneQueueDialogComponent, {
         restoreFocus: false,
         height: "95svh",

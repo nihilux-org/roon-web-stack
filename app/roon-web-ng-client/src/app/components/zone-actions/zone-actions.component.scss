@@ -2,6 +2,13 @@
   display: flex;
   justify-content: flex-end;
   margin: 15px 0 0;
+  width: 100%;
+  .full-screen-toggle {
+    margin-right: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
   .actions {
     display: flex;
     flex-wrap: wrap-reverse;
@@ -15,6 +22,9 @@
     span.is-small-screen {
       min-width: 50px;
     }
+  }
+  .actions.centered {
+    justify-content: center;
   }
   .settings {
     margin-left: 10px;
