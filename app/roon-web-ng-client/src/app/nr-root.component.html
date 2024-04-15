@@ -16,6 +16,7 @@
       }
       @case ("SYNC") {
         @defer {
+          <nr-full-screen-toggle />
           <nr-zone-container />
         } @loading (minimum 500ms) {
           <div class="loading-spinner">
