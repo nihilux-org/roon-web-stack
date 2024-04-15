@@ -1,1 +1,3 @@
-<button mat-icon-button (click)="toggleFullScreen()"><mat-icon [fontIcon]="$icon()" /></button>
+@if (supportsFullscreen) {
+  <button mat-icon-button (click)="toggleFullScreen()"><mat-icon [fontIcon]="$icon()" /></button>
+}

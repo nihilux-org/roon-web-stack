@@ -16,7 +16,9 @@
       }
       @case ("SYNC") {
         @defer {
-          <nr-full-screen-toggle />
+          @if (!$isOneColumn()) {
+            <nr-full-screen-toggle class="top-right" />
+          }
           <nr-zone-container />
         } @loading (minimum 500ms) {
           <div class="loading-spinner">

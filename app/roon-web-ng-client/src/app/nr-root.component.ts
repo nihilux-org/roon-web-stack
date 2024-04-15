@@ -27,6 +27,7 @@ import { SettingsService } from "@services/settings.service";
 })
 export class NrRootComponent {
   readonly $clientState: Signal<string>;
+  readonly $isOneColumn: Signal<boolean>;
 
   constructor(roonService: RoonService, settingsService: SettingsService) {
     const $displayedZoneId = settingsService.displayedZoneId();
@@ -50,5 +51,6 @@ export class NrRootComponent {
         equal: deepEqual,
       }
     );
+    this.$isOneColumn = settingsService.isOneColumn();
   }
 }

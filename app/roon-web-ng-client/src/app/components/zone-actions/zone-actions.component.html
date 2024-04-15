@@ -1,5 +1,10 @@
 @if ($isSmallScreen()) {
-  <div class="actions">
+  @if ($withFullscreen()) {
+    <div class="full-screen-toggle">
+      <nr-full-screen-toggle />
+    </div>
+  }
+  <div class="actions centered">
     @for (action of $actions(); track action.id) {
       <span class="is-small-screen">
         <button tabindex="0" mat-icon-button (click)="executeAction(action)"><mat-icon [fontIcon]="action.button.icon" /></button>
@@ -10,6 +15,11 @@
     <button tabindex="0" mat-icon-button (click)="openSettingsDialog()"><mat-icon fontIcon="settings" /></button>
   </div>
 } @else {
+  @if ($withFullscreen()) {
+    <div class="full-screen-toggle">
+      <nr-full-screen-toggle />
+    </div>
+  }
   <div class="actions">
     @for (action of $actions(); track action.id) {
       <span>
