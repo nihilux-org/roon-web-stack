@@ -1,33 +1,23 @@
-@if ($isSmallScreen()) {
-  @if ($withFullscreen()) {
-    <div class="full-screen-toggle">
-      <nr-full-screen-toggle />
-    </div>
-  }
-  <div class="actions centered">
+@if ($withFullscreen()) {
+  <div class="full-screen-toggle">
+    <nr-full-screen-toggle />
+  </div>
+}
+<div class="actions" [class.centered]="$withFullscreen()">
+  @if ($isSmallScreen()) {
     @for (action of $actions(); track action.id) {
       <span class="is-small-screen">
         <button tabindex="0" mat-icon-button (click)="executeAction(action)"><mat-icon [fontIcon]="action.button.icon" /></button>
       </span>
     }
-  </div>
-  <div class="settings">
-    <button tabindex="0" mat-icon-button (click)="openSettingsDialog()"><mat-icon fontIcon="settings" /></button>
-  </div>
-} @else {
-  @if ($withFullscreen()) {
-    <div class="full-screen-toggle">
-      <nr-full-screen-toggle />
-    </div>
-  }
-  <div class="actions">
+  } @else {
     @for (action of $actions(); track action.id) {
       <span>
         <button tabindex="0" mat-button (click)="executeAction(action)"><mat-icon [fontIcon]="action.button.icon" />{{action.button.label}}</button>
       </span>
     }
-  </div>
-  <div class="settings">
-      <button tabindex="0" mat-icon-button (click)="openSettingsDialog()"><mat-icon fontIcon="settings" /></button>
-  </div>
-}
+  }
+</div>
+<div class="settings">
+    <button tabindex="0" mat-icon-button (click)="openSettingsDialog()"><mat-icon fontIcon="settings" /></button>
+</div>
