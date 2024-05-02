@@ -24,7 +24,7 @@
     "fast-equals": "5.0.1",
     "ngx-device-detector": "7.0.0",
     "rxjs": "~7.8.0",
-    "zone.js": "~0.14.2"
+    "zone.js": "~0.14.5"
   },
   "devDependencies": {
     "@angular-builders/jest": "17.0.3",
