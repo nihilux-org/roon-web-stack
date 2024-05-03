@@ -119,7 +119,7 @@ How you install `node` is your story, after all you want to build from sources.
 
 Checkout the code and `cd` in the directory.
 
-This `monorepo` uses `yarn 4.1.1` as it's package manager. It's defined in each `package.json` of each `workspace`.
+This `monorepo` uses `yarn 4.2.1` as it's package manager as defined in the root `package.json`.
 
 To enable `corepack` for this project, you'll be good for a pair of:
 ```bash
