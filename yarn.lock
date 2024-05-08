@@ -2621,9 +2621,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fastify/static@npm:7.0.3":
-  version: 7.0.3
-  resolution: "@fastify/static@npm:7.0.3"
+"@fastify/static@npm:7.0.4":
+  version: 7.0.4
+  resolution: "@fastify/static@npm:7.0.4"
   dependencies:
     "@fastify/accept-negotiator": "npm:^1.0.0"
     "@fastify/send": "npm:^2.0.0"
@@ -2631,7 +2631,7 @@ __metadata:
     fastify-plugin: "npm:^4.0.0"
     fastq: "npm:^1.17.0"
     glob: "npm:^10.3.4"
-  checksum: 10c0/4445b9f463f063acf66f1d399132722a642872b74cad88bc8c7c7fa34ae4938c325c50ee7411536e5ddc131710dcbe44068d1aaa9cdbd2542d153ecae70e72ee
+  checksum: 10c0/4ca29a37226880fcc8e711b4a3b93858d4e23dd0458a9f65373b63b3df4768610c8cfbd9e51b749ab52d65b9139142a5c69571740265c9ace1660e268ebb38f6
   languageName: node
   linkType: hard
 
@@ -3839,7 +3839,7 @@ __metadata:
   resolution: "@nihilux/roon-web-api@workspace:app/roon-web-api"
   dependencies:
     "@fastify/compress": "npm:7.0.3"
-    "@fastify/static": "npm:7.0.3"
+    "@fastify/static": "npm:7.0.4"
     "@gquittet/graceful-server": "npm:4.0.9"
     "@nihilux/roon-web-model": "workspace:*"
     "@types/jest": "npm:29.5.12"
@@ -3856,7 +3856,7 @@ __metadata:
     eslint-plugin-promise: "npm:6.1.1"
     eslint-plugin-simple-import-sort: "npm:12.1.0"
     eslint-webpack-plugin: "npm:4.1.0"
-    fastify: "npm:4.26.2"
+    fastify: "npm:4.27.0"
     fastify-plugin: "npm:4.5.1"
     fastify-sse-v2: "npm:4.0.0"
     jest: "npm:29.7.0"
@@ -8235,9 +8235,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fastify@npm:4.26.2":
-  version: 4.26.2
-  resolution: "fastify@npm:4.26.2"
+"fastify@npm:4.27.0":
+  version: 4.27.0
+  resolution: "fastify@npm:4.27.0"
   dependencies:
     "@fastify/ajv-compiler": "npm:^3.5.0"
     "@fastify/error": "npm:^3.4.0"
@@ -8248,14 +8248,14 @@ __metadata:
     fast-json-stringify: "npm:^5.8.0"
     find-my-way: "npm:^8.0.0"
     light-my-request: "npm:^5.11.0"
-    pino: "npm:^8.17.0"
+    pino: "npm:^9.0.0"
     process-warning: "npm:^3.0.0"
     proxy-addr: "npm:^2.0.7"
     rfdc: "npm:^1.3.0"
     secure-json-parse: "npm:^2.7.0"
     semver: "npm:^7.5.4"
     toad-cache: "npm:^3.3.0"
-  checksum: 10c0/6b05f2dbe7032909f5916e481645af9ab534e6cbd8d97ba4dfbc383c0bca565f90fccc528c5b6b61f225044c39ea79255fc824f0bb4702354e0991bbdbc57894
+  checksum: 10c0/879e9d3f6b9521bea29255c79ca1ddf3dd4c017937a25e7348d7686625c7dd56f21af18e6db2ecdd41d07e5c73a779ab0bb1f5d6b081909bf3e8caadaf669160
   languageName: node
   linkType: hard
 
@@ -11998,9 +11998,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pino@npm:^8.17.0":
-  version: 8.21.0
-  resolution: "pino@npm:8.21.0"
+"pino@npm:^9.0.0":
+  version: 9.0.0
+  resolution: "pino@npm:9.0.0"
   dependencies:
     atomic-sleep: "npm:^1.0.0"
     fast-redact: "npm:^3.1.1"
@@ -12015,7 +12015,7 @@ __metadata:
     thread-stream: "npm:^2.6.0"
   bin:
     pino: bin.js
-  checksum: 10c0/9cf8b3e8741ecc42b56d07fbb3d09f48c96c07a9a6d7196b69a60b56109899f8a7dfa14d85787d165a1038b74c7ca18e76cecce7c26ec14e0f05c73008df7891
+  checksum: 10c0/10ef10aee0cf80af8ed83468cff2e29d642b6794b53cf641e1abcaf9e9958d8bcbc6e09d62757054aef3b4415c45d66a5018da11d43b81a23ba299ef5dc4e8b1
   languageName: node
   linkType: hard
 
