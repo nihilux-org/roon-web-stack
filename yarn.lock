@@ -3843,7 +3843,7 @@ __metadata:
     "@gquittet/graceful-server": "npm:4.0.9"
     "@nihilux/roon-web-model": "workspace:*"
     "@types/jest": "npm:29.5.12"
-    "@types/node": "npm:20.12.8"
+    "@types/node": "npm:20.12.11"
     "@typescript-eslint/eslint-plugin": "npm:7.8.0"
     "@typescript-eslint/parser": "npm:7.8.0"
     eslint: "npm:8.57.0"
@@ -3870,7 +3870,7 @@ __metadata:
     node-roon-api-transport: "github:roonlabs/node-roon-api-transport"
     nodemon-webpack-plugin: "npm:4.8.2"
     prettier: "npm:3.2.5"
-    rimraf: "npm:5.0.5"
+    rimraf: "npm:5.0.7"
     rxjs: "npm:7.8.1"
     ts-jest: "npm:29.1.2"
     ts-loader: "npm:9.5.1"
@@ -3906,7 +3906,7 @@ __metadata:
     jest-fetch-mock: "npm:3.0.3"
     jest-junit: "npm:16.0.0"
     prettier: "npm:3.2.5"
-    rimraf: "npm:5.0.5"
+    rimraf: "npm:5.0.7"
     ts-jest: "npm:29.1.2"
     ts-loader: "npm:9.5.1"
     tsconfig-paths-webpack-plugin: "npm:4.1.0"
@@ -3962,7 +3962,7 @@ __metadata:
     "@nihilux/roon-web-client": "workspace:*"
     "@nihilux/roon-web-model": "workspace:*"
     "@types/jest": "npm:29.5.12"
-    "@types/node": "npm:20.12.8"
+    "@types/node": "npm:20.12.11"
     "@typescript-eslint/eslint-plugin": "npm:7.8.0"
     "@typescript-eslint/parser": "npm:7.8.0"
     eslint: "npm:8.57.0"
@@ -4730,12 +4730,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:20.12.8":
+"@types/node@npm:*":
   version: 20.12.8
   resolution: "@types/node@npm:20.12.8"
   dependencies:
     undici-types: "npm:~5.26.4"
   checksum: 10c0/840002d20654e38a9af8cdffa215598fdb28ac4f96c5701ed672ec365ed6ccc66da299edddaa409baf13cd71bbf1128901f633b5e44e070fc236e26415805b78
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:20.12.11":
+  version: 20.12.11
+  resolution: "@types/node@npm:20.12.11"
+  dependencies:
+    undici-types: "npm:~5.26.4"
+  checksum: 10c0/efaa7b08c50ba6e6982ac7d531ba08d5935539ba76e954807df1ff9382a319ead7e003ccaca5ad7cf33ecf53f212507f7c1f2794bd2ff52df6365fef21f6e1fb
   languageName: node
   linkType: hard
 
@@ -12727,14 +12736,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rimraf@npm:5.0.5":
-  version: 5.0.5
-  resolution: "rimraf@npm:5.0.5"
+"rimraf@npm:5.0.7":
+  version: 5.0.7
+  resolution: "rimraf@npm:5.0.7"
   dependencies:
     glob: "npm:^10.3.7"
   bin:
     rimraf: dist/esm/bin.mjs
-  checksum: 10c0/d50dbe724f33835decd88395b25ed35995077c60a50ae78ded06e0185418914e555817aad1b4243edbff2254548c2f6ad6f70cc850040bebb4da9e8cc016f586
+  checksum: 10c0/bd6dbfaa98ae34ce1e54d1e06045d2d63e8859d9a1979bb4a4628b652b459a2d17b17dc20ee072b034bd2d09bd691e801d24c4d9cfe94e16fdbcc8470a1d4807
   languageName: node
   linkType: hard
 
