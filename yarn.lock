@@ -3876,7 +3876,7 @@ __metadata:
     ts-jest: "npm:29.1.2"
     ts-loader: "npm:9.5.1"
     ts-node: "npm:10.9.2"
-    ts-retry-promise: "npm:0.8.0"
+    ts-retry-promise: "npm:0.8.1"
     tsconfig-paths-webpack-plugin: "npm:4.1.0"
     typescript: "npm:5.3.3"
     webpack: "npm:5.91.0"
@@ -3983,7 +3983,7 @@ __metadata:
     prettier: "npm:3.2.5"
     rxjs: "npm:~7.8.0"
     typescript: "npm:5.3.3"
-    zone.js: "npm:~0.14.5"
+    zone.js: "npm:~0.14.6"
   languageName: unknown
   linkType: soft
 
@@ -14025,10 +14025,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-retry-promise@npm:0.8.0":
-  version: 0.8.0
-  resolution: "ts-retry-promise@npm:0.8.0"
-  checksum: 10c0/c8171cc9355b51e93deaf82c843d6ea7d0df58c3fbeb947b5d4c1a15ccb3b2b4f7f8b6fba850b7617d20871b95b8f2904d8acc2a204cc837f880b75fc7eb9ac0
+"ts-retry-promise@npm:0.8.1":
+  version: 0.8.1
+  resolution: "ts-retry-promise@npm:0.8.1"
+  checksum: 10c0/69758255f9b185c6bf24da848b5b5102fa7a233c1fb04747076132799116d13eb3ec30bd35eb18bfda1522232a77b97275ad99cee9597b2449f0474d6d9261dd
   languageName: node
   linkType: hard
 
@@ -15013,11 +15013,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zone.js@npm:~0.14.5":
-  version: 0.14.5
-  resolution: "zone.js@npm:0.14.5"
-  dependencies:
-    tslib: "npm:^2.3.0"
-  checksum: 10c0/04f5801ebcd9c959b3123c37a8448b04ee5ffc0ffb0fdf9f9be95c6fbc1066a34a4a005468835884240fe4d7307750df61de491b89fb5e96d53d04565bdd2a16
+"zone.js@npm:~0.14.6":
+  version: 0.14.6
+  resolution: "zone.js@npm:0.14.6"
+  checksum: 10c0/dc138197428b7d5c5bc6119dc94748f700426a340c41fc6ebf5fe3fa7ff302fa970350c44719f644020a82caabf9fc761003af285c7707192c77bcc312bfd264
   languageName: node
   linkType: hard
