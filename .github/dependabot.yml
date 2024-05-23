@@ -40,3 +40,6 @@ updates:
       - dependency-name: "eslint-plugin-n"
         update-types:
           - "version-update:semver-major"
+      - dependency-name: "@gquittet/graceful-server"
+        update-types:
+          - "version-update:semver-major"
