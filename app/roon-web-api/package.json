@@ -15,7 +15,7 @@
   "dependencies": {
     "@fastify/compress": "7.0.3",
     "@fastify/static": "7.0.4",
-    "@gquittet/graceful-server": "4.0.9",
+    "@gquittet/graceful-server": "5.0.0",
     "fastify": "4.27.0",
     "fastify-plugin": "4.5.1",
     "fastify-sse-v2": "4.0.0",
