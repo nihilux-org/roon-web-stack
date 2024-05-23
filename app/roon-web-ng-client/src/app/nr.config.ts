@@ -1,4 +1,4 @@
-import { APP_INITIALIZER, ApplicationConfig } from "@angular/core";
+import { APP_INITIALIZER, ApplicationConfig, provideExperimentalZonelessChangeDetection } from "@angular/core";
 import { MatIconRegistry } from "@angular/material/icon";
 import { provideAnimations } from "@angular/platform-browser/animations";
 import { RoonService } from "@services/roon.service";
@@ -30,5 +30,6 @@ export const nrConfig: ApplicationConfig = {
       deps: [MatIconRegistry],
       multi: true,
     },
+    provideExperimentalZonelessChangeDetection(),
   ],
 };
