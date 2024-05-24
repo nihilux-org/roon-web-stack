@@ -1,43 +1,65 @@
-<div class="zone-display" [class.one-column]="$isOneColumn()">
-  <div class="zone-image">
-    @if ($trackDisplay() !== EMPTY_TRACK) {
-      @if ($image().isReady) {
-        <nr-roon-image [src]="$image().src" [height]="$image().size" [width]="$image().size" priority="true" [alt]="$trackDisplay().title + ' cover'" />
-      }
-    } @else {
-      <div>
-        <p>{{$trackDisplay().title}}</p>
-      </div>
-    }
-  </div>
-  @if ($isOneColumn()) {
-    <div class="zone-info">
-      <nr-zone-current-track [$isOneColumn]="$isOneColumn" [$trackDisplay]="$trackDisplay" />
-      <nr-zone-actions [$trackDisplay]="$trackDisplay" />
-    </div>
-  } @else if ($isCompact()) {
-    <div class="zone-info compact" [style.height]="$image().size + 'px'">
-      <nr-zone-current-track [$isOneColumn]="$isOneColumn" [$trackDisplay]="$trackDisplay" />
-      @if ($displayQueueTrack()) {
-        <nr-zone-queue [$trackDisplay]="$trackDisplay" [disableAnimation]="!hasBeenDisplayed && $displayQueueTrack()" @hideQueueTrack />
-      }
-      <div class="zone-controls-compact">
-        <nr-zone-actions />
-        <nr-zone-commands [$zoneCommands]="$zoneCommands" [$zoneOutputs]="$zoneOutputs" />
-        <nr-zone-progression [$zoneProgression]="$zoneProgression" />
-      </div>
-    </div>
-  } @else if ($isWide()) {
-    <div class="zone-info">
-      <nr-zone-current-track [$isOneColumn]="$isOneColumn" [$trackDisplay]="$trackDisplay" />
-      @if ($displayQueueTrack()) {
-        <nr-zone-queue [$trackDisplay]="$trackDisplay" [disableAnimation]="!hasBeenDisplayed && $displayQueueTrack()" @hideQueueTrack />
-      }
-      <nr-zone-actions />
-    </div>
+<ng-template #zoneActions let-layoutClass="class">
+  <nr-zone-actions [$trackDisplay]="$trackDisplay" [queueComponentTemplateRef]="zoneQueue" [class]="layoutClass" class="zone-actions"/>
+</ng-template>
+<ng-template #zoneCommands let-layoutClass="class">
+  <nr-zone-commands [$zoneCommands]="$zoneCommands" [$zoneOutputs]="$zoneOutputs" [class]="layoutClass" class="zone-commands"/>
+</ng-template>
+<ng-template #zoneCurrentTrack let-layoutClass="class">
+  <nr-zone-current-track [$isOneColumn]="$isOneColumn" [$trackDisplay]="$trackDisplay" [class]="layoutClass" class="zone-current-track"/>
+</ng-template>
+<ng-template #zoneImage let-layoutClass="class">
+  <nr-zone-image [$trackDisplay]="$trackDisplay" [class]="layoutClass" class="zone-image"/>
+</ng-template>
+<ng-template #zoneProgression let-layoutClass="class">
+  <nr-zone-progression [$zoneProgression]="$zoneProgression" [class]="layoutClass" class="zone-progression"/>
+</ng-template>
+<ng-template #zoneQueue let-layoutClass="class">
+  <nr-zone-queue [$trackDisplay]="$trackDisplay" [class]="layoutClass" class="zone-queue" />
+</ng-template>
+@switch ($layout()) {
+  @case (DisplayMode.COMPACT) {
+    <nr-compact-layout
+      [layout]="{
+        zoneActions,
+        zoneCommands,
+        zoneCurrentTrack,
+        zoneImage,
+        zoneProgression,
+        zoneQueue,
+        context: {
+          class: 'compact'
+        }
+      }"
+    />
   }
-</div>
-@if ($isWide() || $isOneColumn()) {
-  <nr-zone-commands [$zoneCommands]="$zoneCommands" [$zoneOutputs]="$zoneOutputs" />
-  <nr-zone-progression [$zoneProgression]="$zoneProgression" />
+  @case (DisplayMode.ONE_COLUMN) {
+    <nr-one-column-layout
+      [layout]="{
+        zoneActions,
+        zoneCommands,
+        zoneCurrentTrack,
+        zoneImage,
+        zoneProgression,
+        zoneQueue,
+        context: {
+          class: 'one-column'
+        }
+      }"
+    />
+  }
+  @case (DisplayMode.WIDE) {
+    <nr-wide-layout
+      [layout]="{
+        zoneActions,
+        zoneCommands,
+        zoneCurrentTrack,
+        zoneImage,
+        zoneProgression,
+        zoneQueue,
+        context: {
+          class: 'wide'
+        }
+      }"
+    />
+  }
 }

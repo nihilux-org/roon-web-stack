@@ -4,6 +4,7 @@ import { BreakpointObserver, Breakpoints } from "@angular/cdk/layout";
 import {
   computed,
   effect,
+  EffectRef,
   Injectable,
   OnDestroy,
   RendererFactory2,
@@ -46,6 +47,7 @@ export class SettingsService implements OnDestroy {
   private readonly _$breakpoints: WritableSignal<ClientBreakpoints>;
   private readonly _$displayMode: WritableSignal<DisplayMode>;
   private readonly _$actions: WritableSignal<Action[]>;
+  private readonly themeEffect: EffectRef;
   private _breakPointSubscription?: Subscription;
 
   constructor(rendererFactory: RendererFactory2, breakPointObserver: BreakpointObserver) {
@@ -69,7 +71,7 @@ export class SettingsService implements OnDestroy {
     );
     const renderer = rendererFactory.createRenderer(null, null);
     // FIXME?: should this be more semantically placed in nr-root.component?
-    effect(() => {
+    this.themeEffect = effect(() => {
       let isDarkTheme: boolean;
       switch (this._$chosenTheme() as ChosenTheme) {
         case ChosenTheme.DARK:
@@ -191,6 +193,7 @@ export class SettingsService implements OnDestroy {
 
   ngOnDestroy() {
     this._breakPointSubscription?.unsubscribe();
+    this.themeEffect.destroy();
   }
 
   private loadBooleanFromLocalStorage(key: string, defaultValue: boolean) {

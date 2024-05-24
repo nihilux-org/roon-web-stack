@@ -1,0 +1,16 @@
+<div class="zone-display">
+  <div>
+    <ng-container [ngTemplateOutlet]="layout.zoneImage" [ngTemplateOutletContext]="layout.context"></ng-container>
+  </div>
+  <div class="zone-info">
+    <div class="main">
+      <ng-container [ngTemplateOutlet]="layout.zoneCurrentTrack" [ngTemplateOutletContext]="layout.context"></ng-container>
+      <ng-container [ngTemplateOutlet]="layout.zoneQueue" [ngTemplateOutletContext]="layout.context"></ng-container>
+    </div>
+    <div>
+      <ng-container [ngTemplateOutlet]="layout.zoneActions" [ngTemplateOutletContext]="layout.context"></ng-container>
+      <ng-container [ngTemplateOutlet]="layout.zoneCommands" [ngTemplateOutletContext]="layout.context"></ng-container>
+      <ng-container [ngTemplateOutlet]="layout.zoneProgression" [ngTemplateOutletContext]="layout.context"></ng-container>
+    </div>
+  </div>
+</div>

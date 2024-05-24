@@ -16,7 +16,7 @@ import {
 } from "@model";
 import { Extension } from "@roon-kit";
 
-export const extension_version = "0.0.8-beta-3";
+export const extension_version = "0.0.8-beta-4";
 
 const extension: RoonExtension = new Extension({
   description: {

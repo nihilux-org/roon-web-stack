@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, Input, Signal } from "@angular/core";
+import { ChangeDetectionStrategy, Component, computed, Input, Signal, TemplateRef } from "@angular/core";
 import { MatButton, MatIconButton } from "@angular/material/button";
 import { MatDialog, MatDialogConfig } from "@angular/material/dialog";
 import { MatIcon } from "@angular/material/icon";
@@ -6,7 +6,7 @@ import { FullScreenToggleComponent } from "@components/full-screen-toggle/full-s
 import { RoonBrowseDialogComponent } from "@components/roon-browse-dialog/roon-browse-dialog.component";
 import { SettingsDialogComponent } from "@components/settings-dialog/settings-dialog.component";
 import { ZoneQueueDialogComponent } from "@components/zone-queue-dialog/zone-queue-dialog.component";
-import { Action, ActionType, LoadAction, TrackDisplay } from "@model/client";
+import { Action, ActionType, LayoutContext, LoadAction, TrackDisplay } from "@model/client";
 import { FullscreenService } from "@services/fullscreen.service";
 import { SettingsService } from "@services/settings.service";
 
@@ -19,7 +19,8 @@ import { SettingsService } from "@services/settings.service";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ZoneActionsComponent {
-  @Input({ required: false }) $trackDisplay?: Signal<TrackDisplay>;
+  @Input({ required: true }) $trackDisplay!: Signal<TrackDisplay>;
+  @Input({ required: true }) queueComponentTemplateRef!: TemplateRef<LayoutContext>;
   private readonly _dialog: MatDialog;
   private readonly _settingsService: SettingsService;
   private readonly _$isOneColumn: Signal<boolean>;
@@ -82,6 +83,7 @@ export class ZoneActionsComponent {
 
   private toggleDisplayQueueTrack() {
     if (this._$isOneColumn()) {
+      this._settingsService.saveDisplayQueueTrack(true);
       this._dialog.open(ZoneQueueDialogComponent, {
         restoreFocus: false,
         height: "95svh",
@@ -90,6 +92,7 @@ export class ZoneActionsComponent {
         maxWidth: "95svw",
         data: {
           $trackDisplay: this.$trackDisplay,
+          queueComponentTemplateRef: this.queueComponentTemplateRef,
         },
       });
     } else {

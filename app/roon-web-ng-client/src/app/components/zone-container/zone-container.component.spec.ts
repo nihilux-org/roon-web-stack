@@ -1,10 +1,8 @@
 import { MockBuilder, MockedComponentFixture, MockRender, ngMocks } from "ng-mocks";
-import { Subject } from "rxjs";
 import { signal, WritableSignal } from "@angular/core";
 import { BrowserAnimationsModule, NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { Output, Zone, ZoneState } from "@model";
 import { DisplayMode } from "@model/client";
-import { ResizeService } from "@services/resize.service";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
 import { ZoneContainerComponent } from "./zone-container.component";
@@ -26,10 +24,6 @@ describe("ZoneContainerComponent", () => {
   let roonService: {
     zoneState: jest.Mock;
   };
-  let resizeObservable: Subject<ResizeObserverEntry>;
-  let resizeService: {
-    observeElement: jest.Mock;
-  };
   ngMocks.globalReplace(BrowserAnimationsModule, NoopAnimationsModule);
 
   beforeEach(async () => {
@@ -47,14 +41,9 @@ describe("ZoneContainerComponent", () => {
     roonService = {
       zoneState: jest.fn().mockImplementation(() => $zoneState),
     };
-    resizeObservable = new Subject<ResizeObserverEntry>();
-    resizeService = {
-      observeElement: jest.fn().mockImplementation(() => resizeObservable),
-    };
     await MockBuilder(ZoneContainerComponent)
       .mock(SettingsService, settingsService as Partial<SettingsService>)
       .mock(RoonService, roonService as Partial<RoonService>)
-      .mock(ResizeService, resizeService as Partial<ResizeService>)
       .keep(BrowserAnimationsModule);
     fixture = MockRender(ZoneContainerComponent);
     component = fixture.componentInstance as ZoneContainerComponent;

@@ -8,9 +8,9 @@
         @if (item) {
           <button tabindex="0" (click)="!item.input_prompt ? onItemClicked(index, item.item_key, item.hint) : true" class="roon-list-item">
             @if (item.image_key || content.list.image_key) {
-              <nr-roon-image [src]="item.image_key ?? content.list.image_key!" [alt]="item.title + ' cover'" height="70" width="70" priority="false" />
+              <nr-roon-image class="roon-item-image" [src]="item.image_key ?? content.list.image_key!" [alt]="item.title + ' cover'" height="70" width="70" priority="false" />
             } @else if(!$isOneColumn()) {
-              <div class="roon-item-image-placeholder"></div>
+              <div class="roon-item-image"></div>
             }
             <div class="roon-item-info" [class.roon-item-prompt]="item.input_prompt" [class.is-small-screen]="$isOneColumn()">
               @if (!(item.input_prompt && $isOneColumn())) {

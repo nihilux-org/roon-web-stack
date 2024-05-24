@@ -10,6 +10,7 @@ export type ClientBreakpoints = {
 
 export enum DisplayMode {
   COMPACT = "COMPACT",
+  ONE_COLUMN = "ONE_COLUMN",
   WIDE = "WIDE",
 }
 

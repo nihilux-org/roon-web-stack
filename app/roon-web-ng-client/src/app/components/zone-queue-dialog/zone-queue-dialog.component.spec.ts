@@ -1,4 +1,5 @@
 import { MockBuilder, MockRender } from "ng-mocks";
+import { Subject } from "rxjs";
 import { Signal, signal, WritableSignal } from "@angular/core";
 import { ComponentFixture } from "@angular/core/testing";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
@@ -10,6 +11,7 @@ describe("ZoneQueueDialogComponent", () => {
   let dialogData: {
     $trackDisplay: Signal<TrackDisplay>;
   };
+  let beforeClosedDialogObservable: Subject<void>;
   let closeDialog: jest.Mock;
   let component: ZoneQueueDialogComponent;
   let fixture: ComponentFixture<ZoneQueueDialogComponent>;
@@ -27,11 +29,13 @@ describe("ZoneQueueDialogComponent", () => {
     dialogData = {
       $trackDisplay,
     };
+    beforeClosedDialogObservable = new Subject<void>();
     closeDialog = jest.fn();
     await MockBuilder(ZoneQueueDialogComponent)
       .mock(MAT_DIALOG_DATA, dialogData)
       .mock(MatDialogRef<ZoneQueueDialogComponent>, {
         close: closeDialog,
+        beforeClosed: () => beforeClosedDialogObservable,
       });
 
     fixture = MockRender(ZoneQueueDialogComponent);
