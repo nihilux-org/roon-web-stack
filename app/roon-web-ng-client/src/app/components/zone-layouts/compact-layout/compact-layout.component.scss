@@ -1,0 +1,19 @@
+@use "../../styles/mixins" as nr;
+
+:host {
+  @include nr.zone-layout();
+  .zone-display {
+    width: 100%;
+    .zone-info {
+      box-sizing: border-box;
+      padding: 12px 0;
+      max-height: 50svmax;
+      .main {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        flex-grow: 1;
+      }
+    }
+  }
+}

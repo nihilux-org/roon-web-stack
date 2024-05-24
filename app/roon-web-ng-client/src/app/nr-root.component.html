@@ -1,59 +1,57 @@
 <main class="main">
-  <div class="content">
-    @switch ($clientState()) {
-      @case ("STARTING") {
-        @defer (on timer(1s)) {
-          <nr-extension-not-enabled />
-        }
-      }
-      @case ("SYNCING") {
-        @defer (on timer(1s)) {
-          <div class="loading-spinner">
-            <h1>syncing with roon server</h1>
-            <mat-progress-spinner diameter="350" strokeWidth="15" color="primary" mode="indeterminate" />
-          </div>
-        }
-      }
-      @case ("SYNC") {
-        @defer {
-          @if (!$isOneColumn()) {
-            <nr-full-screen-toggle class="top-right" />
-          }
-          <nr-zone-container />
-        } @loading (minimum 500ms) {
-          <div class="loading-spinner">
-            <h1>loading application</h1>
-            <mat-progress-spinner diameter="350" strokeWidth="15" color="primary" mode="indeterminate" />
-          </div>
-        }
-      }
-      @case ("GROUPING") {
-        <div class="loading-spinner">
-          <h1>Zone grouping in progress</h1>
-          <mat-progress-spinner diameter="350" strokeWidth="15" color="primary" mode="indeterminate" />
-        </div>
-      }
-      @case ("NEED_SELECTION") {
-        <div class="no-zone-to-display">
-          <h1>Choose a zone to display</h1>
-          <nr-zone-selector yPosition="below" xPosition="after" />
-        </div>
-      }
-      @case("LOST") {
-        <div class="loading-spinner">
-          <h1>lost roon server, waiting for the server to be available again</h1>
-          <mat-progress-spinner diameter="350" strokeWidth="15" color="primary" mode="indeterminate" />
-        </div>
-      }
-      @case("STOPPED") {
-        <div class="loading-spinner">
-          <h1>disconnected from roon server, trying to reconnect</h1>
-          <mat-progress-spinner diameter="350" strokeWidth="15" color="primary" mode="indeterminate" />
-        </div>
-      }
-      @default {
-        <h1>unknown state! something wrong!</h1>
+  @switch ($clientState()) {
+    @case ("STARTING") {
+      @defer (on timer(1s)) {
+        <nr-extension-not-enabled />
       }
     }
-  </div>
+    @case ("SYNCING") {
+      @defer (on timer(1s)) {
+        <div class="loading-spinner">
+          <h1>syncing with roon server</h1>
+          <mat-progress-spinner diameter="350" strokeWidth="15" color="primary" mode="indeterminate" />
+        </div>
+      }
+    }
+    @case ("SYNC") {
+      @defer {
+        @if (!$isOneColumn()) {
+          <nr-full-screen-toggle class="top-right" />
+        }
+        <nr-zone-container />
+      } @loading (minimum 500ms) {
+        <div class="loading-spinner">
+          <h1>loading application</h1>
+          <mat-progress-spinner diameter="350" strokeWidth="15" color="primary" mode="indeterminate" />
+        </div>
+      }
+    }
+    @case ("GROUPING") {
+      <div class="loading-spinner">
+        <h1>zone grouping in progress</h1>
+        <mat-progress-spinner diameter="350" strokeWidth="15" color="primary" mode="indeterminate" />
+      </div>
+    }
+    @case ("NEED_SELECTION") {
+      <div class="no-zone-to-display">
+        <h1>choose a zone to display</h1>
+        <nr-zone-selector yPosition="below" xPosition="after" />
+      </div>
+    }
+    @case("LOST") {
+      <div class="loading-spinner">
+        <h1>lost roon server, waiting for the server to be available again</h1>
+        <mat-progress-spinner diameter="350" strokeWidth="15" color="primary" mode="indeterminate" />
+      </div>
+    }
+    @case("STOPPED") {
+      <div class="loading-spinner">
+        <h1>disconnected from roon server, trying to reconnect</h1>
+        <mat-progress-spinner diameter="350" strokeWidth="15" color="primary" mode="indeterminate" />
+      </div>
+    }
+    @default {
+      <h1>unknown state! something wrong!</h1>
+    }
+  }
 </main>

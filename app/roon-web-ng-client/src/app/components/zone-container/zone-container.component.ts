@@ -1,22 +1,13 @@
 import { deepEqual } from "fast-equals";
-import { Subscription } from "rxjs";
-import { animate, style, transition, trigger } from "@angular/animations";
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  computed,
-  ElementRef,
-  OnDestroy,
-  Signal,
-  signal,
-  WritableSignal,
-} from "@angular/core";
+import { ChangeDetectionStrategy, Component, computed, Signal } from "@angular/core";
 import { RoonImageComponent } from "@components/roon-image/roon-image.component";
 import { ZoneActionsComponent } from "@components/zone-actions/zone-actions.component";
 import { ZoneCommandsComponent } from "@components/zone-commands/zone-commands.component";
 import { ZoneCurrentTrackComponent } from "@components/zone-current-track/zone-current-track.component";
+import { ZoneImageComponent } from "@components/zone-image/zone-image.component";
+import { CompactLayoutComponent } from "@components/zone-layouts/compact-layout/compact-layout.component";
+import { OneColumnLayoutComponent } from "@components/zone-layouts/one-column-layout/one-column-layout.component";
+import { WideLayoutComponent } from "@components/zone-layouts/wide-layout/wide-layout.component";
 import { ZoneProgressionComponent } from "@components/zone-progression/zone-progression.component";
 import { ZoneQueueComponent } from "@components/zone-queue/zone-queue.component";
 import { ZoneSelectorComponent } from "@components/zone-selector/zone-selector.component";
@@ -26,12 +17,10 @@ import {
   DisplayMode,
   EMPTY_TRACK,
   TrackDisplay,
-  TrackImage,
   ZoneCommands,
   ZoneCommandState,
   ZoneProgression,
 } from "@model/client";
-import { ResizeService } from "@services/resize.service";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
 
@@ -46,59 +35,27 @@ import { SettingsService } from "@services/settings.service";
     ZoneProgressionComponent,
     ZoneQueueComponent,
     ZoneSelectorComponent,
+    ZoneImageComponent,
+    CompactLayoutComponent,
+    WideLayoutComponent,
+    OneColumnLayoutComponent,
   ],
   templateUrl: "./zone-container.component.html",
   styleUrl: "./zone-container.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  animations: [
-    trigger("hideQueueTrack", [
-      transition(":leave", [
-        style({
-          opacity: 1,
-          flexGrow: 1,
-        }),
-        animate(
-          "0.2s ease-out",
-          style({
-            opacity: 0,
-            flexGrow: 0,
-          })
-        ),
-      ]),
-    ]),
-  ],
 })
-export class ZoneContainerComponent implements OnDestroy, AfterViewInit {
-  private readonly _resizeService: ResizeService;
+export class ZoneContainerComponent {
   private readonly _settingsService: SettingsService;
-  private readonly _zoneContainerElement: ElementRef;
-  private readonly _changeDetector: ChangeDetectorRef;
   private readonly _$zone: Signal<ZoneState>;
-  private readonly _$imageSize: WritableSignal<number>;
-  private _resizeSubscription?: Subscription;
   readonly $trackDisplay: Signal<TrackDisplay>;
   readonly $zoneCommands: Signal<ZoneCommands>;
   readonly $zoneProgression: Signal<ZoneProgression>;
   readonly $zoneOutputs: Signal<Output[]>;
-  readonly $image: Signal<TrackImage>;
   readonly $isOneColumn: Signal<boolean>;
-  readonly $isCompact: Signal<boolean>;
-  readonly $isWide: Signal<boolean>;
-  readonly $displayQueueTrack: Signal<boolean>;
-  hasBeenDisplayed: boolean;
-  protected readonly EMPTY_TRACK = EMPTY_TRACK;
+  readonly $layout: Signal<DisplayMode>;
 
-  constructor(
-    roonService: RoonService,
-    settingsService: SettingsService,
-    elementRef: ElementRef,
-    resizeService: ResizeService,
-    changeDetector: ChangeDetectorRef
-  ) {
+  constructor(roonService: RoonService, settingsService: SettingsService) {
     this._settingsService = settingsService;
-    this._zoneContainerElement = elementRef;
-    this._resizeService = resizeService;
-    this._changeDetector = changeDetector;
     this._$zone = roonService.zoneState(settingsService.displayedZoneId());
     this.$trackDisplay = computed(
       () => {
@@ -176,53 +133,15 @@ export class ZoneContainerComponent implements OnDestroy, AfterViewInit {
         equal: deepEqual,
       }
     );
-    this._$imageSize = signal(-1);
-    this.$image = computed(
-      () => {
-        const src = this.$trackDisplay().image_key ?? "";
-        const size = this._$imageSize();
-        const isReady = src.length > 0 && size !== -1;
-        return {
-          src,
-          size,
-          isReady,
-        };
-      },
-      {
-        equal: deepEqual,
-      }
-    );
     this.$isOneColumn = this._settingsService.isOneColumn();
-    this.$isCompact = computed(() => {
-      return this._settingsService.displayMode()() === DisplayMode.COMPACT;
-    });
-    this.$isWide = computed(() => {
-      return this._settingsService.displayMode()() === DisplayMode.WIDE;
-    });
-    this.$displayQueueTrack = this._settingsService.displayQueueTrack();
-    this.hasBeenDisplayed = false;
-  }
-
-  ngAfterViewInit(): void {
-    const zoneDisplayDiv = this._zoneContainerElement.nativeElement as HTMLDivElement;
-    const zoneImageDiv = zoneDisplayDiv.getElementsByClassName("zone-image")[0] as HTMLDivElement;
-    setTimeout(() => {
-      this._$imageSize.set(Math.min(zoneImageDiv.offsetWidth - 20, zoneImageDiv.offsetHeight - 20));
-    }, 5);
-    let firstResize = true;
-    this._resizeSubscription = this._resizeService.observeElement(zoneImageDiv).subscribe((resizeEntry) => {
-      if (!firstResize) {
-        const borderBox = resizeEntry.borderBoxSize[0];
-        this._$imageSize.set(Math.min(borderBox.inlineSize - 20, borderBox.blockSize - 20));
-        this._changeDetector.detectChanges();
+    this.$layout = computed(() => {
+      if (this.$isOneColumn()) {
+        return DisplayMode.ONE_COLUMN;
       } else {
-        firstResize = false;
+        return this._settingsService.displayMode()();
       }
     });
-    this.hasBeenDisplayed = true;
   }
 
-  ngOnDestroy() {
-    this._resizeSubscription?.unsubscribe();
-  }
+  protected readonly DisplayMode = DisplayMode;
 }

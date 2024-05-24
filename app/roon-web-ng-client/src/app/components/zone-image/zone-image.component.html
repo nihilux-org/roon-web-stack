@@ -1,0 +1,11 @@
+<div class="zone-image">
+  @if ($trackDisplay() !== EMPTY_TRACK) {
+    @if ($image().isReady) {
+      <nr-roon-image [src]="$image().src" [height]="$image().size" [width]="$image().size" priority="true" [alt]="$trackDisplay().title + ' cover'" />
+    }
+  } @else {
+    <div>
+      <p>{{$trackDisplay().title}}</p>
+    </div>
+  }
+</div>

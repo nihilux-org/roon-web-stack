@@ -1,12 +1,15 @@
 import { deepEqual } from "fast-equals";
-import { animate, style, transition, trigger } from "@angular/animations";
 import { CdkFixedSizeVirtualScroll, CdkVirtualForOf, CdkVirtualScrollViewport } from "@angular/cdk/scrolling";
 import {
-  booleanAttribute,
+  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
+  EffectRef,
+  HostBinding,
   Input,
+  OnDestroy,
   QueryList,
   Signal,
   ViewChild,
@@ -37,35 +40,26 @@ import { SettingsService } from "@services/settings.service";
   templateUrl: "./zone-queue.component.html",
   styleUrl: "./zone-queue.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  animations: [
-    trigger("displayQueueTrack", [
-      transition(":enter", [
-        style({
-          height: 0,
-          opacity: 0,
-        }),
-        animate(
-          "0.2s ease-out",
-          style({
-            height: "100%",
-            opacity: 1,
-          })
-        ),
-      ]),
-    ]),
-  ],
 })
-export class ZoneQueueComponent {
-  @Input({ required: true, transform: booleanAttribute }) disableAnimation!: boolean;
+export class ZoneQueueComponent implements OnDestroy, AfterViewInit {
+  @HostBinding("class.open") open: boolean;
   @Input({ required: true }) $trackDisplay!: Signal<TrackDisplay>;
   private readonly _roonService: RoonService;
+  private readonly _openEffect: EffectRef;
   readonly $zoneId: Signal<string>;
   readonly $queue: Signal<QueueTrack[]>;
+  readonly $displayQueue: Signal<boolean>;
+  disabled: boolean;
   @ViewChild(CdkVirtualScrollViewport) _virtualScroll?: CdkVirtualScrollViewport;
   @ViewChildren(MatMenuTrigger) _menuTriggers!: QueryList<MatMenuTrigger>;
 
   constructor(roonService: RoonService, settingsService: SettingsService) {
     this._roonService = roonService;
+    this.$displayQueue = settingsService.displayQueueTrack();
+    this.open = this.$displayQueue();
+    this._openEffect = effect(() => {
+      this.open = this.$displayQueue();
+    });
     this.$zoneId = settingsService.displayedZoneId();
     this.$queue = computed(
       () => {
@@ -81,6 +75,7 @@ export class ZoneQueueComponent {
         equal: deepEqual,
       }
     );
+    this.disabled = true;
   }
 
   openActionMenu(queue_item_id: number) {
@@ -106,7 +101,15 @@ export class ZoneQueueComponent {
     this._virtualScroll?.scrollToIndex(0, "instant");
   }
 
-  onQueueTrackDisplayed() {
+  onQueueTrackToggled() {
     this._virtualScroll?.checkViewportSize();
+  }
+
+  ngOnDestroy(): void {
+    this._openEffect.destroy();
+  }
+
+  ngAfterViewInit(): void {
+    this.disabled = false;
   }
 }

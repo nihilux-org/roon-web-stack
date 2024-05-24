@@ -1,13 +1,5 @@
 import { IMAGE_LOADER, ImageLoaderConfig, NgOptimizedImage, NgStyle } from "@angular/common";
-import {
-  booleanAttribute,
-  ChangeDetectionStrategy,
-  Component,
-  Input,
-  numberAttribute,
-  OnChanges,
-  SimpleChanges,
-} from "@angular/core";
+import { booleanAttribute, ChangeDetectionStrategy, Component, Input, numberAttribute, OnInit } from "@angular/core";
 
 @Component({
   selector: "nr-roon-image",
@@ -27,30 +19,29 @@ import {
     },
   ],
 })
-export class RoonImageComponent implements OnChanges {
+export class RoonImageComponent implements OnInit {
   @Input({ required: true }) src!: string;
   @Input({ required: true, transform: numberAttribute }) width!: number;
   @Input({ required: true, transform: numberAttribute }) height!: number;
   @Input({ required: true }) alt!: string;
-  @Input({ transform: booleanAttribute }) priority = false;
-  loaderParams = {};
+  @Input({ transform: booleanAttribute }) priority;
+  loaderParams: {
+    height: number;
+    width: number;
+  };
 
-  ngOnChanges(changes: SimpleChanges) {
-    let updateLoadParam = false;
-    for (const changeKey in changes) {
-      if (changeKey === "width" || changeKey === "height") {
-        const change = changes[changeKey];
-        if (change.isFirstChange()) {
-          updateLoadParam = true;
-          break;
-        }
-      }
-    }
-    if (updateLoadParam) {
-      this.loaderParams = {
-        height: this.height * 2,
-        width: this.width * 2,
-      };
-    }
+  constructor() {
+    this.priority = false;
+    this.loaderParams = {
+      height: 0,
+      width: 0,
+    };
+  }
+
+  ngOnInit(): void {
+    this.loaderParams = {
+      height: this.height * 2,
+      width: this.width * 2,
+    };
   }
 }

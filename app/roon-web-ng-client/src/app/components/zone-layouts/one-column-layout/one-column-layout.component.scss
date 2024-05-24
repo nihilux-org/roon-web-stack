@@ -1,0 +1,15 @@
+@use "../../styles/mixins" as nr;
+
+:host {
+  @include nr.zone-layout();
+  .zone-display {
+    flex-direction: column;
+    > div {
+      width: 100%;
+      flex-grow: 0;
+    }
+    .zone-info {
+      height: auto;
+    }
+  }
+}
