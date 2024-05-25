@@ -1,10 +1,10 @@
 import { DOCUMENT } from "@angular/common";
-import { Inject, Injectable, Signal, signal, WritableSignal } from "@angular/core";
+import { Inject, Injectable, OnDestroy, Signal, signal, WritableSignal } from "@angular/core";
 
 @Injectable({
   providedIn: "root",
 })
-export class FullscreenService {
+export class FullscreenService implements OnDestroy {
   private static readonly ENTER_FULL_SCREEN_ICON = "open_in_full";
   private static readonly EXIT_FULL_SCREEN_ICON = "close_fullscreen";
   private readonly _$icon: WritableSignal<string>;
@@ -15,6 +15,9 @@ export class FullscreenService {
     } else {
       this._$icon = signal(FullscreenService.ENTER_FULL_SCREEN_ICON);
     }
+    this._document.addEventListener("fullscreenchange", () => {
+      this.onFullscreenChange();
+    });
   }
 
   toggleFullScreen() {
@@ -41,5 +44,21 @@ export class FullscreenService {
 
   icon(): Signal<string> {
     return this._$icon;
+  }
+
+  ngOnDestroy() {
+    this._document.removeEventListener("fullscreenchange", () => {
+      this.onFullscreenChange();
+    });
+  }
+
+  private onFullscreenChange(): void {
+    const isFullScreen =
+      this._document.fullscreenElement != null
+        ? FullscreenService.EXIT_FULL_SCREEN_ICON
+        : FullscreenService.ENTER_FULL_SCREEN_ICON;
+    if (isFullScreen !== this._$icon()) {
+      this._$icon.set(isFullScreen);
+    }
   }
 }
