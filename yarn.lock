@@ -3821,7 +3821,7 @@ __metadata:
     eslint-plugin-prettier: "npm:5.1.3"
     eslint-plugin-promise: "npm:6.1.1"
     eslint-plugin-simple-import-sort: "npm:12.1.0"
-    eslint-webpack-plugin: "npm:4.1.0"
+    eslint-webpack-plugin: "npm:4.2.0"
     fastify: "npm:4.27.0"
     fastify-plugin: "npm:4.5.1"
     fastify-sse-v2: "npm:4.0.0"
@@ -3867,7 +3867,7 @@ __metadata:
     eslint-plugin-prettier: "npm:5.1.3"
     eslint-plugin-promise: "npm:6.1.1"
     eslint-plugin-simple-import-sort: "npm:12.1.0"
-    eslint-webpack-plugin: "npm:4.1.0"
+    eslint-webpack-plugin: "npm:4.2.0"
     jest: "npm:29.7.0"
     jest-fetch-mock: "npm:3.0.3"
     jest-junit: "npm:16.0.0"
@@ -4558,7 +4558,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/eslint@npm:*, @types/eslint@npm:^8.56.5":
+"@types/eslint@npm:*, @types/eslint@npm:^8.56.10":
   version: 8.56.10
   resolution: "@types/eslint@npm:8.56.10"
   dependencies:
@@ -7657,19 +7657,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-webpack-plugin@npm:4.1.0":
-  version: 4.1.0
-  resolution: "eslint-webpack-plugin@npm:4.1.0"
+"eslint-webpack-plugin@npm:4.2.0":
+  version: 4.2.0
+  resolution: "eslint-webpack-plugin@npm:4.2.0"
   dependencies:
-    "@types/eslint": "npm:^8.56.5"
+    "@types/eslint": "npm:^8.56.10"
     jest-worker: "npm:^29.7.0"
     micromatch: "npm:^4.0.5"
     normalize-path: "npm:^3.0.0"
     schema-utils: "npm:^4.2.0"
   peerDependencies:
-    eslint: ^8.0.0
+    eslint: ^8.0.0 || ^9.0.0
     webpack: ^5.0.0
-  checksum: 10c0/29ccc75ac50d765a254336e073342f33bac0b230512753c763ac783c6d3f15e36a9266371a31547253c5cf0d630be290f54268f99f37c8acbebc88304f5678b9
+  checksum: 10c0/cf5c9b7afa3c025fffadb3e1451e7a55d914c3070614bb4d57f887774d164ca4298bb777f7c3afa16f47af9869174a19d6aebb4d1ca719bc2cc49f2eccd71a3b
   languageName: node
   linkType: hard
 
