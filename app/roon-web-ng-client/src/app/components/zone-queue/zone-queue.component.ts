@@ -124,9 +124,11 @@ export class ZoneQueueComponent implements AfterViewInit {
   onQueueTrackToggleStart(event: AnimationEvent) {
     if (this.$displayQueue()) {
       this.open = true;
-      setTimeout(() => {
-        this._virtualScroll?.checkViewportSize();
-      }, event.totalTime / 3);
+      if ((this._virtualScroll?.getViewportSize() ?? -1) === 0) {
+        setTimeout(() => {
+          this._virtualScroll?.checkViewportSize();
+        }, event.totalTime / 3);
+      }
     }
   }
 
