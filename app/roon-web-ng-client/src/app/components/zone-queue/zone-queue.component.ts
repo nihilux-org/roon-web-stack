@@ -1,15 +1,13 @@
 import { deepEqual } from "fast-equals";
+import { animate, AnimationEvent, state, style, transition, trigger } from "@angular/animations";
 import { CdkFixedSizeVirtualScroll, CdkVirtualForOf, CdkVirtualScrollViewport } from "@angular/cdk/scrolling";
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   computed,
-  effect,
-  EffectRef,
   HostBinding,
   Input,
-  OnDestroy,
   QueryList,
   Signal,
   ViewChild,
@@ -40,12 +38,29 @@ import { SettingsService } from "@services/settings.service";
   templateUrl: "./zone-queue.component.html",
   styleUrl: "./zone-queue.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
+  animations: [
+    trigger("toggleQueue", [
+      state(
+        "open",
+        style({
+          height: "100%",
+        })
+      ),
+      state(
+        "closed",
+        style({
+          height: "0",
+        })
+      ),
+      transition("open => closed", [animate("0.3s ease-in")]),
+      transition("closed => open", [animate("0.3s ease-out")]),
+    ]),
+  ],
 })
-export class ZoneQueueComponent implements OnDestroy, AfterViewInit {
+export class ZoneQueueComponent implements AfterViewInit {
   @HostBinding("class.open") open: boolean;
   @Input({ required: true }) $trackDisplay!: Signal<TrackDisplay>;
   private readonly _roonService: RoonService;
-  private readonly _openEffect: EffectRef;
   readonly $zoneId: Signal<string>;
   readonly $queue: Signal<QueueTrack[]>;
   readonly $displayQueue: Signal<boolean>;
@@ -57,9 +72,6 @@ export class ZoneQueueComponent implements OnDestroy, AfterViewInit {
     this._roonService = roonService;
     this.$displayQueue = settingsService.displayQueueTrack();
     this.open = this.$displayQueue();
-    this._openEffect = effect(() => {
-      this.open = this.$displayQueue();
-    });
     this.$zoneId = settingsService.displayedZoneId();
     this.$queue = computed(
       () => {
@@ -102,11 +114,20 @@ export class ZoneQueueComponent implements OnDestroy, AfterViewInit {
   }
 
   onQueueTrackToggled() {
-    this._virtualScroll?.checkViewportSize();
+    if (this.$displayQueue()) {
+      this._virtualScroll?.checkViewportSize();
+    } else {
+      this.open = false;
+    }
   }
 
-  ngOnDestroy(): void {
-    this._openEffect.destroy();
+  onQueueTrackToggleStart(event: AnimationEvent) {
+    if (this.$displayQueue()) {
+      this.open = true;
+      setTimeout(() => {
+        this._virtualScroll?.checkViewportSize();
+      }, event.totalTime / 3);
+    }
   }
 
   ngAfterViewInit(): void {

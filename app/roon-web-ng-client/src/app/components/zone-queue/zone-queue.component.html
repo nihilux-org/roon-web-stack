@@ -1,43 +1,45 @@
-@if ($displayQueue()) {
-  <div class="queue">
-  @if ($queue().length > 0) {
-    <cdk-virtual-scroll-viewport itemSize="101" minBufferPx="100" maxBufferPx="610">
-      <ol>
-          <li *cdkVirtualFor="let track of $queue(); let last = last; let index = $index;">
-            <button tabindex="0" (click)="openActionMenu(track.queue_item_id)" class="track">
-              @if (track.image_key) {
-                <nr-roon-image class="track-image" priority="false" [alt]="track.title + ' cover'" height="70" width="70" [src]="track.image_key!" />
-              } @else {
-                <div class="track-image"></div>
-              }
-              <div class="track-info">
-                <span class="track-title">{{track.title}}</span>
-                @if (track.disk?.title) {
-                  <span class="track-album">on {{track.disk?.title}}</span>
-                }
-                @if (track.artist) {
-                  <span class="track-artist">by {{track.artist}}</span>
-                }
-              </div>
-            </button>
-            <div [matMenuTriggerFor]="actionMenu" [matMenuTriggerData]="track.queue_item_id"></div>
-            @if (!last) {
-              <mat-divider [inset]="true" [vertical]="false" />
+@if ($queue().length > 0) {
+  <cdk-virtual-scroll-viewport
+    itemSize="101"
+    class="queue"
+    [@toggleQueue]="$displayQueue() ? 'open' : 'closed'"
+    (@toggleQueue.done)="onQueueTrackToggled()"
+    (@toggleQueue.start)="onQueueTrackToggleStart($event)"
+    [@.disabled]="disabled">
+    <ol>
+        <li *cdkVirtualFor="let track of $queue(); let last = last; let index = $index;">
+          <button tabindex="0" (click)="openActionMenu(track.queue_item_id)" class="track">
+            @if (track.image_key) {
+              <nr-roon-image class="track-image" priority="false" [alt]="track.title + ' cover'" height="70" width="70" [src]="track.image_key!" />
+            } @else {
+              <div class="track-image"></div>
             }
-          </li>
-      </ol>
-    </cdk-virtual-scroll-viewport>
-  } @else {
-    <div class="track">
-      <div class="track-info">
-        <span class="track-title">Nothing in queue, go add some music or enjoy Roon radio!</span>
-      </div>
-    </div>
-  }
-  </div>
+            <div class="track-info">
+              <span class="track-title">{{track.title}}</span>
+              @if (track.disk?.title) {
+                <span class="track-album">on {{track.disk?.title}}</span>
+              }
+              @if (track.artist) {
+                <span class="track-artist">by {{track.artist}}</span>
+              }
+            </div>
+          </button>
+          <div [matMenuTriggerFor]="actionMenu" [matMenuTriggerData]="track.queue_item_id"></div>
+          @if (!last) {
+            <mat-divider [inset]="true" [vertical]="false" />
+          }
+        </li>
+    </ol>
+  </cdk-virtual-scroll-viewport>
   <mat-menu #actionMenu="matMenu" xPosition="before" yPosition="above">
     <ng-template matMenuContent let-queueItemId="queue_item_id">
       <button mat-menu-item (click)="onPlayFromHere(queueItemId)">Play from here</button>
     </ng-template>
   </mat-menu>
+} @else {
+  <div class="track">
+    <div class="track-info">
+      <span class="track-title">Nothing in queue, go add some music or enjoy Roon radio!</span>
+    </div>
+  </div>
 }
