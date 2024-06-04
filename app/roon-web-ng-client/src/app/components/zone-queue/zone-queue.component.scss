@@ -18,9 +18,9 @@
     ol {
       list-style: none;
       padding: 0;
-      margin: 5px;
+      margin: 0;
       li {
-        padding: 0 35px 15px 0;
+        padding: 0 0 15px 0;
       }
     }
     .track {
@@ -30,10 +30,11 @@
       height: 85px;
       .track-image {
         height: 70px;
-        width: 70px;
+        min-width: 70px;
       }
       .track-info {
         display: inline-block;
+        // TODO: Make this value depending on device size and orientation
         margin-left: 15px;
         flex-grow: 1;
         min-width: 0;
@@ -58,5 +59,15 @@
 :host.in-dialog {
   .queue {
     padding-left: 0;
+  }
+}
+
+:host:not(.in-dialog) {
+  .queue {
+    ol {
+      li {
+        padding-right: 35px;
+      }
+    }
   }
 }

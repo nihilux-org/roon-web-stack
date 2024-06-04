@@ -15,7 +15,7 @@
     }
     ol {
       list-style: none;
-      margin: 5px;
+      margin: 0;
       padding: 0;
       .roon-list-item {
         @include nr.button-reset();
@@ -26,7 +26,7 @@
         width: 100%;
         .roon-item-image {
           height: 70px;
-          width: 70px;
+          min-width: 70px;
         }
         .roon-item-info {
           flex-grow: 1;
