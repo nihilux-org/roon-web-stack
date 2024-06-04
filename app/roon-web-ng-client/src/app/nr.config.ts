@@ -1,6 +1,6 @@
 import { APP_INITIALIZER, ApplicationConfig } from "@angular/core";
 import { MatIconRegistry } from "@angular/material/icon";
-import { provideAnimations } from "@angular/platform-browser/animations";
+import { provideAnimationsAsync } from "@angular/platform-browser/animations/async";
 import { RoonService } from "@services/roon.service";
 
 const startRoonService = (roonService: RoonService): (() => Promise<void>) => {
@@ -17,7 +17,6 @@ const useMaterialSymbol = (iconRegistry: MatIconRegistry) => () => {
 
 export const nrConfig: ApplicationConfig = {
   providers: [
-    provideAnimations(),
     {
       provide: APP_INITIALIZER,
       useFactory: startRoonService,
@@ -30,5 +29,6 @@ export const nrConfig: ApplicationConfig = {
       deps: [MatIconRegistry],
       multi: true,
     },
+    provideAnimationsAsync(),
   ],
 };
