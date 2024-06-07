@@ -4197,7 +4197,7 @@ __metadata:
     prettier: "npm:3.3.1"
     rxjs: "npm:~7.8.0"
     typescript: "npm:5.4.5"
-    zone.js: "npm:~0.14.6"
+    zone.js: "npm:~0.14.7"
   languageName: unknown
   linkType: soft
 
@@ -15244,9 +15244,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zone.js@npm:~0.14.6":
-  version: 0.14.6
-  resolution: "zone.js@npm:0.14.6"
-  checksum: 10c0/dc138197428b7d5c5bc6119dc94748f700426a340c41fc6ebf5fe3fa7ff302fa970350c44719f644020a82caabf9fc761003af285c7707192c77bcc312bfd264
+"zone.js@npm:~0.14.7":
+  version: 0.14.7
+  resolution: "zone.js@npm:0.14.7"
+  checksum: 10c0/5a5fccb78ea4653ccf3ad5c11448ffa4e005b50a0fd43da713fcc19584746000ea889ca45163d2e6e18e3a4ed7be42cdbc0dbb4dcb28449f02d23408696668cc
   languageName: node
   linkType: hard
