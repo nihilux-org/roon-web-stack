@@ -1,6 +1,7 @@
 import { MockBuilder, MockedComponentFixture, MockRender, ngMocks } from "ng-mocks";
-import { Component, TemplateRef } from "@angular/core";
+import { Component, Signal, signal, TemplateRef, WritableSignal } from "@angular/core";
 import { LayoutContext, LayoutData } from "@model/client";
+import { SettingsService } from "@services/settings.service";
 import { WideLayoutComponent } from "./wide-layout.component";
 
 @Component({
@@ -39,9 +40,20 @@ describe("WideLayoutComponent", () => {
   let zoneProgression: TemplateRef<LayoutContext>;
   let zoneQueue: TemplateRef<LayoutContext>;
   let layoutContext: LayoutContext;
+  let $isSmallTablet: WritableSignal<boolean>;
+  let settingsService: {
+    isSmallTablet(): Signal<boolean>;
+  };
 
   beforeEach(async () => {
-    await MockBuilder(TemplateProducer, WideLayoutComponent);
+    $isSmallTablet = signal(false);
+    settingsService = {
+      isSmallTablet: () => $isSmallTablet,
+    };
+    await MockBuilder(TemplateProducer, WideLayoutComponent).mock(
+      SettingsService,
+      settingsService as Partial<SettingsService>
+    );
     const templateProducerFixture = MockRender(TemplateProducer);
     zoneActions = ngMocks.findTemplateRef(templateProducerFixture.debugElement, "zoneActions");
     zoneCommands = ngMocks.findTemplateRef(templateProducerFixture.debugElement, "zoneCommands");
@@ -68,7 +80,7 @@ describe("WideLayoutComponent", () => {
         reset: true,
       }
     );
-    component = fixture.componentInstance;
+    component = fixture.componentInstance as unknown as WideLayoutComponent;
     fixture.detectChanges();
   });
 

@@ -28,12 +28,16 @@ import {
   providedIn: "root",
 })
 export class SettingsService implements OnDestroy {
+  private static readonly SMALL_TABLET_LANDSCAPE =
+    "(max-width: 1000px) and (max-height: 800px) and (orientation: landscape)";
   private static readonly WATCH_BREAKPOINTS = [
     Breakpoints.XSmall,
     Breakpoints.Handset,
     Breakpoints.TabletPortrait,
     Breakpoints.HandsetPortrait,
+    Breakpoints.HandsetPortrait,
     Breakpoints.WebPortrait,
+    SettingsService.SMALL_TABLET_LANDSCAPE,
   ];
   private static readonly DISPLAYED_ZONE_ID_KEY = "nr.SELECTED_ZONE_ID";
   private static readonly CHOSEN_THEME_KEY = "nr.IS_DARK_THEME";
@@ -41,12 +45,15 @@ export class SettingsService implements OnDestroy {
   private static readonly DISPLAY_MODE_KEY = "nr.DISPLAY_MODE";
   private static readonly ACTIONS_KEY = "nr.ACTIONS";
   private readonly _breakpointObserver: BreakpointObserver;
-  private readonly _$displayedZoneId: WritableSignal<string>;
-  private readonly _$chosenTheme: WritableSignal<string>;
-  private readonly _$displayQueueTrack: WritableSignal<boolean>;
-  private readonly _$breakpoints: WritableSignal<ClientBreakpoints>;
-  private readonly _$displayMode: WritableSignal<DisplayMode>;
   private readonly _$actions: WritableSignal<Action[]>;
+  private readonly _$breakpoints: WritableSignal<ClientBreakpoints>;
+  private readonly _$chosenTheme: WritableSignal<string>;
+  private readonly _$displayedZoneId: WritableSignal<string>;
+  private readonly _$displayQueueTrack: WritableSignal<boolean>;
+  private readonly _$displayMode: WritableSignal<DisplayMode>;
+  private readonly _$isOneColumn: Signal<boolean>;
+  private readonly _$isSmallScreen: Signal<boolean>;
+  private readonly _$isSmallTablet: Signal<boolean>;
   private readonly themeEffect: EffectRef;
   private _breakPointSubscription?: Subscription;
 
@@ -68,6 +75,52 @@ export class SettingsService implements OnDestroy {
         LibraryAction,
         RadiosAction,
       ])
+    );
+    this._$isOneColumn = computed(
+      () => {
+        const breakpoints = this._$breakpoints();
+        let isOneColumn = false;
+        for (const breakpoint of SettingsService.WATCH_BREAKPOINTS) {
+          if (breakpoint !== SettingsService.SMALL_TABLET_LANDSCAPE && breakpoints[breakpoint]) {
+            isOneColumn = true;
+            break;
+          }
+        }
+        return isOneColumn;
+      },
+      {
+        equal: deepEqual,
+      }
+    );
+    this._$isSmallScreen = computed(
+      () => {
+        const breakpoints = this._$breakpoints();
+        let isSmallScreen = false;
+        for (const breakpoint of SettingsService.WATCH_BREAKPOINTS) {
+          if (
+            breakpoint !== Breakpoints.WebPortrait &&
+            breakpoint !== Breakpoints.TabletPortrait &&
+            breakpoint !== SettingsService.SMALL_TABLET_LANDSCAPE &&
+            breakpoints[breakpoint]
+          ) {
+            isSmallScreen = true;
+            break;
+          }
+        }
+        return isSmallScreen;
+      },
+      {
+        equal: deepEqual,
+      }
+    );
+    this._$isSmallTablet = computed(
+      () => {
+        const breakpoints = this._$breakpoints();
+        return breakpoints[SettingsService.SMALL_TABLET_LANDSCAPE];
+      },
+      {
+        equal: deepEqual,
+      }
     );
     const renderer = rendererFactory.createRenderer(null, null);
     // FIXME?: should this be more semantically placed in nr-root.component?
@@ -129,45 +182,15 @@ export class SettingsService implements OnDestroy {
   }
 
   isOneColumn(): Signal<boolean> {
-    return computed(
-      () => {
-        const breakpoints = this._$breakpoints();
-        let isOneColumn = false;
-        for (const breakpoint of SettingsService.WATCH_BREAKPOINTS) {
-          if (breakpoints[breakpoint]) {
-            isOneColumn = true;
-            break;
-          }
-        }
-        return isOneColumn;
-      },
-      {
-        equal: deepEqual,
-      }
-    );
+    return this._$isOneColumn;
   }
 
   isSmallScreen(): Signal<boolean> {
-    return computed(
-      () => {
-        const breakpoints = this._$breakpoints();
-        let isSmallScreen = false;
-        for (const breakpoint of SettingsService.WATCH_BREAKPOINTS) {
-          if (
-            breakpoint !== Breakpoints.WebPortrait &&
-            breakpoint !== Breakpoints.TabletPortrait &&
-            breakpoints[breakpoint]
-          ) {
-            isSmallScreen = true;
-            break;
-          }
-        }
-        return isSmallScreen;
-      },
-      {
-        equal: deepEqual,
-      }
-    );
+    return this._$isSmallScreen;
+  }
+
+  isSmallTablet(): Signal<boolean> {
+    return this._$isSmallTablet;
   }
 
   saveDisplayMode(displayMode: DisplayMode) {

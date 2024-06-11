@@ -4,7 +4,7 @@
   </div>
 }
 <div class="actions" [class.centered]="$withFullscreen()">
-  @if ($isSmallScreen()) {
+  @if ($isIconsOnly()) {
     @for (action of $actions(); track action.id) {
       <span class="is-small-screen">
         <button tabindex="0" mat-icon-button (click)="executeAction(action)"><mat-icon [fontIcon]="action.button.icon" /></button>
