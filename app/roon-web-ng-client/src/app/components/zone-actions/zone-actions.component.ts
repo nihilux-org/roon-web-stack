@@ -24,7 +24,8 @@ export class ZoneActionsComponent {
   private readonly _dialog: MatDialog;
   private readonly _settingsService: SettingsService;
   private readonly _$isOneColumn: Signal<boolean>;
-  readonly $isSmallScreen: Signal<boolean>;
+  private readonly _$isSmallTablet: Signal<boolean>;
+  readonly $isIconsOnly: Signal<boolean>;
   readonly $actions: Signal<Action[]>;
   readonly $withFullscreen: Signal<boolean>;
 
@@ -32,7 +33,11 @@ export class ZoneActionsComponent {
     this._dialog = dialog;
     this._settingsService = settingsService;
     this._$isOneColumn = this._settingsService.isOneColumn();
-    this.$isSmallScreen = this._settingsService.isSmallScreen();
+    this._$isSmallTablet = this._settingsService.isSmallTablet();
+    const $isSmallScreen = this._settingsService.isSmallScreen();
+    this.$isIconsOnly = computed(() => {
+      return $isSmallScreen() || this._$isSmallTablet();
+    });
     this.$actions = this._settingsService.actions();
     const supportsFullScreen = fullScreenService.supportsFullScreen();
     this.$withFullscreen = computed(() => {
@@ -82,7 +87,7 @@ export class ZoneActionsComponent {
   }
 
   private toggleDisplayQueueTrack() {
-    if (this._$isOneColumn()) {
+    if (this._$isOneColumn() || this._$isSmallTablet()) {
       this._settingsService.saveDisplayQueueTrack(true);
       this._dialog.open(ZoneQueueDialogComponent, {
         restoreFocus: false,
