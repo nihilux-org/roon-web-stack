@@ -4399,7 +4399,7 @@ __metadata:
     jest: "npm:29.7.0"
     jsdom-testing-mocks: "npm:1.13.0"
     ng-mocks: "npm:14.13.0"
-    ngx-device-detector: "npm:7.0.0"
+    ngx-device-detector: "npm:8.0.0"
     prettier: "npm:3.3.2"
     rxjs: "npm:~7.8.0"
     typescript: "npm:5.4.5"
@@ -11602,15 +11602,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ngx-device-detector@npm:7.0.0":
-  version: 7.0.0
-  resolution: "ngx-device-detector@npm:7.0.0"
+"ngx-device-detector@npm:8.0.0":
+  version: 8.0.0
+  resolution: "ngx-device-detector@npm:8.0.0"
   dependencies:
     tslib: "npm:^2.0.0"
   peerDependencies:
-    "@angular/common": ^17.0.0
-    "@angular/core": ^17.0.0
-  checksum: 10c0/81708a904d166863a99be6d13c137f39cf32d96c25c106e847c55dc0349c78553a0f1ac75e540d5e2bfaf9a902f16123084ce59a527c456ffca2c266807bc25a
+    "@angular/common": ^18.0.0
+    "@angular/core": ^18.0.0
+  checksum: 10c0/238f12267d3679b9eb7c1110a1859313648dbe1d454d12794c88ec0246e78a8aff59137aa16ef30c3f00738f5a93c9a88a12a2a4b11c56565bb162c6d6cd057c
   languageName: node
   linkType: hard
 
