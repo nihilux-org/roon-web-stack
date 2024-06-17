@@ -4277,7 +4277,7 @@ __metadata:
     eslint-plugin-promise: "npm:6.2.0"
     eslint-plugin-simple-import-sort: "npm:12.1.0"
     eslint-webpack-plugin: "npm:4.2.0"
-    fastify: "npm:4.27.0"
+    fastify: "npm:4.28.0"
     fastify-plugin: "npm:4.5.1"
     fastify-sse-v2: "npm:4.0.0"
     jest: "npm:29.7.0"
@@ -8632,9 +8632,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fastify@npm:4.27.0":
-  version: 4.27.0
-  resolution: "fastify@npm:4.27.0"
+"fastify@npm:4.28.0":
+  version: 4.28.0
+  resolution: "fastify@npm:4.28.0"
   dependencies:
     "@fastify/ajv-compiler": "npm:^3.5.0"
     "@fastify/error": "npm:^3.4.0"
@@ -8652,7 +8652,7 @@ __metadata:
     secure-json-parse: "npm:^2.7.0"
     semver: "npm:^7.5.4"
     toad-cache: "npm:^3.3.0"
-  checksum: 10c0/879e9d3f6b9521bea29255c79ca1ddf3dd4c017937a25e7348d7686625c7dd56f21af18e6db2ecdd41d07e5c73a779ab0bb1f5d6b081909bf3e8caadaf669160
+  checksum: 10c0/24307900a5ef5b8d6357d3cec40abf621859b8f6e3a046bfc5a45ec7fedec42c51bde0bb3c5913f7badd91d5d69a485e1f3e0e2310483103fabc472cb0e122cd
   languageName: node
   linkType: hard
 
