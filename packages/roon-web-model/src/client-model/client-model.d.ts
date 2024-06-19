@@ -1,5 +1,7 @@
 import { ApiState, Command, CommandState, QueueState, ZoneState } from "../api-model";
 import {
+  Item,
+  List,
   RoonApiBrowseHierarchy,
   RoonApiBrowseLoadOptions,
   RoonApiBrowseLoadResponse,
@@ -26,6 +28,7 @@ export interface RoonWebClient {
   browse: (options: ClientRoonApiBrowseOptions) => Promise<RoonApiBrowseResponse>;
   load: (options: ClientRoonApiBrowseLoadOptions) => Promise<RoonApiBrowseLoadResponse>;
   loadPath: (zone_id: string, path: RoonPath) => Promise<RoonApiBrowseLoadResponse>;
+  findItemIndex: (itemIndexSearch: ItemIndexSearch) => Promise<FoundItemIndexResponse>;
   version: () => string;
 }
 
@@ -52,4 +55,15 @@ export type ClientStateListener = (clientState: ClientState) => void;
 export interface RoonPath {
   hierarchy: RoonApiBrowseHierarchy;
   path: string[];
+}
+
+export interface ItemIndexSearch {
+  hierarchy: RoonApiBrowseHierarchy;
+  list: List;
+  letter: string;
+  items?: Item[];
+}
+
+export interface FoundItemIndexResponse extends RoonApiBrowseLoadResponse {
+  itemIndex: number;
 }

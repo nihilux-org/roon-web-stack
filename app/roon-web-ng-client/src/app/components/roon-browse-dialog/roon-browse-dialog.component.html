@@ -19,7 +19,10 @@
       <mat-progress-spinner diameter="350" strokeWidth="15" color="primary" mode="indeterminate" />
     </div>
   } @else {
-    <nr-roon-browse-list [content]="content!" [zoneId]="zoneId" [hierarchy]="hierarchy" [scrollIndex]="scrollIndex" (clickedItem)="onItemClicked($event)" />
+    <nr-roon-browse-list [content]="content!" [zoneId]="zoneId" [hierarchy]="hierarchy" [scrollIndex]="scrollIndex" [isPaginated]="isPaginated" (clickedItem)="onItemClicked($event)" />
+    @if (withIndex) {
+      <nr-alphabetical-index (clickedLetter)="onIndexClicked($event)" />
+    }
   }
 </mat-dialog-content>
 <mat-dialog-actions align="end">

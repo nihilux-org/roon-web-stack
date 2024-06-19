@@ -1,5 +1,5 @@
 export interface NavigationEvent {
-  item_key?: string;
+  item_key: string;
   input?: string;
-  scrollIndex?: number;
+  scrollIndex: number;
 }

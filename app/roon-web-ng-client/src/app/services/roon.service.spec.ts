@@ -38,7 +38,7 @@ describe("RoonServiceService", () => {
       service.command({} as Command);
     }).toThrow(error);
     expect(() => service.loadPath("zone_id", {} as RoonPath)).toThrow(error);
-    expect(() => service.previous("zone_id", "browse")).toThrow(error);
+    expect(() => service.previous("zone_id", "browse", 42, 42)).toThrow(error);
     expect(() => service.navigate("zone_id", "browse")).toThrow(error);
     expect(() => service.browse({} as ClientRoonApiBrowseOptions)).toThrow(error);
     expect(() => service.load({} as ClientRoonApiBrowseLoadOptions)).toThrow(error);

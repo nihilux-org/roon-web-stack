@@ -9,6 +9,7 @@ import {
   ClientStateWorkerEvent,
   CommandApiResult,
   CommandStateWorkerEvent,
+  FoundItemIndexApiResult,
   LoadApiResult,
   QueueStateWorkerEvent,
   RawApiResult,
@@ -257,13 +258,14 @@ const onApiRequest = (apiRequest: RawWorkerApiRequest): void => {
       void _roonClient
         .browse({
           hierarchy: apiRequest.data.hierarchy,
-          pop_levels: apiRequest.data.levels ?? 1,
+          pop_levels: apiRequest.data.levels,
           zone_or_output_id: apiRequest.data.zone_id,
         })
         .then((browseResponse) => {
           return _roonClient.load({
             hierarchy: apiRequest.data.hierarchy,
             level: browseResponse.list?.level,
+            offset: apiRequest.data.offset,
           });
         })
         .then((data) => {
@@ -309,6 +311,27 @@ const onApiRequest = (apiRequest: RawWorkerApiRequest): void => {
           };
           postApiResult(message);
         });
+      break;
+    case "find-item-index":
+      void _roonClient
+        .findItemIndex(apiRequest.data.itemIndexSearch)
+        .then((data) => {
+          const message: FoundItemIndexApiResult = {
+            type: "found-item-index",
+            id,
+            data,
+          };
+          postApiResult(message);
+        })
+        .catch((error: unknown) => {
+          const message: FoundItemIndexApiResult = {
+            type: "found-item-index",
+            id,
+            error,
+          };
+          postApiResult(message);
+        });
+      break;
   }
 };
 

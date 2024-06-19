@@ -22,6 +22,7 @@ import {
 } from "@angular/material/dialog";
 import { MatIcon } from "@angular/material/icon";
 import { MatProgressSpinner } from "@angular/material/progress-spinner";
+import { AlphabeticalIndexComponent } from "@components/alphabetical-index/alphabetical-index.component";
 import { RoonBrowseListComponent } from "@components/roon-browse-list/roon-browse-list.component";
 import { RoonApiBrowseHierarchy, RoonApiBrowseLoadResponse, RoonPath } from "@model";
 import { NavigationEvent } from "@model/client";
@@ -32,6 +33,7 @@ import { SettingsService } from "@services/settings.service";
   selector: "nr-roon-browse-dialog",
   standalone: true,
   imports: [
+    AlphabeticalIndexComponent,
     MatButton,
     MatDialogActions,
     MatDialogClose,
@@ -47,18 +49,21 @@ import { SettingsService } from "@services/settings.service";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RoonBrowseDialogComponent implements OnInit, OnDestroy {
+  private static readonly TITLES_WITH_INDEX = ["Albums", "Artists", "Composers", "My Live Radio", "Playlists", "Tags"];
   private readonly _roonService: RoonService;
   private readonly _dialogRef: MatDialogRef<RoonBrowseDialogComponent>;
   private readonly _firstPath: RoonPath;
   private readonly _scrollIndexes: number[];
   private readonly _dialogCloseSub: Subscription;
-  content?: RoonApiBrowseLoadResponse | undefined = undefined;
   readonly zoneId: string;
   readonly hierarchy: RoonApiBrowseHierarchy;
   readonly $dialogTitle: WritableSignal<string[]>;
   readonly $loading: WritableSignal<boolean>;
   readonly $itemsInTitle: Signal<number>;
+  content?: RoonApiBrowseLoadResponse | undefined = undefined;
+  isPaginated: boolean;
   scrollIndex: number;
+  withIndex: boolean;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) data: { path: RoonPath },
@@ -87,7 +92,9 @@ export class RoonBrowseDialogComponent implements OnInit, OnDestroy {
         equal: deepEqual,
       }
     );
+    this.withIndex = false;
     this.scrollIndex = 0;
+    this.isPaginated = true;
     this._dialogCloseSub = this._dialogRef.beforeClosed().subscribe(() => {
       void this._roonService.browse({
         hierarchy: this.hierarchy,
@@ -99,7 +106,7 @@ export class RoonBrowseDialogComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this._roonService.loadPath(this.zoneId, this._firstPath).subscribe((content) => {
-      this.loadContent(content);
+      this.loadContent(content, 0);
     });
   }
 
@@ -111,13 +118,16 @@ export class RoonBrowseDialogComponent implements OnInit, OnDestroy {
     this.$loading.set(true);
     const levels = this.$dialogTitle().length - titleIndex - 1;
     if (levels !== 0) {
-      this._roonService.previous(this.zoneId, this._firstPath.hierarchy, levels).subscribe((content) => {
+      let scrollIndex = 0;
+      let offset = 0;
+      if (this._scrollIndexes[titleIndex]) {
+        scrollIndex = this._scrollIndexes[titleIndex];
+        this._scrollIndexes.splice(titleIndex, this._scrollIndexes.length - titleIndex);
+        offset = scrollIndex - (scrollIndex % 100);
+      }
+      this._roonService.previous(this.zoneId, this._firstPath.hierarchy, levels, offset).subscribe((content) => {
         this.$dialogTitle.update((dialogTitle) => dialogTitle.slice(0, titleIndex + 1));
-        let scrollIndex: number | undefined = undefined;
-        if (this._scrollIndexes[titleIndex]) {
-          scrollIndex = this._scrollIndexes[titleIndex];
-          this._scrollIndexes.splice(titleIndex, this._scrollIndexes.length - titleIndex);
-        }
+        this.isPaginated = true;
         this.loadContent(content, scrollIndex);
       });
     } else {
@@ -126,26 +136,42 @@ export class RoonBrowseDialogComponent implements OnInit, OnDestroy {
   }
 
   onItemClicked(event: NavigationEvent) {
-    if (event.item_key) {
-      this.$loading.set(true);
-      if (event.scrollIndex) {
-        this._scrollIndexes.push(event.scrollIndex);
-      }
-      this._roonService
-        .navigate(this.zoneId, this._firstPath.hierarchy, event.item_key, event.input)
-        .subscribe((content) => {
-          this.loadContent(content);
-        });
-    } else {
-      this.onTitleClicked(0);
-    }
+    this.$loading.set(true);
+    this._scrollIndexes.push(event.scrollIndex);
+    this._roonService
+      .navigate(this.zoneId, this._firstPath.hierarchy, event.item_key, event.input)
+      .subscribe((content) => {
+        this.isPaginated = true;
+        this.loadContent(content, 0);
+      });
   }
 
   closeDialog() {
     this._dialogRef.close();
   }
 
-  private loadContent(content: RoonApiBrowseLoadResponse, scrollIndexToRestore?: number): void {
+  onIndexClicked(letter: string) {
+    const list = this.content?.list;
+    if (list) {
+      this.$loading.set(true);
+      void this._roonService
+        .findItemIndex({
+          hierarchy: this.hierarchy,
+          list,
+          letter,
+          items: !this.isPaginated ? this.content?.items : undefined,
+        })
+        .then((foundItemIndexResponse) => {
+          this.isPaginated = false;
+          this.loadContent(foundItemIndexResponse, foundItemIndexResponse.itemIndex);
+        })
+        .catch(() => {
+          this.$loading.set(false);
+        });
+    }
+  }
+
+  private loadContent(content: RoonApiBrowseLoadResponse, scrollIndex: number): void {
     const isDeeperTitle = (this.content?.list.level ?? -1) < content.list.level;
     if (isDeeperTitle) {
       this.$dialogTitle.update((dialogTitle) => {
@@ -153,12 +179,9 @@ export class RoonBrowseDialogComponent implements OnInit, OnDestroy {
         return dialogTitle;
       });
     }
-    if (scrollIndexToRestore) {
-      this.scrollIndex = scrollIndexToRestore;
-    } else {
-      this.scrollIndex = 0;
-    }
     this.content = content;
+    this.scrollIndex = scrollIndex;
+    this.withIndex = RoonBrowseDialogComponent.TITLES_WITH_INDEX.includes(content.list.title);
     this.$loading.set(false);
   }
 }

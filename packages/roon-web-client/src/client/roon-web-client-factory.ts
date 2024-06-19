@@ -7,6 +7,9 @@ import {
   Command,
   CommandState,
   CommandStateListener,
+  FoundItemIndexResponse,
+  Item,
+  ItemIndexSearch,
   Ping,
   QueueState,
   QueueStateListener,
@@ -320,6 +323,66 @@ class InternalRoonWebClient implements RoonWebClient {
     } else {
       return loadResponse;
     }
+  };
+
+  // FIXME?: As nothing is indexed in roon API, there's no way to implement this feature without browsing all the data,
+  //  the tradeoff to load everything and return the complete collection is a little extreme, but the data have been loaded 🤷
+  findItemIndex: (itemIndexSearch: ItemIndexSearch) => Promise<FoundItemIndexResponse> = async (
+    itemIndexSearch: ItemIndexSearch
+  ): Promise<FoundItemIndexResponse> => {
+    let items = itemIndexSearch.items;
+    if (items === undefined) {
+      const { hierarchy, list } = itemIndexSearch;
+      const loadResponse = await this.load({
+        hierarchy,
+        level: list.level,
+        count: list.count,
+        offset: 0,
+      });
+      items = loadResponse.items;
+    }
+    const sliceSize = Math.floor(itemIndexSearch.list.count / 26);
+    const letterIndex = itemIndexSearch.letter.charCodeAt(0) - 65;
+    const firstIndex = letterIndex * sliceSize;
+    const lastIndex = items.length;
+    const itemIndex = this._findItemIndex(
+      firstIndex,
+      lastIndex,
+      sliceSize,
+      items,
+      itemIndexSearch.letter.toUpperCase()
+    );
+    return {
+      items,
+      itemIndex,
+      list: itemIndexSearch.list,
+      offset: 0,
+    };
+  };
+
+  private _findItemIndex: (
+    firstIndex: number,
+    lastIndex: number,
+    sliceSize: number,
+    items: Item[],
+    letter: string
+  ) => number = (firstIndex: number, lastIndex: number, sliceSize: number, items: Item[], letter: string): number => {
+    let index = -1;
+    for (let i = firstIndex; i < lastIndex; i++) {
+      const item = items[i];
+      const title = item.title.toUpperCase().replace("THE ", "").trimStart();
+      const comp = title.charAt(0).localeCompare(letter);
+      if (i === firstIndex && comp >= 0) {
+        return this._findItemIndex(firstIndex - sliceSize, firstIndex + 1, sliceSize, items, letter);
+      } else if (comp === 0) {
+        index = i;
+        break;
+      } else if (comp > 0 && i > firstIndex) {
+        index = i - 1;
+        break;
+      }
+    }
+    return index;
   };
 
   private ensureStared: () => string = () => {
