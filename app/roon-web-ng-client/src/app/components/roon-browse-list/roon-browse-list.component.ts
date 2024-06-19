@@ -2,7 +2,8 @@ import { BehaviorSubject, Observable, Subject, Subscription } from "rxjs";
 import { CollectionViewer, DataSource } from "@angular/cdk/collections";
 import { CdkFixedSizeVirtualScroll, CdkVirtualForOf, CdkVirtualScrollViewport } from "@angular/cdk/scrolling";
 import {
-  AfterViewInit,
+  AfterViewChecked,
+  booleanAttribute,
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
@@ -53,7 +54,7 @@ import { SettingsService } from "@services/settings.service";
   styleUrl: "./roon-browse-list.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RoonBrowseListComponent implements OnChanges, AfterViewInit {
+export class RoonBrowseListComponent implements OnChanges, AfterViewChecked {
   private static readonly SUBTITLE_SPLITTER = /\s?\/?\s?\[\[\d*\|/;
   private readonly _roonService: RoonService;
   private readonly _inputValues: Map<string, string>;
@@ -61,11 +62,12 @@ export class RoonBrowseListComponent implements OnChanges, AfterViewInit {
   @Input({ required: true }) hierarchy!: RoonApiBrowseHierarchy;
   @Input({ required: true }) zoneId!: string;
   @Input({ required: true }) content!: RoonApiBrowseLoadResponse;
+  @Input({ required: true, transform: booleanAttribute }) isPaginated!: boolean;
   @Input({ required: true, transform: numberAttribute }) scrollIndex!: number;
   @Output() clickedItem = new EventEmitter<NavigationEvent>();
   @ViewChild(CdkVirtualScrollViewport) _virtualScroll!: CdkVirtualScrollViewport;
   @ViewChildren(MatMenuTrigger) _menuTriggers!: QueryList<MatMenuTrigger>;
-  dataSource?: RoonListDataSource;
+  dataSource?: RoonListDataSource | Item[];
   readonly $isOneColumn: Signal<boolean>;
 
   constructor(roonService: RoonService, settingsService: SettingsService) {
@@ -84,14 +86,22 @@ export class RoonBrowseListComponent implements OnChanges, AfterViewInit {
       }
     }
     if (updateDataSource) {
-      this.dataSource = new RoonListDataSource(this.hierarchy, this.content, this._roonService);
+      if (this.isPaginated) {
+        this.dataSource = new RoonListDataSource(this.hierarchy, this.content, this._roonService);
+      } else {
+        this.dataSource = this.content.items;
+      }
     }
   }
 
-  ngAfterViewInit() {
+  ngAfterViewChecked() {
     if (this.scrollIndex > 1) {
-      setTimeout(() => {
-        this._virtualScroll.scrollToIndex(this.scrollIndex - 1, "instant");
+      this._virtualScroll.scrollToIndex(this.scrollIndex - 1, "instant");
+      const scrollSub = this._virtualScroll.scrolledIndexChange.subscribe((scrolledIndex) => {
+        if (scrolledIndex === this.scrollIndex - 1) {
+          this.scrollIndex = 0;
+          scrollSub.unsubscribe();
+        }
       });
     }
   }
@@ -117,13 +127,11 @@ export class RoonBrowseListComponent implements OnChanges, AfterViewInit {
     }
   }
 
-  onItemClicked(scrollIndex?: number, item_key?: string, hint?: string, hasInput?: boolean) {
+  onItemClicked(scrollIndex: number, item_key?: string, hint?: string, hasInput?: boolean) {
     if (item_key && hint === "action_list") {
       this.onActionListClicked(item_key);
     } else if (item_key && hint === "action") {
-      this._roonService.navigate(this.zoneId, this.hierarchy, item_key).subscribe(() => {
-        this.clickedItem.emit({});
-      });
+      this._roonService.navigate(this.zoneId, this.hierarchy, item_key).subscribe(() => {});
     } else if (item_key) {
       const input = hasInput ? this._inputValues.get(`${item_key}_prompt_input`) : undefined;
       if (hasInput && (input?.trim().length ?? 0) === 0) {
@@ -186,13 +194,13 @@ export class RoonBrowseListComponent implements OnChanges, AfterViewInit {
                   zone_or_output_id: this.zoneId,
                   item_key: undefined,
                 })
-                .then(() => {
-                  menuClosedSub.unsubscribe();
-                  navigationSub.unsubscribe();
-                })
                 .catch((err: unknown) => {
                   // eslint-disable-next-line no-console
                   console.error(err);
+                })
+                .finally(() => {
+                  menuClosedSub.unsubscribe();
+                  navigationSub.unsubscribe();
                 });
             } else {
               this._noActionClicked = true;
@@ -236,15 +244,16 @@ class RoonListDataSource extends DataSource<Item | undefined> {
         length: firstResponse.list.count,
       },
       (_, i) => {
-        if (i < firstResponse.items.length) {
-          return firstResponse.items[i];
+        if (i >= firstResponse.offset && i < firstResponse.items.length + firstResponse.offset) {
+          return firstResponse.items[i - firstResponse.offset];
         } else {
           return undefined;
         }
       }
     );
-    this._loadedOffsets.add(0);
+    this._loadedOffsets.add(this.computeOffset(firstResponse.offset));
   }
+
   override connect(collectionViewer: CollectionViewer): Observable<readonly (Item | undefined)[]> {
     this._subscription.add(
       collectionViewer.viewChange.subscribe((range) => {
@@ -275,6 +284,7 @@ class RoonListDataSource extends DataSource<Item | undefined> {
     );
     return this._itemSubject;
   }
+
   override disconnect(): void {
     this._subscription.unsubscribe();
   }

@@ -12,6 +12,8 @@ import {
   CommandState,
   CommandStateListener,
   CommandType,
+  Item,
+  ItemIndexSearch,
   Ping,
   QueueState,
   QueueStateListener,
@@ -1400,6 +1402,111 @@ describe("roon-web-client-factory.ts test suite", () => {
     expect(loadSpy).toHaveBeenCalledTimes(1);
   });
 
+  it("RoonWebClient#findItemIndex should load the List in the hierarchy described in the provided ItemIndexSearch, filter items and return the first which title starts by the searched letter", async () => {
+    const generatedItems = itemsGenerator();
+    const items = generatedItems.flatMap((genItems) => genItems.items);
+    const itemIndexSearch: ItemIndexSearch = {
+      hierarchy: "browse",
+      list: {
+        level: 42,
+        count: items.length,
+        title: "title",
+      },
+      letter: "C",
+    };
+    const loadResponse: RoonApiBrowseLoadResponse = {
+      list: itemIndexSearch.list,
+      items,
+      offset: 0,
+    };
+    fetchMock
+      .once(mockVersionGet)
+      .once(mockRegisterPost)
+      .once((req) => {
+        if (req.method === "POST" && req.url === new URL(`${client_path}/load`, API_URL).toString()) {
+          return Promise.resolve({
+            status: 200,
+            body: JSON.stringify(loadResponse),
+          });
+        } else {
+          return Promise.reject(new Error());
+        }
+      });
+    const client = roonWebClientFactory.build(API_URL);
+    const loadSpy = jest.spyOn(client, "load");
+    await client.start();
+
+    const foundIndex = await client.findItemIndex(itemIndexSearch);
+
+    expect(loadSpy).toHaveBeenCalledTimes(1);
+    expect(loadSpy).toHaveBeenCalledWith({
+      hierarchy: itemIndexSearch.hierarchy,
+      level: itemIndexSearch.list.level,
+      count: itemIndexSearch.list.count,
+      offset: 0,
+    });
+    expect(foundIndex.list).toBe(itemIndexSearch.list);
+    expect(foundIndex.items).toEqual(items);
+    expect(foundIndex.offset).toEqual(0);
+    expect(foundIndex.itemIndex).toEqual(generatedItems[0].items.length + generatedItems[1].items.length);
+  });
+
+  it("RoonWebClient#findItemIndex should use the items provided in ItemIndexSearch if defined and search in these items", async () => {
+    const generatedItems = itemsGenerator(7, [2, 0, 0, 4, 0, 420, 123]);
+    const items = generatedItems.flatMap((genItems) => genItems.items);
+    const itemIndexSearch: ItemIndexSearch = {
+      hierarchy: "browse",
+      list: {
+        level: 42,
+        count: items.length,
+        title: "title",
+      },
+      letter: "D",
+      items,
+    };
+    fetchMock.once(mockVersionGet).once(mockRegisterPost);
+    const client = roonWebClientFactory.build(API_URL);
+    const loadSpy = jest.spyOn(client, "load");
+    await client.start();
+
+    const foundIndex = await client.findItemIndex(itemIndexSearch);
+
+    expect(loadSpy).toHaveBeenCalledTimes(0);
+    expect(foundIndex.list).toBe(itemIndexSearch.list);
+    expect(foundIndex.items).toEqual(items);
+    expect(foundIndex.offset).toEqual(0);
+    expect(foundIndex.itemIndex).toEqual(
+      generatedItems[0].items.length + generatedItems[1].items.length + generatedItems[2].items.length
+    );
+  });
+
+  it("RoonWebClient#findItemIndex should return the index of the last item which title is before the searched letter if none is starting by the searched letter", async () => {
+    const generatedItems = itemsGenerator(4, [120, 0, 0, 1]);
+    const items = generatedItems.flatMap((genItems) => genItems.items);
+    const itemIndexSearch: ItemIndexSearch = {
+      hierarchy: "browse",
+      list: {
+        level: 42,
+        count: items.length,
+        title: "title",
+      },
+      letter: "C",
+      items,
+    };
+    fetchMock.once(mockVersionGet).once(mockRegisterPost);
+    const client = roonWebClientFactory.build(API_URL);
+    const loadSpy = jest.spyOn(client, "load");
+    await client.start();
+
+    const foundIndex = await client.findItemIndex(itemIndexSearch);
+
+    expect(loadSpy).toHaveBeenCalledTimes(0);
+    expect(foundIndex.list).toBe(itemIndexSearch.list);
+    expect(foundIndex.items).toEqual(items);
+    expect(foundIndex.offset).toEqual(0);
+    expect(foundIndex.itemIndex).toEqual(119);
+  });
+
   it(
     "RoonWebClient#load should auto-refresh client state if a 403 is returned during the call of POST '${client_path}/load' " +
       "and then call POST '${client_path}/load' again",
@@ -1827,4 +1934,51 @@ const mockRegisterPost: MockResponseInitFunction = (req: Request) => {
   } else {
     return Promise.reject(new Error("error"));
   }
+};
+
+interface GeneratedItems {
+  letter: string;
+  items: Item[];
+}
+
+const itemsGenerator: (nbLetters?: number, itemsByLetter?: number[] | number) => GeneratedItems[] = (
+  nbLetters,
+  itemsByLetter
+) => {
+  nbLetters = nbLetters ?? 26;
+  if (itemsByLetter !== undefined && typeof itemsByLetter === "number") {
+    const nbItems = itemsByLetter;
+    itemsByLetter = [];
+    for (let i = 0; i < nbLetters; i++) {
+      itemsByLetter.push(nbItems);
+    }
+  } else if (itemsByLetter === undefined) {
+    itemsByLetter = [];
+    for (let i = 0; i < nbLetters; i++) {
+      itemsByLetter.push(Math.max(1, Math.floor(Math.random() * 100) % 4));
+    }
+  }
+  const generatedItems: GeneratedItems[] = [];
+  for (let i = 0; i < nbLetters; i++) {
+    const letter = String.fromCharCode(65 + i);
+    const nbItems = itemsByLetter[i];
+    generatedItems.push(itemGenerator(letter, nbItems));
+  }
+  return generatedItems;
+};
+
+const itemGenerator: (letter: string, nbItems: number) => GeneratedItems = (letter, nbItems) => {
+  const items: Item[] = [];
+  for (let i = 0; i < nbItems; i++) {
+    const withThe = Math.floor(Math.random() * 100) % 2 === 1;
+    const prefix = withThe ? "The " : "";
+    const title = `${prefix}${letter}${String.fromCharCode(97 + (i % 27))}`;
+    items.push({
+      title,
+    });
+  }
+  return {
+    items,
+    letter,
+  };
 };

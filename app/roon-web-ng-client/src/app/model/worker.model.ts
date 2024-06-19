@@ -5,6 +5,8 @@ import {
   ClientState,
   Command,
   CommandState,
+  FoundItemIndexResponse,
+  ItemIndexSearch,
   QueueState,
   RoonApiBrowseHierarchy,
   RoonApiBrowseLoadResponse,
@@ -73,13 +75,17 @@ export interface LoadPathWorkerApiRequest extends WorkerApiRequest<{ zone_id: st
 }
 
 export interface PreviousWorkerApiRequest
-  extends WorkerApiRequest<{ zone_id: string; hierarchy: RoonApiBrowseHierarchy; levels?: number }> {
+  extends WorkerApiRequest<{ zone_id: string; hierarchy: RoonApiBrowseHierarchy; levels: number; offset: number }> {
   type: "previous";
 }
 
 export interface NavigateWorkerApiRequest
   extends WorkerApiRequest<{ zone_id: string; hierarchy: RoonApiBrowseHierarchy; item_key?: string; input?: string }> {
   type: "navigate";
+}
+
+export interface FindItemIndexWorkerApiRequest extends WorkerApiRequest<{ itemIndexSearch: ItemIndexSearch }> {
+  type: "find-item-index";
 }
 
 export type RawWorkerApiRequest =
@@ -89,7 +95,8 @@ export type RawWorkerApiRequest =
   | CommandWorkerApiRequest
   | LoadPathWorkerApiRequest
   | PreviousWorkerApiRequest
-  | NavigateWorkerApiRequest;
+  | NavigateWorkerApiRequest
+  | FindItemIndexWorkerApiRequest;
 
 export interface WorkerApiRequestMessage extends WorkerMessage<RawWorkerApiRequest> {
   event: "worker-api";
@@ -151,13 +158,22 @@ export interface VersionApiResult extends ApiResult<string> {
   type: "version";
 }
 
-export type RawApiResult = BrowseApiResult | LoadApiResult | CommandApiResult | VersionApiResult;
+export interface FoundItemIndexApiResult extends ApiResult<FoundItemIndexResponse> {
+  type: "found-item-index";
+}
+
+export type RawApiResult =
+  | BrowseApiResult
+  | LoadApiResult
+  | CommandApiResult
+  | VersionApiResult
+  | FoundItemIndexApiResult;
 
 export interface ApiResultWorkerEvent extends WorkerEvent<RawApiResult> {
   event: "apiResult";
 }
 
-export interface ApiResultCallback<U extends RoonApiBrowseResponse | RoonApiBrowseLoadResponse | string> {
+export interface ApiResultCallback<U extends RoonApiBrowseResponse | RoonApiBrowseLoadResponse | string | number> {
   next: (u: U) => void;
   error?: (error: unknown) => void;
 }

@@ -1,0 +1,33 @@
+@use "../styles/mixins" as nr;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  button {
+    @include nr.button-reset();
+    padding-left: 20px;
+  }
+  @media screen and (max-height: 840px) {
+    button {
+      font-size: 10px;
+      line-height: 16px;
+    }
+  }
+  @media screen and (max-height: 610px) {
+    button {
+      font-size: 8px;
+      line-height: 10px;
+    }
+  }
+  @media screen and (max-height: 440px) {
+    button {
+      font-size: 6px;
+      line-height: 8px;
+    }
+  }
+  @media screen and (max-height: 380px) {
+    display: none;
+  }
+}

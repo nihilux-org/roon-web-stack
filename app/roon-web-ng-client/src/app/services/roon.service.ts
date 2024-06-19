@@ -9,6 +9,8 @@ import {
   ClientState,
   Command,
   CommandState,
+  FoundItemIndexResponse,
+  ItemIndexSearch,
   QueueState,
   RoonApiBrowseHierarchy,
   RoonApiBrowseLoadResponse,
@@ -24,6 +26,8 @@ import {
   CommandApiResult,
   CommandCallback,
   CommandWorkerApiRequest,
+  FindItemIndexWorkerApiRequest,
+  FoundItemIndexApiResult,
   LoadApiResult,
   LoadPathWorkerApiRequest,
   LoadWorkerApiRequest,
@@ -62,6 +66,7 @@ export class RoonService implements OnDestroy {
   private readonly _apiStringCallbacks: Map<number, ApiResultCallback<string>>;
   private readonly _apiBrowseCallbacks: Map<number, ApiResultCallback<RoonApiBrowseResponse>>;
   private readonly _apiLoadCallbacks: Map<number, ApiResultCallback<RoonApiBrowseLoadResponse>>;
+  private readonly _apiFoundItemIndexCallbacks: Map<number, ApiResultCallback<FoundItemIndexResponse>>;
   private _workerApiRequestId: number;
   private _isStarted: boolean;
   private _outputCallback?: OutputCallback;
@@ -99,6 +104,7 @@ export class RoonService implements OnDestroy {
     this._apiStringCallbacks = new Map<number, ApiResultCallback<string>>();
     this._apiBrowseCallbacks = new Map<number, ApiResultCallback<RoonApiBrowseResponse>>();
     this._apiLoadCallbacks = new Map<number, ApiResultCallback<RoonApiBrowseLoadResponse>>();
+    this._apiFoundItemIndexCallbacks = new Map<number, ApiResultCallback<FoundItemIndexResponse>>();
     this._workerApiRequestId = 0;
     this._version = "unknown";
   }
@@ -230,11 +236,13 @@ export class RoonService implements OnDestroy {
   previous: (
     zone_id: string,
     hierarchy: RoonApiBrowseHierarchy,
-    levels?: number
+    levels: number,
+    offset: number
   ) => Observable<RoonApiBrowseLoadResponse> = (
     zone_id: string,
     hierarchy: RoonApiBrowseHierarchy,
-    levels?: number
+    levels: number,
+    offset: number
   ) => {
     const worker = this.ensureStarted();
     const apiRequest: PreviousWorkerApiRequest = {
@@ -244,6 +252,7 @@ export class RoonService implements OnDestroy {
         levels,
         zone_id,
         hierarchy,
+        offset,
       },
     };
     return this.buildLoadResponseObservable(worker, apiRequest);
@@ -325,6 +334,39 @@ export class RoonService implements OnDestroy {
         },
       };
       this._apiLoadCallbacks.set(id, apiResultCallback);
+      worker.postMessage({
+        event: "worker-api",
+        data: apiRequest,
+      });
+    });
+  };
+
+  findItemIndex: (itemIndexSearch: ItemIndexSearch) => Promise<FoundItemIndexResponse> = (
+    itemIndexSearch: ItemIndexSearch
+  ) => {
+    const worker = this.ensureStarted();
+    const id = this.nextWorkerApiRequestId();
+    const apiRequest: FindItemIndexWorkerApiRequest = {
+      id,
+      type: "find-item-index",
+      data: {
+        itemIndexSearch,
+      },
+    };
+    return new Promise((resolve, reject) => {
+      const apiResultCallback: ApiResultCallback<FoundItemIndexResponse> = {
+        next: (foundItemIndexResponse) => {
+          resolve(foundItemIndexResponse);
+        },
+        error: (error) => {
+          if (error instanceof Error) {
+            reject(error);
+          } else {
+            reject(new Error("unknown error"));
+          }
+        },
+      };
+      this._apiFoundItemIndexCallbacks.set(id, apiResultCallback);
       worker.postMessage({
         event: "worker-api",
         data: apiRequest,
@@ -494,6 +536,9 @@ export class RoonService implements OnDestroy {
       case "version":
         this.onStringApiResult(apiResultEvent);
         break;
+      case "found-item-index":
+        this.onNumberApiResult(apiResultEvent);
+        break;
     }
   }
 
@@ -530,6 +575,18 @@ export class RoonService implements OnDestroy {
         callback.error(apiResult.error);
       }
       this._apiStringCallbacks.delete(apiResult.id);
+    }
+  }
+
+  private onNumberApiResult(apiResult: FoundItemIndexApiResult) {
+    const callback = this._apiFoundItemIndexCallbacks.get(apiResult.id);
+    if (callback) {
+      if (apiResult.data !== undefined) {
+        callback.next(apiResult.data);
+      } else if (apiResult.error && callback.error) {
+        callback.error(apiResult.error);
+      }
+      this._apiFoundItemIndexCallbacks.delete(apiResult.id);
     }
   }
 
