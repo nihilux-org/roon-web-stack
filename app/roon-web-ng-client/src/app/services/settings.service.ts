@@ -12,11 +12,14 @@ import {
   signal,
   WritableSignal,
 } from "@angular/core";
+import { CustomActionType, SharedConfig } from "@model";
 import {
   Action,
+  ActionType,
   BrowseAction,
   ChosenTheme,
   ClientBreakpoints,
+  CustomAction,
   DefaultActions,
   DisplayMode,
   LibraryAction,
@@ -212,6 +215,23 @@ export class SettingsService implements OnDestroy {
 
   actions(): Signal<Action[]> {
     return this._$actions;
+  }
+
+  updateSharedConfig(sharedConfig: SharedConfig) {
+    const customActions: CustomAction[] = sharedConfig.customActions.map((ca) => ({
+      id: ca.id,
+      button: {
+        label: ca.label,
+        icon: ca.icon,
+      },
+      customType: ca.type || CustomActionType.PLAY_NOW,
+      path: ca.roonPath,
+      type: ActionType.CUSTOM,
+    }));
+    this._$actions.update((actions) => {
+      const defaultActions = actions.filter((a) => a.type !== ActionType.CUSTOM);
+      return [...defaultActions, ...customActions];
+    });
   }
 
   ngOnDestroy() {

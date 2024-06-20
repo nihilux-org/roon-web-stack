@@ -9,6 +9,8 @@ const startExtension = jest.fn();
 const getImage = jest.fn();
 const browse = jest.fn();
 const load = jest.fn();
+const saveSharedConfig = jest.fn();
+const sharedConfigEvents = jest.fn();
 
 export const roonMock = {
   onServerPaired,
@@ -22,20 +24,10 @@ export const roonMock = {
   getImage,
   browse,
   load,
+  saveSharedConfig,
+  sharedConfigEvents,
 };
 
 jest.mock("./roon-extension", () => ({
-  roon: {
-    onServerLost,
-    onServerPaired,
-    server,
-    onZones,
-    offZones,
-    onOutputs,
-    offOutputs,
-    startExtension,
-    getImage,
-    browse,
-    load,
-  },
+  roon: roonMock,
 }));

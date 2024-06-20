@@ -15,6 +15,8 @@ import {
   RoonServer,
   RoonSubscriptionResponse,
   ServerListener,
+  SharedConfig,
+  SharedConfigMessage,
   ZoneListener,
 } from "@model";
 
@@ -249,6 +251,7 @@ describe("roon-extension.ts test suite", () => {
     expect(loggerMock.info).toHaveBeenCalledWith(
       `extension version: ${extension_version}, paired roon server: display_name (vdisplay_version - core_id)`
     );
+    expect(extensionMock.api().load_config).toHaveBeenCalledWith("shared_config_key");
   });
 
   it("roon#startExtension should register the default onServerLost listener", () => {
@@ -372,5 +375,67 @@ describe("roon-extension.ts test suite", () => {
     load.mockImplementation(() => Promise.reject(error));
     const rejectedPromise = roon.load(options);
     void expect(rejectedPromise).rejects.toBe(error);
+  });
+
+  it("roon#sharedConfigEvents should throw an Error if called before server pairing", () => {
+    expect(() => roon.sharedConfigEvents()).toThrow(new Error("server has not be paired yet!"));
+  });
+
+  it("roon#sharedConfigEvents should return an Observable containing the last known SharedConfig", async () => {
+    let registeredListener = null;
+    extensionMock.on.mockImplementation((eventName: string, listener: ServerListener) => {
+      if (eventName === "core_paired") {
+        registeredListener = listener;
+      }
+    });
+    roon.startExtension();
+    const server = {} as unknown as RoonServer;
+    const listener: ServerListener = registeredListener as unknown as ServerListener;
+    listener(server);
+
+    const events = roon.sharedConfigEvents();
+
+    let hasConfig = false;
+    await new Promise<void>((resolve) => {
+      events.subscribe((evt) => {
+        expect(evt).not.toBeNull();
+        hasConfig = true;
+        resolve();
+      });
+    });
+    expect(hasConfig).toBeTruthy();
+  });
+
+  it("roon#saveSharedConfig should call RoonApi#save_config with the provided value and the key 'shared_config_key' and publish the freshly saved config", () => {
+    let registeredListener = null;
+    extensionMock.on.mockImplementation((eventName: string, listener: ServerListener) => {
+      if (eventName === "core_paired") {
+        registeredListener = listener;
+      }
+    });
+    roon.startExtension();
+    const server = {} as unknown as RoonServer;
+    const listener: ServerListener = registeredListener as unknown as ServerListener;
+    listener(server);
+    const sharedConfigevents = roon.sharedConfigEvents();
+    const sharedConfigMessages: SharedConfigMessage[] = [];
+    sharedConfigevents.subscribe((msg) => sharedConfigMessages.push(msg));
+    const sharedConfig: SharedConfig = {
+      customActions: [
+        {
+          id: "id",
+          label: "label",
+          icon: "icon",
+          roonPath: {
+            hierarchy: "browse",
+            path: [],
+          },
+        },
+      ],
+    };
+    roon.saveSharedConfig(sharedConfig);
+    expect(extensionMock.api().save_config).toHaveBeenCalledWith("shared_config_key", sharedConfig);
+    expect(sharedConfigMessages).toHaveLength(2);
+    expect(sharedConfigMessages[1].data).toBe(sharedConfig);
   });
 });

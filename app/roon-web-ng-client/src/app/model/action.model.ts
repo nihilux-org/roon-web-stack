@@ -1,8 +1,9 @@
-import { RoonPath } from "@model";
+import { CustomActionType, RoonPath } from "@model";
 
 export enum ActionType {
   LOAD = "LOAD",
   QUEUE = "QUEUE",
+  CUSTOM = "CUSTOM",
 }
 
 export interface ActionButton {
@@ -10,7 +11,15 @@ export interface ActionButton {
   icon: string;
 }
 
-export type Action = LoadAction | QueueAction;
+export interface CustomAction {
+  id: string;
+  button: ActionButton;
+  type: ActionType.CUSTOM;
+  path: RoonPath;
+  customType: CustomActionType;
+}
+
+export type Action = LoadAction | QueueAction | CustomAction;
 
 export interface LoadAction {
   button: ActionButton;

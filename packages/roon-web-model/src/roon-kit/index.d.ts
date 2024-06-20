@@ -58,7 +58,7 @@ export type RoonSubscriptionResponse = "Subscribed" | "Changed" | "Unsubscribed"
 export interface RoonApi {
   // constructor(options: RoonApiOptions);
   init_services(services: RoonServiceOptions): this;
-  load_config<T = unknown>(key: string): T;
+  load_config<T = unknown>(key: string): T | undefined;
   save_config(key: string, value: unknown): void;
   start_discovery(): void;
   ws_connect(options: WSConnectOptions): this;

@@ -20,6 +20,8 @@ import {
   RoonStateListener,
   RoonWebClient,
   RoonWebClientFactory,
+  SharedConfig,
+  SharedConfigListener,
   ZoneState,
   ZoneStateListener,
 } from "@model";
@@ -45,6 +47,7 @@ class InternalRoonWebClient implements RoonWebClient {
   private readonly _zoneStateListeners: ZoneStateListener[];
   private readonly _queueStateListeners: QueueStateListener[];
   private readonly _clientStateListeners: ClientStateListener[];
+  private readonly _sharedConfigListeners: SharedConfigListener[];
   private readonly _apiHost: URL;
   private _abortController?: AbortController;
   private _roonWebStackVersion?: string;
@@ -61,6 +64,7 @@ class InternalRoonWebClient implements RoonWebClient {
     this._zoneStateListeners = [];
     this._queueStateListeners = [];
     this._clientStateListeners = [];
+    this._sharedConfigListeners = [];
     this._isClosed = true;
     this._mustRefresh = false;
   }
@@ -214,6 +218,17 @@ class InternalRoonWebClient implements RoonWebClient {
     const listenerIndex = this._clientStateListeners.indexOf(listener);
     if (listenerIndex !== -1) {
       this._clientStateListeners.splice(listenerIndex, 1);
+    }
+  };
+
+  onSharedConfig: (listener: SharedConfigListener) => void = (listener: SharedConfigListener) => {
+    this._sharedConfigListeners.push(listener);
+  };
+
+  offSharedConfig: (listener: SharedConfigListener) => void = (listener: SharedConfigListener) => {
+    const listenerIndex = this._sharedConfigListeners.indexOf(listener);
+    if (listenerIndex !== -1) {
+      this._sharedConfigListeners.splice(listenerIndex, 1);
     }
   };
 
@@ -402,6 +417,7 @@ class InternalRoonWebClient implements RoonWebClient {
       this._eventSource.addEventListener("zone", this.onZoneMessage);
       this._eventSource.addEventListener("queue", this.onQueueMessage);
       this._eventSource.addEventListener("ping", this.onPingMessage);
+      this._eventSource.addEventListener("config", this.onSharedConfigMessage);
       this._eventSource.onerror = () => {
         this._mustRefresh = true;
       };
@@ -480,6 +496,15 @@ class InternalRoonWebClient implements RoonWebClient {
   private onClientStateMessage = (clientState: ClientState): void => {
     for (const clientStateListener of this._clientStateListeners) {
       clientStateListener(clientState);
+    }
+  };
+
+  private onSharedConfigMessage = (m: MessageEvent<string>): void => {
+    const sharedConfig: SharedConfig | undefined = parseJson(m.data);
+    if (sharedConfig) {
+      for (const sharedConfigListener of this._sharedConfigListeners) {
+        sharedConfigListener(sharedConfig);
+      }
     }
   };
 

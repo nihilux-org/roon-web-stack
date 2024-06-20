@@ -12,6 +12,7 @@ import {
   RoonApiBrowseLoadResponse,
   RoonApiBrowseResponse,
   RoonPath,
+  SharedConfig,
   ZoneState,
 } from "@model";
 
@@ -128,13 +129,18 @@ export interface ClientStateWorkerEvent extends WorkerEvent<ClientState> {
   event: "clientState";
 }
 
+export interface SharedConfigWorkerEvent extends WorkerEvent<SharedConfig> {
+  event: "config";
+}
+
 export type RawWorkerEvent =
   | ApiStateWorkerEvent
   | ZoneStateWorkerEvent
   | QueueStateWorkerEvent
   | CommandStateWorkerEvent
   | ClientStateWorkerEvent
-  | ApiResultWorkerEvent;
+  | ApiResultWorkerEvent
+  | SharedConfigWorkerEvent;
 
 export interface ApiResult<T> {
   data?: T;

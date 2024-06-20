@@ -1,4 +1,4 @@
-import { ApiState, Command, CommandState, QueueState, ZoneState } from "../api-model";
+import { ApiState, Command, CommandState, QueueState, RoonPath, SharedConfig, ZoneState } from "../api-model";
 import {
   Item,
   List,
@@ -24,6 +24,8 @@ export interface RoonWebClient {
   offQueueState: (listener: QueueStateListener) => void;
   onClientState: (listener: ClientStateListener) => void;
   offClientState: (listener: ClientStateListener) => void;
+  onSharedConfig: (listener: SharedConfigListener) => void;
+  offSharedConfig: (listener: SharedConfigListener) => void;
   command: (command: Command) => Promise<string>;
   browse: (options: ClientRoonApiBrowseOptions) => Promise<RoonApiBrowseResponse>;
   load: (options: ClientRoonApiBrowseLoadOptions) => Promise<RoonApiBrowseLoadResponse>;
@@ -52,10 +54,7 @@ export type QueueStateListener = (queueState: QueueState) => void;
 
 export type ClientStateListener = (clientState: ClientState) => void;
 
-export interface RoonPath {
-  hierarchy: RoonApiBrowseHierarchy;
-  path: string[];
-}
+export type SharedConfigListener = (sharedConfig: SharedConfig) => void;
 
 export interface ItemIndexSearch {
   hierarchy: RoonApiBrowseHierarchy;
