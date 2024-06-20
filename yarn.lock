@@ -4235,7 +4235,7 @@ __metadata:
     "@gquittet/graceful-server": "npm:4.0.9"
     "@nihilux/roon-web-model": "workspace:*"
     "@types/jest": "npm:29.5.12"
-    "@types/node": "npm:20.14.4"
+    "@types/node": "npm:20.14.6"
     "@typescript-eslint/eslint-plugin": "npm:7.13.1"
     "@typescript-eslint/parser": "npm:7.13.1"
     eslint: "npm:8.57.0"
@@ -4270,7 +4270,7 @@ __metadata:
     ts-retry-promise: "npm:0.8.1"
     tsconfig-paths-webpack-plugin: "npm:4.1.0"
     typescript: "npm:5.4.5"
-    webpack: "npm:5.92.0"
+    webpack: "npm:5.92.1"
     webpack-cli: "npm:5.1.4"
     webpack-node-externals: "npm:3.0.0"
   languageName: unknown
@@ -4303,7 +4303,7 @@ __metadata:
     ts-loader: "npm:9.5.1"
     tsconfig-paths-webpack-plugin: "npm:4.1.0"
     typescript: "npm:5.4.5"
-    webpack: "npm:5.92.0"
+    webpack: "npm:5.92.1"
     webpack-cli: "npm:5.1.4"
   languageName: unknown
   linkType: soft
@@ -4354,7 +4354,7 @@ __metadata:
     "@nihilux/roon-web-client": "workspace:*"
     "@nihilux/roon-web-model": "workspace:*"
     "@types/jest": "npm:29.5.12"
-    "@types/node": "npm:20.14.4"
+    "@types/node": "npm:20.14.6"
     "@typescript-eslint/eslint-plugin": "npm:7.13.1"
     "@typescript-eslint/parser": "npm:7.13.1"
     eslint: "npm:8.57.0"
@@ -5135,12 +5135,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:20.14.4":
-  version: 20.14.4
-  resolution: "@types/node@npm:20.14.4"
+"@types/node@npm:20.14.6":
+  version: 20.14.6
+  resolution: "@types/node@npm:20.14.6"
   dependencies:
     undici-types: "npm:~5.26.4"
-  checksum: 10c0/2244be2e66e19377a491bfc279b52bc3f598c2e31d683d2388f4a16dbf6e81ad0032fde01770c4babcc73a31609e23fa0e5864dffc5830e9f457db250bd08b33
+  checksum: 10c0/22640f0eb2a955872e4529a93be1b719f67b527b80fdab51419756d20e21b5ce0f4ccbee9a3e2ff20e5def647f77baf77b4b0434ff8896791c102165ec0c3e48
   languageName: node
   linkType: hard
 
@@ -15184,9 +15184,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack@npm:5.92.0":
-  version: 5.92.0
-  resolution: "webpack@npm:5.92.0"
+"webpack@npm:5.92.1":
+  version: 5.92.1
+  resolution: "webpack@npm:5.92.1"
   dependencies:
     "@types/eslint-scope": "npm:^3.7.3"
     "@types/estree": "npm:^1.0.5"
@@ -15217,7 +15217,7 @@ __metadata:
       optional: true
   bin:
     webpack: bin/webpack.js
-  checksum: 10c0/588de5ce6f1e8fb4fec7300c2c36a8fc844fe71f4c871b06aca1a68553bea8f6479697615abb53cbbeb2e3859fc1b982f2f48ff23dd0e60024f69bb3d46d0712
+  checksum: 10c0/43ca7c76b9c1005bd85f05303d048f918bac10276a209e3ef5e359353fbfef4e5fcee876265e6bc305bf5ef326576e02df63bc7e5af878fb7f06d7e1795b811a
   languageName: node
   linkType: hard
 
