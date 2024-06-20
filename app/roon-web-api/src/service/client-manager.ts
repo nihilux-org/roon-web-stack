@@ -17,6 +17,7 @@ import {
 import { commandDispatcher } from "@service";
 
 class InternalClient implements Client {
+  private static readonly PING_PERIOD = 45;
   private readonly client_id: string;
   private readonly commandChannel: Subject<CommandState>;
   private readonly onCloseListener: (client: InternalClient) => void;
@@ -30,18 +31,17 @@ class InternalClient implements Client {
 
   events = (): Observable<RoonSseMessage> => {
     if (this.eventChannel === undefined) {
-      const pingPeriod = 45;
-      const pingObservable: Observable<RoonSseMessage> = interval(pingPeriod * 1000).pipe(
+      const pingObservable: Observable<RoonSseMessage> = interval(InternalClient.PING_PERIOD * 1000).pipe(
         map(() => ({
           event: "ping",
           data: {
-            next: pingPeriod,
+            next: InternalClient.PING_PERIOD,
           },
         }))
       );
       this.eventChannel = this.commandChannel
         .pipe(map(dataConverter.toRoonSseMessage))
-        .pipe(mergeWith(zoneManager.events(), pingObservable));
+        .pipe(mergeWith(roon.sharedConfigEvents(), zoneManager.events(), pingObservable));
     }
     return this.eventChannel;
   };

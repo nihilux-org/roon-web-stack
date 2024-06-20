@@ -1,5 +1,7 @@
+import { Observable } from "rxjs";
 import {
   EmptyObject,
+  RoonApiBrowseHierarchy,
   RoonApiBrowseLoadOptions,
   RoonApiBrowseLoadResponse,
   RoonApiBrowseOptions,
@@ -17,7 +19,9 @@ import {
   QueueSseMessage,
   QueueState,
   RoonState,
+  SharedConfig,
   ZoneDescription,
+  ZoneListener,
   ZoneSseMessage,
   ZoneState,
 } from "./index";
@@ -63,6 +67,33 @@ export interface Roon {
   getImage: (image_key: string, options: RoonApiImageResultOptions) => Promise<{ content_type: string; image: Buffer }>;
   browse: (options: RoonApiBrowseOptions | EmptyObject) => Promise<RoonApiBrowseResponse>;
   load: (options: RoonApiBrowseLoadOptions) => Promise<RoonApiBrowseLoadResponse>;
+  saveSharedConfig: (shardConfig: SharedConfig) => void;
+  sharedConfigEvents: () => Observable<SharedConfigMessage>;
+}
+
+export interface RoonPath {
+  hierarchy: RoonApiBrowseHierarchy;
+  path: string[];
+}
+
+export interface SharedConfig extends SseMessageData {
+  customActions: CustomAction[];
+}
+
+export const enum CustomActionType {
+  LOAD = "LOAD",
+  PLAY_NOW = "PLAY_NOW",
+  ADD_NEXT = "ADD_NEXT",
+  QUEUE = "QUEUE",
+  START_RADIO = "START_RADIO",
+}
+
+export interface CustomAction {
+  id: string;
+  label: string;
+  icon: string;
+  roonPath: RoonPath;
+  type?: CustomActionType;
 }
 
 export interface SseMessage<T extends SseMessageData> {
@@ -90,4 +121,14 @@ export interface PingSseMessage extends SseMessage<Ping> {
   event: "ping";
 }
 
-export type RoonSseMessage = QueueSseMessage | ZoneSseMessage | SseStateMessage | CommandSseMessage | PingSseMessage;
+export interface SharedConfigMessage extends SseMessage<SharedConfig> {
+  event: "config";
+}
+
+export type RoonSseMessage =
+  | QueueSseMessage
+  | ZoneSseMessage
+  | SseStateMessage
+  | CommandSseMessage
+  | PingSseMessage
+  | SharedConfigMessage;

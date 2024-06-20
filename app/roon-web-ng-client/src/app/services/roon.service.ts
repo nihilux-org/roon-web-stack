@@ -17,6 +17,7 @@ import {
   RoonApiBrowseResponse,
   RoonPath,
   RoonState,
+  SharedConfig,
   ZoneState,
 } from "@model";
 import {
@@ -42,6 +43,7 @@ import {
   VisibilityState,
   WorkerClientActionMessage,
 } from "@model/client";
+import { SettingsService } from "@services/settings.service";
 import { VisibilityService } from "@services/visibility.service";
 import { buildRoonWorker } from "@services/worker.utils";
 
@@ -52,6 +54,7 @@ export class RoonService implements OnDestroy {
   private static readonly THIS_IS_A_BUG_ERROR_MSG = "this is a bug!";
 
   private readonly _deviceDetectorService: DeviceDetectorService;
+  private readonly _settingsService: SettingsService;
   private readonly _$roonState: WritableSignal<ApiState>;
   private readonly _$isGrouping: WritableSignal<boolean>;
   private readonly _commandCallbacks: Map<string, CommandCallback>;
@@ -74,8 +77,13 @@ export class RoonService implements OnDestroy {
   private _version: string;
   private _startResolve?: () => void;
 
-  constructor(deviceDetectorService: DeviceDetectorService, visibilityService: VisibilityService) {
+  constructor(
+    deviceDetectorService: DeviceDetectorService,
+    settingsService: SettingsService,
+    visibilityService: VisibilityService
+  ) {
     this._deviceDetectorService = deviceDetectorService;
+    this._settingsService = settingsService;
     this._$roonState = signal(
       {
         state: RoonState.STARTING,
@@ -446,6 +454,9 @@ export class RoonService implements OnDestroy {
       case "clientState":
         this.onClientState(m.data.data);
         break;
+      case "config":
+        this.onSharedConfig(m.data.data);
+        break;
       case "apiResult":
         this.onApiResult(m.data.data);
         break;
@@ -520,6 +531,10 @@ export class RoonService implements OnDestroy {
         }
         break;
     }
+  }
+
+  private onSharedConfig(sharedConfig: SharedConfig) {
+    this._settingsService.updateSharedConfig(sharedConfig);
   }
 
   private onApiResult(apiResultEvent: RawApiResult) {

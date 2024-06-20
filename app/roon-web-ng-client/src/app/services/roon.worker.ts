@@ -1,7 +1,7 @@
 /// <reference lib="webworker" />
 
 import { defer, retry } from "rxjs";
-import { RoonWebClient } from "@model";
+import { RoonWebClient, SharedConfigMessage } from "@model";
 import {
   ApiResultWorkerEvent,
   ApiStateWorkerEvent,
@@ -85,6 +85,13 @@ const startClient = (url: string, isDesktop: boolean): void => {
     const message: ZoneStateWorkerEvent = {
       event: "zone",
       data: zoneState,
+    };
+    postMessage(message);
+  });
+  _roonClient.onSharedConfig((sharedConfig) => {
+    const message: SharedConfigMessage = {
+      event: "config",
+      data: sharedConfig,
     };
     postMessage(message);
   });

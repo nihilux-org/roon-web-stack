@@ -12,6 +12,7 @@ import {
   CommandState,
   CommandStateListener,
   CommandType,
+  CustomActionType,
   Item,
   ItemIndexSearch,
   Ping,
@@ -24,6 +25,8 @@ import {
   RoonPath,
   RoonState,
   RoonStateListener,
+  SharedConfig,
+  SharedConfigListener,
   ZoneState,
   ZoneStateListener,
 } from "@model";
@@ -42,6 +45,8 @@ describe("roon-web-client-factory.ts test suite", () => {
   let publishedQueueStates: QueueState[];
   let clientStateListener: ClientStateListener;
   let publishedClientStates: ClientState[];
+  let sharedConfigListener: SharedConfigListener;
+  let publishedSharedConfig: SharedConfig[];
   beforeEach(() => {
     enableFetchMocks();
     Object.defineProperty(global, "fetch", {
@@ -69,6 +74,10 @@ describe("roon-web-client-factory.ts test suite", () => {
     publishedClientStates = [];
     clientStateListener = (state: ClientState) => {
       publishedClientStates.push(state);
+    };
+    publishedSharedConfig = [];
+    sharedConfigListener = (sharedConfig: SharedConfig) => {
+      publishedSharedConfig.push(sharedConfig);
     };
     jest.useFakeTimers();
   });
@@ -694,6 +703,123 @@ describe("roon-web-client-factory.ts test suite", () => {
     client.offQueueState(queueStateListener);
     sendQueueEvent(OTHER_QUEUE_STATE, eventSourceMock);
     expect(otherPublishedQueueStates).toHaveLength(2);
+  });
+
+  it("RoonWebClient#onSharedConfig should forward incoming events to registered listener", async () => {
+    fetchMock.once(mockVersionGet).once(mockRegisterPost);
+    const client = roonWebClientFactory.build(API_URL);
+    await client.start();
+    const eventSourceMock = eventSourceMocks.get(EVENTS_URL.toString());
+    client.onSharedConfig(sharedConfigListener);
+    expect(publishedSharedConfig).toHaveLength(0);
+    sendSharedConfigEvent(
+      {
+        customActions: [],
+      },
+      eventSourceMock
+    );
+    sendSharedConfigEvent(
+      {
+        customActions: [
+          {
+            id: "id",
+            label: "label",
+            icon: "icon",
+            roonPath: {
+              hierarchy: "browse",
+              path: [],
+            },
+            type: CustomActionType.PLAY_NOW,
+          },
+        ],
+      },
+      eventSourceMock
+    );
+    expect(publishedSharedConfig).toHaveLength(2);
+    expect(publishedSharedConfig[0].customActions).toHaveLength(0);
+    expect(publishedSharedConfig[1].customActions).toHaveLength(1);
+    const otherPublishedSharedConfig: SharedConfig[] = [];
+    client.onSharedConfig((sc: SharedConfig) => otherPublishedSharedConfig.push(sc));
+    expect(otherPublishedSharedConfig).toHaveLength(0);
+    sendSharedConfigEvent(
+      {
+        customActions: [],
+      },
+      eventSourceMock
+    );
+    expect(otherPublishedSharedConfig).toHaveLength(1);
+    expect(publishedSharedConfig).toHaveLength(3);
+  });
+
+  it("RoonWebClient#onSharedConfig should gracefully ignore incoming events with malformed JSON", async () => {
+    fetchMock.once(mockVersionGet).once(mockRegisterPost);
+    const client = roonWebClientFactory.build(API_URL);
+    await client.start();
+    const eventSourceMock = eventSourceMocks.get(EVENTS_URL.toString());
+    client.onSharedConfig(sharedConfigListener);
+    eventSourceMock?.dispatchEvent(
+      new MessageEvent<string>("config", {
+        data: "{",
+      })
+    );
+    expect(publishedQueueStates).toHaveLength(0);
+  });
+
+  it("RoonWebClient#onSharedConfig should unregister the given SharedConfigListener without impact on the other registered listeners", async () => {
+    fetchMock.once(mockVersionGet).once(mockRegisterPost);
+    const client = roonWebClientFactory.build(API_URL);
+    await client.start();
+    const eventSourceMock = eventSourceMocks.get(EVENTS_URL.toString());
+    client.onSharedConfig(sharedConfigListener);
+    const otherPublishedSharedConfig: SharedConfig[] = [];
+    const otherListener: SharedConfigListener = (sc: SharedConfig) => {
+      otherPublishedSharedConfig.push(sc);
+    };
+    client.onSharedConfig(otherListener);
+    sendSharedConfigEvent(
+      {
+        customActions: [],
+      },
+      eventSourceMock
+    );
+    expect(publishedSharedConfig).toHaveLength(1);
+    expect(otherPublishedSharedConfig).toHaveLength(1);
+    client.offSharedConfig(sharedConfigListener);
+    sendSharedConfigEvent(
+      {
+        customActions: [],
+      },
+      eventSourceMock
+    );
+    expect(publishedSharedConfig).toHaveLength(1);
+    expect(otherPublishedSharedConfig).toHaveLength(2);
+  });
+
+  it("RoonWebClient#offQueueState should ignore silently unregistered listeners", async () => {
+    fetchMock.once(mockVersionGet).once(mockRegisterPost);
+    const client = roonWebClientFactory.build(API_URL);
+    await client.start();
+    const eventSourceMock = eventSourceMocks.get(EVENTS_URL.toString());
+    const otherPublishedSharedConfig: SharedConfig[] = [];
+    const otherListener: SharedConfigListener = (sc: SharedConfig) => {
+      otherPublishedSharedConfig.push(sc);
+    };
+    client.onSharedConfig(otherListener);
+    sendSharedConfigEvent(
+      {
+        customActions: [],
+      },
+      eventSourceMock
+    );
+    expect(otherPublishedSharedConfig).toHaveLength(1);
+    client.offQueueState(queueStateListener);
+    sendSharedConfigEvent(
+      {
+        customActions: [],
+      },
+      eventSourceMock
+    );
+    expect(otherPublishedSharedConfig).toHaveLength(2);
   });
 
   it("RoonWebClient#stop should call POST '${client_path}/unregister', close the EventSource and clean any data", async () => {
@@ -1765,6 +1891,16 @@ const sendPingEvent = (ping: Ping, eventSourceMock?: EventSourceMock): void => {
     eventSourceMock.dispatchEvent(
       new MessageEvent<string>("ping", {
         data: JSON.stringify(ping),
+      })
+    );
+  }
+};
+
+const sendSharedConfigEvent = (sharedConfig: SharedConfig, eventSourceMock?: EventSourceMock): void => {
+  if (eventSourceMock) {
+    eventSourceMock.dispatchEvent(
+      new MessageEvent<string>("config", {
+        data: JSON.stringify(sharedConfig),
       })
     );
   }

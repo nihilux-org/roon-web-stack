@@ -16,6 +16,7 @@ import {
   RoonApiBrowseResponse,
   RoonSseMessage,
   RoonState,
+  SharedConfigMessage,
   ZoneDescription,
 } from "@model";
 
@@ -157,6 +158,8 @@ describe("client-manager.ts test suite", () => {
     "Client#events return an Observable<RoonSseMessage> with a merge of zoneManager#events, " +
       "its internal Subject<CommandNotification> and its internal Ping generator",
     async () => {
+      const sharedConfigSubject = new Subject<SharedConfigMessage>();
+      roonMock.sharedConfigEvents.mockImplementation(() => sharedConfigSubject);
       await clientManager.start();
       const client_id = clientManager.register();
       const client = clientManager.get(client_id);
@@ -165,6 +168,7 @@ describe("client-manager.ts test suite", () => {
         roonSseMessages.push(message);
       });
       expect(zoneManagerMock.events).toHaveBeenCalledTimes(1);
+      expect(roonMock.sharedConfigEvents).toHaveBeenCalledTimes(1);
       // this is not the cleanest way to test it... but it does the job 🤷
       let commandChannel: Subject<CommandState> | undefined = undefined;
       commandDispatcherMock.dispatch.mockImplementation(
@@ -213,6 +217,15 @@ describe("client-manager.ts test suite", () => {
           next: 45,
         },
       });
+      const sharedConfigMsg: SharedConfigMessage = {
+        event: "config",
+        data: {
+          customActions: [],
+        },
+      };
+      sharedConfigSubject.next(sharedConfigMsg);
+      expect(roonSseMessages).toHaveLength(4);
+      expect(roonSseMessages[3]).toEqual(sharedConfigMsg);
     }
   );
 

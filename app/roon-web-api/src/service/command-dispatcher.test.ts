@@ -5,6 +5,7 @@ import { groupCommandExecutorMock } from "./command-executor/group-command-execu
 import { muteCommandExecutorMock } from "./command-executor/mute-command-executor.mock";
 import { muteGroupedZoneCommandExecutorMock } from "./command-executor/mute-grouped-zone-command-executor.mock";
 import { playFromHereCommandExecutorMock } from "./command-executor/play-from-here-command-executor.mock";
+import { sharedConfigCommandExecutor } from "./command-executor/shared-config-command-executor.mock";
 import { transferZoneCommandExecutorMock } from "./command-executor/transfer-zone-command-executor.mock";
 import { volumeCommandExecutorMock } from "./command-executor/volume-command-executor.mock";
 import { volumeGroupedZoneCommandExecutorMock } from "./command-executor/volume-grouped-zone-command-executor.mock";
@@ -22,6 +23,7 @@ import {
   Output,
   PlayFromHereCommand,
   RoonServer,
+  SharedConfigCommand,
   TransferZoneCommand,
   VolumeCommand,
   VolumeGroupedZoneCommand,
@@ -67,19 +69,19 @@ describe("command-dispatcher.ts test suite", () => {
     const promise: Promise<void> = new Promise((resolve) => {
       controlChannel.subscribe((n: CommandState) => {
         notifications.push(n);
-        if (notifications.length === commands.length - 2) {
+        if (notifications.length === commands.length - 3) {
           resolve();
         }
       });
     });
 
     commands
-      .filter((c) => c.type !== CommandType.GROUP)
+      .filter((c) => c.type !== CommandType.GROUP && c.type !== CommandType.SHARED_CONFIG)
       .forEach((c: Command) => {
         commandDispatcher.dispatch(c, controlChannel);
       });
     await promise;
-    expect(nanoid_counter).toEqual(commands.length - 2);
+    expect(nanoid_counter).toEqual(commands.length - 3);
     notifications.forEach((notification: CommandState, index: number) => {
       const command_id = `${index + 1}`;
       expect(notification).toEqual({
@@ -107,19 +109,19 @@ describe("command-dispatcher.ts test suite", () => {
     const promise: Promise<void> = new Promise((resolve) => {
       controlChannel.subscribe((n: CommandState) => {
         notifications.push(n);
-        if (notifications.length === commands.length - 2) {
+        if (notifications.length === commands.length - 3) {
           resolve();
         }
       });
     });
 
     commands
-      .filter((c) => c.type !== CommandType.GROUP)
+      .filter((c) => c.type !== CommandType.GROUP && c.type !== CommandType.SHARED_CONFIG)
       .forEach((c: Command) => {
         commandDispatcher.dispatch(c, controlChannel);
       });
     await promise;
-    expect(nanoid_counter).toEqual(commands.length - 2);
+    expect(nanoid_counter).toEqual(commands.length - 3);
     notifications.forEach((notification: CommandState, index: number) => {
       const command_id = `${index + 1}`;
       expect(notification).toEqual({
@@ -145,7 +147,8 @@ describe("command-dispatcher.ts test suite", () => {
         c.type !== CommandType.MUTE_GROUPED_ZONE &&
         c.type !== CommandType.PLAY_FROM_HERE &&
         c.type !== CommandType.TRANSFER_ZONE &&
-        c.type !== CommandType.GROUP
+        c.type !== CommandType.GROUP &&
+        c.type !== CommandType.SHARED_CONFIG
     );
     controlExecutorMock.mockImplementation(() => Promise.resolve());
     const notifications: CommandState[] = [];
@@ -354,6 +357,30 @@ describe("command-dispatcher.ts test suite", () => {
     expect(commandIds).toHaveLength(groupCommands.length);
     groupCommands.forEach((command, index) => {
       expect(groupCommandExecutorMock).toHaveBeenNthCalledWith(index + 1, command, server);
+    });
+  });
+
+  it("command-dispatcher#dispatch should call shared-config-command-executor with any SharedConfigCommand", async () => {
+    const sharedConfigCommands: SharedConfigCommand[] = commands
+      .filter((c: Command) => c.type === CommandType.SHARED_CONFIG)
+      .map((c: Command) => c as unknown as SharedConfigCommand);
+    const notifications: CommandState[] = [];
+    const commandIds: string[] = [];
+    const promise: Promise<void> = new Promise((resolve) => {
+      controlChannel.subscribe((cn: CommandState) => {
+        notifications.push(cn);
+        if (notifications.length === sharedConfigCommands.length) {
+          resolve();
+        }
+      });
+    });
+    sharedConfigCommands.forEach((c: Command) => {
+      commandIds.push(commandDispatcher.dispatch(c, controlChannel));
+    });
+    await promise;
+    expect(commandIds).toHaveLength(sharedConfigCommands.length);
+    sharedConfigCommands.forEach((command, index) => {
+      expect(sharedConfigCommandExecutor).toHaveBeenNthCalledWith(index + 1, command, server);
     });
   });
 });
@@ -570,6 +597,14 @@ const commands: Command[] = [
         },
       ],
       mode: "ungroup",
+    },
+  },
+  {
+    type: CommandType.SHARED_CONFIG,
+    data: {
+      sharedConfig: {
+        customActions: [],
+      },
     },
   },
 ];

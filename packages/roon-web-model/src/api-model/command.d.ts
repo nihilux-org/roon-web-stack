@@ -1,6 +1,6 @@
 import { Subject } from "rxjs";
 import { RoonServer, Zone } from "../roon-kit";
-import { SseMessage, SseMessageData } from "./common";
+import { SharedConfig, SseMessage, SseMessageData } from "./common";
 import { OutputDescription } from "./zone";
 
 export const enum CommandResult {
@@ -34,6 +34,7 @@ export const enum CommandType {
   GROUP = "GROUP",
   PLAY_FROM_HERE = "PLAY_FROM_HERE",
   TRANSFER_ZONE = "TRANSFER_ZONE",
+  SHARED_CONFIG = "SHARED_CONFIG",
 }
 
 export interface PlayCommand {
@@ -149,6 +150,13 @@ export interface GroupCommand {
   };
 }
 
+export interface SharedConfigCommand {
+  type: CommandType.SHARED_CONFIG;
+  data: {
+    sharedConfig: SharedConfig;
+  };
+}
+
 export type Command =
   | ControlCommand
   | VolumeCommand
@@ -157,7 +165,8 @@ export type Command =
   | MuteGroupedZoneCommand
   | PlayFromHereCommand
   | TransferZoneCommand
-  | GroupCommand;
+  | GroupCommand
+  | SharedConfigCommand;
 
 export type ControlCommand =
   | PlayCommand
