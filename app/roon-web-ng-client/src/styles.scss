@@ -102,3 +102,9 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .settings-tab .mat-mdc-tab-body-content {
   overflow: hidden;
 }
+
+.custom-actions-tabs {
+  .mat-mdc-tab-header {
+    display: none;
+  }
+}

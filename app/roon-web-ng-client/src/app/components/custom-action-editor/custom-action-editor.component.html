@@ -1,0 +1,64 @@
+<mat-form-field appearance="outline">
+  <mat-label>Label</mat-label>
+  <input
+    #labelInputControl="ngModel"
+    matInput
+    type="text"
+    placeholder="Label"
+    [ngModel]="$label()"
+    (ngModelChange)="saveLabel($event)"
+    [required]="true"
+  />
+  @if (labelInputControl.hasError('required')) {
+    <mat-error>
+      Please provide a label
+    </mat-error>
+  }
+</mat-form-field>
+<div class="icon-input">
+  <mat-form-field appearance="outline">
+    <mat-label>Icon</mat-label>
+    <input
+      #iconInputControl="ngModel"
+      matInput
+      type="text"
+      placeholder="Icon"
+      [ngModel]="$icon()"
+      (ngModelChange)="saveIcon($event)"
+      [required]="true"
+    />
+    @if (iconInputControl.hasError('required')) {
+      <mat-error>
+        Please provide an icon
+      </mat-error>
+    }
+  </mat-form-field>
+  <div class="icon-preview">
+    <mat-icon [fontIcon]="$icon()" />
+  </div>
+</div>
+<h3>Action Path:</h3>
+<div class="action-path-details">
+  <div>{{$hierarchy()}}</div>
+  @for (p of $path(); track p) {
+    <div>
+      <mat-icon aria-hidden="false" fontIcon="arrow_right"/>
+      {{p}}
+    </div>
+  } @empty {
+    No path configured yet, please record one.
+  }
+  @if ($actionIndex()) {
+    <div>
+      <mat-icon aria-hidden="false" fontIcon="arrow_right"/> action at index {{$actionIndex()}}
+    </div>
+  }
+</div>
+<button
+  mat-button
+  id="display-mode-selector"
+  [disabled]="$label().length === 0 || $icon().length === 0"
+  (click)="openActionRecorder()"
+>
+  <mat-icon fontIcon="edit" />Modify Action Path
+</button>

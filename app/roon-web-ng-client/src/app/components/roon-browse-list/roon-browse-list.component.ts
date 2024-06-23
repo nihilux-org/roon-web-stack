@@ -25,9 +25,15 @@ import { MatInput } from "@angular/material/input";
 import { MatMenu, MatMenuContent, MatMenuItem, MatMenuTrigger } from "@angular/material/menu";
 import { RoonImageComponent } from "@components/roon-image/roon-image.component";
 import { Item, RoonApiBrowseHierarchy, RoonApiBrowseLoadResponse } from "@model";
-import { NavigationEvent } from "@model/client";
+import { NavigationEvent, RecordedAction } from "@model/client";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
+
+interface MenuTriggerData {
+  item_key: string;
+  title: string;
+  actions: Item[];
+}
 
 @Component({
   selector: "nr-roon-browse-list",
@@ -64,7 +70,9 @@ export class RoonBrowseListComponent implements OnChanges, AfterViewChecked {
   @Input({ required: true }) content!: RoonApiBrowseLoadResponse;
   @Input({ required: true, transform: booleanAttribute }) isPaginated!: boolean;
   @Input({ required: true, transform: numberAttribute }) scrollIndex!: number;
+  @Input({ required: true, transform: booleanAttribute }) isRecording!: boolean;
   @Output() clickedItem = new EventEmitter<NavigationEvent>();
+  @Output() recordedAction = new EventEmitter<RecordedAction>();
   @ViewChild(CdkVirtualScrollViewport) _virtualScroll!: CdkVirtualScrollViewport;
   @ViewChildren(MatMenuTrigger) _menuTriggers!: QueryList<MatMenuTrigger>;
   dataSource?: RoonListDataSource | Item[];
@@ -127,11 +135,18 @@ export class RoonBrowseListComponent implements OnChanges, AfterViewChecked {
     }
   }
 
-  onItemClicked(scrollIndex: number, item_key?: string, hint?: string, hasInput?: boolean) {
+  onItemClicked(scrollIndex: number, title: string, item_key?: string, hint?: string, hasInput?: boolean) {
     if (item_key && hint === "action_list") {
       this.onActionListClicked(item_key);
     } else if (item_key && hint === "action") {
-      this._roonService.navigate(this.zoneId, this.hierarchy, item_key).subscribe(() => {});
+      if (this.isRecording) {
+        this.recordedAction.emit({
+          title,
+          actionIndex: 0,
+        });
+      } else {
+        this._roonService.navigate(this.zoneId, this.hierarchy, item_key).subscribe(() => {});
+      }
     } else if (item_key) {
       const input = hasInput ? this._inputValues.get(`${item_key}_prompt_input`) : undefined;
       if (hasInput && (input?.trim().length ?? 0) === 0) {
@@ -145,9 +160,16 @@ export class RoonBrowseListComponent implements OnChanges, AfterViewChecked {
     }
   }
 
-  onActionClicked(item_key: string) {
+  onActionClicked(item_key: string, actionIndex: number, title: string) {
     this._noActionClicked = false;
-    this._roonService.navigate(this.zoneId, this.hierarchy, item_key).subscribe(() => {});
+    if (this.isRecording) {
+      this.recordedAction.emit({
+        actionIndex,
+        title,
+      });
+    } else {
+      this._roonService.navigate(this.zoneId, this.hierarchy, item_key).subscribe(() => {});
+    }
   }
 
   onPromptInputChange(inputId: string, event: Event) {
@@ -155,7 +177,7 @@ export class RoonBrowseListComponent implements OnChanges, AfterViewChecked {
   }
 
   private onActionListClicked(item_key: string) {
-    const menuTrigger = this._menuTriggers.find((mt) => (mt.menuData as string) === item_key);
+    const menuTrigger = this._menuTriggers.find((mt) => (mt.menuData as MenuTriggerData).item_key === item_key);
     if (menuTrigger) {
       if (!menuTrigger.menuOpen) {
         const navigationSub = new Subscription();
@@ -176,20 +198,19 @@ export class RoonBrowseListComponent implements OnChanges, AfterViewChecked {
     navigationSub: Subscription,
     levelToPop: number
   ) {
+    const menuTriggerData: MenuTriggerData = menuTrigger.menuData as MenuTriggerData;
     levelToPop++;
     navigationSub.add(
       this._roonService.navigate(this.zoneId, this.hierarchy, item_key).subscribe((actionLoadResponse) => {
         if (actionLoadResponse.list.hint === "action_list") {
-          menuTrigger.menuData = {
-            actions: actionLoadResponse.items,
-          };
+          menuTriggerData.actions = actionLoadResponse.items;
           menuTrigger.openMenu();
           const menuClosedSub = menuTrigger.menuClosed.subscribe(() => {
-            menuTrigger.menuData = item_key;
+            menuTriggerData.actions = [];
             if (this._noActionClicked) {
               void this._roonService
                 .browse({
-                  hierarchy: "browse",
+                  hierarchy: this.hierarchy,
                   pop_levels: levelToPop,
                   zone_or_output_id: this.zoneId,
                   item_key: undefined,

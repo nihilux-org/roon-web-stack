@@ -64,7 +64,11 @@
 
   .actions-configuration {
     padding: 5px 0;
-    text-align: center;
+    display: flex;
+    justify-content: space-evenly;
+    button {
+      width: 50%;
+    }
   }
 
   .active-actions-container {

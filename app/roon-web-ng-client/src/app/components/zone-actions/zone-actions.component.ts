@@ -6,8 +6,17 @@ import { FullScreenToggleComponent } from "@components/full-screen-toggle/full-s
 import { RoonBrowseDialogComponent } from "@components/roon-browse-dialog/roon-browse-dialog.component";
 import { SettingsDialogComponent } from "@components/settings-dialog/settings-dialog.component";
 import { ZoneQueueDialogComponent } from "@components/zone-queue-dialog/zone-queue-dialog.component";
-import { Action, ActionType, LayoutContext, LoadAction, TrackDisplay } from "@model/client";
+import {
+  Action,
+  ActionType,
+  CustomAction,
+  LayoutContext,
+  LoadAction,
+  SettingsDialogConfig,
+  TrackDisplay,
+} from "@model/client";
 import { FullscreenService } from "@services/fullscreen.service";
+import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
 
 @Component({
@@ -23,15 +32,22 @@ export class ZoneActionsComponent {
   @Input({ required: true }) queueComponentTemplateRef!: TemplateRef<LayoutContext>;
   private readonly _dialog: MatDialog;
   private readonly _settingsService: SettingsService;
+  private readonly _roonService: RoonService;
   private readonly _$isOneColumn: Signal<boolean>;
   private readonly _$isSmallTablet: Signal<boolean>;
   readonly $isIconsOnly: Signal<boolean>;
   readonly $actions: Signal<Action[]>;
   readonly $withFullscreen: Signal<boolean>;
 
-  constructor(dialog: MatDialog, settingsService: SettingsService, fullScreenService: FullscreenService) {
+  constructor(
+    dialog: MatDialog,
+    settingsService: SettingsService,
+    fullScreenService: FullscreenService,
+    roonService: RoonService
+  ) {
     this._dialog = dialog;
     this._settingsService = settingsService;
+    this._roonService = roonService;
     this._$isOneColumn = this._settingsService.isOneColumn();
     this._$isSmallTablet = this._settingsService.isSmallTablet();
     const $isSmallScreen = this._settingsService.isSmallScreen();
@@ -53,6 +69,9 @@ export class ZoneActionsComponent {
       case ActionType.QUEUE:
         this.toggleDisplayQueueTrack();
         break;
+      case ActionType.CUSTOM:
+        this.executeCustomAction(action);
+        break;
     }
   }
 
@@ -61,6 +80,7 @@ export class ZoneActionsComponent {
       restoreFocus: false,
       data: {
         path: action.path,
+        isRecording: false,
       },
       autoFocus: action.id === "library-action" ? "input:first-of-type" : "button.roon-list-item:first-of-type",
       height: "90svh",
@@ -78,12 +98,7 @@ export class ZoneActionsComponent {
   }
 
   openSettingsDialog() {
-    this._dialog.open(SettingsDialogComponent, {
-      restoreFocus: false,
-      width: "500px",
-      maxWidth: "95svw",
-      maxHeight: "95svh",
-    });
+    this._dialog.open(SettingsDialogComponent, SettingsDialogConfig);
   }
 
   private toggleDisplayQueueTrack() {
@@ -102,6 +117,41 @@ export class ZoneActionsComponent {
       });
     } else {
       this._settingsService.toggleDisplayQueueTrack();
+    }
+  }
+
+  private executeCustomAction(action: CustomAction) {
+    if (action.actionIndex === undefined) {
+      this.openBrowseDialog({
+        path: action.path,
+        type: ActionType.LOAD,
+        button: action.button,
+        id: action.id,
+      });
+    } else {
+      const zoneId = this._settingsService.displayedZoneId()();
+      this._roonService.loadPath(zoneId, action.path).subscribe((loadResponse) => {
+        if (
+          loadResponse.list.hint === "action_list" &&
+          action.actionIndex !== undefined &&
+          action.actionIndex < loadResponse.items.length
+        ) {
+          const actionItem = loadResponse.items[action.actionIndex];
+          this._roonService.navigate(zoneId, action.path.hierarchy, actionItem.item_key).subscribe(() => {
+            void this._roonService.browse({
+              hierarchy: action.path.hierarchy,
+              pop_all: true,
+              set_display_offset: true,
+            });
+          });
+        } else {
+          void this._roonService.browse({
+            hierarchy: action.path.hierarchy,
+            pop_all: true,
+            set_display_offset: true,
+          });
+        }
+      });
     }
   }
 }

@@ -1,4 +1,5 @@
-import { CustomActionType, RoonPath } from "@model";
+import { MatDialogConfig } from "@angular/material/dialog";
+import { RoonApiBrowseHierarchy, RoonPath } from "@model";
 
 export enum ActionType {
   LOAD = "LOAD",
@@ -16,7 +17,21 @@ export interface CustomAction {
   button: ActionButton;
   type: ActionType.CUSTOM;
   path: RoonPath;
-  customType: CustomActionType;
+  actionIndex?: number;
+}
+
+export interface EditedCustomAction {
+  id: string;
+  label?: string;
+  icon?: string;
+  hierarchy?: RoonApiBrowseHierarchy;
+  path: string[];
+  actionIndex?: number;
+}
+
+export interface RecordedAction {
+  title: string;
+  actionIndex: number;
 }
 
 export type Action = LoadAction | QueueAction | CustomAction;
@@ -158,3 +173,17 @@ export const DefaultActions: Action[] = [
   RadiosAction,
   ToggleQueueAction,
 ];
+
+export const CustomActionsManagerDialogConfig: MatDialogConfig = {
+  restoreFocus: false,
+  autoFocus: false,
+  width: "500px",
+  maxWidth: "95svw",
+  maxHeight: "95svh",
+  position: {
+    top: "5svh",
+  },
+  data: {
+    reset: false,
+  },
+};
