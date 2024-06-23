@@ -1,6 +1,6 @@
-<h2 mat-dialog-title class="browse-settings-title">Settings</h2>
+<h2 mat-dialog-title>Settings</h2>
 <mat-dialog-content>
-  <mat-tab-group>
+  <mat-tab-group [selectedIndex]="selectedTab" animationDuration="200ms">
     <mat-tab label="General" bodyClass="settings-tab">
       <div class="settings">
         <div class="setting">
@@ -38,7 +38,10 @@
       <div class="settings actions">
         <div class="actions-configuration">
           <button mat-button id="actions-selector" [matMenuTriggerFor]="actionSelector" [disabled]="$availableActions().length === 0">
-            <mat-icon fontIcon="action_key" />Choose an Action to add
+            <mat-icon fontIcon="action_key" />Add Action
+          </button>
+          <button mat-button id="action-recorder" (click)="openCustomActionsManager()">
+            <mat-icon fontIcon="dashboard_customize" />Manage custom Actions
           </button>
           <mat-menu #actionSelector="matMenu" yPosition="below" xPosition="after">
             @for (da of $availableActions(); track da.id) {
@@ -48,14 +51,14 @@
         </div>
         <div class="active-actions-container">
           <div cdkDropList (cdkDropListDropped)="onActionsReordered($event)" class="active-actions">
-            @for (da of $actions(); track da.id) {
+            @for (a of $actions(); track a.id) {
               <div class="active-action" cdkDrag>
                 <span class="active-action-label">
-                  <mat-icon [fontIcon]="da.button.icon" />
-                  <span>{{da.button.label}}</span>
+                  <mat-icon [fontIcon]="a.button.icon" />
+                  <span>{{a.button.label}}</span>
                 </span>
                 <span>
-                  <button mat-icon-button (click)="removeAction(da)"><mat-icon fontIcon="cancel" /></button>
+                  <button mat-icon-button (click)="removeAction(a)"><mat-icon fontIcon="cancel" /></button>
                   <button mat-icon-button cdkDragHandle><mat-icon fontIcon="reorder" /></button>
                 </span>
               </div>

@@ -43,7 +43,7 @@ import {
   VisibilityState,
   WorkerClientActionMessage,
 } from "@model/client";
-import { SettingsService } from "@services/settings.service";
+import { CustomActionsService } from "@services/custom-actions.service";
 import { VisibilityService } from "@services/visibility.service";
 import { buildRoonWorker } from "@services/worker.utils";
 
@@ -54,7 +54,7 @@ export class RoonService implements OnDestroy {
   private static readonly THIS_IS_A_BUG_ERROR_MSG = "this is a bug!";
 
   private readonly _deviceDetectorService: DeviceDetectorService;
-  private readonly _settingsService: SettingsService;
+  private readonly _customActionsService: CustomActionsService;
   private readonly _$roonState: WritableSignal<ApiState>;
   private readonly _$isGrouping: WritableSignal<boolean>;
   private readonly _commandCallbacks: Map<string, CommandCallback>;
@@ -79,11 +79,11 @@ export class RoonService implements OnDestroy {
 
   constructor(
     deviceDetectorService: DeviceDetectorService,
-    settingsService: SettingsService,
+    customActionsService: CustomActionsService,
     visibilityService: VisibilityService
   ) {
     this._deviceDetectorService = deviceDetectorService;
-    this._settingsService = settingsService;
+    this._customActionsService = customActionsService;
     this._$roonState = signal(
       {
         state: RoonState.STARTING,
@@ -534,7 +534,7 @@ export class RoonService implements OnDestroy {
   }
 
   private onSharedConfig(sharedConfig: SharedConfig) {
-    this._settingsService.updateSharedConfig(sharedConfig);
+    this._customActionsService.updateSharedConfig(sharedConfig);
   }
 
   private onApiResult(apiResultEvent: RawApiResult) {

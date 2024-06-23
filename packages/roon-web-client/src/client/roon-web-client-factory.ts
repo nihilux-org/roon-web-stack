@@ -324,6 +324,7 @@ class InternalRoonWebClient implements RoonWebClient {
     const loadResponse = await this.load({
       hierarchy: path.hierarchy,
       level: browseResponse.list?.level,
+      count: browseResponse.list?.count,
     });
     if (path.path.length !== path.levelToLoad) {
       const item_key = loadResponse.items.find((i) => i.title === path.path[path.levelToLoad])?.item_key;

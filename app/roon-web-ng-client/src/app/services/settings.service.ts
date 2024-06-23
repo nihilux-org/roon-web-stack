@@ -12,20 +12,18 @@ import {
   signal,
   WritableSignal,
 } from "@angular/core";
-import { CustomActionType, SharedConfig } from "@model";
 import {
   Action,
-  ActionType,
   BrowseAction,
   ChosenTheme,
   ClientBreakpoints,
-  CustomAction,
   DefaultActions,
   DisplayMode,
   LibraryAction,
   RadiosAction,
   ToggleQueueAction,
 } from "@model/client";
+import { CustomActionsService } from "@services/custom-actions.service";
 
 @Injectable({
   providedIn: "root",
@@ -48,7 +46,10 @@ export class SettingsService implements OnDestroy {
   private static readonly DISPLAY_MODE_KEY = "nr.DISPLAY_MODE";
   private static readonly ACTIONS_KEY = "nr.ACTIONS";
   private readonly _breakpointObserver: BreakpointObserver;
+  private readonly _customActionsService: CustomActionsService;
   private readonly _$actions: WritableSignal<Action[]>;
+  private readonly _$allActions: Signal<Action[]>;
+  private readonly _$availableActions: Signal<Action[]>;
   private readonly _$breakpoints: WritableSignal<ClientBreakpoints>;
   private readonly _$chosenTheme: WritableSignal<string>;
   private readonly _$displayedZoneId: WritableSignal<string>;
@@ -57,11 +58,17 @@ export class SettingsService implements OnDestroy {
   private readonly _$isOneColumn: Signal<boolean>;
   private readonly _$isSmallScreen: Signal<boolean>;
   private readonly _$isSmallTablet: Signal<boolean>;
-  private readonly themeEffect: EffectRef;
+  private readonly _themeEffect: EffectRef;
+  private readonly _reloadActionsEffect: EffectRef;
   private _breakPointSubscription?: Subscription;
 
-  constructor(rendererFactory: RendererFactory2, breakPointObserver: BreakpointObserver) {
+  constructor(
+    rendererFactory: RendererFactory2,
+    breakPointObserver: BreakpointObserver,
+    customActionsService: CustomActionsService
+  ) {
     this._breakpointObserver = breakPointObserver;
+    this._customActionsService = customActionsService;
     this._$displayedZoneId = signal(localStorage.getItem(SettingsService.DISPLAYED_ZONE_ID_KEY) ?? "", {
       equal: deepEqual,
     });
@@ -70,15 +77,24 @@ export class SettingsService implements OnDestroy {
     this._$breakpoints = signal(this.computeInitialBreakpoints(), {
       equal: deepEqual,
     });
+    const $customActions = this._customActionsService.customActions();
     this._$displayMode = signal((localStorage.getItem(SettingsService.DISPLAY_MODE_KEY) ?? "WIDE") as DisplayMode);
-    this._$actions = signal(
-      this.loadActionsFromLocalStorage(SettingsService.ACTIONS_KEY, [
-        ToggleQueueAction,
-        BrowseAction,
-        LibraryAction,
-        RadiosAction,
-      ])
+    this._$allActions = computed(() => [...DefaultActions, ...$customActions()]);
+    this._$actions = signal(this.loadActionsFromLocalStorage());
+    this._reloadActionsEffect = effect(
+      () => {
+        $customActions();
+        this._$actions.set(this.loadActionsFromLocalStorage());
+      },
+      {
+        allowSignalWrites: true,
+      }
     );
+    this._$availableActions = computed(() => {
+      const allActions = this._$allActions();
+      const actions = this._$actions();
+      return allActions.filter((a) => !actions.includes(a));
+    });
     this._$isOneColumn = computed(
       () => {
         const breakpoints = this._$breakpoints();
@@ -127,7 +143,7 @@ export class SettingsService implements OnDestroy {
     );
     const renderer = rendererFactory.createRenderer(null, null);
     // FIXME?: should this be more semantically placed in nr-root.component?
-    this.themeEffect = effect(() => {
+    this._themeEffect = effect(() => {
       let isDarkTheme: boolean;
       switch (this._$chosenTheme() as ChosenTheme) {
         case ChosenTheme.DARK:
@@ -217,26 +233,14 @@ export class SettingsService implements OnDestroy {
     return this._$actions;
   }
 
-  updateSharedConfig(sharedConfig: SharedConfig) {
-    const customActions: CustomAction[] = sharedConfig.customActions.map((ca) => ({
-      id: ca.id,
-      button: {
-        label: ca.label,
-        icon: ca.icon,
-      },
-      customType: ca.type || CustomActionType.PLAY_NOW,
-      path: ca.roonPath,
-      type: ActionType.CUSTOM,
-    }));
-    this._$actions.update((actions) => {
-      const defaultActions = actions.filter((a) => a.type !== ActionType.CUSTOM);
-      return [...defaultActions, ...customActions];
-    });
+  availableActions(): Signal<Action[]> {
+    return this._$availableActions;
   }
 
   ngOnDestroy() {
     this._breakPointSubscription?.unsubscribe();
-    this.themeEffect.destroy();
+    this._themeEffect.destroy();
+    this._reloadActionsEffect.destroy();
   }
 
   private loadBooleanFromLocalStorage(key: string, defaultValue: boolean) {
@@ -256,20 +260,20 @@ export class SettingsService implements OnDestroy {
     return breakpoints;
   }
 
-  private loadActionsFromLocalStorage(key: string, defaultActions: Action[]) {
-    const storedValue = localStorage.getItem(key);
+  private loadActionsFromLocalStorage() {
+    const storedValue = localStorage.getItem(SettingsService.ACTIONS_KEY);
     if (storedValue !== null) {
       const ids: string[] = storedValue.split(";");
       const actions = [];
       for (const id of ids) {
-        const action = DefaultActions.find((a) => a.id === id);
+        const action = this._$allActions().find((a) => a.id === id);
         if (action) {
           actions.push(action);
         }
       }
       return actions;
     } else {
-      return defaultActions;
+      return [ToggleQueueAction, BrowseAction, LibraryAction, RadiosAction];
     }
   }
 }

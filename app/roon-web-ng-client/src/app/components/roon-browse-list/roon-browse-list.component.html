@@ -6,7 +6,7 @@
     <ol>
       <li *cdkVirtualFor="let item of dataSource; let last = last; let index = index">
         @if (item) {
-          <button tabindex="0" (click)="!item.input_prompt ? onItemClicked(index, item.item_key, item.hint) : true" class="roon-list-item">
+          <button tabindex="0" (click)="!item.input_prompt ? onItemClicked(index, item.title, item.item_key, item.hint, false) : true" class="roon-list-item">
             @if (item.image_key || content.list.image_key) {
               <nr-roon-image class="roon-item-image" [src]="item.image_key ?? content.list.image_key!" [alt]="item.title + ' cover'" height="70" width="70" priority="false" />
             } @else if(!$isOneColumn()) {
@@ -22,14 +22,14 @@
               @if (item.input_prompt) {
                 <mat-form-field appearance="outline">
                   <mat-label>{{item.input_prompt.prompt}}</mat-label>
-                  <input matInput (change)="onPromptInputChange(item.item_key + '_prompt_input', $event)" (keyup.enter)="onItemClicked(index, item.item_key, item.hint, true)"/>
+                  <input matInput (change)="onPromptInputChange(item.item_key + '_prompt_input', $event)" (keyup.enter)="onItemClicked(index, item.title, item.item_key, item.hint, true)"/>
                 </mat-form-field>
-                <button mat-button (click)="onItemClicked(index, item.item_key, item.hint, true)">{{item.input_prompt.action}}</button>
+                <button mat-button (click)="onItemClicked(index, item.title, item.item_key, item.hint, true)">{{item.input_prompt.action}}</button>
               }
             </div>
             @if (item.hint === "action_list") {
               <button mat-icon-button><mat-icon fontIcon="more_vert" /></button>
-              <div [matMenuTriggerFor]="actionMenu" [matMenuTriggerData]="item.item_key"></div>
+              <div [matMenuTriggerFor]="actionMenu" [matMenuTriggerData]="{ item_key: item.item_key, title: item.title, actions: [] }"></div>
             }
           </button>
           @if (!last) {
@@ -40,9 +40,9 @@
     </ol>
   </cdk-virtual-scroll-viewport>
   <mat-menu #actionMenu="matMenu" xPosition="before">
-    <ng-template matMenuContent let-contextActions="actions">
-      @for (action of contextActions; track action.item_key) {
-        <button mat-menu-item (click)="onActionClicked(action.item_key)">{{action.title}}</button>
+    <ng-template matMenuContent let-contextActions="actions" let-contextTitle="title">
+      @for (action of contextActions; track action.item_key; let index = $index) {
+        <button mat-menu-item (click)="onActionClicked(action.item_key, index, contextTitle)">{{action.title}}</button>
       }
     </ng-template>
   </mat-menu>

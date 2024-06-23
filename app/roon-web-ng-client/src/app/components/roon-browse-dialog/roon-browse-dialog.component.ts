@@ -14,6 +14,7 @@ import {
 import { MatButton, MatIconButton } from "@angular/material/button";
 import {
   MAT_DIALOG_DATA,
+  MatDialog,
   MatDialogActions,
   MatDialogClose,
   MatDialogContent,
@@ -23,9 +24,11 @@ import {
 import { MatIcon } from "@angular/material/icon";
 import { MatProgressSpinner } from "@angular/material/progress-spinner";
 import { AlphabeticalIndexComponent } from "@components/alphabetical-index/alphabetical-index.component";
+import { CustomActionsManagerComponent } from "@components/custom-actions-manager/custom-actions-manager.component";
 import { RoonBrowseListComponent } from "@components/roon-browse-list/roon-browse-list.component";
 import { RoonApiBrowseHierarchy, RoonApiBrowseLoadResponse, RoonPath } from "@model";
-import { NavigationEvent } from "@model/client";
+import { CustomActionsManagerDialogConfig, NavigationEvent, RecordedAction } from "@model/client";
+import { CustomActionsService } from "@services/custom-actions.service";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
 
@@ -51,10 +54,13 @@ import { SettingsService } from "@services/settings.service";
 export class RoonBrowseDialogComponent implements OnInit, OnDestroy {
   private static readonly TITLES_WITH_INDEX = ["Albums", "Artists", "Composers", "My Live Radio", "Playlists", "Tags"];
   private readonly _roonService: RoonService;
+  private readonly _customActionsService: CustomActionsService;
+  private readonly _dialog: MatDialog;
   private readonly _dialogRef: MatDialogRef<RoonBrowseDialogComponent>;
   private readonly _firstPath: RoonPath;
   private readonly _scrollIndexes: number[];
   private readonly _dialogCloseSub: Subscription;
+  readonly isRecording: boolean;
   readonly zoneId: string;
   readonly hierarchy: RoonApiBrowseHierarchy;
   readonly $dialogTitle: WritableSignal<string[]>;
@@ -66,17 +72,22 @@ export class RoonBrowseDialogComponent implements OnInit, OnDestroy {
   withIndex: boolean;
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) data: { path: RoonPath },
+    @Inject(MAT_DIALOG_DATA) data: { path: RoonPath; isRecording: boolean },
+    matDialog: MatDialog,
     dialogRef: MatDialogRef<RoonBrowseDialogComponent>,
     roonService: RoonService,
-    settingsService: SettingsService
+    settingsService: SettingsService,
+    customActionsService: CustomActionsService
   ) {
     this.zoneId = settingsService.displayedZoneId()();
     this._roonService = roonService;
+    this._customActionsService = customActionsService;
+    this._dialog = matDialog;
     this._dialogRef = dialogRef;
     this._firstPath = data.path;
     this._scrollIndexes = [];
     this.hierarchy = data.path.hierarchy;
+    this.isRecording = data.isRecording;
     this.$dialogTitle = signal([]);
     this.$loading = signal(true);
     const $isOneColumn = settingsService.isOneColumn();
@@ -101,6 +112,9 @@ export class RoonBrowseDialogComponent implements OnInit, OnDestroy {
         pop_all: true,
         set_display_offset: true,
       });
+      if (this.isRecording) {
+        this._dialog.open(CustomActionsManagerComponent, CustomActionsManagerDialogConfig);
+      }
     });
   }
 
@@ -169,6 +183,14 @@ export class RoonBrowseDialogComponent implements OnInit, OnDestroy {
           this.$loading.set(false);
         });
     }
+  }
+
+  onRecordedAction(recordedAction: RecordedAction) {
+    const path = [...this.$dialogTitle(), recordedAction.title].slice(1);
+    this._customActionsService.saveHierarchy(this._firstPath.hierarchy);
+    this._customActionsService.savePath(path);
+    this._customActionsService.saveActionIndex(recordedAction.actionIndex);
+    this._dialogRef.close();
   }
 
   private loadContent(content: RoonApiBrowseLoadResponse, scrollIndex: number): void {

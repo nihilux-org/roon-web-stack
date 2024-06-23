@@ -19,7 +19,7 @@ import {
 } from "@model";
 import { Extension } from "@roon-kit";
 
-export const extension_version = "0.0.8-beta-8";
+export const extension_version = "0.0.8-beta-9";
 
 const extension: RoonExtension = new Extension({
   description: {
@@ -114,7 +114,7 @@ const load = async (options: RoonApiBrowseLoadOptions): Promise<RoonApiBrowseLoa
   });
 };
 
-const SHARED_CONFIG_KEY = "shared_config_key";
+const SHARED_CONFIG_KEY = "roon_web_stack_shared_config";
 
 const saveSharedConfig = (sharedConfig: SharedConfig): void => {
   extension.api().save_config(SHARED_CONFIG_KEY, sharedConfig);

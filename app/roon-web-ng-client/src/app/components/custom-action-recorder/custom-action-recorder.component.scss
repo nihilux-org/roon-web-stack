@@ -1,0 +1,17 @@
+@use "../styles/mixins" as nr;
+
+:host {
+  .hierarchies-container {
+    margin-top: 30px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    button {
+      width: 200px;
+      margin-bottom: 20px;
+    }
+  }
+  mat-dialog-actions {
+    @include nr.mat-dialog-action-bottom-right();
+  }
+}

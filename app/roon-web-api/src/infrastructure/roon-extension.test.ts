@@ -251,7 +251,7 @@ describe("roon-extension.ts test suite", () => {
     expect(loggerMock.info).toHaveBeenCalledWith(
       `extension version: ${extension_version}, paired roon server: display_name (vdisplay_version - core_id)`
     );
-    expect(extensionMock.api().load_config).toHaveBeenCalledWith("shared_config_key");
+    expect(extensionMock.api().load_config).toHaveBeenCalledWith("roon_web_stack_shared_config");
   });
 
   it("roon#startExtension should register the default onServerLost listener", () => {
@@ -406,7 +406,7 @@ describe("roon-extension.ts test suite", () => {
     expect(hasConfig).toBeTruthy();
   });
 
-  it("roon#saveSharedConfig should call RoonApi#save_config with the provided value and the key 'shared_config_key' and publish the freshly saved config", () => {
+  it("roon#saveSharedConfig should call RoonApi#save_config with the provided value and the key 'roon_web_stack_shared_config' and publish the freshly saved config", () => {
     let registeredListener = null;
     extensionMock.on.mockImplementation((eventName: string, listener: ServerListener) => {
       if (eventName === "core_paired") {
@@ -417,9 +417,9 @@ describe("roon-extension.ts test suite", () => {
     const server = {} as unknown as RoonServer;
     const listener: ServerListener = registeredListener as unknown as ServerListener;
     listener(server);
-    const sharedConfigevents = roon.sharedConfigEvents();
+    const sharedConfigEvents = roon.sharedConfigEvents();
     const sharedConfigMessages: SharedConfigMessage[] = [];
-    sharedConfigevents.subscribe((msg) => sharedConfigMessages.push(msg));
+    sharedConfigEvents.subscribe((msg) => sharedConfigMessages.push(msg));
     const sharedConfig: SharedConfig = {
       customActions: [
         {
@@ -434,7 +434,7 @@ describe("roon-extension.ts test suite", () => {
       ],
     };
     roon.saveSharedConfig(sharedConfig);
-    expect(extensionMock.api().save_config).toHaveBeenCalledWith("shared_config_key", sharedConfig);
+    expect(extensionMock.api().save_config).toHaveBeenCalledWith("roon_web_stack_shared_config", sharedConfig);
     expect(sharedConfigMessages).toHaveLength(2);
     expect(sharedConfigMessages[1].data).toBe(sharedConfig);
   });

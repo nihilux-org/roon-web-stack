@@ -1,4 +1,7 @@
 <div mat-dialog-title class="browse-dialog-title">
+  @if (isRecording) {
+    <h3 class="is-recording-title">Custom Action Recording:</h3>
+  }
   @for (item of $dialogTitle(); track item; let first = $first; let index = $index; let count = $count) {
     @if (count >= $itemsInTitle() && index === (count - $itemsInTitle())) {
       <button mat-icon-button aria-label="back in navigation" (click)="onTitleClicked(index)">
@@ -19,12 +22,25 @@
       <mat-progress-spinner diameter="350" strokeWidth="15" color="primary" mode="indeterminate" />
     </div>
   } @else {
-    <nr-roon-browse-list [content]="content!" [zoneId]="zoneId" [hierarchy]="hierarchy" [scrollIndex]="scrollIndex" [isPaginated]="isPaginated" (clickedItem)="onItemClicked($event)" />
+    <nr-roon-browse-list
+      [content]="content!"
+      [zoneId]="zoneId"
+      [hierarchy]="hierarchy"
+      [scrollIndex]="scrollIndex"
+      [isPaginated]="isPaginated"
+      [isRecording]="isRecording"
+      (clickedItem)="onItemClicked($event)"
+      (recordedAction)="onRecordedAction($event)" />
     @if (withIndex) {
       <nr-alphabetical-index (clickedLetter)="onIndexClicked($event)" />
     }
   }
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-  <button mat-button (click)="closeDialog()"><mat-icon fontIcon="close"/>Close</button>
+  @if (isRecording) {
+    <button mat-button (click)="closeDialog()"><mat-icon fontIcon="cancel"/>Cancel</button>
+    <button mat-button (click)="closeDialog()"><mat-icon fontIcon="save"/>Save</button>
+  } @else {
+    <button mat-button (click)="closeDialog()"><mat-icon fontIcon="close"/>Close</button>
+  }
 </mat-dialog-actions>

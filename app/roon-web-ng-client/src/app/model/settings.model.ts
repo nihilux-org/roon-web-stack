@@ -1,3 +1,5 @@
+import { MatDialogConfig } from "@angular/material/dialog";
+
 export enum ChosenTheme {
   BROWSER = "BROWSER",
   DARK = "DARK",
@@ -18,3 +20,16 @@ export enum VisibilityState {
   VISIBLE = "VISIBLE",
   HIDDEN = "HIDDEN",
 }
+
+export const SettingsDialogConfig: MatDialogConfig = {
+  restoreFocus: false,
+  width: "500px",
+  maxWidth: "95svw",
+  maxHeight: "95svh",
+  data: {
+    selectedTab: 0,
+  },
+  position: {
+    top: "5svh",
+  },
+};

@@ -80,20 +80,12 @@ export interface SharedConfig extends SseMessageData {
   customActions: CustomAction[];
 }
 
-export const enum CustomActionType {
-  LOAD = "LOAD",
-  PLAY_NOW = "PLAY_NOW",
-  ADD_NEXT = "ADD_NEXT",
-  QUEUE = "QUEUE",
-  START_RADIO = "START_RADIO",
-}
-
 export interface CustomAction {
   id: string;
   label: string;
   icon: string;
   roonPath: RoonPath;
-  type?: CustomActionType;
+  actionIndex?: number;
 }
 
 export interface SseMessage<T extends SseMessageData> {

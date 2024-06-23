@@ -1,0 +1,36 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  mat-form-field {
+    margin-bottom: 15px;
+  }
+  .icon-input {
+    display: flex;
+    justify-items: center;
+    mat-form-field {
+      flex-grow: 1;
+    }
+    .icon-preview {
+      height: 56px;
+      width: 56px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-sizing: border-box;
+      margin-left: 20px;
+      border-radius: 4px;
+      background-color: #555555;
+    }
+  }
+  .action-path-details {
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    margin-bottom: 20px;
+    > div {
+      display: flex;
+      justify-items: center;
+      margin-bottom: 5px;
+    }
+  }
+}
