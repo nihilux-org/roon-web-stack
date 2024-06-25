@@ -1,6 +1,7 @@
 import { deepEqual } from "fast-equals";
 import { CommonModule } from "@angular/common";
-import { ChangeDetectionStrategy, Component, computed, Signal } from "@angular/core";
+import { ChangeDetectionStrategy, Component, computed, effect, EffectRef, OnDestroy, Signal } from "@angular/core";
+import { MatDialog } from "@angular/material/dialog";
 import { MatProgressSpinner } from "@angular/material/progress-spinner";
 import { ExtensionNotEnabledComponent } from "@components/extension-not-enabled/extension-not-enabled.component";
 import { FullScreenToggleComponent } from "@components/full-screen-toggle/full-screen-toggle.component";
@@ -25,11 +26,14 @@ import { SettingsService } from "@services/settings.service";
   styleUrl: "./nr-root.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NrRootComponent {
+export class NrRootComponent implements OnDestroy {
+  private readonly _matDialog: MatDialog;
+  private readonly _closeDialogsEffect: EffectRef;
   readonly $clientState: Signal<string>;
   readonly $isOneColumn: Signal<boolean>;
 
-  constructor(roonService: RoonService, settingsService: SettingsService) {
+  constructor(roonService: RoonService, settingsService: SettingsService, matDialog: MatDialog) {
+    this._matDialog = matDialog;
     const $displayedZoneId = settingsService.displayedZoneId();
     const $apiState = roonService.roonState();
     const $isGrouping = roonService.isGrouping();
@@ -52,5 +56,13 @@ export class NrRootComponent {
       }
     );
     this.$isOneColumn = settingsService.isOneColumn();
+    this._closeDialogsEffect = effect(() => {
+      this.$clientState();
+      this._matDialog.closeAll();
+    });
+  }
+
+  ngOnDestroy() {
+    this._closeDialogsEffect.destroy();
   }
 }
