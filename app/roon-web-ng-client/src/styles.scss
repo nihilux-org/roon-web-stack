@@ -70,10 +70,8 @@ html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 .queue {
-  cdk-virtual-scroll-viewport {
-    .cdk-virtual-scroll-content-wrapper {
-      max-width: 100% !important;
-    }
+  .cdk-virtual-scroll-content-wrapper {
+    max-width: 100% !important;
   }
 }
 
