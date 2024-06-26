@@ -17,12 +17,17 @@
       list-style: none;
       margin: 0;
       padding: 0;
+      li {
+        .mat-divider.mat-divider-inset {
+          margin-left: 105px;
+        }
+      }
       .roon-list-item {
         @include nr.button-reset();
         display: flex;
         justify-content: flex-start;
         align-items: center;
-        padding: 20px 0;
+        padding: 10px 0 10px 10px;
         width: 100%;
         .roon-item-image {
           height: 70px;
@@ -56,15 +61,24 @@
         .roon-item-info.is-small-screen.roon-item-prompt mat-form-field {
           margin-left: 0;
         }
-        .roon-item-info:not(.is-small-screen) {
-          span {
-            margin-left: 30px;
-          }
+      }
+    }
+  }
+  .roon-list:not(.is-small-screen) {
+    ol {
+      .roon-list-item {
+        span {
+          margin-left: 30px;
         }
-        .roon-item-info.is-small-screen {
-          span {
-            margin-left: 15px;
-          }
+      }
+    }
+  }
+  .roon-list.is-small-screen {
+    ol {
+      .roon-list-item {
+        padding: 10px 0;
+        span {
+          margin-left: 15px;
         }
       }
     }
