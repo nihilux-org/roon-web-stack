@@ -15,6 +15,11 @@
   overflow: visible;
   padding-block: 0;
   padding-inline: 0;
+  &:focus-visible {
+    outline: none;
+    backdrop-filter: contrast(0.5);
+    --webkit-backdrop-filter: contrast(0.5);
+  }
 }
 
 @mixin block-overflow-ellipsis {

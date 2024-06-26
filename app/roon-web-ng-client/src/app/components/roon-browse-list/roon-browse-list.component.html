@@ -1,8 +1,8 @@
-<div class="roon-list">
+<div class="roon-list" [class.is-small-screen]="$isOneColumn()">
   @if(content.list.subtitle) {
     <h3>{{sanitizeSubtitle(content.list.subtitle)}}</h3>
   }
-  <cdk-virtual-scroll-viewport itemSize="111">
+  <cdk-virtual-scroll-viewport itemSize="91">
     <ol>
       <li *cdkVirtualFor="let item of dataSource; let last = last; let index = index">
         @if (item) {
@@ -12,7 +12,7 @@
             } @else if(!$isOneColumn()) {
               <div class="roon-item-image"></div>
             }
-            <div class="roon-item-info" [class.roon-item-prompt]="item.input_prompt" [class.is-small-screen]="$isOneColumn()">
+            <div class="roon-item-info" [class.roon-item-prompt]="item.input_prompt !== undefined">
               @if (!(item.input_prompt && $isOneColumn())) {
                 <span>{{item.title}}</span>
                 @if (item.subtitle) {
