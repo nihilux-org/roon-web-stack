@@ -4291,9 +4291,9 @@ __metadata:
     node-roon-api-transport: "github:roonlabs/node-roon-api-transport"
     nodemon-webpack-plugin: "npm:4.8.2"
     prettier: "npm:3.3.2"
-    rimraf: "npm:6.0.0"
+    rimraf: "npm:6.0.1"
     rxjs: "npm:7.8.1"
-    ts-jest: "npm:29.2.0"
+    ts-jest: "npm:29.2.2"
     ts-loader: "npm:9.5.1"
     ts-node: "npm:10.9.2"
     ts-retry-promise: "npm:0.8.1"
@@ -4327,8 +4327,8 @@ __metadata:
     jest-fetch-mock: "npm:3.0.3"
     jest-junit: "npm:16.0.0"
     prettier: "npm:3.3.2"
-    rimraf: "npm:6.0.0"
-    ts-jest: "npm:29.2.0"
+    rimraf: "npm:6.0.1"
+    ts-jest: "npm:29.2.2"
     ts-loader: "npm:9.5.1"
     tsconfig-paths-webpack-plugin: "npm:4.1.0"
     typescript: "npm:5.4.5"
@@ -7452,7 +7452,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ejs@npm:^3.1.7":
+"ejs@npm:^3.0.0, ejs@npm:^3.1.7":
   version: 3.1.10
   resolution: "ejs@npm:3.1.10"
   dependencies:
@@ -13289,14 +13289,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rimraf@npm:6.0.0":
-  version: 6.0.0
-  resolution: "rimraf@npm:6.0.0"
+"rimraf@npm:6.0.1":
+  version: 6.0.1
+  resolution: "rimraf@npm:6.0.1"
   dependencies:
     glob: "npm:^11.0.0"
+    package-json-from-dist: "npm:^1.0.0"
   bin:
     rimraf: dist/esm/bin.mjs
-  checksum: 10c0/32d07c542490db96efd515b27f857f45b71b2169a1b533052630d119034450d3afcf766adc2df43314378f9168407ef222d7d1104c48cc9d385e97b17964b3bf
+  checksum: 10c0/b30b6b072771f0d1e73b4ca5f37bb2944ee09375be9db5f558fcd3310000d29dfcfa93cf7734d75295ad5a7486dc8e40f63089ced1722a664539ffc0c3ece8c6
   languageName: node
   linkType: hard
 
@@ -14514,11 +14515,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-jest@npm:29.2.0":
-  version: 29.2.0
-  resolution: "ts-jest@npm:29.2.0"
+"ts-jest@npm:29.2.2":
+  version: 29.2.2
+  resolution: "ts-jest@npm:29.2.2"
   dependencies:
     bs-logger: "npm:0.x"
+    ejs: "npm:^3.0.0"
     fast-json-stable-stringify: "npm:2.x"
     jest-util: "npm:^29.0.0"
     json5: "npm:^2.2.3"
@@ -14546,7 +14548,7 @@ __metadata:
       optional: true
   bin:
     ts-jest: cli.js
-  checksum: 10c0/a20fb23f1b54cbdb3d793bf527df81fa212c4a9e0dbad00f73923f94c199eea7d3b6f88de208ecaf5ddd52c781119a958af045fc807e10f0d37f5a1c4fcee7fb
+  checksum: 10c0/833afe98f6aef7c46abbfb6bc84ce2431bcd82d614380e54ccd73cfc4c7c015ecdf058ad53edc48d575816b35c3db044de5fe1a579336a75f9a8c6651b6f7b50
   languageName: node
   linkType: hard
 
