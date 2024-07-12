@@ -78,7 +78,7 @@ export class SettingsService implements OnDestroy {
       equal: deepEqual,
     });
     const $customActions = this._customActionsService.customActions();
-    this._$displayMode = signal((localStorage.getItem(SettingsService.DISPLAY_MODE_KEY) ?? "WIDE") as DisplayMode);
+    this._$displayMode = signal(this.loadDisplayModeFromLocalStorage(DisplayMode.WIDE));
     this._$allActions = computed(() => [...DefaultActions, ...$customActions()]);
     this._$actions = signal(this.loadActionsFromLocalStorage());
     this._reloadActionsEffect = effect(
@@ -275,5 +275,15 @@ export class SettingsService implements OnDestroy {
     } else {
       return [ToggleQueueAction, BrowseAction, LibraryAction, RadiosAction];
     }
+  }
+
+  private loadDisplayModeFromLocalStorage(defaultValue: DisplayMode) {
+    const displayMode = localStorage.getItem(SettingsService.DISPLAY_MODE_KEY);
+    if (displayMode !== null) {
+      if (Object.values(DisplayMode).includes(displayMode as DisplayMode)) {
+        return displayMode as DisplayMode;
+      }
+    }
+    return defaultValue;
   }
 }
