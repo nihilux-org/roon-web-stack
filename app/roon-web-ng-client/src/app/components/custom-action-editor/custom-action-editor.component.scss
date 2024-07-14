@@ -19,7 +19,7 @@
       box-sizing: border-box;
       margin-left: 20px;
       border-radius: 4px;
-      background-color: #555555;
+      backdrop-filter: contrast(0.8);
     }
   }
   .action-path-details {

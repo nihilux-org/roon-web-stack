@@ -12,6 +12,9 @@
   mat-dialog-actions {
     @include nr.mat-dialog-action-bottom-right();
   }
+  .custom-actions-wrapper {
+    padding: 15px 0;
+  }
   .custom-actions-container {
     min-height: 0;
     overflow: scroll;
@@ -44,6 +47,5 @@
   }
   .custom-action-recorder {
     min-height: 0;
-    margin-top: 20px;
   }
 }

@@ -48,9 +48,9 @@
   } @empty {
     No path configured yet, please record one.
   }
-  @if ($actionIndex()) {
+  @if ($actionIndex() !== undefined) {
     <div>
-      <mat-icon aria-hidden="false" fontIcon="arrow_right"/> action at index {{$actionIndex()}}
+      <mat-icon aria-hidden="false" fontIcon="arrow_right"/> action {{$actionIndex()! + 1}}
     </div>
   }
 </div>
