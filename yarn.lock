@@ -4071,7 +4071,7 @@ __metadata:
     eslint-import-resolver-typescript: "npm:3.6.1"
     eslint-plugin-import: "npm:2.29.1"
     eslint-plugin-n: "npm:16.6.2"
-    eslint-plugin-prettier: "npm:5.1.3"
+    eslint-plugin-prettier: "npm:5.2.1"
     eslint-plugin-promise: "npm:6.4.0"
     eslint-plugin-simple-import-sort: "npm:12.1.1"
     eslint-webpack-plugin: "npm:4.2.0"
@@ -4091,7 +4091,7 @@ __metadata:
     prettier: "npm:3.3.3"
     rimraf: "npm:6.0.1"
     rxjs: "npm:7.8.1"
-    ts-jest: "npm:29.2.2"
+    ts-jest: "npm:29.2.3"
     ts-loader: "npm:9.5.1"
     ts-node: "npm:10.9.2"
     ts-retry-promise: "npm:0.8.1"
@@ -4117,7 +4117,7 @@ __metadata:
     eslint-import-resolver-typescript: "npm:3.6.1"
     eslint-plugin-import: "npm:2.29.1"
     eslint-plugin-n: "npm:16.6.2"
-    eslint-plugin-prettier: "npm:5.1.3"
+    eslint-plugin-prettier: "npm:5.2.1"
     eslint-plugin-promise: "npm:6.4.0"
     eslint-plugin-simple-import-sort: "npm:12.1.1"
     eslint-webpack-plugin: "npm:4.2.0"
@@ -4126,7 +4126,7 @@ __metadata:
     jest-junit: "npm:16.0.0"
     prettier: "npm:3.3.3"
     rimraf: "npm:6.0.1"
-    ts-jest: "npm:29.2.2"
+    ts-jest: "npm:29.2.3"
     ts-loader: "npm:9.5.1"
     tsconfig-paths-webpack-plugin: "npm:4.1.0"
     typescript: "npm:5.4.5"
@@ -4147,7 +4147,7 @@ __metadata:
     eslint-import-resolver-typescript: "npm:3.6.1"
     eslint-plugin-import: "npm:2.29.1"
     eslint-plugin-n: "npm:16.6.2"
-    eslint-plugin-prettier: "npm:5.1.3"
+    eslint-plugin-prettier: "npm:5.2.1"
     eslint-plugin-promise: "npm:6.4.0"
     eslint-plugin-simple-import-sort: "npm:12.1.1"
     prettier: "npm:3.3.3"
@@ -4190,7 +4190,7 @@ __metadata:
     eslint-import-resolver-typescript: "npm:3.6.1"
     eslint-plugin-import: "npm:2.29.1"
     eslint-plugin-n: "npm:16.6.2"
-    eslint-plugin-prettier: "npm:5.1.3"
+    eslint-plugin-prettier: "npm:5.2.1"
     eslint-plugin-promise: "npm:6.4.0"
     eslint-plugin-simple-import-sort: "npm:12.1.1"
     fast-equals: "npm:5.0.1"
@@ -4202,7 +4202,7 @@ __metadata:
     prettier: "npm:3.3.3"
     rxjs: "npm:~7.8.0"
     typescript: "npm:5.4.5"
-    zone.js: "npm:~0.14.7"
+    zone.js: "npm:~0.14.8"
   languageName: unknown
   linkType: soft
 
@@ -7393,7 +7393,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ejs@npm:^3.0.0, ejs@npm:^3.1.7":
+"ejs@npm:^3.0.0, ejs@npm:^3.1.10, ejs@npm:^3.1.7":
   version: 3.1.10
   resolution: "ejs@npm:3.1.10"
   dependencies:
@@ -8027,12 +8027,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-prettier@npm:5.1.3":
-  version: 5.1.3
-  resolution: "eslint-plugin-prettier@npm:5.1.3"
+"eslint-plugin-prettier@npm:5.2.1":
+  version: 5.2.1
+  resolution: "eslint-plugin-prettier@npm:5.2.1"
   dependencies:
     prettier-linter-helpers: "npm:^1.0.0"
-    synckit: "npm:^0.8.6"
+    synckit: "npm:^0.9.1"
   peerDependencies:
     "@types/eslint": ">=8.0.0"
     eslint: ">=8.0.0"
@@ -8043,7 +8043,7 @@ __metadata:
       optional: true
     eslint-config-prettier:
       optional: true
-  checksum: 10c0/f45d5fc1fcfec6b0cf038a7a65ddd10a25df4fe3f9e1f6b7f0d5100e66f046a26a2492e69ee765dddf461b93c114cf2e1eb18d4970aafa6f385448985c136e09
+  checksum: 10c0/4bc8bbaf5bb556c9c501dcdff369137763c49ccaf544f9fa91400360ed5e3a3f1234ab59690e06beca5b1b7e6f6356978cdd3b02af6aba3edea2ffe69ca6e8b2
   languageName: node
   linkType: hard
 
@@ -14251,13 +14251,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"synckit@npm:^0.8.6":
-  version: 0.8.8
-  resolution: "synckit@npm:0.8.8"
+"synckit@npm:^0.9.1":
+  version: 0.9.1
+  resolution: "synckit@npm:0.9.1"
   dependencies:
     "@pkgr/core": "npm:^0.1.0"
     tslib: "npm:^2.6.2"
-  checksum: 10c0/c3d3aa8e284f3f84f2f868b960c9f49239b364e35f6d20825a448449a3e9c8f49fe36cdd5196b30615682f007830d46f2ea354003954c7336723cb821e4b6519
+  checksum: 10c0/d8b89e1bf30ba3ffb469d8418c836ad9c0c062bf47028406b4d06548bc66af97155ea2303b96c93bf5c7c0f0d66153a6fbd6924c76521b434e6a9898982abc2e
   languageName: node
   linkType: hard
 
@@ -14522,7 +14522,44 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-jest@npm:29.2.2, ts-jest@npm:^29.0.0":
+"ts-jest@npm:29.2.3":
+  version: 29.2.3
+  resolution: "ts-jest@npm:29.2.3"
+  dependencies:
+    bs-logger: "npm:0.x"
+    ejs: "npm:^3.1.10"
+    fast-json-stable-stringify: "npm:2.x"
+    jest-util: "npm:^29.0.0"
+    json5: "npm:^2.2.3"
+    lodash.memoize: "npm:4.x"
+    make-error: "npm:1.x"
+    semver: "npm:^7.5.3"
+    yargs-parser: "npm:^21.0.1"
+  peerDependencies:
+    "@babel/core": ">=7.0.0-beta.0 <8"
+    "@jest/transform": ^29.0.0
+    "@jest/types": ^29.0.0
+    babel-jest: ^29.0.0
+    jest: ^29.0.0
+    typescript: ">=4.3 <6"
+  peerDependenciesMeta:
+    "@babel/core":
+      optional: true
+    "@jest/transform":
+      optional: true
+    "@jest/types":
+      optional: true
+    babel-jest:
+      optional: true
+    esbuild:
+      optional: true
+  bin:
+    ts-jest: cli.js
+  checksum: 10c0/3be57a9f0e9cf0d0de235f5543dc1f2a33da4380bf46e660f79d050a15a6e7bab71a7a80ba9559761ce1203248b40d0f9386c19356718165575f32192e32140e
+  languageName: node
+  linkType: hard
+
+"ts-jest@npm:^29.0.0":
   version: 29.2.2
   resolution: "ts-jest@npm:29.2.2"
   dependencies:
@@ -15609,9 +15646,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zone.js@npm:~0.14.7":
-  version: 0.14.7
-  resolution: "zone.js@npm:0.14.7"
-  checksum: 10c0/5a5fccb78ea4653ccf3ad5c11448ffa4e005b50a0fd43da713fcc19584746000ea889ca45163d2e6e18e3a4ed7be42cdbc0dbb4dcb28449f02d23408696668cc
+"zone.js@npm:~0.14.8":
+  version: 0.14.8
+  resolution: "zone.js@npm:0.14.8"
+  checksum: 10c0/9d5c70f084e7291887059fc7ed3131e4ba1b3d4d604923cbae133ae37be08ac9293d7becebe25a7055f4fd10252b72f427e839a17f5b9d2a7cb9e105d8530498
   languageName: node
   linkType: hard
