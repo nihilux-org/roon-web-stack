@@ -1,4 +1,6 @@
+jest.config.js
 webpack.config.js
 /bin
+/coverage
 /src/roon-kit
 **/*.md

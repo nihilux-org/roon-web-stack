@@ -16,27 +16,32 @@ import {
   ZoneState,
 } from "@model";
 
-export interface WorkerMessageData {}
+export type WorkerMessageData =
+  | WorkerClientStartAction
+  | WorkerClientRefreshAction
+  | WorkerClientStopAction
+  | WorkerClientRestartAction
+  | RawWorkerApiRequest;
 
 export interface WorkerMessage<T extends WorkerMessageData> {
   data: T;
 }
 
-export interface WorkerClientStartAction extends WorkerMessageData {
+export interface WorkerClientStartAction {
   action: "start-client";
   url: string;
   isDesktop: boolean;
 }
 
-export interface WorkerClientRefreshAction extends WorkerMessageData {
+export interface WorkerClientRefreshAction {
   action: "refresh-client";
 }
 
-export interface WorkerClientStopAction extends WorkerMessageData {
+export interface WorkerClientStopAction {
   action: "stop-client";
 }
 
-export interface WorkerClientRestartAction extends WorkerMessageData {
+export interface WorkerClientRestartAction {
   action: "restart-client";
 }
 
@@ -50,7 +55,7 @@ export interface WorkerClientActionMessage extends WorkerMessage<WorkerClientAct
   event: "worker-client";
 }
 
-export interface WorkerApiRequest<T> extends WorkerMessageData {
+export interface WorkerApiRequest<T> {
   data: T;
   id: number;
 }

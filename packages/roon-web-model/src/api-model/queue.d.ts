@@ -1,6 +1,6 @@
 import { Subject } from "rxjs";
 import { QueueItem, RoonApiTransportQueue, RoonSubscriptionResponse, Zone } from "../roon-kit";
-import { RoonSseMessage, SseMessage, SseMessageData, Track } from "./index";
+import { RoonSseMessage, SseMessage, Track } from "./index";
 
 export interface Queue {
   zone_id: string;
@@ -26,7 +26,7 @@ export interface QueueTrack extends Omit<Track, "seek_position" | "seek_percenta
   queue_item_id: number;
 }
 
-export interface QueueState extends SseMessageData {
+export interface QueueState {
   zone_id: string;
   tracks: QueueTrack[];
 }

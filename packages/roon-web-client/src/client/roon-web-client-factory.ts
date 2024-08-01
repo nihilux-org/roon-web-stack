@@ -426,7 +426,7 @@ class InternalRoonWebClient implements RoonWebClient {
   };
 
   private onApiStateMessage = (m: MessageEvent<string>): void => {
-    const apiState: ApiState | undefined = parseJson(m.data);
+    const apiState = parseJson<ApiState>(m.data);
     if (apiState) {
       this._apiState = apiState;
       for (const roonStateListener of this._roonStateListeners) {
@@ -436,7 +436,7 @@ class InternalRoonWebClient implements RoonWebClient {
   };
 
   private onCommandStateMessage = (m: MessageEvent<string>): void => {
-    const commandState: CommandState | undefined = parseJson(m.data);
+    const commandState = parseJson<CommandState>(m.data);
     if (commandState) {
       for (const commandStateListener of this._commandStateListeners) {
         commandStateListener(commandState);
@@ -445,7 +445,7 @@ class InternalRoonWebClient implements RoonWebClient {
   };
 
   private onZoneMessage = (m: MessageEvent<string>): void => {
-    const zoneState: ZoneState | undefined = parseJson(m.data);
+    const zoneState = parseJson<ZoneState>(m.data);
     if (zoneState) {
       const zoneStates = this._zones.get(zoneState.zone_id);
       if (!zoneStates) {
@@ -462,7 +462,7 @@ class InternalRoonWebClient implements RoonWebClient {
   };
 
   private onQueueMessage = (m: MessageEvent<string>): void => {
-    const queueState: QueueState | undefined = parseJson(m.data);
+    const queueState = parseJson<QueueState>(m.data);
     if (queueState) {
       const zoneStates = this._zones.get(queueState.zone_id);
       if (!zoneStates) {
@@ -479,7 +479,7 @@ class InternalRoonWebClient implements RoonWebClient {
   };
 
   private onPingMessage = (m: MessageEvent<string>): void => {
-    const ping: Ping | undefined = parseJson(m.data);
+    const ping = parseJson<Ping>(m.data);
     if (ping) {
       if (this._pingInterval) {
         clearTimeout(this._pingInterval);
@@ -501,7 +501,7 @@ class InternalRoonWebClient implements RoonWebClient {
   };
 
   private onSharedConfigMessage = (m: MessageEvent<string>): void => {
-    const sharedConfig: SharedConfig | undefined = parseJson(m.data);
+    const sharedConfig = parseJson<SharedConfig>(m.data);
     if (sharedConfig) {
       for (const sharedConfigListener of this._sharedConfigListeners) {
         sharedConfigListener(sharedConfig);
@@ -544,6 +544,7 @@ export const roonWebClientFactory: RoonWebClientFactory = {
   build,
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
 const parseJson = <T>(json: string): T | undefined => {
   try {
     return JSON.parse(json) as unknown as T;

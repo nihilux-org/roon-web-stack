@@ -1,3 +1,4 @@
 /bin
+/coverage
 webpack.config.cjs
 jest.config.cjs

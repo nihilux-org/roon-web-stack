@@ -76,7 +76,7 @@ export interface RoonPath {
   path: string[];
 }
 
-export interface SharedConfig extends SseMessageData {
+export interface SharedConfig {
   customActions: CustomAction[];
 }
 
@@ -88,18 +88,18 @@ export interface CustomAction {
   actionIndex?: number;
 }
 
+export type SseMessageData = Ping | ApiState | SharedConfig | CommandState | QueueState | ZoneState;
+
 export interface SseMessage<T extends SseMessageData> {
   event: string;
   data: T;
 }
 
-export interface SseMessageData {}
-
-export interface Ping extends SseMessageData {
+export interface Ping {
   next: number;
 }
 
-export interface ApiState extends SseMessageData {
+export interface ApiState {
   state: RoonState;
   zones: ZoneDescription[];
   outputs: OutputDescription[];

@@ -1,6 +1,6 @@
 import { Subject } from "rxjs";
 import { RoonServer, Zone } from "../roon-kit";
-import { SharedConfig, SseMessage, SseMessageData } from "./common";
+import { SharedConfig, SseMessage } from "./common";
 import { OutputDescription } from "./zone";
 
 export const enum CommandResult {
@@ -8,7 +8,7 @@ export const enum CommandResult {
   REJECTED = "REJECTED",
 }
 
-export interface CommandState extends SseMessageData {
+export interface CommandState {
   command_id: string;
   state: CommandResult;
   cause?: string;

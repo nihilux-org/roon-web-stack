@@ -139,7 +139,7 @@ const apiRoute: FastifyPluginAsync = async (server: FastifyInstance): Promise<vo
         scale: scaleOption,
         width: widthOption,
       });
-      return reply
+      return await reply
         .status(200)
         .header("cache-control", "public, max-age=86400, immutable")
         .header("age", "0")
