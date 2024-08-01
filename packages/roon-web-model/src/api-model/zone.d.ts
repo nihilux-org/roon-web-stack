@@ -8,11 +8,11 @@ import {
   RoonSubscriptionResponse,
   Zone,
 } from "../roon-kit";
-import { RoonSseMessage, SseMessage, SseMessageData, Track } from "./index";
+import { RoonSseMessage, SseMessage, Track } from "./index";
 
-export interface ZoneDescription extends Pick<Zone, "display_name" | "zone_id"> {}
+export type ZoneDescription = Pick<Zone, "display_name" | "zone_id">;
 
-export interface OutputDescription extends Pick<Output, "display_name" | "zone_id" | "output_id"> {}
+export type OutputDescription = Pick<Output, "display_name" | "zone_id" | "output_id">;
 
 export interface ZoneListener {
   (core: RoonServer, response: RoonSubscriptionResponse, body: RoonApiTransportZones): void;
@@ -44,7 +44,7 @@ export interface ZoneNicePlaying {
   state: RoonPlaybackState;
 }
 
-export interface ZoneState extends SseMessageData, Omit<Zone, "now_playing"> {
+export interface ZoneState extends Omit<Zone, "now_playing"> {
   nice_playing?: ZoneNicePlaying;
 }
 

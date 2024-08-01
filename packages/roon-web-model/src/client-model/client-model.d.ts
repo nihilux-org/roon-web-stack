@@ -40,9 +40,9 @@ export interface RoonWebClientFactory {
 
 export type ClientState = "started" | "outdated" | "not-started" | "to-refresh";
 
-export interface ClientRoonApiBrowseOptions extends Omit<RoonApiBrowseOptions, "multi_session_key"> {}
+export type ClientRoonApiBrowseOptions = Omit<RoonApiBrowseOptions, "multi_session_key">;
 
-export interface ClientRoonApiBrowseLoadOptions extends Omit<RoonApiBrowseLoadOptions, "multi_session_key"> {}
+export type ClientRoonApiBrowseLoadOptions = Omit<RoonApiBrowseLoadOptions, "multi_session_key">;
 
 export type RoonStateListener = (state: ApiState) => void;
 
