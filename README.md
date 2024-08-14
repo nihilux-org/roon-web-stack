@@ -114,12 +114,12 @@ As a reminder, this is how to enable an extension in `roon` settings:
 
 ## How to build it from source
 
-First, you'll need the last `lts` version of `node` (newer might work, not tested though). Currently, the [CI](./.github/workflows/ci.yml) and the [CD](./.github/workflows/cd.yml) are using what's defined in the main `package.json`: `node >= 20.12.0`. This will follow availability of node `lts` in `github` actions.
+First, you'll need the last `lts` version of `node` (newer might work, not tested though). Currently, the [CI](./.github/workflows/ci.yml) and the [CD](./.github/workflows/cd.yml) are using what's defined in the main `package.json`: `node >= 22.6.0`. This will follow availability of node `lts` in `github` actions.
 How you install `node` is your story, after all you want to build from sources.
 
 Checkout the code and `cd` in the directory.
 
-This `monorepo` uses `yarn 4.2.1` as it's package manager as defined in the root `package.json`.
+This `monorepo` uses `yarn 4.4.0` as it's package manager as defined in the root `package.json`.
 
 To enable `corepack` for this project, you'll be good for a pair of:
 ```bash

@@ -1,6 +1,6 @@
 ARG ALPINE_VERSION=3.20
 
-FROM node:20-alpine${ALPINE_VERSION} AS builder
+FROM node:22-alpine${ALPINE_VERSION} AS builder
 RUN mkdir -p /usr/src/roon-web-stack
 WORKDIR /usr/src/roon-web-stack
 COPY . /usr/src/roon-web-stack

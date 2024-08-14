@@ -3287,7 +3287,7 @@ __metadata:
     jest: "npm:29.7.0"
     jest-junit: "npm:16.0.0"
     nanoid: "npm:3.3.7"
-    node-roon-api: "github:roonlabs/node-roon-api"
+    node-roon-api: "github:OonihiloO/node-roon-api#fix/add-node-22-support"
     node-roon-api-browse: "github:roonlabs/node-roon-api-browse"
     node-roon-api-image: "github:roonlabs/node-roon-api-image"
     node-roon-api-settings: "github:roonlabs/node-roon-api-settings"
@@ -10631,14 +10631,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-roon-api@github:roonlabs/node-roon-api":
+"node-roon-api@github:OonihiloO/node-roon-api#fix/add-node-22-support":
   version: 1.2.3
-  resolution: "node-roon-api@https://github.com/roonlabs/node-roon-api.git#commit=7cfaddc63b0d8a8bffe0f71df02d7c73adc728a5"
+  resolution: "node-roon-api@https://github.com/OonihiloO/node-roon-api.git#commit=e0a51b72795fe9921d7b2b12d9c0102a475faa60"
   dependencies:
     ip: "npm:^1.1.3"
     node-uuid: "npm:^1.4.7"
     ws: "npm:>=3.3.1"
-  checksum: 10c0/a485d141e5c7aa92dec0d1392b1169eb38e9a0e77a687ffaaf24d6edd66f719fa6890140cd04243c96611c84ca42e7a331e95c747e7ed1921df6551df15bddf2
+  checksum: 10c0/761cbbe83600b0f4f16458e6c8597e2ad05667a4d88f6bc7700837d6b9e6e2bafe831e295ba8180bd70e62f3879430e64315deb759e85f7774981c77acf06dc4
   languageName: node
   linkType: hard
 
