@@ -20,7 +20,7 @@
     "fastify-plugin": "4.5.1",
     "fastify-sse-v2": "4.0.0",
     "nanoid": "3.3.7",
-    "node-roon-api": "github:roonlabs/node-roon-api",
+    "node-roon-api": "github:OonihiloO/node-roon-api#fix/add-node-22-support",
     "node-roon-api-browse": "github:roonlabs/node-roon-api-browse",
     "node-roon-api-image": "github:roonlabs/node-roon-api-image",
     "node-roon-api-settings": "github:roonlabs/node-roon-api-settings",
