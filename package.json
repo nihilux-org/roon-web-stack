@@ -10,7 +10,7 @@
     "app/*"
   ],
   "engines": {
-    "node": ">= 20.12.0"
+    "node": ">= 22.6.0"
   },
   "repository": {
     "type": "git",
@@ -24,5 +24,5 @@
     "backend": "yarn workspace @nihilux/roon-web-api start",
     "frontend": "yarn workspace @nihilux/roon-web-ng-client start"
   },
-  "packageManager": "yarn@4.4.0+sha256.5f228cb28f2edb97d8c3b667fb7b2fdcf06c46798e25ea889dad9e0b4bc2e2c1"
+  "packageManager": "yarn@4.4.0+sha512.91d93b445d9284e7ed52931369bc89a663414e5582d00eea45c67ddc459a2582919eece27c412d6ffd1bd0793ff35399381cb229326b961798ce4f4cc60ddfdb"
 }
