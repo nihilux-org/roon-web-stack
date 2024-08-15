@@ -23,12 +23,12 @@
         }
       }
       .roon-list-item {
-        @include nr.button-reset();
         display: flex;
         justify-content: flex-start;
         align-items: center;
         padding: 10px 0 10px 10px;
         width: 100%;
+        @include nr.button-reset();
         .roon-item-image {
           height: 70px;
           min-width: 70px;
