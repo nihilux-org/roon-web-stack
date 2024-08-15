@@ -4,12 +4,12 @@
   width: 100%;
   flex-grow: 0;
   .queue {
-    span {
-      @include nr.block-overflow-ellipsis();
-    }
     height: 100%;
     width: 100%;
     box-sizing: border-box;
+    span {
+      @include nr.block-overflow-ellipsis();
+    }
     cdk-virtual-scroll-viewport {
       height: 100%;
       width: 100%;
@@ -20,12 +20,12 @@
       margin: 0;
     }
     .track {
-      @include nr.button-reset();
       width: 100%;
       display: flex;
       height: 100px;
       align-items: center;
       padding-left: 15px;
+      @include nr.button-reset();
       .track-image {
         height: 70px;
         min-width: 70px;
