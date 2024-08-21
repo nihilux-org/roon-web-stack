@@ -39,7 +39,7 @@
     "@angular/compiler-cli": "18.2.0",
     "@nihilux/roon-web-model": "workspace:*",
     "@types/jest": "29.5.12",
-    "@types/node": "22.4.1",
+    "@types/node": "22.4.2",
     "@typescript-eslint/eslint-plugin": "8.2.0",
     "@typescript-eslint/parser": "8.2.0",
     "eslint": "8.57.0",
