@@ -17,7 +17,7 @@
   <nr-zone-queue [$trackDisplay]="$trackDisplay" [class]="layoutClass" class="zone-queue" />
 </ng-template>
 <ng-template #zoneVolume let-layoutClass="class">
-  <nr-zone-volume [class]="layoutClass" class="zone-volume" [$outputs]="$zoneOutputs"/>
+  <nr-zone-volume [class]="layoutClass" class="zone-volume" />
 </ng-template>
 @switch ($layout()) {
   @case (DisplayMode.COMPACT) {

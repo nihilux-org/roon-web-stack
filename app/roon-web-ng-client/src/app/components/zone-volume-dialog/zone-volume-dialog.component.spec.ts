@@ -1,24 +1,26 @@
 import { MockBuilder, MockRender } from "ng-mocks";
-import { signal, WritableSignal } from "@angular/core";
+import { Signal, signal, WritableSignal } from "@angular/core";
 import { ComponentFixture } from "@angular/core/testing";
 import { MatDialog, MatDialogRef } from "@angular/material/dialog";
-import { Command, ZoneState } from "@model";
-import { RoonService } from "@services/roon.service";
+import { Output } from "@model";
 import { SettingsService } from "@services/settings.service";
+import { VolumeService } from "@services/volume.service";
 import { ZoneVolumeDialogComponent } from "./zone-volume-dialog.component";
 
 describe("ZoneVolumeDialogComponent", () => {
-  let $zone: WritableSignal<ZoneState>;
-  let commands: Command[];
-  let roonService: {
-    command: jest.Mock;
-    zoneState: jest.Mock;
-  };
-  let $displayedZoneId: WritableSignal<string>;
   let $isSmallScreen: WritableSignal<boolean>;
   let settingsService: {
-    displayedZoneId: jest.Mock;
     isSmallScreen: jest.Mock;
+  };
+  let $outputs: Signal<Output[]>;
+  let $canGroup: Signal<boolean>;
+  let $isGroup: Signal<boolean>;
+  let $isGroupedZoneMute: Signal<boolean>;
+  let volumeService: {
+    outputs: jest.Mock;
+    canGroup: jest.Mock;
+    isGrouped: jest.Mock;
+    isGroupedZoneMute: jest.Mock;
   };
   let closeDialog: jest.Mock;
   let openTransferDialog: jest.Mock;
@@ -26,25 +28,25 @@ describe("ZoneVolumeDialogComponent", () => {
   let fixture: ComponentFixture<ZoneVolumeDialogComponent>;
 
   beforeEach(async () => {
-    $zone = signal({
-      outputs: [],
-    } as unknown as ZoneState);
-    commands = [];
-    roonService = {
-      command: jest.fn().mockImplementation((c: Command) => commands.push(c)),
-      zoneState: jest.fn().mockImplementation(() => $zone),
-    };
-    $displayedZoneId = signal("zone_id");
     $isSmallScreen = signal(false);
     settingsService = {
-      displayedZoneId: jest.fn().mockImplementation(() => $displayedZoneId),
       isSmallScreen: jest.fn().mockImplementation(() => $isSmallScreen),
+    };
+    $outputs = signal([]);
+    $canGroup = signal(false);
+    $isGroup = signal(false);
+    $isGroupedZoneMute = signal(false);
+    volumeService = {
+      outputs: jest.fn().mockImplementation(() => $outputs),
+      canGroup: jest.fn().mockImplementation(() => $canGroup),
+      isGrouped: jest.fn().mockImplementation(() => $isGroup),
+      isGroupedZoneMute: jest.fn().mockImplementation(() => $isGroupedZoneMute),
     };
     closeDialog = jest.fn();
     openTransferDialog = jest.fn();
     await MockBuilder(ZoneVolumeDialogComponent)
-      .mock(RoonService, roonService as Partial<RoonService>)
       .mock(SettingsService, settingsService as Partial<SettingsService>)
+      .mock(VolumeService, volumeService as Partial<VolumeService>)
       .mock(MatDialogRef<ZoneVolumeDialogComponent>, {
         close: closeDialog,
       })

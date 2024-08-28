@@ -1,51 +1,44 @@
-import { ChangeDetectionStrategy, Component, computed, Input, Signal, ViewChild } from "@angular/core";
+import { ChangeDetectionStrategy, Component, Signal, ViewChild } from "@angular/core";
 import { MatButtonModule, MatIconButton } from "@angular/material/button";
+import { MatRipple } from "@angular/material/core";
 import { MatDialog } from "@angular/material/dialog";
 import { MatDivider } from "@angular/material/divider";
 import { MatIconModule } from "@angular/material/icon";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatSliderModule } from "@angular/material/slider";
 import { ZoneVolumeDialogComponent } from "@components/zone-volume-dialog/zone-volume-dialog.component";
-import { Output } from "@model";
 import { DisplayMode } from "@model/client";
 import { SettingsService } from "@services/settings.service";
+import { VolumeService } from "@services/volume.service";
 
 @Component({
   selector: "nr-zone-volume",
   standalone: true,
-  imports: [MatButtonModule, MatDivider, MatIconModule, MatMenuModule, MatSliderModule],
+  imports: [MatButtonModule, MatDivider, MatIconModule, MatMenuModule, MatSliderModule, MatRipple],
   templateUrl: "./zone-volume.component.html",
   styleUrl: "./zone-volume.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ZoneVolumeComponent {
-  @Input({ required: true }) $outputs!: Signal<Output[]>;
   @ViewChild("volumeButton") _volumeButton!: MatIconButton;
   private readonly _dialog: MatDialog;
+  private readonly _volumeService: VolumeService;
   private readonly _$displayMode: Signal<DisplayMode>;
   private readonly _$isSmallScreen: Signal<boolean>;
   private readonly _$layoutClass: Signal<string>;
   readonly $isMuted: Signal<boolean>;
 
-  constructor(dialog: MatDialog, settingsService: SettingsService) {
+  constructor(dialog: MatDialog, settingsService: SettingsService, volumeService: VolumeService) {
     this._dialog = dialog;
+    this._volumeService = volumeService;
     this._$displayMode = settingsService.displayMode();
     this._$isSmallScreen = settingsService.isSmallScreen();
     this._$layoutClass = settingsService.displayModeClass();
-    this.$isMuted = computed(() => {
-      const outputs = this.$outputs();
-      if (outputs.length > 1) {
-        return outputs.reduce((isMuted, output) => isMuted && (output.volume?.is_muted ?? false), true);
-      } else if (outputs.length === 1) {
-        return outputs[0].volume?.is_muted ?? false;
-      } else {
-        return false;
-      }
-    });
+    this.$isMuted = this._volumeService.isMute();
   }
 
   onVolumeDrawerOpen() {
-    const nbOutputs = this.$outputs().length;
+    const nbOutputs = this._volumeService.outputs()().length;
     if (nbOutputs > 0) {
       const buttonElementRect = (
         this._volumeButton._elementRef.nativeElement as HTMLButtonElement
