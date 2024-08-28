@@ -1,16 +1,24 @@
 @if ($queue().length > 0) {
   <cdk-virtual-scroll-viewport
-    itemSize="101"
-    class="queue"
     [@toggleQueue]="$displayQueue() ? 'open' : 'closed'"
     (@toggleQueue.done)="onQueueTrackToggled()"
     (@toggleQueue.start)="onQueueTrackToggleStart($event)"
-    [@.disabled]="disabled">
+    [@.disabled]="disabled"
+    [itemSize]="101"
+    class="queue"
+  >
     <ol>
         <li *cdkVirtualFor="let track of $queue(); let last = last; let index = $index;">
-          <button tabindex="0" (click)="openActionMenu(track.queue_item_id)" class="track">
-            @if (track.image_key) {
-              <nr-roon-image class="track-image" priority="false" [alt]="track.title + ' cover'" height="70" width="70" [src]="track.image_key!" />
+          <button (click)="openActionMenu(track.queue_item_id)" class="track">
+            @if (track.image_key !== undefined) {
+              <nr-roon-image
+                [src]="track.image_key"
+                [alt]="track.title + ' cover'"
+                [height]="70"
+                [width]="70"
+                class="track-image"
+                priority="false"
+              />
             } @else {
               <div class="track-image"></div>
             }
@@ -31,7 +39,7 @@
         </li>
     </ol>
   </cdk-virtual-scroll-viewport>
-  <mat-menu #actionMenu="matMenu" xPosition="before" yPosition="above">
+  <mat-menu #actionMenu="matMenu" xPosition="before" yPosition="above" class="nr-menu-custom" [class]="$layoutClass()">
     <ng-template matMenuContent let-queueItemId="queue_item_id">
       <button mat-menu-item (click)="onPlayFromHere(queueItemId)">Play from here</button>
     </ng-template>

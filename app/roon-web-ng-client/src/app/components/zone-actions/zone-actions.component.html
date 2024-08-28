@@ -7,17 +7,17 @@
   @if ($isIconsOnly()) {
     @for (action of $actions(); track action.id) {
       <span class="is-small-screen">
-        <button tabindex="0" mat-icon-button (click)="executeAction(action)"><mat-icon [fontIcon]="action.button.icon" /></button>
+        <button mat-icon-button (click)="executeAction(action)"><mat-icon [fontIcon]="action.button.icon" /></button>
       </span>
     }
   } @else {
     @for (action of $actions(); track action.id) {
       <span>
-        <button tabindex="0" mat-button (click)="executeAction(action)"><mat-icon [fontIcon]="action.button.icon" />{{action.button.label}}</button>
+        <button mat-button (click)="executeAction(action)"><mat-icon [fontIcon]="action.button.icon" />{{action.button.label}}</button>
       </span>
     }
   }
 </div>
 <div class="settings">
-    <button tabindex="0" mat-icon-button (click)="openSettingsDialog()"><mat-icon fontIcon="settings" /></button>
+    <button mat-icon-button (click)="openSettingsDialog()"><mat-icon fontIcon="settings" /></button>
 </div>

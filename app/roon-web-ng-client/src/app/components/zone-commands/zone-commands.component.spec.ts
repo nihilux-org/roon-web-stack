@@ -47,7 +47,7 @@ describe("ZoneCommandsComponent", () => {
       $zoneCommands,
       $zoneOutputs,
     });
-    component = fixture.componentInstance as ZoneCommandsComponent;
+    component = fixture.componentInstance as unknown as ZoneCommandsComponent;
     fixture.detectChanges();
   });
 

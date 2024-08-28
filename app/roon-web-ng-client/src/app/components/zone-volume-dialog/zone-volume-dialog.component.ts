@@ -32,10 +32,12 @@ export class ZoneVolumeDialogComponent {
   private readonly _dialog: MatDialog;
   private readonly _dialogRef: MatDialogRef<ZoneVolumeDialogComponent>;
   private readonly _roonService: RoonService;
+  private readonly _$layoutClass: Signal<string>;
   readonly $outputs: Signal<Output[]>;
   readonly $isSmallScreen: Signal<boolean>;
   readonly $canGroup: Signal<boolean>;
   readonly $isGroup: Signal<boolean>;
+  readonly $isGroupedZoneMute: Signal<boolean>;
 
   constructor(
     dialog: MatDialog,
@@ -46,6 +48,7 @@ export class ZoneVolumeDialogComponent {
     this._dialog = dialog;
     this._dialogRef = dialogRef;
     this._roonService = roonService;
+    this._$layoutClass = settingsService.displayModeClass();
     const $displayedZoneId = settingsService.displayedZoneId();
     this.$outputs = computed(
       () => {
@@ -62,6 +65,9 @@ export class ZoneVolumeDialogComponent {
       return outputs.length > 0 && outputs[0].can_group_with_output_ids.length > 0;
     });
     this.$isGroup = computed(() => this.$outputs().length > 1);
+    this.$isGroupedZoneMute = computed(() => {
+      return this.$outputs().reduce((isMuted, output) => isMuted && (output.volume?.is_muted ?? false), true);
+    });
   }
 
   onGroupedZoneStep(event: MouseEvent, decrement: boolean) {
@@ -78,7 +84,7 @@ export class ZoneVolumeDialogComponent {
 
   onGroupedZoneMute(event: MouseEvent) {
     event.stopPropagation();
-    const type: MuteType = this.isGroupedZoneMute() ? MuteType.UN_MUTE : MuteType.MUTE;
+    const type: MuteType = this.$isGroupedZoneMute() ? MuteType.UN_MUTE : MuteType.MUTE;
     const command: MuteGroupedZoneCommand = {
       type: CommandType.MUTE_GROUPED_ZONE,
       data: {
@@ -87,10 +93,6 @@ export class ZoneVolumeDialogComponent {
       },
     };
     this._roonService.command(command);
-  }
-
-  isGroupedZoneMute() {
-    return this.$outputs().reduce((isMuted, output) => isMuted && (output.volume?.is_muted ?? false), true);
   }
 
   onVolumeStep(event: MouseEvent, output_id: string, decrement?: boolean) {
@@ -148,6 +150,7 @@ export class ZoneVolumeDialogComponent {
     this._dialog.open(ZoneTransferDialogComponent, {
       autoFocus: false,
       restoreFocus: false,
+      panelClass: ["nr-dialog-custom", this._$layoutClass()],
     });
   }
 
@@ -156,6 +159,7 @@ export class ZoneVolumeDialogComponent {
     this._dialog.open(ZoneGroupingDialogComponent, {
       autoFocus: false,
       restoreFocus: false,
+      panelClass: ["nr-dialog-custom", this._$layoutClass()],
     });
   }
 }

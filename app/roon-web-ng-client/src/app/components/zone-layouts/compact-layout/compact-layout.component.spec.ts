@@ -25,6 +25,9 @@ import { CompactLayoutComponent } from "./compact-layout.component";
     <ng-template #zoneQueue let-layoutClass="class">
       <div class="zone-queue"></div>
     </ng-template>
+    <ng-template #zoneVolume let-layoutClass="class">
+      <div class="zone-volume"></div>
+    </ng-template>
   `,
 })
 // eslint-disable-next-line @angular-eslint/component-class-suffix,@typescript-eslint/no-extraneous-class
@@ -40,6 +43,7 @@ describe("CompactLayoutComponent", () => {
   let zoneImage: TemplateRef<LayoutContext>;
   let zoneProgression: TemplateRef<LayoutContext>;
   let zoneQueue: TemplateRef<LayoutContext>;
+  let zoneVolume: TemplateRef<LayoutContext>;
   let layoutContext: LayoutContext;
   let $isSmallTablet: WritableSignal<boolean>;
   let settingsService: {
@@ -69,6 +73,7 @@ describe("CompactLayoutComponent", () => {
       zoneImage,
       zoneProgression,
       zoneQueue,
+      zoneVolume,
       context: layoutContext,
     };
 

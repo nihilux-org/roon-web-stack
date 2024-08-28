@@ -1,8 +1,16 @@
 import { deepEqual } from "fast-equals";
-import { booleanAttribute, ChangeDetectionStrategy, Component, computed, Input, Signal } from "@angular/core";
+import {
+  booleanAttribute,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  Input,
+  Signal,
+  ViewChild,
+} from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
-import { MatMenuModule } from "@angular/material/menu";
+import { MatMenuModule, MatMenuTrigger } from "@angular/material/menu";
 import { ApiState, ZoneDescription } from "@model";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
@@ -19,11 +27,13 @@ export class ZoneSelectorComponent {
   @Input({ required: false, transform: booleanAttribute }) withoutLabel: boolean;
   @Input({ required: false }) xPosition: "before" | "after";
   @Input({ required: false }) yPosition: "below" | "above";
+  @ViewChild(MatMenuTrigger) menuTrigger!: MatMenuTrigger;
   private readonly _settingsService: SettingsService;
   private readonly _$zoneId: Signal<string>;
   private readonly _$roonState: Signal<ApiState>;
   readonly $zones: Signal<ZoneDescription[]>;
   readonly $label: Signal<string>;
+  readonly $layoutClass: Signal<string>;
 
   constructor(roonService: RoonService, settingsService: SettingsService) {
     this._settingsService = settingsService;
@@ -44,6 +54,7 @@ export class ZoneSelectorComponent {
       const zoneId = this._$zoneId();
       return this.$zones().find((zd: ZoneDescription) => zd.zone_id === zoneId)?.display_name ?? "Zones";
     });
+    this.$layoutClass = settingsService.displayModeClass();
   }
 
   onZoneSelected(selectedZoneId: string) {

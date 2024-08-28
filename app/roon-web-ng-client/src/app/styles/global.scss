@@ -1,0 +1,62 @@
+@use "@angular/material" as mat;
+@use "./variables" as nr-variables;
+@use "./mixins" as nr;
+
+@mixin global {
+
+  @property --roon-list-item-height {
+    syntax: "<length>";
+    inherits: true;
+    initial-value: 70px;
+  }
+
+  @property --roon-list-item-padding {
+    syntax: "<length>";
+    inherits: true;
+    initial-value: 10px;
+  }
+
+  @property --roon-list-item-info-margin {
+    syntax: "<length>";
+    inherits: true;
+    initial-value: 30px;
+  }
+
+  @property --roon-list-item-divider-margin {
+    syntax: "<length>";
+    inherits: true;
+    initial-value: 105px;
+  }
+
+  .queue {
+    .cdk-virtual-scroll-content-wrapper {
+      max-width: 100% !important;
+    }
+  }
+
+  .roon-list {
+    .cdk-virtual-scroll-orientation-vertical .cdk-virtual-scroll-content-wrapper {
+      max-width: 100% !important;
+    }
+  }
+
+  .zone-grouping {
+    .mdc-form-field > label {
+      display: flex;
+      align-items: center;
+      mat-icon {
+        margin-right: 6px;
+      }
+    }
+  }
+
+  .settings-tab .mat-mdc-tab-body-content {
+    overflow: hidden;
+  }
+
+  .custom-actions-tabs {
+    .mat-mdc-tab-header {
+      display: none;
+    }
+  }
+}

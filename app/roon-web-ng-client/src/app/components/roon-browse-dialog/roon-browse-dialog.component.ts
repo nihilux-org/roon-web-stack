@@ -60,6 +60,7 @@ export class RoonBrowseDialogComponent implements OnInit, OnDestroy {
   private readonly _firstPath: RoonPath;
   private readonly _scrollIndexes: number[];
   private readonly _dialogCloseSub: Subscription;
+  private readonly _$layoutClass: Signal<string>;
   readonly isRecording: boolean;
   readonly zoneId: string;
   readonly hierarchy: RoonApiBrowseHierarchy;
@@ -86,6 +87,7 @@ export class RoonBrowseDialogComponent implements OnInit, OnDestroy {
     this._dialogRef = dialogRef;
     this._firstPath = data.path;
     this._scrollIndexes = [];
+    this._$layoutClass = settingsService.displayModeClass();
     this.hierarchy = data.path.hierarchy;
     this.isRecording = data.isRecording;
     this.$dialogTitle = signal([]);
@@ -113,7 +115,10 @@ export class RoonBrowseDialogComponent implements OnInit, OnDestroy {
         set_display_offset: true,
       });
       if (this.isRecording) {
-        this._dialog.open(CustomActionsManagerComponent, CustomActionsManagerDialogConfig);
+        this._dialog.open(CustomActionsManagerComponent, {
+          ...CustomActionsManagerDialogConfig,
+          panelClass: ["nr-dialog-custom", this._$layoutClass()],
+        });
       }
     });
   }

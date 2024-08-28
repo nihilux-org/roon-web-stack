@@ -77,11 +77,13 @@ export class RoonBrowseListComponent implements OnChanges, AfterViewChecked {
   @ViewChildren(MatMenuTrigger) _menuTriggers!: QueryList<MatMenuTrigger>;
   dataSource?: RoonListDataSource | Item[];
   readonly $isOneColumn: Signal<boolean>;
+  readonly $layoutClass: Signal<string>;
 
   constructor(roonService: RoonService, settingsService: SettingsService) {
     this._roonService = roonService;
     this._inputValues = new Map<string, string>();
     this.$isOneColumn = settingsService.isOneColumn();
+    this.$layoutClass = settingsService.displayModeClass();
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -184,6 +186,7 @@ export class RoonBrowseListComponent implements OnChanges, AfterViewChecked {
         this.navigateToActionList(item_key, menuTrigger, navigationSub, 0);
       } else {
         menuTrigger.closeMenu();
+        menuTrigger.focus("keyboard");
       }
     }
   }

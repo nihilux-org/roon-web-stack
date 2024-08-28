@@ -16,6 +16,8 @@ describe("SettingsDialogComponent", () => {
   let $isOneColumn: WritableSignal<boolean>;
   let $actions: WritableSignal<Action[]>;
   let $availableAction: WritableSignal<Action[]>;
+  let $layoutClass: WritableSignal<string>;
+  let displayModeClasses: string[];
   let settingsService: {
     chosenTheme: jest.Mock;
     saveIsDarkTheme: jest.Mock;
@@ -26,12 +28,16 @@ describe("SettingsDialogComponent", () => {
     actions: jest.Mock;
     saveActions: jest.Mock;
     availableActions: jest.Mock;
+    displayModeClass: jest.Mock;
+    displayModeClasses: jest.Mock;
   };
   let version: string;
   let roonService: {
     version: jest.Mock;
   };
   let closeDialog: jest.Mock;
+  let addPanelClass: jest.Mock;
+  let removePanelClass: jest.Mock;
   let component: SettingsDialogComponent;
   let fixture: ComponentFixture<SettingsDialogComponent>;
 
@@ -43,6 +49,8 @@ describe("SettingsDialogComponent", () => {
     $isOneColumn = signal(false);
     $actions = signal(DefaultActions);
     $availableAction = signal([]);
+    $layoutClass = signal("wide");
+    displayModeClasses = ["wide", "one-column", "compact"];
     settingsService = {
       chosenTheme: jest.fn().mockImplementation(() => $chosenTheme),
       saveIsDarkTheme: jest.fn().mockImplementation((chosenTheme: ChosenTheme) => {
@@ -59,17 +67,23 @@ describe("SettingsDialogComponent", () => {
         $actions.set(actions);
       }),
       availableActions: jest.fn().mockImplementation(() => $availableAction),
+      displayModeClass: jest.fn().mockImplementation(() => $layoutClass),
+      displayModeClasses: jest.fn().mockImplementation(() => displayModeClasses),
     };
     version = "version";
     roonService = {
       version: jest.fn().mockImplementation(() => version),
     };
     closeDialog = jest.fn();
+    addPanelClass = jest.fn();
+    removePanelClass = jest.fn();
     await MockBuilder(SettingsDialogComponent)
       .mock(SettingsService, settingsService as Partial<SettingsService>)
       .mock(RoonService, roonService as Partial<RoonService>)
       .mock(MatDialogRef<SettingsDialogComponent>, {
         close: closeDialog,
+        addPanelClass,
+        removePanelClass,
       })
       .mock(MAT_DIALOG_DATA, { selectedTab })
       .keep(MatTab);

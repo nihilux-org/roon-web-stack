@@ -12,8 +12,10 @@ describe("RoonBrowseListComponent", () => {
     navigate: jest.Mock;
   };
   let $isOneColumn: WritableSignal<boolean>;
+  let $displayModeClass: WritableSignal<string>;
   let settingsService: {
     isOneColumn: jest.Mock;
+    displayModeClass: jest.Mock;
   };
   let content: RoonApiBrowseLoadResponse;
   let clickedItem: EventEmitter<NavigationEvent>;
@@ -38,8 +40,10 @@ describe("RoonBrowseListComponent", () => {
       navigate: jest.fn(),
     };
     $isOneColumn = signal(false);
+    $displayModeClass = signal("wide");
     settingsService = {
       isOneColumn: jest.fn().mockImplementation(() => $isOneColumn),
+      displayModeClass: jest.fn().mockImplementation(() => $displayModeClass),
     };
     content = {
       list: {

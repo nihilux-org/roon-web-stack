@@ -1,10 +1,11 @@
 import { deepEqual } from "fast-equals";
-import { ChangeDetectionStrategy, Component, computed, Input, Signal } from "@angular/core";
+import { NgTemplateOutlet } from "@angular/common";
+import { ChangeDetectionStrategy, Component, computed, Input, Signal, TemplateRef } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { ZoneSelectorComponent } from "@components/zone-selector/zone-selector.component";
 import { ZoneVolumeComponent } from "@components/zone-volume/zone-volume.component";
-import { Command, CommandType, Output } from "@model";
+import { Command, CommandType } from "@model";
 import { DisplayMode, ZoneCommands, ZoneCommandState } from "@model/client";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
@@ -12,7 +13,7 @@ import { SettingsService } from "@services/settings.service";
 @Component({
   selector: "nr-zone-commands",
   standalone: true,
-  imports: [MatButtonModule, MatIconModule, ZoneSelectorComponent, ZoneVolumeComponent],
+  imports: [MatButtonModule, MatIconModule, ZoneSelectorComponent, ZoneVolumeComponent, NgTemplateOutlet],
   templateUrl: "./zone-commands.component.html",
   styleUrl: "./zone-commands.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -20,7 +21,7 @@ import { SettingsService } from "@services/settings.service";
 export class ZoneCommandsComponent {
   private readonly _roonService: RoonService;
   @Input({ required: true }) $zoneCommands!: Signal<ZoneCommands>;
-  @Input({ required: true }) $zoneOutputs!: Signal<Output[]>;
+  @Input({ required: false }) zoneVolume?: TemplateRef<{ class: string }>;
   readonly $isSmallScreen: Signal<boolean>;
 
   constructor(roonService: RoonService, settingsService: SettingsService) {

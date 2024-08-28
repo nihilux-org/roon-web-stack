@@ -64,6 +64,7 @@ export class ZoneQueueComponent implements AfterViewInit {
   readonly $zoneId: Signal<string>;
   readonly $queue: Signal<QueueTrack[]>;
   readonly $displayQueue: Signal<boolean>;
+  readonly $layoutClass: Signal<string>;
   disabled: boolean;
   @ViewChild(CdkVirtualScrollViewport) _virtualScroll?: CdkVirtualScrollViewport;
   @ViewChildren(MatMenuTrigger) _menuTriggers!: QueryList<MatMenuTrigger>;
@@ -87,6 +88,7 @@ export class ZoneQueueComponent implements AfterViewInit {
         equal: deepEqual,
       }
     );
+    this.$layoutClass = settingsService.displayModeClass();
     this.disabled = true;
   }
 

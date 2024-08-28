@@ -45,6 +45,7 @@ export class SettingsService implements OnDestroy {
   private static readonly DISPLAY_QUEUE_TRACK_KEY = "nr.DISPLAY_QUEUE_TRACK";
   private static readonly DISPLAY_MODE_KEY = "nr.DISPLAY_MODE";
   private static readonly ACTIONS_KEY = "nr.ACTIONS";
+  private static readonly DISPLAY_MODE_CLASSES = ["one-column", "compact", "wide"];
   private readonly _breakpointObserver: BreakpointObserver;
   private readonly _customActionsService: CustomActionsService;
   private readonly _$actions: WritableSignal<Action[]>;
@@ -55,6 +56,7 @@ export class SettingsService implements OnDestroy {
   private readonly _$displayedZoneId: WritableSignal<string>;
   private readonly _$displayQueueTrack: WritableSignal<boolean>;
   private readonly _$displayMode: WritableSignal<DisplayMode>;
+  private readonly _$displayModeClass: Signal<string>;
   private readonly _$isOneColumn: Signal<boolean>;
   private readonly _$isSmallScreen: Signal<boolean>;
   private readonly _$isSmallTablet: Signal<boolean>;
@@ -79,6 +81,22 @@ export class SettingsService implements OnDestroy {
     });
     const $customActions = this._customActionsService.customActions();
     this._$displayMode = signal(this.loadDisplayModeFromLocalStorage(DisplayMode.WIDE));
+    this._$displayModeClass = computed(() => {
+      let displayModeClass = "";
+      if (this._$isOneColumn()) {
+        displayModeClass = SettingsService.DISPLAY_MODE_CLASSES[0];
+      } else {
+        switch (this._$displayMode()) {
+          case DisplayMode.COMPACT:
+            displayModeClass = SettingsService.DISPLAY_MODE_CLASSES[1];
+            break;
+          case DisplayMode.WIDE:
+            displayModeClass = SettingsService.DISPLAY_MODE_CLASSES[2];
+            break;
+        }
+      }
+      return displayModeClass;
+    });
     this._$allActions = computed(() => [...DefaultActions, ...$customActions()]);
     this._$actions = signal(this.loadActionsFromLocalStorage());
     this._reloadActionsEffect = effect(
@@ -219,6 +237,14 @@ export class SettingsService implements OnDestroy {
 
   displayMode(): Signal<DisplayMode> {
     return this._$displayMode;
+  }
+
+  displayModeClass(): Signal<string> {
+    return this._$displayModeClass;
+  }
+
+  displayModeClasses(): string[] {
+    return SettingsService.DISPLAY_MODE_CLASSES;
   }
 
   saveActions(actions: Action[]) {

@@ -1,6 +1,5 @@
 import { deepEqual } from "fast-equals";
 import { ChangeDetectionStrategy, Component, computed, Signal } from "@angular/core";
-import { RoonImageComponent } from "@components/roon-image/roon-image.component";
 import { ZoneActionsComponent } from "@components/zone-actions/zone-actions.component";
 import { ZoneCommandsComponent } from "@components/zone-commands/zone-commands.component";
 import { ZoneCurrentTrackComponent } from "@components/zone-current-track/zone-current-track.component";
@@ -10,7 +9,7 @@ import { OneColumnLayoutComponent } from "@components/zone-layouts/one-column-la
 import { WideLayoutComponent } from "@components/zone-layouts/wide-layout/wide-layout.component";
 import { ZoneProgressionComponent } from "@components/zone-progression/zone-progression.component";
 import { ZoneQueueComponent } from "@components/zone-queue/zone-queue.component";
-import { ZoneSelectorComponent } from "@components/zone-selector/zone-selector.component";
+import { ZoneVolumeComponent } from "@components/zone-volume/zone-volume.component";
 import { Output, ZoneState } from "@model";
 import {
   DEFAULT_ZONE_PROGRESSION,
@@ -28,17 +27,16 @@ import { SettingsService } from "@services/settings.service";
   selector: "nr-zone-container",
   standalone: true,
   imports: [
-    RoonImageComponent,
+    CompactLayoutComponent,
+    OneColumnLayoutComponent,
+    WideLayoutComponent,
     ZoneActionsComponent,
     ZoneCommandsComponent,
     ZoneCurrentTrackComponent,
+    ZoneImageComponent,
     ZoneProgressionComponent,
     ZoneQueueComponent,
-    ZoneSelectorComponent,
-    ZoneImageComponent,
-    CompactLayoutComponent,
-    WideLayoutComponent,
-    OneColumnLayoutComponent,
+    ZoneVolumeComponent,
   ],
   templateUrl: "./zone-container.component.html",
   styleUrl: "./zone-container.component.scss",
@@ -53,6 +51,8 @@ export class ZoneContainerComponent {
   readonly $zoneOutputs: Signal<Output[]>;
   readonly $isOneColumn: Signal<boolean>;
   readonly $layout: Signal<DisplayMode>;
+  readonly $layoutClass: Signal<string>;
+  readonly DisplayMode = DisplayMode;
 
   constructor(roonService: RoonService, settingsService: SettingsService) {
     this._settingsService = settingsService;
@@ -141,7 +141,6 @@ export class ZoneContainerComponent {
         return this._settingsService.displayMode()();
       }
     });
+    this.$layoutClass = this._settingsService.displayModeClass();
   }
-
-  protected readonly DisplayMode = DisplayMode;
 }

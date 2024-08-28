@@ -1,3 +1,5 @@
+@use "../../styles/mixins" as nr;
+
 :host {
   display: flex;
   justify-content: flex-end;

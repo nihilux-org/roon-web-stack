@@ -35,21 +35,25 @@ export class ZoneActionsComponent {
   private readonly _roonService: RoonService;
   private readonly _$isOneColumn: Signal<boolean>;
   private readonly _$isSmallTablet: Signal<boolean>;
+  private readonly _$isQueueInModal: Signal<boolean>;
   readonly $isIconsOnly: Signal<boolean>;
   readonly $actions: Signal<Action[]>;
   readonly $withFullscreen: Signal<boolean>;
 
   constructor(
     dialog: MatDialog,
-    settingsService: SettingsService,
     fullScreenService: FullscreenService,
-    roonService: RoonService
+    roonService: RoonService,
+    settingsService: SettingsService
   ) {
     this._dialog = dialog;
     this._settingsService = settingsService;
     this._roonService = roonService;
     this._$isOneColumn = this._settingsService.isOneColumn();
     this._$isSmallTablet = this._settingsService.isSmallTablet();
+    this._$isQueueInModal = computed(() => {
+      return this._$isOneColumn() || this._$isSmallTablet();
+    });
     const $isSmallScreen = this._settingsService.isSmallScreen();
     this.$isIconsOnly = computed(() => {
       return $isSmallScreen() || this._$isSmallTablet();
@@ -87,6 +91,7 @@ export class ZoneActionsComponent {
       maxHeight: "90svh",
       width: "90svw",
       maxWidth: "90svw",
+      panelClass: ["nr-dialog-custom", this._settingsService.displayModeClass()()],
     };
     if (this._$isOneColumn()) {
       config.height = "95svh";
@@ -98,11 +103,14 @@ export class ZoneActionsComponent {
   }
 
   openSettingsDialog() {
-    this._dialog.open(SettingsDialogComponent, SettingsDialogConfig);
+    this._dialog.open(SettingsDialogComponent, {
+      ...SettingsDialogConfig,
+      panelClass: ["nr-dialog-custom", this._settingsService.displayModeClass()()],
+    });
   }
 
   private toggleDisplayQueueTrack() {
-    if (this._$isOneColumn() || this._$isSmallTablet()) {
+    if (this._$isQueueInModal()) {
       this._settingsService.saveDisplayQueueTrack(true);
       this._dialog.open(ZoneQueueDialogComponent, {
         restoreFocus: false,
@@ -114,6 +122,7 @@ export class ZoneActionsComponent {
           $trackDisplay: this.$trackDisplay,
           queueComponentTemplateRef: this.queueComponentTemplateRef,
         },
+        panelClass: ["nr-dialog-custom", this._settingsService.displayModeClass()()],
       });
     } else {
       this._settingsService.toggleDisplayQueueTrack();
