@@ -14,6 +14,7 @@ export enum DisplayMode {
   COMPACT = "COMPACT",
   ONE_COLUMN = "ONE_COLUMN",
   WIDE = "WIDE",
+  TEN_FEET = "TEN_FEET",
 }
 
 export enum VisibilityState {
@@ -32,4 +33,9 @@ export const SettingsDialogConfig: MatDialogConfig = {
   position: {
     top: "5svh",
   },
+};
+
+export const SettingsDialogConfigBigFonts: MatDialogConfig = {
+  ...SettingsDialogConfig,
+  width: "800px",
 };

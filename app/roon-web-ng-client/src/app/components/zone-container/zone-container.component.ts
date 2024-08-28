@@ -10,7 +10,7 @@ import { WideLayoutComponent } from "@components/zone-layouts/wide-layout/wide-l
 import { ZoneProgressionComponent } from "@components/zone-progression/zone-progression.component";
 import { ZoneQueueComponent } from "@components/zone-queue/zone-queue.component";
 import { ZoneVolumeComponent } from "@components/zone-volume/zone-volume.component";
-import { Output, ZoneState } from "@model";
+import { ZoneState } from "@model";
 import {
   DEFAULT_ZONE_PROGRESSION,
   DisplayMode,
@@ -48,7 +48,6 @@ export class ZoneContainerComponent {
   readonly $trackDisplay: Signal<TrackDisplay>;
   readonly $zoneCommands: Signal<ZoneCommands>;
   readonly $zoneProgression: Signal<ZoneProgression>;
-  readonly $zoneOutputs: Signal<Output[]>;
   readonly $isOneColumn: Signal<boolean>;
   readonly $layout: Signal<DisplayMode>;
   readonly $layoutClass: Signal<string>;
@@ -125,14 +124,6 @@ export class ZoneContainerComponent {
       }
       return DEFAULT_ZONE_PROGRESSION;
     });
-    this.$zoneOutputs = computed(
-      () => {
-        return this._$zone().outputs;
-      },
-      {
-        equal: deepEqual,
-      }
-    );
     this.$isOneColumn = this._settingsService.isOneColumn();
     this.$layout = computed(() => {
       if (this.$isOneColumn()) {
