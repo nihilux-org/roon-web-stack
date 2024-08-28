@@ -15,6 +15,7 @@ import { SettingsDialogComponent } from "@components/settings-dialog/settings-di
 import { CustomAction, SettingsDialogConfig } from "@model/client";
 import { CustomActionsService } from "@services/custom-actions.service";
 import { RoonService } from "@services/roon.service";
+import { SettingsService } from "@services/settings.service";
 
 @Component({
   selector: "nr-custom-actions-manager",
@@ -39,6 +40,7 @@ export class CustomActionsManagerComponent {
   private readonly _dialogRef: MatDialogRef<CustomActionsManagerComponent>;
   private readonly _customActionsService: CustomActionsService;
   private readonly _roonService: RoonService;
+  private readonly _$layoutClass: Signal<string>;
   readonly $isEditing: Signal<boolean>;
   readonly $customActions: Signal<CustomAction[]>;
   readonly $selectedTab: Signal<number>;
@@ -49,12 +51,14 @@ export class CustomActionsManagerComponent {
     matDialog: MatDialog,
     dialogRef: MatDialogRef<CustomActionsManagerComponent>,
     customActionsService: CustomActionsService,
-    roonService: RoonService
+    roonService: RoonService,
+    settingsService: SettingsService
   ) {
     this._dialog = matDialog;
     this._dialogRef = dialogRef;
     this._customActionsService = customActionsService;
     this._roonService = roonService;
+    this._$layoutClass = settingsService.displayModeClass();
     this.$isEditing = this._customActionsService.isEditing();
     this.$customActions = computed(() =>
       this._customActionsService
@@ -81,6 +85,7 @@ export class CustomActionsManagerComponent {
         data: {
           selectedTab: 1,
         },
+        panelClass: ["nr-dialog-custom", this._$layoutClass()],
       });
       this._dialogRef.close();
     }

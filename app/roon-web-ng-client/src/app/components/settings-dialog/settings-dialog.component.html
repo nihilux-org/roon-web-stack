@@ -17,9 +17,9 @@
             <button mat-button id="display-mode-selector" [matMenuTriggerFor]="displayModeSelector">
               <mat-icon fontIcon="display_settings" />{{displayModeLabel(displayMode()())}}
             </button>
-            <mat-menu #displayModeSelector="matMenu" yPosition="below" xPosition="after">
+            <mat-menu #displayModeSelector="matMenu" yPosition="below" xPosition="after" class="nr-menu-custom" [class]="$layoutClass()">
               @for (dm of displayModes(); track dm.id) {
-                <button tabindex="0" mat-menu-item (click)="setDisplayMode(dm.id)"><mat-icon fontIcon="display_settings" />{{dm.label}}</button>
+                <button mat-menu-item (click)="setDisplayMode(dm.id)"><mat-icon fontIcon="display_settings" />{{dm.label}}</button>
               }
             </mat-menu>
           </div>
@@ -45,7 +45,7 @@
           </button>
           <mat-menu #actionSelector="matMenu" yPosition="below" xPosition="after">
             @for (da of $availableActions(); track da.id) {
-              <button tabindex="0" mat-menu-item (click)="addAction(da)"><mat-icon [fontIcon]="da.button.icon" />{{da.button.label}}</button>
+              <button mat-menu-item (click)="addAction(da)"><mat-icon [fontIcon]="da.button.icon" />{{da.button.label}}</button>
             }
           </mat-menu>
         </div>

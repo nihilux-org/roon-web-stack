@@ -1,4 +1,4 @@
-@use "../styles/mixins" as nr;
+@use "../../styles/mixins" as nr;
 
 :host {
   height: 100%;
@@ -19,26 +19,26 @@
       padding: 0;
       li {
         .mat-divider.mat-divider-inset {
-          margin-left: 105px;
+          margin-left: var(--roon-list-item-divider-margin);
         }
       }
       .roon-list-item {
+        @include nr.button-reset();
         display: flex;
         justify-content: flex-start;
         align-items: center;
-        padding: 10px 0 10px 10px;
+        padding: var(--roon-list-item-padding) 0 var(--roon-list-item-padding) var(--roon-list-item-padding);
         width: 100%;
-        @include nr.button-reset();
         .roon-item-image {
-          height: 70px;
-          min-width: 70px;
+          height: var(--roon-list-item-height);
+          min-width: var(--roon-list-item-height);
         }
         .roon-item-info {
           flex-grow: 1;
           display: flex;
           flex-direction: column;
           justify-content: space-evenly;
-          height: 70px;
+          height: var(--roon-list-item-height);;
           min-width: 0;
           text-align: left;
           span {
@@ -63,22 +63,22 @@
         }
       }
     }
-  }
-  .roon-list:not(.is-small-screen) {
-    ol {
-      .roon-list-item {
-        span {
-          margin-left: 30px;
+    &:not(.is-small-screen) {
+      ol {
+        .roon-list-item {
+          span {
+            margin-left: 30px;
+          }
         }
       }
     }
-  }
-  .roon-list.is-small-screen {
-    ol {
-      .roon-list-item {
-        padding: 10px 0;
-        span {
-          margin-left: 15px;
+    &.is-small-screen {
+      ol {
+        .roon-list-item {
+          padding: var(--roon-list-item-padding) 0;
+          span {
+            margin-left: 15px;
+          }
         }
       }
     }

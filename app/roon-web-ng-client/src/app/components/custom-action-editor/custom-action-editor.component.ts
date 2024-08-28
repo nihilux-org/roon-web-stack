@@ -10,6 +10,7 @@ import { CustomActionsManagerComponent } from "@components/custom-actions-manage
 import { RoonApiBrowseHierarchy } from "@model";
 import { CustomActionsManagerDialogConfig } from "@model/client";
 import { CustomActionsService } from "@services/custom-actions.service";
+import { SettingsService } from "@services/settings.service";
 
 @Component({
   selector: "nr-custom-action-editor",
@@ -23,6 +24,7 @@ export class CustomActionEditorComponent {
   private readonly _dialog: MatDialog;
   private readonly _dialogRef: MatDialogRef<CustomActionsManagerComponent>;
   private readonly _customActionsService: CustomActionsService;
+  private readonly _$layoutClass: Signal<string>;
   readonly $label: Signal<string>;
   readonly $icon: Signal<string>;
   readonly $hierarchy: Signal<RoonApiBrowseHierarchy | undefined>;
@@ -32,11 +34,13 @@ export class CustomActionEditorComponent {
   constructor(
     matDialog: MatDialog,
     dialogRef: MatDialogRef<CustomActionsManagerComponent>,
-    customActionService: CustomActionsService
+    customActionService: CustomActionsService,
+    settingsService: SettingsService
   ) {
     this._dialog = matDialog;
     this._dialogRef = dialogRef;
     this._customActionsService = customActionService;
+    this._$layoutClass = settingsService.displayModeClass();
     this.$label = computed(() => this._customActionsService.label()() ?? "");
     this.$icon = computed(() => this._customActionsService.icon()() ?? "");
     this.$hierarchy = this._customActionsService.hierarchy();
@@ -45,7 +49,10 @@ export class CustomActionEditorComponent {
   }
 
   openActionRecorder() {
-    this._dialog.open(CustomActionRecorderComponent, CustomActionsManagerDialogConfig);
+    this._dialog.open(CustomActionRecorderComponent, {
+      ...CustomActionsManagerDialogConfig,
+      panelClass: ["nr-dialog-custom", this._$layoutClass()],
+    });
     this._dialogRef.close();
   }
 

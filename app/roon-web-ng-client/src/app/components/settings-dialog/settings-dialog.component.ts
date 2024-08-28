@@ -1,5 +1,5 @@
 import { CdkDrag, CdkDragDrop, CdkDragHandle, CdkDropList, moveItemInArray } from "@angular/cdk/drag-drop";
-import { ChangeDetectionStrategy, Component, Inject, Signal } from "@angular/core";
+import { ChangeDetectionStrategy, Component, effect, EffectRef, Inject, OnDestroy, Signal } from "@angular/core";
 import { MatButton, MatIconButton } from "@angular/material/button";
 import {
   MAT_DIALOG_DATA,
@@ -45,36 +45,49 @@ import { SettingsService } from "@services/settings.service";
   styleUrl: "./settings-dialog.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SettingsDialogComponent {
+export class SettingsDialogComponent implements OnDestroy {
   private readonly _dialogRef: MatDialogRef<SettingsDialogComponent>;
   private readonly _settingsService: SettingsService;
-  private readonly _displayModeLabels: Map<DisplayMode, string>;
+  readonly displayModeLabels: Map<DisplayMode, string>;
   private readonly _dialog: MatDialog;
+  private readonly _layoutChangeEffect: EffectRef;
   readonly $isSmallScreen: Signal<boolean>;
   readonly $isOneColumn: Signal<boolean>;
   readonly $actions: Signal<Action[]>;
   readonly $availableActions: Signal<Action[]>;
+  readonly $layoutClass: Signal<string>;
   readonly version: string;
   readonly selectedTab: number;
   constructor(
     @Inject(MAT_DIALOG_DATA) data: { selectedTab: number },
-    settingsService: SettingsService,
     roonService: RoonService,
+    settingsService: SettingsService,
     dialogRef: MatDialogRef<SettingsDialogComponent>,
     matDialog: MatDialog
   ) {
     this._dialogRef = dialogRef;
     this._settingsService = settingsService;
-    this._displayModeLabels = new Map<DisplayMode, string>();
-    this._displayModeLabels.set(DisplayMode.COMPACT, "Compact");
-    this._displayModeLabels.set(DisplayMode.WIDE, "Wide");
+    this.displayModeLabels = new Map<DisplayMode, string>();
+    this.displayModeLabels.set(DisplayMode.COMPACT, "Compact");
+    this.displayModeLabels.set(DisplayMode.WIDE, "Wide");
+    this._layoutChangeEffect = effect(() => {
+      for (const displayModeCLass of this._settingsService.displayModeClasses()) {
+        this._dialogRef.removePanelClass(displayModeCLass);
+      }
+      this._dialogRef.addPanelClass(this.$layoutClass());
+    });
     this._dialog = matDialog;
     this.$actions = this._settingsService.actions();
     this.$availableActions = this._settingsService.availableActions();
     this.$isSmallScreen = this._settingsService.isSmallScreen();
     this.$isOneColumn = this._settingsService.isOneColumn();
+    this.$layoutClass = this._settingsService.displayModeClass();
     this.selectedTab = data.selectedTab;
     this.version = roonService.version();
+  }
+
+  ngOnDestroy(): void {
+    this._layoutChangeEffect.destroy();
   }
 
   chosenTheme() {
@@ -103,12 +116,12 @@ export class SettingsDialogComponent {
   }
 
   displayModeLabel(displayMode: DisplayMode) {
-    return this._displayModeLabels.get(displayMode) ?? "Unknown display mode 🤷";
+    return this.displayModeLabels.get(displayMode) ?? "Unknown display mode 🤷";
   }
 
   displayModes() {
     const displayModes: { id: DisplayMode; label: string }[] = [];
-    for (const [id, label] of this._displayModeLabels) {
+    for (const [id, label] of this.displayModeLabels) {
       displayModes.push({ id, label });
     }
     return displayModes;
@@ -141,6 +154,7 @@ export class SettingsDialogComponent {
       data: {
         reset: true,
       },
+      panelClass: ["nr-dialog-custom", this.$layoutClass()],
     });
     this._dialogRef.close();
   }

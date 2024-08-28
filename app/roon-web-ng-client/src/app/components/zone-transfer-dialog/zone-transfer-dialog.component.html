@@ -1,15 +1,15 @@
 <h2 mat-dialog-title>Transfer zone</h2>
 <mat-divider />
 <mat-dialog-content>
-  <span tabindex="0" class="from-zone"><mat-icon fontIcon="speaker" />{{currentZone}}</span>
+  <span class="from-zone"><mat-icon fontIcon="speaker" />{{currentZone}}</span>
   <mat-divider />
   <h4>to zone:</h4>
   @for (zone of transferableZones; track zone.zone_id; let index = $index;) {
     <div>
-      <button tabindex="0" mat-button (click)="onTransferZoneSelected(zone.zone_id)"><mat-icon fontIcon="speaker" />{{zone.display_name}}</button>
+      <button mat-button (click)="onTransferZoneSelected(zone.zone_id)"><mat-icon fontIcon="speaker" />{{zone.display_name}}</button>
     </div>
   }
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-  <button tabindex="0" mat-button (click)="onCancel()"><mat-icon fontIcon="cancel" />Cancel</button>
+  <button mat-button (click)="onCancel()"><mat-icon fontIcon="cancel" />Cancel</button>
 </mat-dialog-actions>

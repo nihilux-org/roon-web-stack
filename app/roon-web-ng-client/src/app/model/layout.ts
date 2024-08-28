@@ -11,5 +11,6 @@ export interface LayoutData {
   zoneImage: TemplateRef<LayoutContext>;
   zoneProgression: TemplateRef<LayoutContext>;
   zoneQueue: TemplateRef<LayoutContext>;
+  zoneVolume: TemplateRef<LayoutContext>;
   context: LayoutContext;
 }

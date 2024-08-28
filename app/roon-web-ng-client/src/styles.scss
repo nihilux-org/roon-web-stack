@@ -1,61 +1,43 @@
 @use '@angular/material' as mat;
+@use "./app/styles/global" as nr;
+@use "./app/styles/variables" as nr-variables;
 
 @include mat.core();
 
-$roon-cqrs-web-ng-client-typography: mat.m2-define-typography-config();
-
-$roon-cqrs-web-ng-client-dark-theme: mat.m2-define-dark-theme((
-  color: (
-    primary: mat.m2-define-palette(mat.$m2-grey-palette, A200, A100, A400),
-    accent: mat.m2-define-palette(mat.$m2-indigo-palette, A200, A100, A400),
-    warn: mat.m2-define-palette(mat.$m2-red-palette),
-  ),
-  density: 0,
-  typography: $roon-cqrs-web-ng-client-typography
-));
-
-@include mat.button-theme($roon-cqrs-web-ng-client-dark-theme);
-@include mat.checkbox-theme($roon-cqrs-web-ng-client-dark-theme);
-@include mat.core-theme($roon-cqrs-web-ng-client-dark-theme);
-@include mat.dialog-theme($roon-cqrs-web-ng-client-dark-theme);
-@include mat.divider-theme($roon-cqrs-web-ng-client-dark-theme);
-@include mat.fab-theme($roon-cqrs-web-ng-client-dark-theme);
-@include mat.form-field-theme($roon-cqrs-web-ng-client-dark-theme);
-@include mat.icon-button-theme($roon-cqrs-web-ng-client-dark-theme);
-@include mat.icon-theme($roon-cqrs-web-ng-client-dark-theme);
-@include mat.input-theme($roon-cqrs-web-ng-client-dark-theme);
-@include mat.menu-theme($roon-cqrs-web-ng-client-dark-theme);
-@include mat.progress-bar-theme($roon-cqrs-web-ng-client-dark-theme);
-@include mat.progress-spinner-theme($roon-cqrs-web-ng-client-dark-theme);
-@include mat.radio-theme($roon-cqrs-web-ng-client-dark-theme);
-@include mat.slider-theme($roon-cqrs-web-ng-client-dark-theme);
-@include mat.tabs-theme($roon-cqrs-web-ng-client-dark-theme);
-
-$roon-cqrs-web-ng-client-light-theme: mat.m2-define-light-theme((
-  color: (
-    primary: mat.m2-define-palette(mat.$m2-indigo-palette),
-    accent: mat.m2-define-palette(mat.$m2-pink-palette, A200, A100, A400),
-    warn: mat.m2-define-palette(mat.$m2-red-palette),
-  )
-));
+@include mat.button-theme(nr-variables.$roon-web-ng-client-dark-theme);
+@include mat.checkbox-theme(nr-variables.$roon-web-ng-client-dark-theme);
+@include mat.core-theme(nr-variables.$roon-web-ng-client-dark-theme);
+@include mat.dialog-theme(nr-variables.$roon-web-ng-client-dark-theme);
+@include mat.divider-theme(nr-variables.$roon-web-ng-client-dark-theme);
+@include mat.fab-theme(nr-variables.$roon-web-ng-client-dark-theme);
+@include mat.form-field-theme(nr-variables.$roon-web-ng-client-dark-theme);
+@include mat.icon-button-theme(nr-variables.$roon-web-ng-client-dark-theme);
+@include mat.icon-theme(nr-variables.$roon-web-ng-client-dark-theme);
+@include mat.input-theme(nr-variables.$roon-web-ng-client-dark-theme);
+@include mat.menu-theme(nr-variables.$roon-web-ng-client-dark-theme);
+@include mat.progress-bar-theme(nr-variables.$roon-web-ng-client-dark-theme);
+@include mat.progress-spinner-theme(nr-variables.$roon-web-ng-client-dark-theme);
+@include mat.radio-theme(nr-variables.$roon-web-ng-client-dark-theme);
+@include mat.slider-theme(nr-variables.$roon-web-ng-client-dark-theme);
+@include mat.tabs-theme(nr-variables.$roon-web-ng-client-dark-theme);
 
 .light-theme {
-  @include mat.button-color($roon-cqrs-web-ng-client-light-theme);
-  @include mat.checkbox-color($roon-cqrs-web-ng-client-light-theme);
-  @include mat.core-color($roon-cqrs-web-ng-client-light-theme);
-  @include mat.dialog-color($roon-cqrs-web-ng-client-light-theme);
-  @include mat.divider-color($roon-cqrs-web-ng-client-light-theme);
-  @include mat.fab-color($roon-cqrs-web-ng-client-light-theme);
-  @include mat.form-field-color($roon-cqrs-web-ng-client-light-theme);
-  @include mat.icon-button-color($roon-cqrs-web-ng-client-light-theme);
-  @include mat.icon-color($roon-cqrs-web-ng-client-light-theme);
-  @include mat.input-color($roon-cqrs-web-ng-client-light-theme);
-  @include mat.menu-color($roon-cqrs-web-ng-client-light-theme);
-  @include mat.progress-bar-color($roon-cqrs-web-ng-client-light-theme);
-  @include mat.progress-spinner-color($roon-cqrs-web-ng-client-light-theme);
-  @include mat.radio-color($roon-cqrs-web-ng-client-light-theme);
-  @include mat.slider-color($roon-cqrs-web-ng-client-light-theme);
-  @include mat.tabs-color($roon-cqrs-web-ng-client-light-theme);
+  @include mat.button-color(nr-variables.$roon-web-ng-client-light-theme);
+  @include mat.checkbox-color(nr-variables.$roon-web-ng-client-light-theme);
+  @include mat.core-color(nr-variables.$roon-web-ng-client-light-theme);
+  @include mat.dialog-color(nr-variables.$roon-web-ng-client-light-theme);
+  @include mat.divider-color(nr-variables.$roon-web-ng-client-light-theme);
+  @include mat.fab-color(nr-variables.$roon-web-ng-client-light-theme);
+  @include mat.form-field-color(nr-variables.$roon-web-ng-client-light-theme);
+  @include mat.icon-button-color(nr-variables.$roon-web-ng-client-light-theme);
+  @include mat.icon-color(nr-variables.$roon-web-ng-client-light-theme);
+  @include mat.input-color(nr-variables.$roon-web-ng-client-light-theme);
+  @include mat.menu-color(nr-variables.$roon-web-ng-client-light-theme);
+  @include mat.progress-bar-color(nr-variables.$roon-web-ng-client-light-theme);
+  @include mat.progress-spinner-color(nr-variables.$roon-web-ng-client-light-theme);
+  @include mat.radio-color(nr-variables.$roon-web-ng-client-light-theme);
+  @include mat.slider-color(nr-variables.$roon-web-ng-client-light-theme);
+  @include mat.tabs-color(nr-variables.$roon-web-ng-client-light-theme);
 }
 
 .material-symbols-outlined {
@@ -69,40 +51,4 @@ $roon-cqrs-web-ng-client-light-theme: mat.m2-define-light-theme((
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
-.queue {
-  .cdk-virtual-scroll-content-wrapper {
-    max-width: 100% !important;
-  }
-}
-
-.roon-list {
-  .cdk-virtual-scroll-orientation-vertical .cdk-virtual-scroll-content-wrapper {
-    max-width: 100% !important;
-  }
-}
-
-.browse-dialog-title {
-  .mat-mdc-unelevated-button {
-    font-size: mat.m2-font-size($roon-cqrs-web-ng-client-typography, headline-6);
-  }
-}
-
-.zone-grouping {
-  .mdc-form-field > label {
-    display: flex;
-    align-items: center;
-    mat-icon {
-      margin-right: 6px;
-    }
-  }
-}
-
-.settings-tab .mat-mdc-tab-body-content {
-  overflow: hidden;
-}
-
-.custom-actions-tabs {
-  .mat-mdc-tab-header {
-    display: none;
-  }
-}
+@include nr.global();

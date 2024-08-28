@@ -1,4 +1,3 @@
-import { deepEqual } from "fast-equals";
 import { ChangeDetectionStrategy, Component, computed, Input, Signal, ViewChild } from "@angular/core";
 import { MatButtonModule, MatIconButton } from "@angular/material/button";
 import { MatDialog } from "@angular/material/dialog";
@@ -25,30 +24,25 @@ export class ZoneVolumeComponent {
   private readonly _dialog: MatDialog;
   private readonly _$displayMode: Signal<DisplayMode>;
   private readonly _$isSmallScreen: Signal<boolean>;
+  private readonly _$layoutClass: Signal<string>;
   readonly $isMuted: Signal<boolean>;
 
   constructor(dialog: MatDialog, settingsService: SettingsService) {
     this._dialog = dialog;
     this._$displayMode = settingsService.displayMode();
     this._$isSmallScreen = settingsService.isSmallScreen();
-    this.$isMuted = computed(
-      () => {
-        const outputs = this.$outputs();
-        if (outputs.length > 1) {
-          return outputs.reduce((isMuted, output) => isMuted && (output.volume?.is_muted ?? false), true);
-        } else if (outputs.length === 1) {
-          return outputs[0].volume?.is_muted ?? false;
-        } else {
-          return false;
-        }
-      },
-      {
-        equal: deepEqual,
+    this._$layoutClass = settingsService.displayModeClass();
+    this.$isMuted = computed(() => {
+      const outputs = this.$outputs();
+      if (outputs.length > 1) {
+        return outputs.reduce((isMuted, output) => isMuted && (output.volume?.is_muted ?? false), true);
+      } else if (outputs.length === 1) {
+        return outputs[0].volume?.is_muted ?? false;
+      } else {
+        return false;
       }
-    );
+    });
   }
-
-  isMuted() {}
 
   onVolumeDrawerOpen() {
     const nbOutputs = this.$outputs().length;
@@ -73,6 +67,7 @@ export class ZoneVolumeComponent {
         maxHeight: "99svh",
         restoreFocus: false,
         autoFocus: false,
+        panelClass: ["nr-dialog-custom", this._$layoutClass()],
       });
     }
   }

@@ -1,4 +1,4 @@
-@mixin button-reset {
+  @mixin button-reset {
   -webkit-font-smoothing: inherit;
   -moz-osx-font-smoothing: inherit;
   -webkit-appearance: none;
@@ -60,6 +60,30 @@
       justify-content: space-between;
       height: 100%;
       align-self: center;
+    }
+  }
+}
+
+@mixin mat-button-size($font-size) {
+  & {
+    --mdc-text-button-label-text-size: #{$font-size};
+  }
+  .mat-mdc-button > .mat-icon {
+    font-size: $font-size;
+    width: $font-size;
+    height: $font-size;
+  }
+}
+
+@mixin icon-button-size($size: 48px, $font-size: 24px, $padding: 12px) {
+  button {
+    --mdc-icon-button-state-layer-size: #{$size};
+    --mdc-icon-button-icon-size: #{$font-size};
+    padding: $padding;
+    mat-icon {
+      height: $font-size;
+      width: $font-size;
+      font-size: $font-size;
     }
   }
 }

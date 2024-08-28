@@ -1,7 +1,7 @@
 <h2 mat-dialog-title>Zone grouping</h2>
 <mat-divider />
 <mat-dialog-content class="zone-grouping">
-  <span tabindex="0" class="from-zone"><mat-icon fontIcon="speaker" />{{mainOutput.display_name}}</span>
+  <span class="from-zone"><mat-icon fontIcon="speaker" />{{mainOutput.display_name}}</span>
   <mat-divider />
   @if ($groupedOutputs().length > 0) {
     <h3>Currently in zone:</h3>
@@ -33,5 +33,5 @@
   }
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-  <button tabindex="0" mat-button (click)="onSave()"><mat-icon fontIcon="save" />Save</button>
+  <button mat-button (click)="onSave()"><mat-icon fontIcon="save" />Save</button>
 </mat-dialog-actions>

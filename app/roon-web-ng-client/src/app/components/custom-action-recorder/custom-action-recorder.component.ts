@@ -14,6 +14,7 @@ import { CustomActionsManagerComponent } from "@components/custom-actions-manage
 import { RoonBrowseDialogComponent } from "@components/roon-browse-dialog/roon-browse-dialog.component";
 import { RoonApiBrowseHierarchy } from "@model";
 import { CustomActionsManagerDialogConfig } from "@model/client";
+import { SettingsService } from "@services/settings.service";
 
 interface RecordableHierarchy {
   hierarchy: RoonApiBrowseHierarchy;
@@ -70,21 +71,30 @@ export class CustomActionRecorderComponent implements OnDestroy {
   private readonly _dialog: MatDialog;
   private readonly _dialogRef: MatDialogRef<CustomActionRecorderComponent>;
   private readonly _closeDialogSubscription: Subscription;
+  private readonly _$layoutClass: Signal<string>;
   readonly $hierarchy: Signal<RoonApiBrowseHierarchy | undefined>;
   readonly $path: Signal<string[]>;
   readonly $actionIndex: Signal<number | undefined>;
   private _isRecording: boolean;
 
-  constructor(matDialog: MatDialog, dialogRef: MatDialogRef<CustomActionRecorderComponent>) {
+  constructor(
+    matDialog: MatDialog,
+    dialogRef: MatDialogRef<CustomActionRecorderComponent>,
+    settingsService: SettingsService
+  ) {
     this._dialog = matDialog;
     this._dialogRef = dialogRef;
+    this._$layoutClass = settingsService.displayModeClass();
     this.$hierarchy = signal(undefined);
     this.$path = signal([]);
     this.$actionIndex = signal(undefined);
     this._isRecording = false;
     this._closeDialogSubscription = this._dialogRef.beforeClosed().subscribe(() => {
       if (!this._isRecording) {
-        this._dialog.open(CustomActionsManagerComponent, CustomActionsManagerDialogConfig);
+        this._dialog.open(CustomActionsManagerComponent, {
+          ...CustomActionsManagerDialogConfig,
+          panelClass: ["nr-dialog-custom", this._$layoutClass()],
+        });
       }
     });
   }
@@ -105,6 +115,7 @@ export class CustomActionRecorderComponent implements OnDestroy {
       maxHeight: "95svh",
       width: "90svw",
       maxWidth: "90svw",
+      panelClass: ["nr-dialog-custom", this._$layoutClass()],
     };
     this._dialog.open(RoonBrowseDialogComponent, config);
     this._dialogRef.close();

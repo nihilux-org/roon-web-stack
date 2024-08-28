@@ -2,13 +2,20 @@
   @if(content.list.subtitle) {
     <h3>{{sanitizeSubtitle(content.list.subtitle)}}</h3>
   }
-  <cdk-virtual-scroll-viewport itemSize="91">
+  <cdk-virtual-scroll-viewport [itemSize]="91">
     <ol>
       <li *cdkVirtualFor="let item of dataSource; let last = last; let index = index">
         @if (item) {
-          <button tabindex="0" (click)="!item.input_prompt ? onItemClicked(index, item.title, item.item_key, item.hint, false) : true" class="roon-list-item">
-            @if (item.image_key || content.list.image_key) {
-              <nr-roon-image class="roon-item-image" [src]="item.image_key ?? content.list.image_key!" [alt]="item.title + ' cover'" height="70" width="70" priority="false" />
+          <button (click)="!item.input_prompt ? onItemClicked(index, item.title, item.item_key, item.hint, false) : true" class="roon-list-item">
+            @if (item.image_key !== null || content.list.image_key) {
+              <nr-roon-image
+                class="roon-item-image"
+                [src]="item.image_key ?? content.list.image_key "
+                [alt]="item.title + ' cover'"
+                [height]="70"
+                [width]="70"
+                priority="false"
+              />
             } @else if(!$isOneColumn()) {
               <div class="roon-item-image"></div>
             }
@@ -39,7 +46,7 @@
       </li>
     </ol>
   </cdk-virtual-scroll-viewport>
-  <mat-menu #actionMenu="matMenu" xPosition="before">
+  <mat-menu #actionMenu="matMenu" xPosition="before" class="nr-menu-custom" [class]="$layoutClass()">
     <ng-template matMenuContent let-contextActions="actions" let-contextTitle="title">
       @for (action of contextActions; track action.item_key; let index = $index) {
         <button mat-menu-item (click)="onActionClicked(action.item_key, index, contextTitle)">{{action.title}}</button>

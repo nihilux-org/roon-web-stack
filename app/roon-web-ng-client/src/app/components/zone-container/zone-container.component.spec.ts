@@ -14,11 +14,13 @@ describe("ZoneContainerComponent", () => {
   let $displayMode: WritableSignal<DisplayMode>;
   let $displayQueueTrack: WritableSignal<boolean>;
   let $isOneColumn: WritableSignal<boolean>;
+  let $displayModeClass: WritableSignal<string>;
   let settingsService: {
     displayedZoneId: jest.Mock;
     displayMode: jest.Mock;
     displayQueueTrack: jest.Mock;
     isOneColumn: jest.Mock;
+    displayModeClass: jest.Mock;
   };
   let $zoneState: WritableSignal<ZoneState>;
   let roonService: {
@@ -31,11 +33,13 @@ describe("ZoneContainerComponent", () => {
     $displayMode = signal(DisplayMode.WIDE);
     $displayQueueTrack = signal(true);
     $isOneColumn = signal(false);
+    $displayModeClass = signal("wide");
     settingsService = {
       displayedZoneId: jest.fn().mockImplementation(() => $displayedZoneId),
       displayMode: jest.fn().mockImplementation(() => $displayMode),
       displayQueueTrack: jest.fn().mockImplementation(() => $displayQueueTrack),
       isOneColumn: jest.fn().mockImplementation(() => $isOneColumn),
+      displayModeClass: jest.fn().mockImplementation(() => $displayModeClass),
     };
     $zoneState = signal(ZONE_STATE);
     roonService = {

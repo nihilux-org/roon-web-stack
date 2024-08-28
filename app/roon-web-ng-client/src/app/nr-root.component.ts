@@ -30,7 +30,7 @@ export class NrRootComponent implements OnDestroy {
   private readonly _matDialog: MatDialog;
   private readonly _closeDialogsEffect: EffectRef;
   readonly $clientState: Signal<string>;
-  readonly $isOneColumn: Signal<boolean>;
+  readonly $isWithFullScreen: Signal<boolean>;
 
   constructor(roonService: RoonService, settingsService: SettingsService, matDialog: MatDialog) {
     this._matDialog = matDialog;
@@ -55,7 +55,8 @@ export class NrRootComponent implements OnDestroy {
         equal: deepEqual,
       }
     );
-    this.$isOneColumn = settingsService.isOneColumn();
+    const $isOneColumn = settingsService.isOneColumn();
+    this.$isWithFullScreen = computed(() => !$isOneColumn());
     this._closeDialogsEffect = effect(() => {
       this.$clientState();
       this._matDialog.closeAll();

@@ -15,7 +15,7 @@
     }
     @case ("SYNC") {
       @defer {
-        @if (!$isOneColumn()) {
+        @if ($isWithFullScreen()) {
           <nr-full-screen-toggle class="top-right" />
         }
         <nr-zone-container />

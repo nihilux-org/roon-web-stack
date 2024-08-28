@@ -1,0 +1,15 @@
+@use "../../styles/mixins" as nr;
+
+:host {
+  .zone-volume-large {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    > div {
+      width: 652px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+}

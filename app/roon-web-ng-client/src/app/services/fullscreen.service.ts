@@ -22,7 +22,7 @@ export class FullscreenService implements OnDestroy {
 
   toggleFullScreen() {
     if (this.supportsFullScreen()) {
-      if (this._document.fullscreenElement) {
+      if (this.isFullScreen()) {
         void this._document.exitFullscreen().then(() => {
           this._$icon.set(FullscreenService.ENTER_FULL_SCREEN_ICON);
         });
@@ -36,6 +36,10 @@ export class FullscreenService implements OnDestroy {
           });
       }
     }
+  }
+
+  isFullScreen(): boolean {
+    return this._document.fullscreenElement !== null;
   }
 
   supportsFullScreen() {
