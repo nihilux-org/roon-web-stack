@@ -89,7 +89,9 @@ class InternalRoonWebClient implements RoonWebClient {
       } else {
         throw new Error("unable to validate roon-web-stack version");
       }
-      const registerUrl = new URL("/api/register", this._apiHost);
+      const previousClientId = this._clientPath?.substring(5);
+      const registerPath = "/api/register" + (previousClientId ? `/${previousClientId}` : "");
+      const registerUrl = new URL(registerPath, this._apiHost);
       const registerReq = new Request(registerUrl, {
         method: "POST",
         mode: "cors",

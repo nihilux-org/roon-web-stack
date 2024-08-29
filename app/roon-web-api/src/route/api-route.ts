@@ -29,8 +29,9 @@ const apiRoute: FastifyPluginAsync = async (server: FastifyInstance): Promise<vo
   server.get("/version", (_: FastifyRequest, reply: FastifyReply) => {
     return reply.status(204).header("x-roon-web-stack-version", extension_version).send();
   });
-  server.post("/register", (_: FastifyRequest, reply: FastifyReply) => {
-    const client_id = clientManager.register();
+  server.post<{ Params: { previous_client_id?: string } }>("/register/:previous_client_id?", (req, reply) => {
+    const previous_client_id = req.params.previous_client_id;
+    const client_id = clientManager.register(previous_client_id);
     const location = `/api/${client_id}`;
     return reply.status(201).header("location", location).send();
   });

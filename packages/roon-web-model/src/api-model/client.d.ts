@@ -16,7 +16,7 @@ export interface Client {
 }
 
 export interface ClientManager {
-  register: () => string;
+  register: (previous_client_id?: string) => string;
   unregister: (client_id: string) => void;
   get: (client_id: string) => Client;
   start: () => Promise<void>;
