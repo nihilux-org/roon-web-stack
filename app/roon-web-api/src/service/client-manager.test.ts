@@ -74,10 +74,28 @@ describe("client-manager.ts test suite", () => {
     expect(clientManager.register).toThrow(NOT_STARTED_ERROR);
   });
 
-  it("clientManager#register should return a client_id, generated via 'nanoid', mandatory for all the other calls", async () => {
+  it("clientManager#register should return a client_id, generated via 'nanoid if none is provided', mandatory for all the other calls", async () => {
     await clientManager.start();
     const client_id = clientManager.register();
     expect(client_id).toEqual(`${client_id_counter}`);
+  });
+
+  it("clientManager#register should use provided client_id if provided", async () => {
+    await clientManager.start();
+    const previousClientId = "previous_client_id";
+    const client_id = clientManager.register(previousClientId);
+    expect(client_id).toEqual(previousClientId);
+  });
+
+  it("clientManager#register should not create a new client if an existing client exists for provided previous_client_id", async () => {
+    await clientManager.start();
+    const previousClientId = "previous_client_id";
+    const client_id = clientManager.register(previousClientId);
+    const firstClient = clientManager.get(client_id);
+    const second_client_id = clientManager.register(previousClientId);
+    expect(second_client_id).toEqual(client_id);
+    const secondClient = clientManager.get(second_client_id);
+    expect(secondClient).toBe(firstClient);
   });
 
   it("clientManager#get should throw an Error if called before clientManager#start", () => {

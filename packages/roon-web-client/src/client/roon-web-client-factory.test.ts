@@ -1776,7 +1776,7 @@ describe("roon-web-client-factory.ts test suite", () => {
     expect(restartSpy).toHaveBeenCalledTimes(1);
   });
 
-  it("RoonWebClient#refresh should let the client marked as to refresh if any error happen during #restart", async () => {
+  it("RoonWebClient#refresh should let the client marked as to be refreshed if any error happen during #restart", async () => {
     fetchMock.once(mockVersionGet).once(mockRegisterPost);
     const client = roonWebClientFactory.build(API_URL);
     await client.start();
@@ -2058,7 +2058,7 @@ const mockVersionGet: MockResponseInitFunction = (req: Request) => {
 };
 
 const mockRegisterPost: MockResponseInitFunction = (req: Request) => {
-  if (req.method === "POST" && req.url === new URL("/api/register", API_URL).toString()) {
+  if (req.method === "POST" && req.url.startsWith(new URL("/api/register", API_URL).toString())) {
     return Promise.resolve({
       headers: {
         Location: client_path,

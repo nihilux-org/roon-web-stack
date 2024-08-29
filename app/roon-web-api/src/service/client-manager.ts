@@ -103,9 +103,12 @@ class InternalClientManager implements ClientManager {
     this.isStarted = false;
   }
 
-  register = (): string => {
+  register = (previous_client_id?: string): string => {
     this.ensureStarted();
-    const client_id = generateClientId();
+    const client_id = previous_client_id ?? generateClientId();
+    if (this.clients.has(client_id)) {
+      return client_id;
+    }
     const client = new InternalClient(client_id, (c: InternalClient) => {
       this.clients.delete(c.id());
       c.cleanHierarchies();
