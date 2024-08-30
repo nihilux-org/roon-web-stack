@@ -15,6 +15,7 @@ import {
   ServerListener,
   SharedConfig,
   SharedConfigMessage,
+  SharedConfigUpdate,
   ZoneListener,
 } from "@model";
 import { Extension } from "@roon-kit";
@@ -115,19 +116,30 @@ const load = async (options: RoonApiBrowseLoadOptions): Promise<RoonApiBrowseLoa
 };
 
 const SHARED_CONFIG_KEY = "roon_web_stack_shared_config";
+const EMPTY_SHARED_CONFIG: SharedConfig = {
+  customActions: [],
+};
 
-const saveSharedConfig = (sharedConfig: SharedConfig): void => {
-  extension.api().save_config(SHARED_CONFIG_KEY, sharedConfig);
-  publishSharedConfigMessage(sharedConfig);
+const updateSharedConfig = (sharedConfigUpdate: SharedConfigUpdate): void => {
+  let sharedConfig: SharedConfig | undefined = undefined;
+  if (sharedConfigUpdate.sharedConfig) {
+    sharedConfig = sharedConfigUpdate.sharedConfig;
+  } else if (sharedConfigUpdate.sharedConfigKey) {
+    // config has been initialized on server paired
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    sharedConfig = extension.api().load_config<SharedConfig>(SHARED_CONFIG_KEY)!;
+    sharedConfig[sharedConfigUpdate.sharedConfigKey.key] = sharedConfigUpdate.sharedConfigKey.value;
+  }
+  if (sharedConfig !== undefined) {
+    extension.api().save_config(SHARED_CONFIG_KEY, sharedConfig);
+    publishSharedConfigMessage(sharedConfig);
+  }
 };
 
 let sharedConfigSubject: Subject<SharedConfigMessage> | undefined;
 
 const publishSharedConfigMessage = (sharedConfig?: SharedConfig): void => {
-  const data = sharedConfig ||
-    extension.api().load_config<SharedConfig>(SHARED_CONFIG_KEY) || {
-      customActions: [],
-    };
+  const data = sharedConfig ?? extension.api().load_config<SharedConfig>(SHARED_CONFIG_KEY) ?? EMPTY_SHARED_CONFIG;
   const msg: SharedConfigMessage = {
     event: "config",
     data,
@@ -158,6 +170,6 @@ export const roon: Roon = {
   getImage,
   browse,
   load,
-  saveSharedConfig,
+  updateSharedConfig,
   sharedConfigEvents,
 };
