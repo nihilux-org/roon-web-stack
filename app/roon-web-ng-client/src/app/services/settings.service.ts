@@ -17,6 +17,7 @@ import {
   BrowseAction,
   ChosenTheme,
   ClientBreakpoints,
+  CustomAction,
   DefaultActions,
   DisplayMode,
   LibraryAction,
@@ -53,6 +54,7 @@ export class SettingsService implements OnDestroy {
   private readonly _$availableActions: Signal<Action[]>;
   private readonly _$breakpoints: WritableSignal<ClientBreakpoints>;
   private readonly _$chosenTheme: WritableSignal<string>;
+  private readonly _$customActions: Signal<CustomAction[]>;
   private readonly _$displayedZoneId: WritableSignal<string>;
   private readonly _$displayQueueTrack: WritableSignal<boolean>;
   private readonly _$displayMode: WritableSignal<DisplayMode>;
@@ -79,7 +81,7 @@ export class SettingsService implements OnDestroy {
     this._$breakpoints = signal(this.computeInitialBreakpoints(), {
       equal: deepEqual,
     });
-    const $customActions = this._customActionsService.customActions();
+    this._$customActions = this._customActionsService.customActions();
     this._$displayMode = signal(this.loadDisplayModeFromLocalStorage(DisplayMode.WIDE));
     this._$displayModeClass = computed(() => {
       let displayModeClass = "";
@@ -97,11 +99,14 @@ export class SettingsService implements OnDestroy {
       }
       return displayModeClass;
     });
-    this._$allActions = computed(() => [...DefaultActions, ...$customActions()]);
+    this._$allActions = computed(() => {
+      const customActions = this._$customActions();
+      return [...DefaultActions, ...customActions];
+    });
     this._$actions = signal(this.loadActionsFromLocalStorage());
     this._reloadActionsEffect = effect(
       () => {
-        $customActions();
+        this._$customActions();
         this._$actions.set(this.loadActionsFromLocalStorage());
       },
       {

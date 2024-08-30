@@ -12,6 +12,14 @@ export interface ActionButton {
   icon: string;
 }
 
+export interface SharedCustomActions {
+  id: string;
+  label: string;
+  icon: string;
+  roonPath: RoonPath;
+  actionIndex?: number;
+}
+
 export interface CustomAction {
   id: string;
   button: ActionButton;

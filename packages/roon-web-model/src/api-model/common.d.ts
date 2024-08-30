@@ -67,7 +67,7 @@ export interface Roon {
   getImage: (image_key: string, options: RoonApiImageResultOptions) => Promise<{ content_type: string; image: Buffer }>;
   browse: (options: RoonApiBrowseOptions | EmptyObject) => Promise<RoonApiBrowseResponse>;
   load: (options: RoonApiBrowseLoadOptions) => Promise<RoonApiBrowseLoadResponse>;
-  saveSharedConfig: (shardConfig: SharedConfig) => void;
+  updateSharedConfig: (shardConfigUpdate: SharedConfigUpdate) => void;
   sharedConfigEvents: () => Observable<SharedConfigMessage>;
 }
 
@@ -78,6 +78,14 @@ export interface RoonPath {
 
 export interface SharedConfig {
   customActions: CustomAction[];
+}
+
+export interface SharedConfigUpdate {
+  sharedConfig?: SharedConfig;
+  sharedConfigKey?: {
+    key: keyof SharedConfig;
+    value: SharedConfig[keyof SharedConfig];
+  };
 }
 
 export interface CustomAction {

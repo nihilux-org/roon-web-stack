@@ -602,8 +602,10 @@ const commands: Command[] = [
   {
     type: CommandType.SHARED_CONFIG,
     data: {
-      sharedConfig: {
-        customActions: [],
+      sharedConfigUpdate: {
+        sharedConfig: {
+          customActions: [],
+        },
       },
     },
   },

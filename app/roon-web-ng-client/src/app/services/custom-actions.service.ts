@@ -1,7 +1,7 @@
 import { nanoid } from "nanoid";
 import { computed, Injectable, Signal, signal, WritableSignal } from "@angular/core";
-import { CommandType, RoonApiBrowseHierarchy, SharedConfig, SharedConfigCommand } from "@model";
-import { ActionType, CustomAction, EditedCustomAction } from "@model/client";
+import { CommandType, RoonApiBrowseHierarchy, SharedConfigCommand } from "@model";
+import { ActionType, CustomAction, EditedCustomAction, SharedCustomActions } from "@model/client";
 
 @Injectable({
   providedIn: "root",
@@ -194,34 +194,37 @@ export class CustomActionsService {
     this._$editedAction.set(undefined);
   }
 
-  updateSharedConfig(sharedConfig: SharedConfig) {
-    const customActions: CustomAction[] = sharedConfig.customActions.map((ca) => ({
-      id: ca.id,
+  updateCustomActions(sharedCustomActions: SharedCustomActions[]) {
+    const customActions: CustomAction[] = sharedCustomActions.map((sca) => ({
+      id: sca.id,
       button: {
-        label: ca.label,
-        icon: ca.icon,
+        label: sca.label,
+        icon: sca.icon,
       },
-      path: ca.roonPath,
+      path: sca.roonPath,
       type: ActionType.CUSTOM,
-      actionIndex: ca.actionIndex,
+      actionIndex: sca.actionIndex,
     }));
     this._$customActions.set(customActions);
   }
 
   private buildCommand(customActions: CustomAction[]): SharedConfigCommand {
-    const sharedConfig: SharedConfig = {
-      customActions: customActions.map((ca) => ({
-        id: ca.id,
-        label: ca.button.label,
-        icon: ca.button.icon,
-        roonPath: ca.path,
-        actionIndex: ca.actionIndex,
-      })),
-    };
+    const sharedCustomActions: SharedCustomActions[] = customActions.map((ca) => ({
+      id: ca.id,
+      label: ca.button.label,
+      icon: ca.button.icon,
+      roonPath: ca.path,
+      actionIndex: ca.actionIndex,
+    }));
     return {
       type: CommandType.SHARED_CONFIG,
       data: {
-        sharedConfig,
+        sharedConfigUpdate: {
+          sharedConfigKey: {
+            key: "customActions",
+            value: sharedCustomActions,
+          },
+        },
       },
     };
   }

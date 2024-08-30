@@ -9,7 +9,7 @@ const startExtension = jest.fn();
 const getImage = jest.fn();
 const browse = jest.fn();
 const load = jest.fn();
-const saveSharedConfig = jest.fn();
+const updateSharedConfig = jest.fn();
 const sharedConfigEvents = jest.fn();
 
 export const roonMock = {
@@ -24,7 +24,7 @@ export const roonMock = {
   getImage,
   browse,
   load,
-  saveSharedConfig,
+  updateSharedConfig,
   sharedConfigEvents,
 };
 

@@ -1,6 +1,6 @@
 import { Subject } from "rxjs";
 import { RoonServer, Zone } from "../roon-kit";
-import { SharedConfig, SseMessage } from "./common";
+import { SharedConfigUpdate, SseMessage } from "./common";
 import { OutputDescription } from "./zone";
 
 export const enum CommandResult {
@@ -153,7 +153,7 @@ export interface GroupCommand {
 export interface SharedConfigCommand {
   type: CommandType.SHARED_CONFIG;
   data: {
-    sharedConfig: SharedConfig;
+    sharedConfigUpdate: SharedConfigUpdate;
   };
 }
 

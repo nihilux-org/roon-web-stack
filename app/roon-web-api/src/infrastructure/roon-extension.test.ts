@@ -2,6 +2,7 @@ import { extensionMock, loggerMock } from "@mock";
 
 import { extension_version, logger } from "@infrastructure";
 import {
+  CustomAction,
   OutputListener,
   Roon,
   RoonApiBrowse,
@@ -406,7 +407,109 @@ describe("roon-extension.ts test suite", () => {
     expect(hasConfig).toBeTruthy();
   });
 
-  it("roon#saveSharedConfig should call RoonApi#save_config with the provided value and the key 'roon_web_stack_shared_config' and publish the freshly saved config", () => {
+  it(
+    "roon#updateSharedConfig, if called with a complete SharedConfig in the provided SharedConfigUpdate, " +
+      "should call RoonApi#save_config with the provided value and the key 'roon_web_stack_shared_config' and publish the freshly saved config",
+    () => {
+      let registeredListener = null;
+      extensionMock.on.mockImplementation((eventName: string, listener: ServerListener) => {
+        if (eventName === "core_paired") {
+          registeredListener = listener;
+        }
+      });
+      roon.startExtension();
+      const server = {} as unknown as RoonServer;
+      const listener: ServerListener = registeredListener as unknown as ServerListener;
+      listener(server);
+      const sharedConfigEvents = roon.sharedConfigEvents();
+      const sharedConfigMessages: SharedConfigMessage[] = [];
+      sharedConfigEvents.subscribe((msg) => sharedConfigMessages.push(msg));
+      const sharedConfig: SharedConfig = {
+        customActions: [
+          {
+            id: "id",
+            label: "label",
+            icon: "icon",
+            roonPath: {
+              hierarchy: "browse",
+              path: [],
+            },
+          },
+        ],
+      };
+      roon.updateSharedConfig({
+        sharedConfig,
+      });
+      expect(extensionMock.api().save_config).toHaveBeenCalledWith("roon_web_stack_shared_config", sharedConfig);
+      expect(sharedConfigMessages).toHaveLength(2);
+      expect(sharedConfigMessages[1].data).toBe(sharedConfig);
+    }
+  );
+
+  it(
+    "roon#updateSharedConfig, if called with a partial SharedConfig in the provided SharedConfigUpdate, " +
+      "should call RoonApi#load_config, update the givem key and then " +
+      "call RoonApi#save_config with the provided value and the key 'roon_web_stack_shared_config' and publish the freshly saved config",
+    () => {
+      let registeredListener = null;
+      extensionMock.on.mockImplementation((eventName: string, listener: ServerListener) => {
+        if (eventName === "core_paired") {
+          registeredListener = listener;
+        }
+      });
+      const sharedConfig: SharedConfig = {
+        customActions: [
+          {
+            id: "id",
+            label: "label",
+            icon: "icon",
+            roonPath: {
+              hierarchy: "browse",
+              path: [],
+            },
+          },
+        ],
+      };
+      extensionMock.api().load_config.mockImplementation((key: string) => {
+        if (key === "roon_web_stack_shared_config") {
+          return sharedConfig;
+        }
+      });
+      roon.startExtension();
+      const server = {} as unknown as RoonServer;
+      const listener: ServerListener = registeredListener as unknown as ServerListener;
+      listener(server);
+      const sharedConfigEvents = roon.sharedConfigEvents();
+      const sharedConfigMessages: SharedConfigMessage[] = [];
+      sharedConfigEvents.subscribe((msg) => sharedConfigMessages.push(msg));
+      const updateCustomActions: CustomAction[] = [
+        ...sharedConfig.customActions,
+        {
+          id: "other_id",
+          label: "other_label",
+          icon: "other_icon",
+          roonPath: {
+            hierarchy: "browse",
+            path: [],
+          },
+        },
+      ];
+      roon.updateSharedConfig({
+        sharedConfigKey: {
+          key: "customActions",
+          value: updateCustomActions,
+        },
+      });
+      expect(extensionMock.api().save_config).toHaveBeenCalledWith("roon_web_stack_shared_config", sharedConfig);
+      expect(sharedConfigMessages).toHaveLength(2);
+      expect(sharedConfigMessages[0].data).toBe(sharedConfig);
+      expect(sharedConfigMessages[1].data).toEqual({
+        customActions: updateCustomActions,
+      });
+    }
+  );
+
+  it("roon#updateSharedConfig should do nothing if called with an empty update", () => {
     let registeredListener = null;
     extensionMock.on.mockImplementation((eventName: string, listener: ServerListener) => {
       if (eventName === "core_paired") {
@@ -420,22 +523,8 @@ describe("roon-extension.ts test suite", () => {
     const sharedConfigEvents = roon.sharedConfigEvents();
     const sharedConfigMessages: SharedConfigMessage[] = [];
     sharedConfigEvents.subscribe((msg) => sharedConfigMessages.push(msg));
-    const sharedConfig: SharedConfig = {
-      customActions: [
-        {
-          id: "id",
-          label: "label",
-          icon: "icon",
-          roonPath: {
-            hierarchy: "browse",
-            path: [],
-          },
-        },
-      ],
-    };
-    roon.saveSharedConfig(sharedConfig);
-    expect(extensionMock.api().save_config).toHaveBeenCalledWith("roon_web_stack_shared_config", sharedConfig);
-    expect(sharedConfigMessages).toHaveLength(2);
-    expect(sharedConfigMessages[1].data).toBe(sharedConfig);
+    roon.updateSharedConfig({});
+    expect(extensionMock.api().save_config).toHaveBeenCalledTimes(0);
+    expect(sharedConfigMessages).toHaveLength(1);
   });
 });

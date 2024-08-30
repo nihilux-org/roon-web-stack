@@ -534,7 +534,7 @@ export class RoonService implements OnDestroy {
   }
 
   private onSharedConfig(sharedConfig: SharedConfig) {
-    this._customActionsService.updateSharedConfig(sharedConfig);
+    this._customActionsService.updateCustomActions(sharedConfig.customActions);
   }
 
   private onApiResult(apiResultEvent: RawApiResult) {
