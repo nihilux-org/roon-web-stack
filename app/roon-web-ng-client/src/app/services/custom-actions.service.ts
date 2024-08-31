@@ -220,10 +220,7 @@ export class CustomActionsService {
       type: CommandType.SHARED_CONFIG,
       data: {
         sharedConfigUpdate: {
-          sharedConfigKey: {
-            key: "customActions",
-            value: sharedCustomActions,
-          },
+          customActions: sharedCustomActions,
         },
       },
     };

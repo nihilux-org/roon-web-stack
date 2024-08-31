@@ -408,45 +408,6 @@ describe("roon-extension.ts test suite", () => {
   });
 
   it(
-    "roon#updateSharedConfig, if called with a complete SharedConfig in the provided SharedConfigUpdate, " +
-      "should call RoonApi#save_config with the provided value and the key 'roon_web_stack_shared_config' and publish the freshly saved config",
-    () => {
-      let registeredListener = null;
-      extensionMock.on.mockImplementation((eventName: string, listener: ServerListener) => {
-        if (eventName === "core_paired") {
-          registeredListener = listener;
-        }
-      });
-      roon.startExtension();
-      const server = {} as unknown as RoonServer;
-      const listener: ServerListener = registeredListener as unknown as ServerListener;
-      listener(server);
-      const sharedConfigEvents = roon.sharedConfigEvents();
-      const sharedConfigMessages: SharedConfigMessage[] = [];
-      sharedConfigEvents.subscribe((msg) => sharedConfigMessages.push(msg));
-      const sharedConfig: SharedConfig = {
-        customActions: [
-          {
-            id: "id",
-            label: "label",
-            icon: "icon",
-            roonPath: {
-              hierarchy: "browse",
-              path: [],
-            },
-          },
-        ],
-      };
-      roon.updateSharedConfig({
-        sharedConfig,
-      });
-      expect(extensionMock.api().save_config).toHaveBeenCalledWith("roon_web_stack_shared_config", sharedConfig);
-      expect(sharedConfigMessages).toHaveLength(2);
-      expect(sharedConfigMessages[1].data).toBe(sharedConfig);
-    }
-  );
-
-  it(
     "roon#updateSharedConfig, if called with a partial SharedConfig in the provided SharedConfigUpdate, " +
       "should call RoonApi#load_config, update the givem key and then " +
       "call RoonApi#save_config with the provided value and the key 'roon_web_stack_shared_config' and publish the freshly saved config",
@@ -495,10 +456,7 @@ describe("roon-extension.ts test suite", () => {
         },
       ];
       roon.updateSharedConfig({
-        sharedConfigKey: {
-          key: "customActions",
-          value: updateCustomActions,
-        },
+        customActions: updateCustomActions,
       });
       expect(extensionMock.api().save_config).toHaveBeenCalledWith("roon_web_stack_shared_config", sharedConfig);
       expect(sharedConfigMessages).toHaveLength(2);

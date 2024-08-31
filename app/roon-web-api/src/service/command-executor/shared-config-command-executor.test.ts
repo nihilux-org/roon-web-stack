@@ -6,9 +6,7 @@ import { executor } from "./shared-config-command-executor";
 describe("shared-config-command-executor test suite", () => {
   it("executor should call roon#saveSharedConfig", () => {
     const sharedConfigUpdate: SharedConfigUpdate = {
-      sharedConfig: {
-        customActions: [],
-      },
+      customActions: [],
     };
     const command: SharedConfigCommand = {
       type: CommandType.SHARED_CONFIG,
@@ -31,9 +29,7 @@ describe("shared-config-command-executor test suite", () => {
       type: CommandType.SHARED_CONFIG,
       data: {
         sharedConfigUpdate: {
-          sharedConfig: {
-            customActions: [],
-          },
+          customActions: [],
         },
       },
     };
