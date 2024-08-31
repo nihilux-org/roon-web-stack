@@ -1,7 +1,8 @@
 import { deepEqual } from "fast-equals";
 import { DeviceDetectorService } from "ngx-device-detector";
-import { Observable, Subscription } from "rxjs";
-import { computed, Injectable, OnDestroy, Signal, signal, WritableSignal } from "@angular/core";
+import { Observable } from "rxjs";
+import { DOCUMENT } from "@angular/common";
+import { computed, Inject, Injectable, Signal, signal, WritableSignal } from "@angular/core";
 import {
   ApiState,
   ClientRoonApiBrowseLoadOptions,
@@ -50,11 +51,13 @@ import { buildRoonWorker } from "@services/worker.utils";
 @Injectable({
   providedIn: "root",
 })
-export class RoonService implements OnDestroy {
+export class RoonService {
   private static readonly THIS_IS_A_BUG_ERROR_MSG = "this is a bug!";
 
+  private readonly _window: Window;
   private readonly _deviceDetectorService: DeviceDetectorService;
   private readonly _customActionsService: CustomActionsService;
+  private readonly _visibilityService: VisibilityService;
   private readonly _$roonState: WritableSignal<ApiState>;
   private readonly _$isGrouping: WritableSignal<boolean>;
   private readonly _commandCallbacks: Map<string, CommandCallback>;
@@ -65,7 +68,6 @@ export class RoonService implements OnDestroy {
       $queue?: WritableSignal<QueueState>;
     }
   >;
-  private readonly _visibilitySubscription: Subscription;
   private readonly _apiStringCallbacks: Map<number, ApiResultCallback<string>>;
   private readonly _apiBrowseCallbacks: Map<number, ApiResultCallback<RoonApiBrowseResponse>>;
   private readonly _apiLoadCallbacks: Map<number, ApiResultCallback<RoonApiBrowseLoadResponse>>;
@@ -78,12 +80,18 @@ export class RoonService implements OnDestroy {
   private _startResolve?: () => void;
 
   constructor(
+    @Inject(DOCUMENT) document: Document,
     deviceDetectorService: DeviceDetectorService,
     customActionsService: CustomActionsService,
     visibilityService: VisibilityService
   ) {
+    if (document.defaultView === null) {
+      throw new Error("this app does not support server rendering!");
+    }
+    this._window = document.defaultView;
     this._deviceDetectorService = deviceDetectorService;
     this._customActionsService = customActionsService;
+    this._visibilityService = visibilityService;
     this._$roonState = signal(
       {
         state: RoonState.STARTING,
@@ -104,11 +112,6 @@ export class RoonService implements OnDestroy {
       }
     >();
     this._isStarted = false;
-    this._visibilitySubscription = visibilityService.observeVisibility((visibilityState) => {
-      if (visibilityState === VisibilityState.VISIBLE) {
-        this.refresh();
-      }
-    });
     this._apiStringCallbacks = new Map<number, ApiResultCallback<string>>();
     this._apiBrowseCallbacks = new Map<number, ApiResultCallback<RoonApiBrowseResponse>>();
     this._apiLoadCallbacks = new Map<number, ApiResultCallback<RoonApiBrowseLoadResponse>>();
@@ -130,7 +133,7 @@ export class RoonService implements OnDestroy {
       event: "worker-client",
       data: {
         action: "start-client",
-        url: window.location.href,
+        url: this._window.location.href,
         isDesktop,
       },
     };
@@ -157,6 +160,11 @@ export class RoonService implements OnDestroy {
         if (this._startResolve) {
           this._startResolve();
           delete this._startResolve;
+          this._visibilityService.listen((visibilityState: VisibilityState) => {
+            if (visibilityState === VisibilityState.VISIBLE) {
+              this.refresh();
+            }
+          });
         }
       },
     };
@@ -390,10 +398,6 @@ export class RoonService implements OnDestroy {
     this._outputCallback = callback;
   };
 
-  ngOnDestroy() {
-    this._visibilitySubscription.unsubscribe();
-  }
-
   startGrouping() {
     this._$isGrouping.set(true);
   }
@@ -516,7 +520,7 @@ export class RoonService implements OnDestroy {
   private onClientState(clientState: ClientState) {
     switch (clientState) {
       case "outdated":
-        window.location.reload();
+        this._window.location.reload();
         break;
       case "started":
       case "not-started":

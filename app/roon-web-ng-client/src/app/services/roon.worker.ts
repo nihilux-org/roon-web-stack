@@ -98,12 +98,7 @@ const startClient = (url: string, isDesktop: boolean): void => {
   void _roonClient
     .start()
     .then(() => {
-      const message: ClientStateWorkerEvent = {
-        event: "clientState",
-        data: "started",
-      };
       startHealthCheck();
-      postMessage(message);
     })
     .catch((err: unknown) => {
       // eslint-disable-next-line no-console

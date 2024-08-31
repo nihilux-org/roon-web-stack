@@ -1,35 +1,76 @@
-import { fromEvent, map, mergeWith, Observable, Observer, Subscription } from "rxjs";
-import { Injectable } from "@angular/core";
-import { VisibilityState } from "@model/client";
+import { DOCUMENT } from "@angular/common";
+import { Inject, Injectable, OnDestroy } from "@angular/core";
+import { VisibilityListener, VisibilityState } from "@model/client";
+
+interface VisibilityEvent {
+  visibilityState: VisibilityState;
+  time: number;
+}
 
 @Injectable({
   providedIn: "root",
 })
-export class VisibilityService {
-  private readonly _visibilityObservable$: Observable<VisibilityState>;
+export class VisibilityService implements OnDestroy {
+  private readonly _document: Document;
+  private readonly _eventsToListen = ["pageshow", "pagehide"];
+  private readonly _visibilityListener: VisibilityListener[];
+  private readonly _windowListener: () => void;
+  private _lastEvent: VisibilityEvent;
 
-  constructor() {
-    const documentVisibilityEvent$ = fromEvent(document, "visibilitychange").pipe(
-      map(() => {
-        if (document.visibilityState === "visible") {
-          return VisibilityState.VISIBLE;
-        } else {
-          return VisibilityState.HIDDEN;
+  constructor(@Inject(DOCUMENT) document: Document) {
+    this._document = document;
+    this._visibilityListener = [];
+    this._windowListener = () => {
+      const visibilityEvent = this.buildVisibilityEvent();
+      if (
+        this._visibilityListener.length > 0 &&
+        (visibilityEvent.visibilityState !== this._lastEvent.visibilityState ||
+          visibilityEvent.time - this._lastEvent.time > 250)
+      ) {
+        this._lastEvent = visibilityEvent;
+        for (const listener of this._visibilityListener) {
+          listener(visibilityEvent.visibilityState);
         }
-      })
-    );
-    // needed for iPhone on iOS, because window$focus and visibilitychange are not consistently fired
-    const windowPageShowEvent$ = fromEvent(window, "pageshow").pipe(map(() => VisibilityState.VISIBLE));
-    // needed for iPad on iPadOS, because window$pageshow and visibilitychange are not consistently fired
-    const windowFocus$ = fromEvent(window, "focus").pipe(map(() => VisibilityState.VISIBLE));
-    // FIXME?: register events depending on user-agent?
-    this._visibilityObservable$ = documentVisibilityEvent$.pipe(mergeWith(windowPageShowEvent$, windowFocus$));
+      }
+    };
+    this._visibilityListener = [];
+    this._lastEvent = this.buildVisibilityEvent();
   }
 
-  // this is firing too much VISIBLE events, handle with care (and safe retry 🤷)
-  observeVisibility(
-    observerOrNext?: Partial<Observer<VisibilityState>> | ((value: VisibilityState) => void)
-  ): Subscription {
-    return this._visibilityObservable$.subscribe(observerOrNext);
+  listen(visibilityListener: VisibilityListener): void {
+    const mustStartListening = this._visibilityListener.length === 0;
+    this._visibilityListener.push(visibilityListener);
+    if (mustStartListening) {
+      if (this._document.defaultView) {
+        for (const eventType of this._eventsToListen) {
+          this._document.defaultView.addEventListener(eventType, this._windowListener);
+        }
+        this._document.addEventListener("visibilitychange", this._windowListener);
+      }
+    }
+  }
+
+  private buildVisibilityEvent(): VisibilityEvent {
+    const time = Date.now();
+    if (this._document.visibilityState === "visible") {
+      return {
+        visibilityState: VisibilityState.VISIBLE,
+        time,
+      };
+    } else {
+      return {
+        visibilityState: VisibilityState.HIDDEN,
+        time,
+      };
+    }
+  }
+
+  ngOnDestroy() {
+    if (this._visibilityListener.length > 0) {
+      for (const eventType of this._eventsToListen) {
+        this._document.defaultView?.removeEventListener(eventType, this._windowListener);
+      }
+      this._document.removeEventListener("visibilitychange", this._windowListener);
+    }
   }
 }

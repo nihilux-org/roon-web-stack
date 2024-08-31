@@ -1,6 +1,7 @@
 {
 	"name": "roon-web-client",
   "display": "standalone",
+  "start_url": "/",
 	"icons": [
 		{
 			"src": "/assets/favicons/favicon-36.png",
