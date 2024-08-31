@@ -81,11 +81,7 @@ export interface SharedConfig {
 }
 
 export interface SharedConfigUpdate {
-  sharedConfig?: SharedConfig;
-  sharedConfigKey?: {
-    key: keyof SharedConfig;
-    value: SharedConfig[keyof SharedConfig];
-  };
+  customActions?: CustomAction[];
 }
 
 export interface CustomAction {
