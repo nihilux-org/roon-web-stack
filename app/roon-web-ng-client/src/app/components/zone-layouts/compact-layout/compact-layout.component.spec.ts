@@ -1,6 +1,5 @@
 import { MockBuilder, MockedComponentFixture, MockRender, ngMocks } from "ng-mocks";
 import { Component, Signal, signal, TemplateRef, WritableSignal } from "@angular/core";
-import { WideLayoutComponent } from "@components/zone-layouts/wide-layout/wide-layout.component";
 import { LayoutContext, LayoutData } from "@model/client";
 import { SettingsService } from "@services/settings.service";
 import { CompactLayoutComponent } from "./compact-layout.component";
@@ -66,6 +65,10 @@ describe("CompactLayoutComponent", () => {
     zoneImage = ngMocks.findTemplateRef(templateProducerFixture.debugElement, "zoneImage");
     zoneProgression = ngMocks.findTemplateRef(templateProducerFixture.debugElement, "zoneProgression");
     zoneQueue = ngMocks.findTemplateRef(templateProducerFixture.debugElement, "zoneQueue");
+    zoneVolume = ngMocks.findTemplateRef(templateProducerFixture.debugElement, "zoneVolume");
+    layoutContext = {
+      class: "compact",
+    };
     layout = {
       zoneActions,
       zoneCommands,
@@ -86,7 +89,7 @@ describe("CompactLayoutComponent", () => {
         reset: true,
       }
     );
-    component = fixture.componentInstance as unknown as WideLayoutComponent;
+    component = fixture.componentInstance as unknown as CompactLayoutComponent;
     fixture.detectChanges();
   });
 
