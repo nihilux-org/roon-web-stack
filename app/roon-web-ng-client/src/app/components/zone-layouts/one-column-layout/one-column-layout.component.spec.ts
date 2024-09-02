@@ -1,6 +1,5 @@
 import { MockBuilder, MockedComponentFixture, MockRender, ngMocks } from "ng-mocks";
 import { Component, TemplateRef } from "@angular/core";
-import { CompactLayoutComponent } from "@components/zone-layouts/compact-layout/compact-layout.component";
 import { LayoutContext, LayoutData } from "@model/client";
 import { OneColumnLayoutComponent } from "./one-column-layout.component";
 
@@ -46,7 +45,7 @@ describe("OneColumnLayoutComponent", () => {
   let layoutContext: LayoutContext;
 
   beforeEach(async () => {
-    await MockBuilder(TemplateProducer, CompactLayoutComponent);
+    await MockBuilder(TemplateProducer, OneColumnLayoutComponent);
     const templateProducerFixture = MockRender(TemplateProducer);
     zoneActions = ngMocks.findTemplateRef(templateProducerFixture.debugElement, "zoneActions");
     zoneCommands = ngMocks.findTemplateRef(templateProducerFixture.debugElement, "zoneCommands");
@@ -54,6 +53,10 @@ describe("OneColumnLayoutComponent", () => {
     zoneImage = ngMocks.findTemplateRef(templateProducerFixture.debugElement, "zoneImage");
     zoneProgression = ngMocks.findTemplateRef(templateProducerFixture.debugElement, "zoneProgression");
     zoneQueue = ngMocks.findTemplateRef(templateProducerFixture.debugElement, "zoneQueue");
+    zoneVolume = ngMocks.findTemplateRef(templateProducerFixture.debugElement, "zoneVolume");
+    layoutContext = {
+      class: "one-column",
+    };
     layout = {
       zoneActions,
       zoneCommands,
@@ -66,7 +69,7 @@ describe("OneColumnLayoutComponent", () => {
     };
 
     fixture = MockRender(
-      CompactLayoutComponent,
+      OneColumnLayoutComponent,
       {
         layout,
       },

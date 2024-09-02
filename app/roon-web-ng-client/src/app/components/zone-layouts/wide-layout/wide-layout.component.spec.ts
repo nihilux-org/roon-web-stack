@@ -65,6 +65,10 @@ describe("WideLayoutComponent", () => {
     zoneImage = ngMocks.findTemplateRef(templateProducerFixture.debugElement, "zoneImage");
     zoneProgression = ngMocks.findTemplateRef(templateProducerFixture.debugElement, "zoneProgression");
     zoneQueue = ngMocks.findTemplateRef(templateProducerFixture.debugElement, "zoneQueue");
+    zoneVolume = ngMocks.findTemplateRef(templateProducerFixture.debugElement, "zoneVolume");
+    layoutContext = {
+      class: "wide",
+    };
     layout = {
       zoneActions,
       zoneCommands,
