@@ -1,6 +1,7 @@
 import { MockBuilder, MockedComponentFixture, MockRender } from "ng-mocks";
 import { signal, WritableSignal } from "@angular/core";
 import { Output } from "@model";
+import { DialogService } from "@services/dialog.service";
 import { SettingsService } from "@services/settings.service";
 import { VolumeService } from "@services/volume.service";
 import { ZoneVolumeComponent } from "./zone-volume.component";
@@ -18,6 +19,9 @@ describe("ZoneVolumeComponent", () => {
     outputs: jest.Mock;
     isMute: jest.Mock;
   };
+  let dialogService: {
+    open: jest.Mock;
+  };
 
   beforeEach(async () => {
     $outputs = signal([]);
@@ -31,7 +35,11 @@ describe("ZoneVolumeComponent", () => {
       outputs: jest.fn().mockImplementation(() => $outputs),
       isMute: jest.fn().mockImplementation(() => $isMuted),
     };
+    dialogService = {
+      open: jest.fn(),
+    };
     await MockBuilder(ZoneVolumeComponent)
+      .mock(DialogService, dialogService as Partial<DialogService>)
       .mock(SettingsService, settingsService as Partial<SettingsService>)
       .mock(VolumeService, volumeService as Partial<VolumeService>);
     fixture = MockRender(ZoneVolumeComponent);

@@ -1,21 +1,14 @@
 import { ChangeDetectionStrategy, Component, computed, Inject, Signal } from "@angular/core";
 import { MatButton, MatIconButton } from "@angular/material/button";
-import {
-  MAT_DIALOG_DATA,
-  MatDialog,
-  MatDialogActions,
-  MatDialogContent,
-  MatDialogRef,
-  MatDialogTitle,
-} from "@angular/material/dialog";
+import { MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogTitle } from "@angular/material/dialog";
 import { MatIcon } from "@angular/material/icon";
 import { MatTab, MatTabGroup } from "@angular/material/tabs";
 import { CustomActionEditorComponent } from "@components/custom-action-editor/custom-action-editor.component";
 import { SettingsDialogComponent } from "@components/settings-dialog/settings-dialog.component";
 import { CustomAction, SettingsDialogConfig } from "@model/client";
 import { CustomActionsService } from "@services/custom-actions.service";
+import { DialogService } from "@services/dialog.service";
 import { RoonService } from "@services/roon.service";
-import { SettingsService } from "@services/settings.service";
 
 @Component({
   selector: "nr-custom-actions-manager",
@@ -36,11 +29,9 @@ import { SettingsService } from "@services/settings.service";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CustomActionsManagerComponent {
-  private readonly _dialog: MatDialog;
-  private readonly _dialogRef: MatDialogRef<CustomActionsManagerComponent>;
+  private readonly _dialogService: DialogService;
   private readonly _customActionsService: CustomActionsService;
   private readonly _roonService: RoonService;
-  private readonly _$layoutClass: Signal<string>;
   readonly $isEditing: Signal<boolean>;
   readonly $customActions: Signal<CustomAction[]>;
   readonly $selectedTab: Signal<number>;
@@ -48,17 +39,13 @@ export class CustomActionsManagerComponent {
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: { reset: boolean },
-    matDialog: MatDialog,
-    dialogRef: MatDialogRef<CustomActionsManagerComponent>,
+    dialogService: DialogService,
     customActionsService: CustomActionsService,
-    roonService: RoonService,
-    settingsService: SettingsService
+    roonService: RoonService
   ) {
-    this._dialog = matDialog;
-    this._dialogRef = dialogRef;
+    this._dialogService = dialogService;
     this._customActionsService = customActionsService;
     this._roonService = roonService;
-    this._$layoutClass = settingsService.displayModeClass();
     this.$isEditing = this._customActionsService.isEditing();
     this.$customActions = computed(() =>
       this._customActionsService
@@ -80,14 +67,12 @@ export class CustomActionsManagerComponent {
         this._customActionsService.cancelEdition();
       }
     } else {
-      this._dialog.open(SettingsDialogComponent, {
+      this._dialogService.open(SettingsDialogComponent, {
         ...SettingsDialogConfig,
         data: {
           selectedTab: 1,
         },
-        panelClass: ["nr-dialog-custom", this._$layoutClass()],
       });
-      this._dialogRef.close();
     }
   }
 

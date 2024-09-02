@@ -3,7 +3,6 @@ import { ChangeDetectionStrategy, Component, effect, EffectRef, Inject, OnDestro
 import { MatButton, MatIconButton } from "@angular/material/button";
 import {
   MAT_DIALOG_DATA,
-  MatDialog,
   MatDialogActions,
   MatDialogContent,
   MatDialogRef,
@@ -16,6 +15,7 @@ import { MatTab, MatTabGroup } from "@angular/material/tabs";
 import { CustomActionsManagerComponent } from "@components/custom-actions-manager/custom-actions-manager.component";
 import { ZoneSelectorComponent } from "@components/zone-selector/zone-selector.component";
 import { Action, ChosenTheme, CustomActionsManagerDialogConfig, DisplayMode } from "@model/client";
+import { DialogService } from "@services/dialog.service";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
 
@@ -47,10 +47,10 @@ import { SettingsService } from "@services/settings.service";
 })
 export class SettingsDialogComponent implements OnDestroy {
   private readonly _dialogRef: MatDialogRef<SettingsDialogComponent>;
+  private readonly _dialogService: DialogService;
   private readonly _settingsService: SettingsService;
-  readonly displayModeLabels: Map<DisplayMode, string>;
-  private readonly _dialog: MatDialog;
   private readonly _layoutChangeEffect: EffectRef;
+  readonly displayModeLabels: Map<DisplayMode, string>;
   readonly $isSmallScreen: Signal<boolean>;
   readonly $isOneColumn: Signal<boolean>;
   readonly $actions: Signal<Action[]>;
@@ -60,23 +60,23 @@ export class SettingsDialogComponent implements OnDestroy {
   readonly selectedTab: number;
   constructor(
     @Inject(MAT_DIALOG_DATA) data: { selectedTab: number },
-    roonService: RoonService,
-    settingsService: SettingsService,
     dialogRef: MatDialogRef<SettingsDialogComponent>,
-    matDialog: MatDialog
+    dialogService: DialogService,
+    roonService: RoonService,
+    settingsService: SettingsService
   ) {
     this._dialogRef = dialogRef;
+    this._dialogService = dialogService;
     this._settingsService = settingsService;
     this.displayModeLabels = new Map<DisplayMode, string>();
     this.displayModeLabels.set(DisplayMode.COMPACT, "Compact");
     this.displayModeLabels.set(DisplayMode.WIDE, "Wide");
     this._layoutChangeEffect = effect(() => {
-      for (const displayModeCLass of this._settingsService.displayModeClasses()) {
-        this._dialogRef.removePanelClass(displayModeCLass);
+      for (const displayModeClass of this._settingsService.displayModeClasses()) {
+        this._dialogRef.removePanelClass(displayModeClass);
       }
       this._dialogRef.addPanelClass(this.$layoutClass());
     });
-    this._dialog = matDialog;
     this.$actions = this._settingsService.actions();
     this.$availableActions = this._settingsService.availableActions();
     this.$isSmallScreen = this._settingsService.isSmallScreen();
@@ -107,7 +107,7 @@ export class SettingsDialogComponent implements OnDestroy {
   }
 
   onSave() {
-    this._dialogRef.close();
+    this._dialogService.close();
   }
 
   onReload() {
@@ -149,13 +149,11 @@ export class SettingsDialogComponent implements OnDestroy {
   }
 
   openCustomActionsManager() {
-    this._dialog.open(CustomActionsManagerComponent, {
+    this._dialogService.open(CustomActionsManagerComponent, {
       ...CustomActionsManagerDialogConfig,
       data: {
         reset: true,
       },
-      panelClass: ["nr-dialog-custom", this.$layoutClass()],
     });
-    this._dialogRef.close();
   }
 }

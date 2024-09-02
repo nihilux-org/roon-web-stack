@@ -4,6 +4,7 @@ import { ComponentFixture } from "@angular/core/testing";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { MatTab } from "@angular/material/tabs";
 import { Action, ChosenTheme, DefaultActions, DisplayMode } from "@model/client";
+import { DialogService } from "@services/dialog.service";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
 import { SettingsDialogComponent } from "./settings-dialog.component";
@@ -32,10 +33,13 @@ describe("SettingsDialogComponent", () => {
     displayModeClasses: jest.Mock;
   };
   let version: string;
+  let dialogService: {
+    open: jest.Mock;
+    close: jest.Mock;
+  };
   let roonService: {
     version: jest.Mock;
   };
-  let closeDialog: jest.Mock;
   let addPanelClass: jest.Mock;
   let removePanelClass: jest.Mock;
   let component: SettingsDialogComponent;
@@ -74,14 +78,17 @@ describe("SettingsDialogComponent", () => {
     roonService = {
       version: jest.fn().mockImplementation(() => version),
     };
-    closeDialog = jest.fn();
+    dialogService = {
+      open: jest.fn(),
+      close: jest.fn(),
+    };
     addPanelClass = jest.fn();
     removePanelClass = jest.fn();
     await MockBuilder(SettingsDialogComponent)
+      .mock(DialogService, dialogService as Partial<DialogService>)
       .mock(SettingsService, settingsService as Partial<SettingsService>)
       .mock(RoonService, roonService as Partial<RoonService>)
       .mock(MatDialogRef<SettingsDialogComponent>, {
-        close: closeDialog,
         addPanelClass,
         removePanelClass,
       })
