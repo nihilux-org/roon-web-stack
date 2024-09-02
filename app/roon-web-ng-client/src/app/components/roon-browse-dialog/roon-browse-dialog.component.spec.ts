@@ -3,6 +3,7 @@ import { Subject } from "rxjs";
 import { signal, WritableSignal } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { RoonApiBrowseLoadResponse, RoonPath } from "@model";
+import { DialogService } from "@services/dialog.service";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
 import { RoonBrowseDialogComponent } from "./roon-browse-dialog.component";
@@ -17,6 +18,10 @@ describe("RoonBrowseDialogComponent", () => {
   } = {
     path,
   };
+  let dialogService: {
+    open: jest.Mock;
+    close: jest.Mock;
+  };
   let roonService: {
     explore: jest.Mock;
     library: jest.Mock;
@@ -28,9 +33,8 @@ describe("RoonBrowseDialogComponent", () => {
     displayedZoneId: jest.Mock;
   };
   let $zoneId: WritableSignal<string>;
-  let beforeClosedDialog: jest.Mock;
-  let beforeClosedObservable: Subject<void>;
-  let closeDialog: jest.Mock;
+  let afterClosedDialog: jest.Mock;
+  let afterClosedObservable: Subject<void>;
   let exploreObservable: Subject<RoonApiBrowseLoadResponse>;
   let libraryObservable: Subject<RoonApiBrowseLoadResponse>;
   let navigateObservable: Subject<RoonApiBrowseLoadResponse>;
@@ -40,14 +44,17 @@ describe("RoonBrowseDialogComponent", () => {
   let fixture: MockedComponentFixture<RoonBrowseDialogComponent>;
 
   beforeEach(async () => {
-    closeDialog = jest.fn();
-    beforeClosedObservable = new Subject<void>();
-    beforeClosedDialog = jest.fn().mockImplementation(() => beforeClosedObservable);
+    afterClosedObservable = new Subject<void>();
+    afterClosedDialog = jest.fn().mockImplementation(() => afterClosedObservable);
     exploreObservable = new Subject<RoonApiBrowseLoadResponse>();
     libraryObservable = new Subject<RoonApiBrowseLoadResponse>();
     navigateObservable = new Subject<RoonApiBrowseLoadResponse>();
     previousObservable = new Subject<RoonApiBrowseLoadResponse>();
     loadPathObservable = new Subject<RoonApiBrowseLoadResponse>();
+    dialogService = {
+      open: jest.fn(),
+      close: jest.fn(),
+    };
     roonService = {
       explore: jest.fn().mockImplementation(() => exploreObservable),
       library: jest.fn().mockImplementation(() => libraryObservable),
@@ -61,11 +68,11 @@ describe("RoonBrowseDialogComponent", () => {
     };
     await MockBuilder(RoonBrowseDialogComponent)
       .mock(MAT_DIALOG_DATA, dialogData)
+      .mock(DialogService, dialogService as Partial<DialogService>)
       .mock(RoonService, roonService as Partial<RoonService>)
       .mock(SettingsService, settingsService as Partial<SettingsService>)
       .mock(MatDialogRef<RoonBrowseDialogComponent>, {
-        close: closeDialog,
-        beforeClosed: beforeClosedDialog,
+        afterClosed: afterClosedDialog,
       });
     fixture = MockRender(RoonBrowseDialogComponent);
     component = fixture.componentInstance as RoonBrowseDialogComponent;

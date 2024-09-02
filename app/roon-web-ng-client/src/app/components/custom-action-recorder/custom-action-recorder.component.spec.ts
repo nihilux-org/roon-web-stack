@@ -1,29 +1,31 @@
 import { MockBuilder, MockRender } from "ng-mocks";
 import { Subject } from "rxjs";
 import { ComponentFixture } from "@angular/core/testing";
-import { MatDialog, MatDialogRef } from "@angular/material/dialog";
+import { MatDialogRef } from "@angular/material/dialog";
+import { DialogService } from "@services/dialog.service";
 import { CustomActionRecorderComponent } from "./custom-action-recorder.component";
 
 describe("CustomActionRecorderComponent", () => {
-  let dialogOpen: jest.Mock;
-  let beforeClosedDialog: jest.Mock;
-  let beforeClosedObservable: Subject<void>;
-  let closeDialog: jest.Mock;
+  let dialogService: {
+    open: jest.Mock;
+    close: jest.Mock;
+  };
+  let afterClosedDialog: jest.Mock;
+  let afterClosedDialogObservable: Subject<void>;
   let component: CustomActionRecorderComponent;
   let fixture: ComponentFixture<CustomActionRecorderComponent>;
 
   beforeEach(async () => {
-    dialogOpen = jest.fn();
-    closeDialog = jest.fn();
-    beforeClosedObservable = new Subject<void>();
-    beforeClosedDialog = jest.fn().mockImplementation(() => beforeClosedObservable);
+    dialogService = {
+      open: jest.fn(),
+      close: jest.fn(),
+    };
+    afterClosedDialogObservable = new Subject<void>();
+    afterClosedDialog = jest.fn().mockImplementation(() => afterClosedDialogObservable);
     await MockBuilder(CustomActionRecorderComponent)
-      .mock(MatDialog, {
-        open: dialogOpen,
-      })
+      .mock(DialogService, dialogService as Partial<DialogService>)
       .mock(MatDialogRef<CustomActionRecorderComponent>, {
-        close: closeDialog,
-        beforeClosed: beforeClosedDialog,
+        afterClosed: afterClosedDialog,
       });
     fixture = MockRender(CustomActionRecorderComponent);
     component = fixture.componentInstance;

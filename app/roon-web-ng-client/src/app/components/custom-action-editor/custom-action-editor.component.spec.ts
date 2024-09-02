@@ -1,16 +1,14 @@
 import { MockBuilder, MockedComponentFixture, MockRender } from "ng-mocks";
-import { Subject } from "rxjs";
 import { signal, WritableSignal } from "@angular/core";
-import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { RoonApiBrowseHierarchy } from "@model";
 import { CustomActionsService } from "@services/custom-actions.service";
+import { DialogService } from "@services/dialog.service";
 import { CustomActionEditorComponent } from "./custom-action-editor.component";
 
 describe("CustomActionEditorComponent", () => {
-  let dialogOpen: jest.Mock;
-  let beforeClosedDialog: jest.Mock;
-  let beforeClosedObservable: Subject<void>;
-  let closeDialog: jest.Mock;
+  let dialogService: {
+    open: jest.Mock;
+  };
   let $label: WritableSignal<string>;
   let $icon: WritableSignal<string>;
   let $hierarchy: WritableSignal<RoonApiBrowseHierarchy | undefined>;
@@ -22,10 +20,9 @@ describe("CustomActionEditorComponent", () => {
   let fixture: MockedComponentFixture<CustomActionEditorComponent>;
 
   beforeEach(async () => {
-    dialogOpen = jest.fn();
-    closeDialog = jest.fn();
-    beforeClosedObservable = new Subject<void>();
-    beforeClosedDialog = jest.fn().mockImplementation(() => beforeClosedObservable);
+    dialogService = {
+      open: jest.fn(),
+    };
     $label = signal("label");
     $icon = signal("icon");
     $hierarchy = signal(undefined);
@@ -38,13 +35,7 @@ describe("CustomActionEditorComponent", () => {
       $icon.set(icon);
     });
     await MockBuilder(CustomActionEditorComponent)
-      .mock(MatDialog, {
-        open: dialogOpen,
-      })
-      .mock(MatDialogRef<CustomActionEditorComponent>, {
-        close: closeDialog,
-        beforeClosed: beforeClosedDialog,
-      })
+      .mock(DialogService, dialogService as Partial<DialogService>)
       .mock(CustomActionsService, {
         label: () => $label,
         icon: () => $icon,

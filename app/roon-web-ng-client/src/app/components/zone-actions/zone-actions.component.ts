@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, Input, Signal, TemplateRef } from "@angular/core";
 import { MatButton, MatIconButton } from "@angular/material/button";
-import { MatDialog, MatDialogConfig } from "@angular/material/dialog";
+import { MatDialogConfig } from "@angular/material/dialog";
 import { MatIcon } from "@angular/material/icon";
 import { FullScreenToggleComponent } from "@components/full-screen-toggle/full-screen-toggle.component";
 import { RoonBrowseDialogComponent } from "@components/roon-browse-dialog/roon-browse-dialog.component";
@@ -15,6 +15,7 @@ import {
   SettingsDialogConfig,
   TrackDisplay,
 } from "@model/client";
+import { DialogService } from "@services/dialog.service";
 import { FullscreenService } from "@services/fullscreen.service";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
@@ -30,7 +31,7 @@ import { SettingsService } from "@services/settings.service";
 export class ZoneActionsComponent {
   @Input({ required: true }) $trackDisplay!: Signal<TrackDisplay>;
   @Input({ required: true }) queueComponentTemplateRef!: TemplateRef<LayoutContext>;
-  private readonly _dialog: MatDialog;
+  private readonly _dialogService: DialogService;
   private readonly _settingsService: SettingsService;
   private readonly _roonService: RoonService;
   private readonly _$isOneColumn: Signal<boolean>;
@@ -41,12 +42,12 @@ export class ZoneActionsComponent {
   readonly $withFullscreen: Signal<boolean>;
 
   constructor(
-    dialog: MatDialog,
+    dialogService: DialogService,
     fullScreenService: FullscreenService,
     roonService: RoonService,
     settingsService: SettingsService
   ) {
-    this._dialog = dialog;
+    this._dialogService = dialogService;
     this._settingsService = settingsService;
     this._roonService = roonService;
     this._$isOneColumn = this._settingsService.isOneColumn();
@@ -91,7 +92,6 @@ export class ZoneActionsComponent {
       maxHeight: "90svh",
       width: "90svw",
       maxWidth: "90svw",
-      panelClass: ["nr-dialog-custom", this._settingsService.displayModeClass()()],
     };
     if (this._$isOneColumn()) {
       config.height = "95svh";
@@ -99,20 +99,19 @@ export class ZoneActionsComponent {
       config.width = "95svw";
       config.maxWidth = "95svw";
     }
-    this._dialog.open(RoonBrowseDialogComponent, config);
+    this._dialogService.open(RoonBrowseDialogComponent, config);
   }
 
   openSettingsDialog() {
-    this._dialog.open(SettingsDialogComponent, {
+    this._dialogService.open(SettingsDialogComponent, {
       ...SettingsDialogConfig,
-      panelClass: ["nr-dialog-custom", this._settingsService.displayModeClass()()],
     });
   }
 
   private toggleDisplayQueueTrack() {
     if (this._$isQueueInModal()) {
       this._settingsService.saveDisplayQueueTrack(true);
-      this._dialog.open(ZoneQueueDialogComponent, {
+      this._dialogService.open(ZoneQueueDialogComponent, {
         restoreFocus: false,
         height: "95svh",
         maxHeight: "95svh",
@@ -122,7 +121,6 @@ export class ZoneActionsComponent {
           $trackDisplay: this.$trackDisplay,
           queueComponentTemplateRef: this.queueComponentTemplateRef,
         },
-        panelClass: ["nr-dialog-custom", this._settingsService.displayModeClass()()],
       });
     } else {
       this._settingsService.toggleDisplayQueueTrack();

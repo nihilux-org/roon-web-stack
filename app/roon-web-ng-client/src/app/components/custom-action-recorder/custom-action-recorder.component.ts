@@ -1,8 +1,6 @@
-import { Subscription } from "rxjs";
-import { ChangeDetectionStrategy, Component, OnDestroy, Signal, signal } from "@angular/core";
+import { ChangeDetectionStrategy, Component, Signal, signal } from "@angular/core";
 import { MatButton, MatFabButton, MatMiniFabButton } from "@angular/material/button";
 import {
-  MatDialog,
   MatDialogActions,
   MatDialogConfig,
   MatDialogContent,
@@ -14,7 +12,7 @@ import { CustomActionsManagerComponent } from "@components/custom-actions-manage
 import { RoonBrowseDialogComponent } from "@components/roon-browse-dialog/roon-browse-dialog.component";
 import { RoonApiBrowseHierarchy } from "@model";
 import { CustomActionsManagerDialogConfig } from "@model/client";
-import { SettingsService } from "@services/settings.service";
+import { DialogService } from "@services/dialog.service";
 
 interface RecordableHierarchy {
   hierarchy: RoonApiBrowseHierarchy;
@@ -25,12 +23,12 @@ interface RecordableHierarchy {
 @Component({
   selector: "nr-custom-action-recorder",
   standalone: true,
-  imports: [MatButton, MatFabButton, MatDialogActions, MatDialogContent, MatDialogTitle, MatIcon, MatMiniFabButton],
+  imports: [MatButton, MatDialogActions, MatDialogContent, MatDialogTitle, MatFabButton, MatIcon, MatMiniFabButton],
   templateUrl: "./custom-action-recorder.component.html",
   styleUrl: "./custom-action-recorder.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CustomActionRecorderComponent implements OnDestroy {
+export class CustomActionRecorderComponent {
   readonly recordableHierarchies: RecordableHierarchy[] = [
     {
       hierarchy: "albums",
@@ -68,32 +66,22 @@ export class CustomActionRecorderComponent implements OnDestroy {
       icon: "radio",
     },
   ];
-  private readonly _dialog: MatDialog;
-  private readonly _dialogRef: MatDialogRef<CustomActionRecorderComponent>;
-  private readonly _closeDialogSubscription: Subscription;
-  private readonly _$layoutClass: Signal<string>;
+  private readonly _dialogService: DialogService;
   readonly $hierarchy: Signal<RoonApiBrowseHierarchy | undefined>;
   readonly $path: Signal<string[]>;
   readonly $actionIndex: Signal<number | undefined>;
   private _isRecording: boolean;
 
-  constructor(
-    matDialog: MatDialog,
-    dialogRef: MatDialogRef<CustomActionRecorderComponent>,
-    settingsService: SettingsService
-  ) {
-    this._dialog = matDialog;
-    this._dialogRef = dialogRef;
-    this._$layoutClass = settingsService.displayModeClass();
+  constructor(dialogService: DialogService, dialogRef: MatDialogRef<CustomActionRecorderComponent>) {
+    this._dialogService = dialogService;
     this.$hierarchy = signal(undefined);
     this.$path = signal([]);
     this.$actionIndex = signal(undefined);
     this._isRecording = false;
-    this._closeDialogSubscription = this._dialogRef.beforeClosed().subscribe(() => {
+    dialogRef.afterClosed().subscribe(() => {
       if (!this._isRecording) {
-        this._dialog.open(CustomActionsManagerComponent, {
+        this._dialogService.open(CustomActionsManagerComponent, {
           ...CustomActionsManagerDialogConfig,
-          panelClass: ["nr-dialog-custom", this._$layoutClass()],
         });
       }
     });
@@ -115,17 +103,11 @@ export class CustomActionRecorderComponent implements OnDestroy {
       maxHeight: "95svh",
       width: "90svw",
       maxWidth: "90svw",
-      panelClass: ["nr-dialog-custom", this._$layoutClass()],
     };
-    this._dialog.open(RoonBrowseDialogComponent, config);
-    this._dialogRef.close();
+    this._dialogService.open(RoonBrowseDialogComponent, config);
   }
 
   onCancel() {
-    this._dialogRef.close();
-  }
-
-  ngOnDestroy() {
-    this._closeDialogSubscription.unsubscribe();
+    this._dialogService.close();
   }
 }

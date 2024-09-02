@@ -1,13 +1,13 @@
 import { ChangeDetectionStrategy, Component, Signal, ViewChild } from "@angular/core";
 import { MatButtonModule, MatIconButton } from "@angular/material/button";
 import { MatRipple } from "@angular/material/core";
-import { MatDialog } from "@angular/material/dialog";
 import { MatDivider } from "@angular/material/divider";
 import { MatIconModule } from "@angular/material/icon";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatSliderModule } from "@angular/material/slider";
 import { ZoneVolumeDialogComponent } from "@components/zone-volume-dialog/zone-volume-dialog.component";
 import { DisplayMode } from "@model/client";
+import { DialogService } from "@services/dialog.service";
 import { SettingsService } from "@services/settings.service";
 import { VolumeService } from "@services/volume.service";
 
@@ -21,19 +21,17 @@ import { VolumeService } from "@services/volume.service";
 })
 export class ZoneVolumeComponent {
   @ViewChild("volumeButton") _volumeButton!: MatIconButton;
-  private readonly _dialog: MatDialog;
+  private readonly _dialogService: DialogService;
   private readonly _volumeService: VolumeService;
   private readonly _$displayMode: Signal<DisplayMode>;
   private readonly _$isSmallScreen: Signal<boolean>;
-  private readonly _$layoutClass: Signal<string>;
   readonly $isMuted: Signal<boolean>;
 
-  constructor(dialog: MatDialog, settingsService: SettingsService, volumeService: VolumeService) {
-    this._dialog = dialog;
+  constructor(dialogService: DialogService, settingsService: SettingsService, volumeService: VolumeService) {
+    this._dialogService = dialogService;
     this._volumeService = volumeService;
     this._$displayMode = settingsService.displayMode();
     this._$isSmallScreen = settingsService.isSmallScreen();
-    this._$layoutClass = settingsService.displayModeClass();
     this.$isMuted = this._volumeService.isMute();
   }
 
@@ -50,7 +48,7 @@ export class ZoneVolumeComponent {
       } else {
         topDelta = 58 + nbOutputs * 117;
       }
-      this._dialog.open(ZoneVolumeDialogComponent, {
+      this._dialogService.open(ZoneVolumeDialogComponent, {
         position: {
           top: `${Math.max(buttonElementRect.top - topDelta, 0)}px`,
           left: this._$isSmallScreen() ? "1%" : `${buttonElementRect.left}px`,
@@ -60,7 +58,6 @@ export class ZoneVolumeComponent {
         maxHeight: "99svh",
         restoreFocus: false,
         autoFocus: false,
-        panelClass: ["nr-dialog-custom", this._$layoutClass()],
       });
     }
   }

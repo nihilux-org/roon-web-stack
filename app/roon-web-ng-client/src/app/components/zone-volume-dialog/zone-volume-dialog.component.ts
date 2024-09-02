@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, Component, Signal } from "@angular/core";
 import { MatIconButton } from "@angular/material/button";
-import { MatDialog, MatDialogContent, MatDialogRef, MatDialogTitle } from "@angular/material/dialog";
+import { MatDialogContent, MatDialogTitle } from "@angular/material/dialog";
 import { MatDivider } from "@angular/material/divider";
 import { MatIcon } from "@angular/material/icon";
 import { MatSlider, MatSliderThumb } from "@angular/material/slider";
 import { ZoneGroupingDialogComponent } from "@components/zone-grouping-dialog/zone-grouping-dialog.component";
 import { ZoneTransferDialogComponent } from "@components/zone-transfer-dialog/zone-transfer-dialog.component";
 import { Output } from "@model";
+import { DialogService } from "@services/dialog.service";
 import { SettingsService } from "@services/settings.service";
 import { VolumeService } from "@services/volume.service";
 
@@ -19,26 +20,17 @@ import { VolumeService } from "@services/volume.service";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ZoneVolumeDialogComponent {
-  private readonly _dialog: MatDialog;
-  private readonly _dialogRef: MatDialogRef<ZoneVolumeDialogComponent>;
+  private readonly _dialogService: DialogService;
   private readonly _volumeService: VolumeService;
-  private readonly _$layoutClass: Signal<string>;
   readonly $outputs: Signal<Output[]>;
   readonly $isSmallScreen: Signal<boolean>;
   readonly $canGroup: Signal<boolean>;
   readonly $isGroup: Signal<boolean>;
   readonly $isGroupedZoneMute: Signal<boolean>;
 
-  constructor(
-    dialog: MatDialog,
-    dialogRef: MatDialogRef<ZoneVolumeDialogComponent>,
-    settingsService: SettingsService,
-    volumeService: VolumeService
-  ) {
-    this._dialog = dialog;
-    this._dialogRef = dialogRef;
+  constructor(dialogService: DialogService, settingsService: SettingsService, volumeService: VolumeService) {
+    this._dialogService = dialogService;
     this._volumeService = volumeService;
-    this._$layoutClass = settingsService.displayModeClass();
     this.$outputs = this._volumeService.outputs();
     this.$isSmallScreen = settingsService.isSmallScreen();
     this.$canGroup = this._volumeService.canGroup();
@@ -71,20 +63,16 @@ export class ZoneVolumeDialogComponent {
   }
 
   onOpenTransferDialog() {
-    this._dialogRef.close();
-    this._dialog.open(ZoneTransferDialogComponent, {
+    this._dialogService.open(ZoneTransferDialogComponent, {
       autoFocus: false,
       restoreFocus: false,
-      panelClass: ["nr-dialog-custom", this._$layoutClass()],
     });
   }
 
   onOpenGroupDialog() {
-    this._dialogRef.close();
-    this._dialog.open(ZoneGroupingDialogComponent, {
+    this._dialogService.open(ZoneGroupingDialogComponent, {
       autoFocus: false,
       restoreFocus: false,
-      panelClass: ["nr-dialog-custom", this._$layoutClass()],
     });
   }
 }

@@ -1,11 +1,9 @@
 import { deepEqual } from "fast-equals";
-import { Subscription } from "rxjs";
 import {
   ChangeDetectionStrategy,
   Component,
   computed,
   Inject,
-  OnDestroy,
   OnInit,
   Signal,
   signal,
@@ -14,7 +12,6 @@ import {
 import { MatButton, MatIconButton } from "@angular/material/button";
 import {
   MAT_DIALOG_DATA,
-  MatDialog,
   MatDialogActions,
   MatDialogClose,
   MatDialogContent,
@@ -29,6 +26,7 @@ import { RoonBrowseListComponent } from "@components/roon-browse-list/roon-brows
 import { RoonApiBrowseHierarchy, RoonApiBrowseLoadResponse, RoonPath } from "@model";
 import { CustomActionsManagerDialogConfig, NavigationEvent, RecordedAction } from "@model/client";
 import { CustomActionsService } from "@services/custom-actions.service";
+import { DialogService } from "@services/dialog.service";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
 
@@ -51,16 +49,13 @@ import { SettingsService } from "@services/settings.service";
   styleUrl: "./roon-browse-dialog.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RoonBrowseDialogComponent implements OnInit, OnDestroy {
+export class RoonBrowseDialogComponent implements OnInit {
   private static readonly TITLES_WITH_INDEX = ["Albums", "Artists", "Composers", "My Live Radio", "Playlists", "Tags"];
-  private readonly _roonService: RoonService;
   private readonly _customActionsService: CustomActionsService;
-  private readonly _dialog: MatDialog;
-  private readonly _dialogRef: MatDialogRef<RoonBrowseDialogComponent>;
+  private readonly _dialogService: DialogService;
+  private readonly _roonService: RoonService;
   private readonly _firstPath: RoonPath;
   private readonly _scrollIndexes: number[];
-  private readonly _dialogCloseSub: Subscription;
-  private readonly _$layoutClass: Signal<string>;
   readonly isRecording: boolean;
   readonly zoneId: string;
   readonly hierarchy: RoonApiBrowseHierarchy;
@@ -74,20 +69,18 @@ export class RoonBrowseDialogComponent implements OnInit, OnDestroy {
 
   constructor(
     @Inject(MAT_DIALOG_DATA) data: { path: RoonPath; isRecording: boolean },
-    matDialog: MatDialog,
-    dialogRef: MatDialogRef<RoonBrowseDialogComponent>,
+    customActionsService: CustomActionsService,
+    dialogService: DialogService,
     roonService: RoonService,
     settingsService: SettingsService,
-    customActionsService: CustomActionsService
+    dialogRef: MatDialogRef<RoonBrowseDialogComponent>
   ) {
     this.zoneId = settingsService.displayedZoneId()();
-    this._roonService = roonService;
     this._customActionsService = customActionsService;
-    this._dialog = matDialog;
-    this._dialogRef = dialogRef;
+    this._dialogService = dialogService;
+    this._roonService = roonService;
     this._firstPath = data.path;
     this._scrollIndexes = [];
-    this._$layoutClass = settingsService.displayModeClass();
     this.hierarchy = data.path.hierarchy;
     this.isRecording = data.isRecording;
     this.$dialogTitle = signal([]);
@@ -108,16 +101,15 @@ export class RoonBrowseDialogComponent implements OnInit, OnDestroy {
     this.withIndex = false;
     this.scrollIndex = 0;
     this.isPaginated = true;
-    this._dialogCloseSub = this._dialogRef.beforeClosed().subscribe(() => {
+    dialogRef.afterClosed().subscribe(() => {
       void this._roonService.browse({
         hierarchy: this.hierarchy,
         pop_all: true,
         set_display_offset: true,
       });
       if (this.isRecording) {
-        this._dialog.open(CustomActionsManagerComponent, {
+        this._dialogService.open(CustomActionsManagerComponent, {
           ...CustomActionsManagerDialogConfig,
-          panelClass: ["nr-dialog-custom", this._$layoutClass()],
         });
       }
     });
@@ -127,10 +119,6 @@ export class RoonBrowseDialogComponent implements OnInit, OnDestroy {
     this._roonService.loadPath(this.zoneId, this._firstPath).subscribe((content) => {
       this.loadContent(content, 0);
     });
-  }
-
-  ngOnDestroy() {
-    this._dialogCloseSub.unsubscribe();
   }
 
   onTitleClicked(titleIndex: number) {
@@ -166,7 +154,7 @@ export class RoonBrowseDialogComponent implements OnInit, OnDestroy {
   }
 
   closeDialog() {
-    this._dialogRef.close();
+    this._dialogService.close();
   }
 
   onIndexClicked(letter: string) {
@@ -195,7 +183,7 @@ export class RoonBrowseDialogComponent implements OnInit, OnDestroy {
     this._customActionsService.saveHierarchy(this._firstPath.hierarchy);
     this._customActionsService.savePath(path);
     this._customActionsService.saveActionIndex(recordedAction.actionIndex);
-    this._dialogRef.close();
+    this._dialogService.close();
   }
 
   private loadContent(content: RoonApiBrowseLoadResponse, scrollIndex: number): void {

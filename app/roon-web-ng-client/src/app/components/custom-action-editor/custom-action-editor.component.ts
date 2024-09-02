@@ -1,16 +1,14 @@
 import { ChangeDetectionStrategy, Component, computed, Signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MatButton } from "@angular/material/button";
-import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { MatFormFieldModule, MatLabel } from "@angular/material/form-field";
 import { MatIcon } from "@angular/material/icon";
 import { MatInput } from "@angular/material/input";
 import { CustomActionRecorderComponent } from "@components/custom-action-recorder/custom-action-recorder.component";
-import { CustomActionsManagerComponent } from "@components/custom-actions-manager/custom-actions-manager.component";
 import { RoonApiBrowseHierarchy } from "@model";
 import { CustomActionsManagerDialogConfig } from "@model/client";
 import { CustomActionsService } from "@services/custom-actions.service";
-import { SettingsService } from "@services/settings.service";
+import { DialogService } from "@services/dialog.service";
 
 @Component({
   selector: "nr-custom-action-editor",
@@ -21,26 +19,17 @@ import { SettingsService } from "@services/settings.service";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CustomActionEditorComponent {
-  private readonly _dialog: MatDialog;
-  private readonly _dialogRef: MatDialogRef<CustomActionsManagerComponent>;
   private readonly _customActionsService: CustomActionsService;
-  private readonly _$layoutClass: Signal<string>;
+  private readonly _dialogService: DialogService;
   readonly $label: Signal<string>;
   readonly $icon: Signal<string>;
   readonly $hierarchy: Signal<RoonApiBrowseHierarchy | undefined>;
   readonly $path: Signal<string[]>;
   readonly $actionIndex: Signal<number | undefined>;
 
-  constructor(
-    matDialog: MatDialog,
-    dialogRef: MatDialogRef<CustomActionsManagerComponent>,
-    customActionService: CustomActionsService,
-    settingsService: SettingsService
-  ) {
-    this._dialog = matDialog;
-    this._dialogRef = dialogRef;
+  constructor(customActionService: CustomActionsService, dialogService: DialogService) {
     this._customActionsService = customActionService;
-    this._$layoutClass = settingsService.displayModeClass();
+    this._dialogService = dialogService;
     this.$label = computed(() => this._customActionsService.label()() ?? "");
     this.$icon = computed(() => this._customActionsService.icon()() ?? "");
     this.$hierarchy = this._customActionsService.hierarchy();
@@ -49,11 +38,9 @@ export class CustomActionEditorComponent {
   }
 
   openActionRecorder() {
-    this._dialog.open(CustomActionRecorderComponent, {
+    this._dialogService.open(CustomActionRecorderComponent, {
       ...CustomActionsManagerDialogConfig,
-      panelClass: ["nr-dialog-custom", this._$layoutClass()],
     });
-    this._dialogRef.close();
   }
 
   saveLabel(label: string) {
