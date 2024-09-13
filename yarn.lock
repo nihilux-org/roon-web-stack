@@ -3352,7 +3352,7 @@ __metadata:
     "@fastify/static": "npm:7.0.4"
     "@gquittet/graceful-server": "npm:4.0.9"
     "@nihilux/roon-web-model": "workspace:*"
-    "@types/jest": "npm:29.5.12"
+    "@types/jest": "npm:29.5.13"
     "@types/node": "npm:22.5.4"
     "@typescript-eslint/eslint-plugin": "npm:8.5.0"
     "@typescript-eslint/parser": "npm:8.5.0"
@@ -3399,7 +3399,7 @@ __metadata:
   resolution: "@nihilux/roon-web-client@workspace:packages/roon-web-client"
   dependencies:
     "@nihilux/roon-web-model": "workspace:*"
-    "@types/jest": "npm:29.5.12"
+    "@types/jest": "npm:29.5.13"
     "@typescript-eslint/eslint-plugin": "npm:8.5.0"
     "@typescript-eslint/parser": "npm:8.5.0"
     eslint: "npm:8.57.0"
@@ -3471,7 +3471,7 @@ __metadata:
     "@angular/platform-browser-dynamic": "npm:18.2.4"
     "@nihilux/roon-web-client": "workspace:*"
     "@nihilux/roon-web-model": "workspace:*"
-    "@types/jest": "npm:29.5.12"
+    "@types/jest": "npm:29.5.13"
     "@types/node": "npm:22.5.4"
     "@typescript-eslint/eslint-plugin": "npm:8.5.0"
     "@typescript-eslint/parser": "npm:8.5.0"
@@ -4213,13 +4213,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest@npm:29.5.12":
-  version: 29.5.12
-  resolution: "@types/jest@npm:29.5.12"
+"@types/jest@npm:29.5.13":
+  version: 29.5.13
+  resolution: "@types/jest@npm:29.5.13"
   dependencies:
     expect: "npm:^29.0.0"
     pretty-format: "npm:^29.0.0"
-  checksum: 10c0/25fc8e4c611fa6c4421e631432e9f0a6865a8cb07c9815ec9ac90d630271cad773b2ee5fe08066f7b95bebd18bb967f8ce05d018ee9ab0430f9dfd1d84665b6f
+  checksum: 10c0/9c31af0b155387b9860908830de63c6b79011d7c87c8b61b39da124e26e55423dd51b006749aafe4f0ef3a065016619a1f93ef4b055157d43727f448e67824b7
   languageName: node
   linkType: hard
 
