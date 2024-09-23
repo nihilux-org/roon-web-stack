@@ -2561,9 +2561,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fastify/compress@npm:8.0.0":
-  version: 8.0.0
-  resolution: "@fastify/compress@npm:8.0.0"
+"@fastify/compress@npm:8.0.1":
+  version: 8.0.1
+  resolution: "@fastify/compress@npm:8.0.1"
   dependencies:
     "@fastify/accept-negotiator": "npm:^2.0.0"
     fastify-plugin: "npm:^5.0.0"
@@ -2573,7 +2573,7 @@ __metadata:
     pump: "npm:^3.0.0"
     pumpify: "npm:^2.0.1"
     readable-stream: "npm:^4.5.2"
-  checksum: 10c0/bbae16a8214fb50016e1a25f58cca3ceb9ad253c0c7cffdc18dca18d2d63af79c2b6985bf32c1c0c508f0152576b0aaf5fd3896187ce6fe9fc9be87194d9d401
+  checksum: 10c0/f78b6517e8fdbd6bb422187bfce1f7972a60db98aad0d6ca58dfdfe0a45205c2e1009bf99b714c9f0307dd8cb982a71849ba279163c8afe80e37cbda34e9b4ae
   languageName: node
   linkType: hard
 
@@ -2615,9 +2615,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fastify/static@npm:8.0.0":
-  version: 8.0.0
-  resolution: "@fastify/static@npm:8.0.0"
+"@fastify/static@npm:8.0.1":
+  version: 8.0.1
+  resolution: "@fastify/static@npm:8.0.1"
   dependencies:
     "@fastify/accept-negotiator": "npm:^2.0.0"
     "@fastify/send": "npm:^3.1.0"
@@ -2625,7 +2625,7 @@ __metadata:
     fastify-plugin: "npm:^5.0.0"
     fastq: "npm:^1.17.1"
     glob: "npm:^11.0.0"
-  checksum: 10c0/6460736f5b31aefa2b18e22c04079dfbe4aed129e8ae88129b3d6ba34d460e2079f15c15aa45111537f67e2a5dcf9e1210b6ca16e457104eca8096de59c5e13f
+  checksum: 10c0/41103c9f3f2ad9475e51041a1acf9904efcdfc433db1e835abe887697c4c09279295b41e325a44b5348c97fdb27aa59a5b379b4abd9e21e7666f2fcc40e6c35e
   languageName: node
   linkType: hard
 
@@ -3338,8 +3338,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@nihilux/roon-web-api@workspace:app/roon-web-api"
   dependencies:
-    "@fastify/compress": "npm:8.0.0"
-    "@fastify/static": "npm:8.0.0"
+    "@fastify/compress": "npm:8.0.1"
+    "@fastify/static": "npm:8.0.1"
     "@gquittet/graceful-server": "npm:4.0.9"
     "@nihilux/roon-web-model": "workspace:*"
     "@types/jest": "npm:29.5.13"
@@ -3357,7 +3357,7 @@ __metadata:
     eslint-plugin-simple-import-sort: "npm:12.1.1"
     eslint-webpack-plugin: "npm:4.2.0"
     fastify: "npm:5.0.0"
-    fastify-plugin: "npm:5.0.0"
+    fastify-plugin: "npm:5.0.1"
     fastify-sse-v2: "npm:4.1.0"
     jest: "npm:29.7.0"
     jest-junit: "npm:16.0.0"
@@ -7654,10 +7654,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fastify-plugin@npm:5.0.0, fastify-plugin@npm:^5.0.0":
-  version: 5.0.0
-  resolution: "fastify-plugin@npm:5.0.0"
-  checksum: 10c0/9b6b009c7b3e672ce95fa422bb48423987d24631adfc56337a9c99d2816c1a6176af7f68e3aa48df92a288b4020484e5902bad7c6b9c6d87d45917ef5ff660cd
+"fastify-plugin@npm:5.0.1":
+  version: 5.0.1
+  resolution: "fastify-plugin@npm:5.0.1"
+  checksum: 10c0/c5e5932e7b8c5713ff881adeade3e8ee8fc288e8249d79cd193a2a2438eef1ad58ae5814f12835acbf04025dbddf2628787cd845f3e550dee847f494a08f7c5b
   languageName: node
   linkType: hard
 
@@ -7665,6 +7665,13 @@ __metadata:
   version: 4.5.1
   resolution: "fastify-plugin@npm:4.5.1"
   checksum: 10c0/f58f79cd9d3c88fd7f79a3270276c6339fc57bbe72ef14d20b73779193c404e317ac18e8eae2c5071b3909ebee45d7eb6871da4e65464ac64ed0d9746b4e9b9f
+  languageName: node
+  linkType: hard
+
+"fastify-plugin@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "fastify-plugin@npm:5.0.0"
+  checksum: 10c0/9b6b009c7b3e672ce95fa422bb48423987d24631adfc56337a9c99d2816c1a6176af7f68e3aa48df92a288b4020484e5902bad7c6b9c6d87d45917ef5ff660cd
   languageName: node
   linkType: hard
 
