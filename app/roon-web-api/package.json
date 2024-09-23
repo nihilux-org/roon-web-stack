@@ -13,11 +13,11 @@
     "test": "jest"
   },
   "dependencies": {
-    "@fastify/compress": "8.0.0",
-    "@fastify/static": "8.0.0",
+    "@fastify/compress": "8.0.1",
+    "@fastify/static": "8.0.1",
     "@gquittet/graceful-server": "4.0.9",
     "fastify": "5.0.0",
-    "fastify-plugin": "5.0.0",
+    "fastify-plugin": "5.0.1",
     "fastify-sse-v2": "4.1.0",
     "nanoid": "3.3.7",
     "node-roon-api": "github:OonihiloO/node-roon-api#fix/add-node-22-support",
