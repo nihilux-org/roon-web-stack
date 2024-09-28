@@ -8,7 +8,6 @@ on:
 
 concurrency:
   group: ${{ github.workflow }}
-  cancel-in-progress: ${{ !contains(github.ref, 'dependabot/')}}
 
 jobs:
   build:
