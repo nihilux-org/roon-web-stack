@@ -433,9 +433,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@angular/cdk@npm:18.2.6":
-  version: 18.2.6
-  resolution: "@angular/cdk@npm:18.2.6"
+"@angular/cdk@npm:18.2.7":
+  version: 18.2.7
+  resolution: "@angular/cdk@npm:18.2.7"
   dependencies:
     parse5: "npm:^7.1.2"
     tslib: "npm:^2.3.0"
@@ -446,7 +446,7 @@ __metadata:
   dependenciesMeta:
     parse5:
       optional: true
-  checksum: 10c0/e48ac83dfa949983e4a6741aa215544ce9e7cc940282dde7f440641c3187e471c4753eac2e23a3f3ffc78321ce737cff3d2efab125cea341a1b2ad2b6dd3897c
+  checksum: 10c0/e8f00dcf066044e43372838016b059b394019714b405e78927b8f7dc5b3ebebb5f6bb7fb2657289bbdeb2741905db1f0f187be82c068460a1f4a90206ba4a902
   languageName: node
   linkType: hard
 
@@ -557,20 +557,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@angular/material@npm:18.2.6":
-  version: 18.2.6
-  resolution: "@angular/material@npm:18.2.6"
+"@angular/material@npm:18.2.7":
+  version: 18.2.7
+  resolution: "@angular/material@npm:18.2.7"
   dependencies:
     tslib: "npm:^2.3.0"
   peerDependencies:
     "@angular/animations": ^18.0.0 || ^19.0.0
-    "@angular/cdk": 18.2.6
+    "@angular/cdk": 18.2.7
     "@angular/common": ^18.0.0 || ^19.0.0
     "@angular/core": ^18.0.0 || ^19.0.0
     "@angular/forms": ^18.0.0 || ^19.0.0
     "@angular/platform-browser": ^18.0.0 || ^19.0.0
     rxjs: ^6.5.3 || ^7.4.0
-  checksum: 10c0/d2d0850d4ba822f6455ad32b3526337e2e9036bad9bfcb431042edcb56350de4e20f10048be77a71172001da7f4fd1423399d4d8214737a182ef8304ba01006d
+  checksum: 10c0/3387230aed41db4751d6d00bad5e08328a2297083dfcceeac20df6d83fec27c61ef3e3b817424aa177dcb21ca534ce7229611dc7076ea667ce28fa70f9b6f51e
   languageName: node
   linkType: hard
 
@@ -3488,14 +3488,14 @@ __metadata:
     "@angular-eslint/schematics": "npm:18.3.1"
     "@angular-eslint/template-parser": "npm:18.3.1"
     "@angular/animations": "npm:18.2.7"
-    "@angular/cdk": "npm:18.2.6"
+    "@angular/cdk": "npm:18.2.7"
     "@angular/cli": "npm:18.2.7"
     "@angular/common": "npm:18.2.7"
     "@angular/compiler": "npm:18.2.7"
     "@angular/compiler-cli": "npm:18.2.7"
     "@angular/core": "npm:18.2.7"
     "@angular/forms": "npm:18.2.7"
-    "@angular/material": "npm:18.2.6"
+    "@angular/material": "npm:18.2.7"
     "@angular/platform-browser": "npm:18.2.7"
     "@angular/platform-browser-dynamic": "npm:18.2.7"
     "@nihilux/roon-web-client": "workspace:*"
