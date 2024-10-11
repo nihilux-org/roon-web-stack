@@ -8,6 +8,7 @@ import { FullScreenToggleComponent } from "@components/full-screen-toggle/full-s
 import { ZoneContainerComponent } from "@components/zone-container/zone-container.component";
 import { ZoneSelectorComponent } from "@components/zone-selector/zone-selector.component";
 import { RoonState } from "@model";
+import { DisplayMode } from "@model/client";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
 
@@ -56,7 +57,8 @@ export class NrRootComponent implements OnDestroy {
       }
     );
     const $isOneColumn = settingsService.isOneColumn();
-    this.$isWithFullScreen = computed(() => !$isOneColumn());
+    const $displayMode = settingsService.displayMode();
+    this.$isWithFullScreen = computed(() => !$isOneColumn() && $displayMode() !== DisplayMode.TEN_FEET);
     this._closeDialogsEffect = effect(() => {
       this.$clientState();
       this._matDialog.closeAll();

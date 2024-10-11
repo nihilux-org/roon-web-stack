@@ -24,4 +24,10 @@
       margin-left: 20px;
     }
   }
+  &.ten-feet {
+    > div {
+      border-radius: 12px;
+      @include nr.ten-feet-blur();
+    }
+  }
 }

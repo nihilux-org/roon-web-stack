@@ -13,6 +13,7 @@ describe("SettingsDialogComponent", () => {
   let selectedTab: number;
   let $chosenTheme: WritableSignal<string>;
   let $displayMode: WritableSignal<DisplayMode>;
+  let $isBigFonts: WritableSignal<boolean>;
   let $isSmallScreen: WritableSignal<boolean>;
   let $isOneColumn: WritableSignal<boolean>;
   let $actions: WritableSignal<Action[]>;
@@ -31,6 +32,7 @@ describe("SettingsDialogComponent", () => {
     availableActions: jest.Mock;
     displayModeClass: jest.Mock;
     displayModeClasses: jest.Mock;
+    isBigFonts: jest.Mock;
   };
   let version: string;
   let dialogService: {
@@ -51,6 +53,7 @@ describe("SettingsDialogComponent", () => {
     $displayMode = signal(DisplayMode.WIDE);
     $isSmallScreen = signal(false);
     $isOneColumn = signal(false);
+    $isBigFonts = signal(false);
     $actions = signal(DefaultActions);
     $availableAction = signal([]);
     $layoutClass = signal("wide");
@@ -73,6 +76,7 @@ describe("SettingsDialogComponent", () => {
       availableActions: jest.fn().mockImplementation(() => $availableAction),
       displayModeClass: jest.fn().mockImplementation(() => $layoutClass),
       displayModeClasses: jest.fn().mockImplementation(() => displayModeClasses),
+      isBigFonts: jest.fn().mockImplementation(() => $isBigFonts),
     };
     version = "version";
     roonService = {

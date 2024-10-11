@@ -28,6 +28,30 @@
     initial-value: 105px;
   }
 
+  @property --ten-feet-blur-background-color  {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: rgba(0, 0, 0, .5);;
+  }
+
+  @property --ten-feet-blur-background-color-dialog  {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: rgba(0, 0, 0, .75);;
+  }
+
+  @property --ten-feet-mdc-dialog-supporting-text-color  {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: rgba(255, 255, 255, .9);
+  }
+
+  .light-theme {
+    --ten-feet-blur-background-color: rgba(255, 255, 255, .6);
+    --ten-feet-blur-background-color-dialog: rgba(255, 255, 255, .75);
+    --ten-feet-mdc-dialog-supporting-text-color: rgb(0, 0, 0, .9);
+  }
+
   .queue {
     .cdk-virtual-scroll-content-wrapper {
       max-width: 100% !important;
@@ -57,6 +81,36 @@
   .custom-actions-tabs {
     .mat-mdc-tab-header {
       display: none;
+    }
+  }
+
+  .nr-menu-custom {
+    &.ten-feet {
+      --mat-menu-item-label-text-line-height: 4rem;
+      --mat-menu-item-label-text-size: 1.5rem;
+      max-width: fit-content;
+      @include nr.ten-feet-blur();
+    }
+  }
+
+  .nr-dialog-custom {
+    &.ten-feet {
+      --mdc-dialog-container-color: var(--ten-feet-blur-background-color-dialog);
+      --mdc-dialog-supporting-text-line-height: 2rem;
+      --mdc-dialog-supporting-text-size: 1.5rem;
+      --mdc-dialog-supporting-text-color: var(--ten-feet-mdc-dialog-supporting-text-color);
+      --mdc-dialog-subhead-size: 2rem;
+      --mdc-dialog-subhead-line-height: 2.4rem;
+      h2 {
+        padding-bottom: 1.5rem;
+      }
+      .mat-mdc-tab-header {
+        --mdc-secondary-navigation-tab-container-height: 64px;
+        --mat-tab-header-label-text-size: 32px;
+        --mat-tab-header-label-text-line-height: 42px;
+      }
+      @include nr.mat-button-size(1.5rem);
+      @include nr.ten-feet-blur();
     }
   }
 }

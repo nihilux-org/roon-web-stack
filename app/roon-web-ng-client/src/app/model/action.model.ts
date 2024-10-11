@@ -195,3 +195,8 @@ export const CustomActionsManagerDialogConfig: MatDialogConfig = {
     reset: false,
   },
 };
+
+export const CustomActionsManagerDialogConfigBigFonts: MatDialogConfig = {
+  ...CustomActionsManagerDialogConfig,
+  width: "800px",
+};

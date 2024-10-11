@@ -1,5 +1,5 @@
 <h2 mat-dialog-title>Settings</h2>
-<mat-dialog-content>
+<mat-dialog-content [class.is-big-fonts]="$isBigFonts()">
   <mat-tab-group [selectedIndex]="selectedTab" animationDuration="200ms">
     <mat-tab label="General" bodyClass="settings-tab">
       <div class="settings">

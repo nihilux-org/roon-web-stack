@@ -14,7 +14,13 @@ import { MatRadioButton, MatRadioChange, MatRadioGroup } from "@angular/material
 import { MatTab, MatTabGroup } from "@angular/material/tabs";
 import { CustomActionsManagerComponent } from "@components/custom-actions-manager/custom-actions-manager.component";
 import { ZoneSelectorComponent } from "@components/zone-selector/zone-selector.component";
-import { Action, ChosenTheme, CustomActionsManagerDialogConfig, DisplayMode } from "@model/client";
+import {
+  Action,
+  ChosenTheme,
+  CustomActionsManagerDialogConfig,
+  CustomActionsManagerDialogConfigBigFonts,
+  DisplayMode,
+} from "@model/client";
 import { DialogService } from "@services/dialog.service";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
@@ -51,10 +57,11 @@ export class SettingsDialogComponent implements OnDestroy {
   private readonly _settingsService: SettingsService;
   private readonly _layoutChangeEffect: EffectRef;
   readonly displayModeLabels: Map<DisplayMode, string>;
-  readonly $isSmallScreen: Signal<boolean>;
-  readonly $isOneColumn: Signal<boolean>;
   readonly $actions: Signal<Action[]>;
   readonly $availableActions: Signal<Action[]>;
+  readonly $isBigFonts: Signal<boolean>;
+  readonly $isOneColumn: Signal<boolean>;
+  readonly $isSmallScreen: Signal<boolean>;
   readonly $layoutClass: Signal<string>;
   readonly version: string;
   readonly selectedTab: number;
@@ -71,6 +78,7 @@ export class SettingsDialogComponent implements OnDestroy {
     this.displayModeLabels = new Map<DisplayMode, string>();
     this.displayModeLabels.set(DisplayMode.COMPACT, "Compact");
     this.displayModeLabels.set(DisplayMode.WIDE, "Wide");
+    this.displayModeLabels.set(DisplayMode.TEN_FEET, "10 Feet");
     this._layoutChangeEffect = effect(() => {
       for (const displayModeClass of this._settingsService.displayModeClasses()) {
         this._dialogRef.removePanelClass(displayModeClass);
@@ -79,6 +87,7 @@ export class SettingsDialogComponent implements OnDestroy {
     });
     this.$actions = this._settingsService.actions();
     this.$availableActions = this._settingsService.availableActions();
+    this.$isBigFonts = this._settingsService.isBigFonts();
     this.$isSmallScreen = this._settingsService.isSmallScreen();
     this.$isOneColumn = this._settingsService.isOneColumn();
     this.$layoutClass = this._settingsService.displayModeClass();
@@ -149,8 +158,9 @@ export class SettingsDialogComponent implements OnDestroy {
   }
 
   openCustomActionsManager() {
+    const config = this.$isBigFonts() ? CustomActionsManagerDialogConfigBigFonts : CustomActionsManagerDialogConfig;
     this._dialogService.open(CustomActionsManagerComponent, {
-      ...CustomActionsManagerDialogConfig,
+      ...config,
       data: {
         reset: true,
       },

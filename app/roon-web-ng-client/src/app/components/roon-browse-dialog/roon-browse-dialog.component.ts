@@ -24,7 +24,12 @@ import { AlphabeticalIndexComponent } from "@components/alphabetical-index/alpha
 import { CustomActionsManagerComponent } from "@components/custom-actions-manager/custom-actions-manager.component";
 import { RoonBrowseListComponent } from "@components/roon-browse-list/roon-browse-list.component";
 import { RoonApiBrowseHierarchy, RoonApiBrowseLoadResponse, RoonPath } from "@model";
-import { CustomActionsManagerDialogConfig, NavigationEvent, RecordedAction } from "@model/client";
+import {
+  CustomActionsManagerDialogConfig,
+  CustomActionsManagerDialogConfigBigFonts,
+  NavigationEvent,
+  RecordedAction,
+} from "@model/client";
 import { CustomActionsService } from "@services/custom-actions.service";
 import { DialogService } from "@services/dialog.service";
 import { RoonService } from "@services/roon.service";
@@ -56,6 +61,7 @@ export class RoonBrowseDialogComponent implements OnInit {
   private readonly _roonService: RoonService;
   private readonly _firstPath: RoonPath;
   private readonly _scrollIndexes: number[];
+  private readonly _$isBigFont: Signal<boolean>;
   readonly isRecording: boolean;
   readonly zoneId: string;
   readonly hierarchy: RoonApiBrowseHierarchy;
@@ -81,6 +87,7 @@ export class RoonBrowseDialogComponent implements OnInit {
     this._roonService = roonService;
     this._firstPath = data.path;
     this._scrollIndexes = [];
+    this._$isBigFont = settingsService.isBigFonts();
     this.hierarchy = data.path.hierarchy;
     this.isRecording = data.isRecording;
     this.$dialogTitle = signal([]);
@@ -108,8 +115,9 @@ export class RoonBrowseDialogComponent implements OnInit {
         set_display_offset: true,
       });
       if (this.isRecording) {
+        const config = this._$isBigFont() ? CustomActionsManagerDialogConfigBigFonts : CustomActionsManagerDialogConfig;
         this._dialogService.open(CustomActionsManagerComponent, {
-          ...CustomActionsManagerDialogConfig,
+          ...config,
         });
       }
     });

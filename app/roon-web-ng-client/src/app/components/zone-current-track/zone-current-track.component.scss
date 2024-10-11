@@ -22,4 +22,15 @@
       min-width: 0;
     }
   }
+  &.ten-feet {
+    .current-track {
+      h1 {
+        font-size: 4rem;
+      }
+      span {
+        line-height: 3.0rem;
+        font-size: 2.6rem;
+      }
+    }
+  }
 }

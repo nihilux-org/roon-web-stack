@@ -6,9 +6,10 @@ import { MatIcon } from "@angular/material/icon";
 import { MatInput } from "@angular/material/input";
 import { CustomActionRecorderComponent } from "@components/custom-action-recorder/custom-action-recorder.component";
 import { RoonApiBrowseHierarchy } from "@model";
-import { CustomActionsManagerDialogConfig } from "@model/client";
+import { CustomActionsManagerDialogConfig, CustomActionsManagerDialogConfigBigFonts } from "@model/client";
 import { CustomActionsService } from "@services/custom-actions.service";
 import { DialogService } from "@services/dialog.service";
+import { SettingsService } from "@services/settings.service";
 
 @Component({
   selector: "nr-custom-action-editor",
@@ -21,15 +22,21 @@ import { DialogService } from "@services/dialog.service";
 export class CustomActionEditorComponent {
   private readonly _customActionsService: CustomActionsService;
   private readonly _dialogService: DialogService;
+  private readonly _$isBigFonts: Signal<boolean>;
   readonly $label: Signal<string>;
   readonly $icon: Signal<string>;
   readonly $hierarchy: Signal<RoonApiBrowseHierarchy | undefined>;
   readonly $path: Signal<string[]>;
   readonly $actionIndex: Signal<number | undefined>;
 
-  constructor(customActionService: CustomActionsService, dialogService: DialogService) {
+  constructor(
+    customActionService: CustomActionsService,
+    dialogService: DialogService,
+    settingsService: SettingsService
+  ) {
     this._customActionsService = customActionService;
     this._dialogService = dialogService;
+    this._$isBigFonts = settingsService.isBigFonts();
     this.$label = computed(() => this._customActionsService.label()() ?? "");
     this.$icon = computed(() => this._customActionsService.icon()() ?? "");
     this.$hierarchy = this._customActionsService.hierarchy();
@@ -38,8 +45,9 @@ export class CustomActionEditorComponent {
   }
 
   openActionRecorder() {
+    const config = this._$isBigFonts() ? CustomActionsManagerDialogConfigBigFonts : CustomActionsManagerDialogConfig;
     this._dialogService.open(CustomActionRecorderComponent, {
-      ...CustomActionsManagerDialogConfig,
+      ...config,
     });
   }
 

@@ -82,5 +82,10 @@
         }
       }
     }
+    &.is-big-fonts {
+      --roon-list-item-height: 120px;
+      --roon-list-item-padding: 20px;
+      --roon-list-item-divider-margin: 145px;
+    }
   }
 }
