@@ -24,5 +24,5 @@
     "backend": "yarn workspace @nihilux/roon-web-api start",
     "frontend": "yarn workspace @nihilux/roon-web-ng-client start"
   },
-  "packageManager": "yarn@4.4.1+sha256.920b4530755296dc2ce8b4351f057d4a26429524fcb2789d277560d94837c27e"
+  "packageManager": "yarn@4.5.1+sha256.dc2e45a77f87a9c2a76708d098ab54ca0cfdd5ec2cf7d9e3c1f24bf786a2383c"
 }
