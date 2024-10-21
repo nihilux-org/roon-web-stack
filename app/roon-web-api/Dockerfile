@@ -14,7 +14,6 @@ RUN addgroup -g 1000 node && adduser -u 1000 -G node -s /bin/sh -D node \
 RUN mkdir /usr/src/app/config \
     && chown node:node /usr/src/app/config \
     && ln -sv /usr/src/app/config/config.json /usr/src/app/config.json
-VOLUME /usr/src/app/config
 ENV HOST=0.0.0.0
 COPY --from=builder /usr/local/bin/node /usr/local/bin/
 COPY --from=builder /usr/local/bin/docker-entrypoint.sh /usr/local/bin/
