@@ -10,6 +10,7 @@ import {
 import { MatIcon } from "@angular/material/icon";
 import { CustomActionsManagerComponent } from "@components/custom-actions-manager/custom-actions-manager.component";
 import { RoonBrowseDialogComponent } from "@components/roon-browse-dialog/roon-browse-dialog.component";
+import { SpatialNavigableContainerDirective } from "@directives/spatial-navigable-container.directive";
 import { RoonApiBrowseHierarchy } from "@model";
 import { CustomActionsManagerDialogConfig } from "@model/client";
 import { DialogService } from "@services/dialog.service";
@@ -23,7 +24,16 @@ interface RecordableHierarchy {
 @Component({
   selector: "nr-custom-action-recorder",
   standalone: true,
-  imports: [MatButton, MatDialogActions, MatDialogContent, MatDialogTitle, MatFabButton, MatIcon, MatMiniFabButton],
+  imports: [
+    MatButton,
+    MatDialogActions,
+    MatDialogContent,
+    MatDialogTitle,
+    MatFabButton,
+    MatIcon,
+    MatMiniFabButton,
+    SpatialNavigableContainerDirective,
+  ],
   templateUrl: "./custom-action-recorder.component.html",
   styleUrl: "./custom-action-recorder.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -2,40 +2,44 @@
 <mat-dialog-content>
   <mat-tab-group class="custom-actions-tabs" [selectedIndex]="$selectedTab()" animationDuration="0ms">
     <mat-tab label="Manager">
-      <div class="custom-actions-wrapper">
-        <div class="custom-actions-container">
-          @for (ca of $customActions(); track ca.id) {
-            <div class="custom-action">
-              <span class="custom-action-label">
-                <mat-icon [fontIcon]="ca.button.icon" />
-                <span>{{ca.button.label}}</span>
-              </span>
-              <span>
-                <button mat-icon-button (click)="editCustomAction(ca)"><mat-icon fontIcon="edit" /></button>
-                <button mat-icon-button (click)="deleteCustomAction(ca.id)"><mat-icon fontIcon="cancel" /></button>
-              </span>
-            </div>
-          } @empty {
-            <span>No custom action has been defined yet</span>
-          }
+      <ng-template matTabContent>
+        <div class="custom-actions-wrapper">
+          <div class="custom-actions-container" nrSnContainer>
+            @for (ca of $customActions(); track ca.id; let index = $index) {
+              <div class="custom-action">
+                <span class="custom-action-label">
+                  <mat-icon [fontIcon]="ca.button.icon" />
+                  <span>{{ca.button.label}}</span>
+                </span>
+                <span>
+                  <button mat-icon-button [id]="'custom-action-edit-' + ca.id" nrSnStarter [nrSnIgnore]="index !== 0" (click)="editCustomAction(ca)"><mat-icon fontIcon="edit" /></button>
+                  <button mat-icon-button [id]="'custom-action-delete-' + ca.id" (click)="deleteCustomAction(ca.id)"><mat-icon fontIcon="cancel" /></button>
+                </span>
+              </div>
+            } @empty {
+              <span>No custom action has been defined yet</span>
+            }
+          </div>
+          <button mat-button id="create-custom-action" (click)="createCustomAction()"><mat-icon fontIcon="playlist_add_circle" />Create a Custom Action</button>
         </div>
-        <button mat-button (click)="createCustomAction()"><mat-icon fontIcon="playlist_add_circle" />Create a Custom Action</button>
-      </div>
+      </ng-template>
     </mat-tab>
-    <mat-tab label="Recroder">
-      <div class="custom-actions-wrapper">
-        <div class="custom-action-recorder">
-          <nr-custom-action-editor />
+    <mat-tab label="Recorder">
+      <ng-template matTabContent>
+        <div class="custom-actions-wrapper">
+          <div class="custom-action-recorder">
+            <nr-custom-action-editor />
+          </div>
         </div>
-      </div>
+      </ng-template>
     </mat-tab>
   </mat-tab-group>
 </mat-dialog-content>
-<mat-dialog-actions align="end">
+<mat-dialog-actions align="end" nrSnContainer>
   @if ($isEditing()) {
-    <button mat-button (click)="onCancel()"><mat-icon fontIcon="cancel" />Cancel</button>
-    <button mat-button (click)="onSave()" [disabled]="$saveDisabled()"><mat-icon fontIcon="save" />Save</button>
+    <button mat-button id="custom-action-recorder-cancel" (click)="onCancel()"><mat-icon fontIcon="cancel" />Cancel</button>
+    <button mat-button id="custom-action-recorder-save" (click)="onSave()" [disabled]="$saveDisabled()"><mat-icon fontIcon="save" />Save</button>
   } @else {
-    <button mat-button (click)="onSave()" [disabled]="$saveDisabled()"><mat-icon fontIcon="arrow_back_ios" />Back to settings</button>
+    <button mat-button  id="custom-action-editor-save" (click)="onSave()" [disabled]="$saveDisabled()"><mat-icon fontIcon="arrow_back_ios" />Back to settings</button>
   }
 </mat-dialog-actions>

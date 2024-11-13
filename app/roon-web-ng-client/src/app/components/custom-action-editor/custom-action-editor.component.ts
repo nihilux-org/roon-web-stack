@@ -5,6 +5,7 @@ import { MatFormFieldModule, MatLabel } from "@angular/material/form-field";
 import { MatIcon } from "@angular/material/icon";
 import { MatInput } from "@angular/material/input";
 import { CustomActionRecorderComponent } from "@components/custom-action-recorder/custom-action-recorder.component";
+import { SpatialNavigableStarterDirective } from "@directives/spatial-navigable-starter.directive";
 import { RoonApiBrowseHierarchy } from "@model";
 import { CustomActionsManagerDialogConfig } from "@model/client";
 import { CustomActionsService } from "@services/custom-actions.service";
@@ -13,7 +14,7 @@ import { DialogService } from "@services/dialog.service";
 @Component({
   selector: "nr-custom-action-editor",
   standalone: true,
-  imports: [FormsModule, MatButton, MatFormFieldModule, MatIcon, MatInput, MatLabel],
+  imports: [FormsModule, MatButton, MatFormFieldModule, MatIcon, MatInput, MatLabel, SpatialNavigableStarterDirective],
   templateUrl: "./custom-action-editor.component.html",
   styleUrl: "./custom-action-editor.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,

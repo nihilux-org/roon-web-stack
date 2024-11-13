@@ -23,6 +23,7 @@ import { MatProgressSpinner } from "@angular/material/progress-spinner";
 import { AlphabeticalIndexComponent } from "@components/alphabetical-index/alphabetical-index.component";
 import { CustomActionsManagerComponent } from "@components/custom-actions-manager/custom-actions-manager.component";
 import { RoonBrowseListComponent } from "@components/roon-browse-list/roon-browse-list.component";
+import { SpatialNavigableContainerDirective } from "@directives/spatial-navigable-container.directive";
 import { RoonApiBrowseHierarchy, RoonApiBrowseLoadResponse, RoonPath } from "@model";
 import { CustomActionsManagerDialogConfig, NavigationEvent, RecordedAction } from "@model/client";
 import { CustomActionsService } from "@services/custom-actions.service";
@@ -44,6 +45,7 @@ import { SettingsService } from "@services/settings.service";
     MatIconButton,
     MatProgressSpinner,
     RoonBrowseListComponent,
+    SpatialNavigableContainerDirective,
   ],
   templateUrl: "./roon-browse-dialog.component.html",
   styleUrl: "./roon-browse-dialog.component.scss",

@@ -2,9 +2,11 @@ import { ChangeDetectionStrategy, Component, computed, Inject, Signal } from "@a
 import { MatButton, MatIconButton } from "@angular/material/button";
 import { MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogTitle } from "@angular/material/dialog";
 import { MatIcon } from "@angular/material/icon";
-import { MatTab, MatTabGroup } from "@angular/material/tabs";
+import { MatTab, MatTabContent, MatTabGroup } from "@angular/material/tabs";
 import { CustomActionEditorComponent } from "@components/custom-action-editor/custom-action-editor.component";
 import { SettingsDialogComponent } from "@components/settings-dialog/settings-dialog.component";
+import { SpatialNavigableContainerDirective } from "@directives/spatial-navigable-container.directive";
+import { SpatialNavigableStarterDirective } from "@directives/spatial-navigable-starter.directive";
 import { CustomAction, SettingsDialogConfig } from "@model/client";
 import { CustomActionsService } from "@services/custom-actions.service";
 import { DialogService } from "@services/dialog.service";
@@ -21,8 +23,11 @@ import { RoonService } from "@services/roon.service";
     MatDialogTitle,
     MatIcon,
     MatIconButton,
-    MatTabGroup,
     MatTab,
+    MatTabContent,
+    MatTabGroup,
+    SpatialNavigableContainerDirective,
+    SpatialNavigableStarterDirective,
   ],
   templateUrl: "./custom-actions-manager.component.html",
   styleUrl: "./custom-actions-manager.component.scss",

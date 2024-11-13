@@ -5,6 +5,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { ZoneSelectorComponent } from "@components/zone-selector/zone-selector.component";
 import { ZoneVolumeComponent } from "@components/zone-volume/zone-volume.component";
+import { SpatialNavigableStarterDirective } from "@directives/spatial-navigable-starter.directive";
 import { Command, CommandType } from "@model";
 import { DisplayMode, ZoneCommands, ZoneCommandState } from "@model/client";
 import { RoonService } from "@services/roon.service";
@@ -13,7 +14,14 @@ import { SettingsService } from "@services/settings.service";
 @Component({
   selector: "nr-zone-commands",
   standalone: true,
-  imports: [MatButtonModule, MatIconModule, ZoneSelectorComponent, ZoneVolumeComponent, NgTemplateOutlet],
+  imports: [
+    MatButtonModule,
+    MatIconModule,
+    NgTemplateOutlet,
+    SpatialNavigableStarterDirective,
+    ZoneSelectorComponent,
+    ZoneVolumeComponent,
+  ],
   templateUrl: "./zone-commands.component.html",
   styleUrl: "./zone-commands.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,

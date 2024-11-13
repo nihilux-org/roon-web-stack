@@ -17,7 +17,6 @@
 @include mat.menu-theme(nr-variables.$roon-web-ng-client-dark-theme);
 @include mat.progress-bar-theme(nr-variables.$roon-web-ng-client-dark-theme);
 @include mat.progress-spinner-theme(nr-variables.$roon-web-ng-client-dark-theme);
-@include mat.radio-theme(nr-variables.$roon-web-ng-client-dark-theme);
 @include mat.slider-theme(nr-variables.$roon-web-ng-client-dark-theme);
 @include mat.tabs-theme(nr-variables.$roon-web-ng-client-dark-theme);
 
@@ -35,7 +34,6 @@
   @include mat.menu-color(nr-variables.$roon-web-ng-client-light-theme);
   @include mat.progress-bar-color(nr-variables.$roon-web-ng-client-light-theme);
   @include mat.progress-spinner-color(nr-variables.$roon-web-ng-client-light-theme);
-  @include mat.radio-color(nr-variables.$roon-web-ng-client-light-theme);
   @include mat.slider-color(nr-variables.$roon-web-ng-client-light-theme);
   @include mat.tabs-color(nr-variables.$roon-web-ng-client-light-theme);
 }

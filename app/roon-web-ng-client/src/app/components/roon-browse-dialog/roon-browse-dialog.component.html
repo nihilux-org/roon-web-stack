@@ -1,10 +1,10 @@
-<div mat-dialog-title class="browse-dialog-title">
+<div mat-dialog-title class="browse-dialog-title" nrSnContainer>
   @if (isRecording) {
     <h3 class="is-recording-title">Custom Action Recording:</h3>
   }
   @for (item of $dialogTitle(); track item; let first = $first; let index = $index; let count = $count) {
     @if (count >= $itemsInTitle() && index === (count - $itemsInTitle())) {
-      <button mat-icon-button aria-label="back in navigation" (click)="onTitleClicked(index)">
+      <button mat-icon-button aria-label="back in navigation" (click)="onTitleClicked(index)" [id]="'roon-dialog-title-' + index">
         <mat-icon aria-hidden="false" fontIcon="arrow_upward"/>
       </button>
     }
@@ -12,7 +12,7 @@
       @if (!first && index > (count - $itemsInTitle() + 1)) {
         <mat-icon aria-hidden="true" fontIcon="navigate_next"/>
       }
-      <button mat-flat-button (click)="onTitleClicked(index)">{{item}}</button>
+      <button mat-flat-button (click)="onTitleClicked(index)" [id]="'roon-dialog-title-' + index">{{item}}</button>
     }
   }
 </div>
@@ -32,15 +32,15 @@
       (clickedItem)="onItemClicked($event)"
       (recordedAction)="onRecordedAction($event)" />
     @if (withIndex) {
-      <nr-alphabetical-index (clickedLetter)="onIndexClicked($event)" />
+      <nr-alphabetical-index (clickedLetter)="onIndexClicked($event)" nrSnContainer />
     }
   }
 </mat-dialog-content>
-<mat-dialog-actions align="end">
+<mat-dialog-actions align="end" nrSnContainer>
   @if (isRecording) {
-    <button mat-button (click)="closeDialog()"><mat-icon fontIcon="cancel"/>Cancel</button>
-    <button mat-button (click)="closeDialog()"><mat-icon fontIcon="save"/>Save</button>
+    <button mat-button (click)="closeDialog()" id="roon-dialog-cancel"><mat-icon fontIcon="cancel"/>Cancel</button>
+    <button mat-button (click)="closeDialog()" id="roon-dialog-save"><mat-icon fontIcon="save"/>Save</button>
   } @else {
-    <button mat-button (click)="closeDialog()"><mat-icon fontIcon="close"/>Close</button>
+    <button mat-button (click)="closeDialog()" id="roon-dialog-close"><mat-icon fontIcon="close"/>Close</button>
   }
 </mat-dialog-actions>

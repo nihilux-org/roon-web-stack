@@ -6,27 +6,62 @@
   }
   <div class="buttons">
     @if ($zoneCommands().previousTrack !== "ABSENT") {
-      <button mat-icon-button aria-label="Previous track" [disabled]="$zoneCommands().previousTrack ==='DISABLED'" (click)="onCommandClick('previousTrack')">
+      <button
+        mat-icon-button
+        aria-label="Previous track"
+        [disabled]="$zoneCommands().previousTrack ==='DISABLED'"
+        (click)="onCommandClick('previousTrack')"
+        id="previous-track"
+      >
         <mat-icon fontIcon="skip_previous" />
       </button>
     }
     @if ($zoneCommands().loading !== "ABSENT") {
-      <button mat-mini-fab color="primary" aria-label="Loading" [disabled]="$zoneCommands().loading ==='DISABLED'" (click)="onCommandClick('pause')">
+      <button
+        mat-mini-fab
+        color="primary" aria-label="Loading"
+        [disabled]="$zoneCommands().loading ==='DISABLED'"
+        (click)="onCommandClick('pause')"
+        nrSnStarter
+        id="loading"
+      >
         <mat-icon fontIcon="rotate_right" />
       </button>
     }
     @if ($zoneCommands().play !== "ABSENT") {
-      <button mat-mini-fab color="primary" aria-label="Play" [disabled]="$zoneCommands().play ==='DISABLED'" (click)="onCommandClick('play')">
+      <button
+        mat-mini-fab
+        color="primary"
+        aria-label="Play"
+        [disabled]="$zoneCommands().play ==='DISABLED'"
+        (click)="onCommandClick('play')"
+        nrSnStarter
+        id="play"
+      >
         <mat-icon fontIcon="play_arrow" />
       </button>
     }
     @if ($zoneCommands().pause !== "ABSENT") {
-      <button mat-mini-fab color="primary" aria-label="Pause" [disabled]="$zoneCommands().pause ==='DISABLED'" (click)="onCommandClick('pause')">
+      <button
+        mat-mini-fab
+        color="primary"
+        aria-label="Pause"
+        [disabled]="$zoneCommands().pause ==='DISABLED'"
+        (click)="onCommandClick('pause')"
+        nrSnStarter
+        id="pause"
+      >
         <mat-icon fontIcon="pause" />
       </button>
     }
     @if ($zoneCommands().nextTrack !== "ABSENT") {
-      <button mat-icon-button aria-label="Next track" [disabled]="$zoneCommands().nextTrack ==='DISABLED'" (click)="onCommandClick('nextTrack')">
+      <button
+        mat-icon-button
+        aria-label="Next track"
+        [disabled]="$zoneCommands().nextTrack ==='DISABLED'"
+        (click)="onCommandClick('nextTrack')"
+        id="next-track"
+      >
         <mat-icon fontIcon="skip_next" />
       </button>
     }

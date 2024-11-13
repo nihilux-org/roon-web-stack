@@ -1,8 +1,8 @@
 <ng-template #zoneActions let-layoutClass="class">
-  <nr-zone-actions [$trackDisplay]="$trackDisplay" [queueComponentTemplateRef]="zoneQueue" [class]="layoutClass" class="zone-actions"/>
+  <nr-zone-actions [$trackDisplay]="$trackDisplay" [queueComponentTemplateRef]="zoneQueue" [class]="layoutClass" class="zone-actions" nrSnContainer />
 </ng-template>
 <ng-template #zoneCommands let-layoutClass="class">
-  <nr-zone-commands [$zoneCommands]="$zoneCommands" [class]="layoutClass" class="zone-commands" [zoneVolume]="zoneVolume" />
+  <nr-zone-commands [$zoneCommands]="$zoneCommands" [class]="layoutClass" class="zone-commands" [zoneVolume]="zoneVolume" nrSnContainer />
 </ng-template>
 <ng-template #zoneCurrentTrack let-layoutClass="class">
   <nr-zone-current-track [$isOneColumn]="$isOneColumn" [$trackDisplay]="$trackDisplay" [class]="layoutClass" class="zone-current-track"/>
@@ -31,8 +31,8 @@
         zoneQueue,
         zoneVolume,
         context: {
-          class: $layoutClass()
-        }
+          class: $layoutClass(),
+        },
       }"
     />
   }
@@ -47,8 +47,8 @@
         zoneQueue,
         zoneVolume,
         context: {
-          class: $layoutClass()
-        }
+          class: $layoutClass(),
+        },
       }"
     />
   }
@@ -63,8 +63,8 @@
         zoneQueue,
         zoneVolume,
         context: {
-          class: $layoutClass()
-        }
+          class: $layoutClass(),
+        },
       }"
     />
   }

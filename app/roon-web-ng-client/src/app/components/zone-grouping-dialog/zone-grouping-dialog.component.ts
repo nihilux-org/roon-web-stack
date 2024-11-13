@@ -4,6 +4,8 @@ import { MatCheckbox } from "@angular/material/checkbox";
 import { MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle } from "@angular/material/dialog";
 import { MatDivider } from "@angular/material/divider";
 import { MatIcon } from "@angular/material/icon";
+import { SpatialNavigableContainerDirective } from "@directives/spatial-navigable-container.directive";
+import { SpatialNavigableStarterDirective } from "@directives/spatial-navigable-starter.directive";
 import { CommandResult, CommandType, GroupCommand, OutputDescription } from "@model";
 import { CommandCallback } from "@model/client";
 import { RoonService } from "@services/roon.service";
@@ -16,7 +18,17 @@ export interface GroupOutputDescription extends OutputDescription {
 @Component({
   selector: "nr-zone-grouping-dialog",
   standalone: true,
-  imports: [MatButton, MatCheckbox, MatDialogActions, MatDialogContent, MatDialogTitle, MatDivider, MatIcon],
+  imports: [
+    MatButton,
+    MatCheckbox,
+    MatDialogActions,
+    MatDialogContent,
+    MatDialogTitle,
+    MatDivider,
+    MatIcon,
+    SpatialNavigableContainerDirective,
+    SpatialNavigableStarterDirective,
+  ],
   templateUrl: "./zone-grouping-dialog.component.html",
   styleUrl: "./zone-grouping-dialog.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,

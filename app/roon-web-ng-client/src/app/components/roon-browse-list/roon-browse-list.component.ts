@@ -24,10 +24,14 @@ import { MatIcon } from "@angular/material/icon";
 import { MatInput } from "@angular/material/input";
 import { MatMenu, MatMenuContent, MatMenuItem, MatMenuTrigger } from "@angular/material/menu";
 import { RoonImageComponent } from "@components/roon-image/roon-image.component";
+import { SpatialNavigableContainerDirective } from "@directives/spatial-navigable-container.directive";
+import { SpatialNavigableElementDirective } from "@directives/spatial-navigable-element.directive";
+import { SpatialNavigableStarterDirective } from "@directives/spatial-navigable-starter.directive";
 import { Item, RoonApiBrowseHierarchy, RoonApiBrowseLoadResponse } from "@model";
 import { NavigationEvent, RecordedAction } from "@model/client";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
+import { SpatialNavigationService } from "@services/spatial-navigation.service";
 
 interface MenuTriggerData {
   item_key: string;
@@ -55,6 +59,9 @@ interface MenuTriggerData {
     MatMenuItem,
     MatMenuTrigger,
     RoonImageComponent,
+    SpatialNavigableContainerDirective,
+    SpatialNavigableElementDirective,
+    SpatialNavigableStarterDirective,
   ],
   templateUrl: "./roon-browse-list.component.html",
   styleUrl: "./roon-browse-list.component.scss",
@@ -63,6 +70,7 @@ interface MenuTriggerData {
 export class RoonBrowseListComponent implements OnChanges, AfterViewChecked {
   private static readonly SUBTITLE_SPLITTER = /\s?\/?\s?\[\[\d*\|/;
   private readonly _roonService: RoonService;
+  private readonly _spatialNavigationService: SpatialNavigationService;
   private readonly _inputValues: Map<string, string>;
   private _noActionClicked = true;
   @Input({ required: true }) hierarchy!: RoonApiBrowseHierarchy;
@@ -79,8 +87,13 @@ export class RoonBrowseListComponent implements OnChanges, AfterViewChecked {
   readonly $isOneColumn: Signal<boolean>;
   readonly $layoutClass: Signal<string>;
 
-  constructor(roonService: RoonService, settingsService: SettingsService) {
+  constructor(
+    roonService: RoonService,
+    settingsService: SettingsService,
+    spatialNavigationService: SpatialNavigationService
+  ) {
     this._roonService = roonService;
+    this._spatialNavigationService = spatialNavigationService;
     this._inputValues = new Map<string, string>();
     this.$isOneColumn = settingsService.isOneColumn();
     this.$layoutClass = settingsService.displayModeClass();
@@ -208,7 +221,9 @@ export class RoonBrowseListComponent implements OnChanges, AfterViewChecked {
         if (actionLoadResponse.list.hint === "action_list") {
           menuTriggerData.actions = actionLoadResponse.items;
           menuTrigger.openMenu();
+          this._spatialNavigationService.suspendSpatialNavigation();
           const menuClosedSub = menuTrigger.menuClosed.subscribe(() => {
+            this._spatialNavigationService.resumeSpatialNavigation();
             menuTriggerData.actions = [];
             if (this._noActionClicked) {
               void this._roonService
