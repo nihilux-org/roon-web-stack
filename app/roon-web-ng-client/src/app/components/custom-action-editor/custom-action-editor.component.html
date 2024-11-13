@@ -26,6 +26,7 @@
       [ngModel]="$icon()"
       (ngModelChange)="saveIcon($event)"
       [required]="true"
+      nrSnStarter
     />
     @if (iconInputControl.hasError('required')) {
       <mat-error>

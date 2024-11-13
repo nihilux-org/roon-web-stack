@@ -3,6 +3,8 @@ import { MatButton } from "@angular/material/button";
 import { MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle } from "@angular/material/dialog";
 import { MatDivider } from "@angular/material/divider";
 import { MatIcon } from "@angular/material/icon";
+import { SpatialNavigableContainerDirective } from "@directives/spatial-navigable-container.directive";
+import { SpatialNavigableStarterDirective } from "@directives/spatial-navigable-starter.directive";
 import { CommandResult, CommandType, TransferZoneCommand, ZoneDescription } from "@model";
 import { CommandCallback } from "@model/client";
 import { RoonService } from "@services/roon.service";
@@ -11,7 +13,16 @@ import { SettingsService } from "@services/settings.service";
 @Component({
   selector: "nr-zone-transfer-dialog",
   standalone: true,
-  imports: [MatButton, MatDialogActions, MatDialogContent, MatDialogTitle, MatDivider, MatIcon],
+  imports: [
+    MatButton,
+    MatDialogActions,
+    MatDialogContent,
+    MatDialogTitle,
+    MatDivider,
+    MatIcon,
+    SpatialNavigableContainerDirective,
+    SpatialNavigableStarterDirective,
+  ],
   templateUrl: "./zone-transfer-dialog.component.html",
   styleUrl: "./zone-transfer-dialog.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,

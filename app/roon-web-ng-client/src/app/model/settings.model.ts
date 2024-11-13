@@ -6,6 +6,30 @@ export enum ChosenTheme {
   LIGHT = "LIGHT",
 }
 
+export interface Theme {
+  id: ChosenTheme;
+  label: string;
+  icon: string;
+}
+
+export const Themes: Theme[] = [
+  {
+    id: ChosenTheme.BROWSER,
+    icon: "contrast",
+    label: "Browser",
+  },
+  {
+    id: ChosenTheme.LIGHT,
+    icon: "light_mode",
+    label: "Light",
+  },
+  {
+    id: ChosenTheme.DARK,
+    icon: "dark_mode",
+    label: "Dark",
+  },
+];
+
 export type ClientBreakpoints = {
   [key: string]: boolean;
 };

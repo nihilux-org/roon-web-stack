@@ -10,6 +10,7 @@ import { WideLayoutComponent } from "@components/zone-layouts/wide-layout/wide-l
 import { ZoneProgressionComponent } from "@components/zone-progression/zone-progression.component";
 import { ZoneQueueComponent } from "@components/zone-queue/zone-queue.component";
 import { ZoneVolumeComponent } from "@components/zone-volume/zone-volume.component";
+import { SpatialNavigableContainerDirective } from "@directives/spatial-navigable-container.directive";
 import { ZoneState } from "@model";
 import {
   DEFAULT_ZONE_PROGRESSION,
@@ -37,6 +38,7 @@ import { SettingsService } from "@services/settings.service";
     ZoneProgressionComponent,
     ZoneQueueComponent,
     ZoneVolumeComponent,
+    SpatialNavigableContainerDirective,
   ],
   templateUrl: "./zone-container.component.html",
   styleUrl: "./zone-container.component.scss",

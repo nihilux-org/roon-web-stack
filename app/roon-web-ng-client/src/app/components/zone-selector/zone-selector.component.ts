@@ -14,6 +14,7 @@ import { MatMenuModule, MatMenuTrigger } from "@angular/material/menu";
 import { ApiState, ZoneDescription } from "@model";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
+import { SpatialNavigationService } from "@services/spatial-navigation.service";
 
 @Component({
   selector: "nr-zone-selector",
@@ -29,14 +30,20 @@ export class ZoneSelectorComponent {
   @Input({ required: false }) yPosition: "below" | "above";
   @ViewChild(MatMenuTrigger) menuTrigger!: MatMenuTrigger;
   private readonly _settingsService: SettingsService;
+  private readonly _spatialNavigationService: SpatialNavigationService;
   private readonly _$zoneId: Signal<string>;
   private readonly _$roonState: Signal<ApiState>;
   readonly $zones: Signal<ZoneDescription[]>;
   readonly $label: Signal<string>;
   readonly $layoutClass: Signal<string>;
 
-  constructor(roonService: RoonService, settingsService: SettingsService) {
+  constructor(
+    roonService: RoonService,
+    settingsService: SettingsService,
+    spatialNavigationService: SpatialNavigationService
+  ) {
     this._settingsService = settingsService;
+    this._spatialNavigationService = spatialNavigationService;
     this.withoutLabel = false;
     this.xPosition = "before";
     this.yPosition = "above";
@@ -59,5 +66,13 @@ export class ZoneSelectorComponent {
 
   onZoneSelected(selectedZoneId: string) {
     this._settingsService.saveDisplayedZoneId(selectedZoneId);
+  }
+
+  onSelectorOpen() {
+    this._spatialNavigationService.suspendSpatialNavigation();
+  }
+
+  onSelectorClose() {
+    this._spatialNavigationService.resumeSpatialNavigation();
   }
 }

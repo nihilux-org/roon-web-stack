@@ -16,10 +16,13 @@ import {
 import { MatDividerModule } from "@angular/material/divider";
 import { MatMenu, MatMenuContent, MatMenuItem, MatMenuTrigger } from "@angular/material/menu";
 import { RoonImageComponent } from "@components/roon-image/roon-image.component";
+import { SpatialNavigableContainerDirective } from "@directives/spatial-navigable-container.directive";
+import { SpatialNavigableElementDirective } from "@directives/spatial-navigable-element.directive";
 import { CommandType, QueueTrack } from "@model";
 import { TrackDisplay } from "@model/client";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
+import { SpatialNavigationService } from "@services/spatial-navigation.service";
 
 @Component({
   selector: "nr-zone-queue",
@@ -34,6 +37,8 @@ import { SettingsService } from "@services/settings.service";
     MatMenuItem,
     MatMenuTrigger,
     RoonImageComponent,
+    SpatialNavigableContainerDirective,
+    SpatialNavigableElementDirective,
   ],
   templateUrl: "./zone-queue.component.html",
   styleUrl: "./zone-queue.component.scss",
@@ -61,6 +66,7 @@ export class ZoneQueueComponent implements AfterViewInit {
   @HostBinding("class.open") open: boolean;
   @Input({ required: true }) $trackDisplay!: Signal<TrackDisplay>;
   private readonly _roonService: RoonService;
+  private readonly _spatialNavigationService: SpatialNavigationService;
   readonly $zoneId: Signal<string>;
   readonly $queue: Signal<QueueTrack[]>;
   readonly $displayQueue: Signal<boolean>;
@@ -69,8 +75,13 @@ export class ZoneQueueComponent implements AfterViewInit {
   @ViewChild(CdkVirtualScrollViewport) _virtualScroll?: CdkVirtualScrollViewport;
   @ViewChildren(MatMenuTrigger) _menuTriggers!: QueryList<MatMenuTrigger>;
 
-  constructor(roonService: RoonService, settingsService: SettingsService) {
+  constructor(
+    roonService: RoonService,
+    settingsService: SettingsService,
+    spatialNavigationService: SpatialNavigationService
+  ) {
     this._roonService = roonService;
+    this._spatialNavigationService = spatialNavigationService;
     this.$displayQueue = settingsService.displayQueueTrack();
     this.open = this.$displayQueue();
     this.$zoneId = settingsService.displayedZoneId();
@@ -96,9 +107,11 @@ export class ZoneQueueComponent implements AfterViewInit {
     const menuTrigger = this._menuTriggers.find((mt) => mt.menuData === queue_item_id);
     if (menuTrigger) {
       menuTrigger.menuData = { queue_item_id };
+      this._spatialNavigationService.suspendSpatialNavigation();
       menuTrigger.openMenu();
       const closeSub = menuTrigger.menuClosed.subscribe(() => {
         menuTrigger.menuData = queue_item_id;
+        this._spatialNavigationService.resumeSpatialNavigation();
         closeSub.unsubscribe();
       });
     }

@@ -1,4 +1,4 @@
-<div class="roon-list" [class.is-small-screen]="$isOneColumn()">
+<div class="roon-list" [class.is-small-screen]="$isOneColumn()" nrSnContainer>
   @if(content.list.subtitle) {
     <h3>{{sanitizeSubtitle(content.list.subtitle)}}</h3>
   }
@@ -6,7 +6,13 @@
     <ol>
       <li *cdkVirtualFor="let item of dataSource; let last = last; let index = index">
         @if (item) {
-          <button (click)="!item.input_prompt ? onItemClicked(index, item.title, item.item_key, item.hint, false) : true" class="roon-list-item">
+          <button
+            (click)="!item.input_prompt ? onItemClicked(index, item.title, item.item_key, item.hint, false) : true"
+            class="roon-list-item"
+            [id]="'roon-browse-item-' + index"
+            nrSnStarter
+            [nrSnIgnore]="index !== 0"
+          >
             @if (item.image_key !== null || content.list.image_key) {
               <nr-roon-image
                 class="roon-item-image"
@@ -29,13 +35,17 @@
               @if (item.input_prompt) {
                 <mat-form-field appearance="outline">
                   <mat-label>{{item.input_prompt.prompt}}</mat-label>
-                  <input matInput (change)="onPromptInputChange(item.item_key + '_prompt_input', $event)" (keyup.enter)="onItemClicked(index, item.title, item.item_key, item.hint, true)"/>
+                  <input
+                    matInput
+                    (change)="onPromptInputChange(item.item_key + '_prompt_input', $event)"
+                    (keyup.enter)="onItemClicked(index, item.title, item.item_key, item.hint, true)"
+                  />
                 </mat-form-field>
                 <button mat-button (click)="onItemClicked(index, item.title, item.item_key, item.hint, true)">{{item.input_prompt.action}}</button>
               }
             </div>
             @if (item.hint === "action_list") {
-              <button mat-icon-button><mat-icon fontIcon="more_vert" /></button>
+              <button mat-icon-button nrSnElement nrSnIgnore="true"><mat-icon fontIcon="more_vert" /></button>
               <div [matMenuTriggerFor]="actionMenu" [matMenuTriggerData]="{ item_key: item.item_key, title: item.title, actions: [] }"></div>
             }
           </button>

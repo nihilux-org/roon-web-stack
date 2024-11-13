@@ -20,6 +20,7 @@
     "@angular/material": "18.2.12",
     "@angular/platform-browser": "18.2.11",
     "@angular/platform-browser-dynamic": "18.2.11",
+    "@bbc/tv-lrud-spatial": "0.0.12",
     "@nihilux/roon-web-client": "workspace:*",
     "fast-equals": "5.0.1",
     "nanoid": "3.3.7",

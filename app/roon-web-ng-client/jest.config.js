@@ -20,6 +20,7 @@ module.exports = {
   moduleNameMapper: {
     "^@app/(.*)$": ["<rootDir>/src/app/$1"],
     "^@components/(.*)$": ["<rootDir>/src/app/components/$1"],
+    "^@directives/(.*)$": ["<rootDir>/src/app/directives/$1"],
     "^@mock/(.*)$": ["<rootDir>/src/mock/$1"],
     "^@services/(.*)$": ["<rootDir>/src/app/services/$1"],
     "@model/client": ["<rootDir>/src/app/model/index.ts"],

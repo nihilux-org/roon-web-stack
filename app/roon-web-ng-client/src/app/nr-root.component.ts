@@ -7,6 +7,7 @@ import { ExtensionNotEnabledComponent } from "@components/extension-not-enabled/
 import { FullScreenToggleComponent } from "@components/full-screen-toggle/full-screen-toggle.component";
 import { ZoneContainerComponent } from "@components/zone-container/zone-container.component";
 import { ZoneSelectorComponent } from "@components/zone-selector/zone-selector.component";
+import { SpatialNavigableRootDirective } from "@directives/spatial-navigable-root.directive";
 import { RoonState } from "@model";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
@@ -17,10 +18,11 @@ import { SettingsService } from "@services/settings.service";
   imports: [
     CommonModule,
     ExtensionNotEnabledComponent,
+    FullScreenToggleComponent,
     MatProgressSpinner,
+    SpatialNavigableRootDirective,
     ZoneContainerComponent,
     ZoneSelectorComponent,
-    FullScreenToggleComponent,
   ],
   templateUrl: "./nr-root.component.html",
   styleUrl: "./nr-root.component.scss",

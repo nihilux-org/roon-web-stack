@@ -1,6 +1,6 @@
 export * from "./action.model";
 export * from "./browse.model";
-export * from "./layout";
+export * from "./layout.model";
 export * from "./roon-service.model";
 export * from "./settings.model";
 export * from "./track.model";

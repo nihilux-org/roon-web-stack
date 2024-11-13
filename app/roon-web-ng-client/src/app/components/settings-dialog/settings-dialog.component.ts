@@ -1,5 +1,14 @@
 import { CdkDrag, CdkDragDrop, CdkDragHandle, CdkDropList, moveItemInArray } from "@angular/cdk/drag-drop";
-import { ChangeDetectionStrategy, Component, effect, EffectRef, Inject, OnDestroy, Signal } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  EffectRef,
+  Inject,
+  OnDestroy,
+  Signal,
+} from "@angular/core";
 import { MatButton, MatIconButton } from "@angular/material/button";
 import {
   MAT_DIALOG_DATA,
@@ -10,14 +19,17 @@ import {
 } from "@angular/material/dialog";
 import { MatIcon } from "@angular/material/icon";
 import { MatMenu, MatMenuItem, MatMenuTrigger } from "@angular/material/menu";
-import { MatRadioButton, MatRadioChange, MatRadioGroup } from "@angular/material/radio";
-import { MatTab, MatTabGroup } from "@angular/material/tabs";
+import { MatTab, MatTabContent, MatTabGroup } from "@angular/material/tabs";
 import { CustomActionsManagerComponent } from "@components/custom-actions-manager/custom-actions-manager.component";
 import { ZoneSelectorComponent } from "@components/zone-selector/zone-selector.component";
-import { Action, ChosenTheme, CustomActionsManagerDialogConfig, DisplayMode } from "@model/client";
+import { SpatialNavigableContainerDirective } from "@directives/spatial-navigable-container.directive";
+import { SpatialNavigableElementDirective } from "@directives/spatial-navigable-element.directive";
+import { SpatialNavigableStarterDirective } from "@directives/spatial-navigable-starter.directive";
+import { Action, ChosenTheme, CustomActionsManagerDialogConfig, DisplayMode, Theme, Themes } from "@model/client";
 import { DialogService } from "@services/dialog.service";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
+import { SpatialNavigationService } from "@services/spatial-navigation.service";
 
 @Component({
   selector: "nr-settings-dialog",
@@ -35,10 +47,12 @@ import { SettingsService } from "@services/settings.service";
     MatMenu,
     MatMenuItem,
     MatMenuTrigger,
-    MatRadioButton,
-    MatRadioGroup,
     MatTab,
+    MatTabContent,
     MatTabGroup,
+    SpatialNavigableContainerDirective,
+    SpatialNavigableElementDirective,
+    SpatialNavigableStarterDirective,
     ZoneSelectorComponent,
   ],
   templateUrl: "./settings-dialog.component.html",
@@ -49,8 +63,10 @@ export class SettingsDialogComponent implements OnDestroy {
   private readonly _dialogRef: MatDialogRef<SettingsDialogComponent>;
   private readonly _dialogService: DialogService;
   private readonly _settingsService: SettingsService;
+  private readonly _spatialNavigationService: SpatialNavigationService;
   private readonly _layoutChangeEffect: EffectRef;
   readonly displayModeLabels: Map<DisplayMode, string>;
+  readonly $chosenTheme: Signal<Theme>;
   readonly $isSmallScreen: Signal<boolean>;
   readonly $isOneColumn: Signal<boolean>;
   readonly $actions: Signal<Action[]>;
@@ -63,11 +79,13 @@ export class SettingsDialogComponent implements OnDestroy {
     dialogRef: MatDialogRef<SettingsDialogComponent>,
     dialogService: DialogService,
     roonService: RoonService,
-    settingsService: SettingsService
+    settingsService: SettingsService,
+    spatialNavigationService: SpatialNavigationService
   ) {
     this._dialogRef = dialogRef;
     this._dialogService = dialogService;
     this._settingsService = settingsService;
+    this._spatialNavigationService = spatialNavigationService;
     this.displayModeLabels = new Map<DisplayMode, string>();
     this.displayModeLabels.set(DisplayMode.COMPACT, "Compact");
     this.displayModeLabels.set(DisplayMode.WIDE, "Wide");
@@ -76,6 +94,10 @@ export class SettingsDialogComponent implements OnDestroy {
         this._dialogRef.removePanelClass(displayModeClass);
       }
       this._dialogRef.addPanelClass(this.$layoutClass());
+    });
+    this.$chosenTheme = computed(() => {
+      const chosenTheme = this._settingsService.chosenTheme()() as ChosenTheme;
+      return Themes.find((t) => t.id === chosenTheme) ?? Themes[0];
     });
     this.$actions = this._settingsService.actions();
     this.$availableActions = this._settingsService.availableActions();
@@ -90,12 +112,16 @@ export class SettingsDialogComponent implements OnDestroy {
     this._layoutChangeEffect.destroy();
   }
 
-  chosenTheme() {
-    return this._settingsService.chosenTheme();
+  chosenThemes() {
+    return Themes;
   }
 
-  setChosenTheme(change: MatRadioChange) {
-    this._settingsService.saveChosenTheme(change.value as ChosenTheme);
+  chosenTheme() {
+    return this.$chosenTheme;
+  }
+
+  setChosenTheme(theme: ChosenTheme) {
+    this._settingsService.saveChosenTheme(theme);
   }
 
   displayMode() {
@@ -156,4 +182,14 @@ export class SettingsDialogComponent implements OnDestroy {
       },
     });
   }
+
+  onMenOpen() {
+    this._spatialNavigationService.suspendSpatialNavigation();
+  }
+
+  onMenuClosed() {
+    this._spatialNavigationService.resumeSpatialNavigation();
+  }
+
+  protected readonly ChosenTheme = ChosenTheme;
 }
