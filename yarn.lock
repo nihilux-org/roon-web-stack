@@ -395,9 +395,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@angular/cdk@npm:18.2.12":
-  version: 18.2.12
-  resolution: "@angular/cdk@npm:18.2.12"
+"@angular/cdk@npm:18.2.13":
+  version: 18.2.13
+  resolution: "@angular/cdk@npm:18.2.13"
   dependencies:
     parse5: "npm:^7.1.2"
     tslib: "npm:^2.3.0"
@@ -408,7 +408,7 @@ __metadata:
   dependenciesMeta:
     parse5:
       optional: true
-  checksum: 10c0/e8aab41bf298cb3faff2e026fe0ff53a86815df1c1eebd749a5f11e1efd41fd809b9ccb54b7fe864a1342701eec5b0d7a1d05d6710fa77dc265fcdab8344b6d1
+  checksum: 10c0/c2ab0851da844e573e5212cfcd2bacbc6520c2988c3d935d826bd4e8df11f4cd4dfeabe0dff67a04afa0f6f05a1ce20b5c678457bb140efe9f2ef6931264561b
   languageName: node
   linkType: hard
 
@@ -519,20 +519,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@angular/material@npm:18.2.12":
-  version: 18.2.12
-  resolution: "@angular/material@npm:18.2.12"
+"@angular/material@npm:18.2.13":
+  version: 18.2.13
+  resolution: "@angular/material@npm:18.2.13"
   dependencies:
     tslib: "npm:^2.3.0"
   peerDependencies:
     "@angular/animations": ^18.0.0 || ^19.0.0
-    "@angular/cdk": 18.2.12
+    "@angular/cdk": 18.2.13
     "@angular/common": ^18.0.0 || ^19.0.0
     "@angular/core": ^18.0.0 || ^19.0.0
     "@angular/forms": ^18.0.0 || ^19.0.0
     "@angular/platform-browser": ^18.0.0 || ^19.0.0
     rxjs: ^6.5.3 || ^7.4.0
-  checksum: 10c0/f6de60c0581e8839c1ffdbc153be039ad1b99ce69e7a6a732074f85867b21dd447e2f0ae296a86f7baa658a0ab9a90eaef33c18deb0d1bba6ab7a68264fc915c
+  checksum: 10c0/59e4df379bb3ef5658f29b38190584ee62368d4734b3302d598dad159fbc430253268b3125ff421594a5cc0b48ff453f2b6311a4e8f7e070fff80f505159c8f3
   languageName: node
   linkType: hard
 
@@ -3600,14 +3600,14 @@ __metadata:
     "@angular-eslint/schematics": "npm:18.4.0"
     "@angular-eslint/template-parser": "npm:18.4.0"
     "@angular/animations": "npm:18.2.11"
-    "@angular/cdk": "npm:18.2.12"
+    "@angular/cdk": "npm:18.2.13"
     "@angular/cli": "npm:18.2.11"
     "@angular/common": "npm:18.2.11"
     "@angular/compiler": "npm:18.2.11"
     "@angular/compiler-cli": "npm:18.2.11"
     "@angular/core": "npm:18.2.11"
     "@angular/forms": "npm:18.2.11"
-    "@angular/material": "npm:18.2.12"
+    "@angular/material": "npm:18.2.13"
     "@angular/platform-browser": "npm:18.2.11"
     "@angular/platform-browser-dynamic": "npm:18.2.11"
     "@bbc/tv-lrud-spatial": "npm:0.0.12"
