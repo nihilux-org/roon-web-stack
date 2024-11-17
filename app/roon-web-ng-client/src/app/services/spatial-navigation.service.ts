@@ -106,7 +106,7 @@ export class SpatialNavigationService implements OnDestroy {
     let candidate = current;
     let disabled = false;
     do {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-assignment
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       candidate = getNextFocus(candidate, key, scope) as HTMLElement | undefined;
       disabled = candidate?.getAttribute("disabled") === "true";
     } while (disabled);

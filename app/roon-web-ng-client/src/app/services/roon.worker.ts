@@ -133,7 +133,6 @@ const refreshClient = (): void => {
           const message: ApiStateWorkerEvent = {
             event: "state",
             data: {
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-expect-error use string as import of enum seems broken in worker 🤷
               state: "STOPPED",
               zones: [],

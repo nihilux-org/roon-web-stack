@@ -25,6 +25,7 @@ const config = {
       extensions: ["ts", "json", "d.ts"],
       fix: false,
       cache: false,
+      configType: "flat",
     }),
   ],
   module: {

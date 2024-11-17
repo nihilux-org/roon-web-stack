@@ -23,7 +23,7 @@
         "roon-kit/index.ts"
       ]
     },
-    "outDir": "bin",
+    "outDir": "bin"
   },
   "references": [
     {
