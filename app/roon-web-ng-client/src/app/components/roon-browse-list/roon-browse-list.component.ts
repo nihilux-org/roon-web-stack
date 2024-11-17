@@ -6,6 +6,7 @@ import {
   booleanAttribute,
   ChangeDetectionStrategy,
   Component,
+  computed,
   EventEmitter,
   Input,
   numberAttribute,
@@ -84,7 +85,10 @@ export class RoonBrowseListComponent implements OnChanges, AfterViewChecked {
   @ViewChild(CdkVirtualScrollViewport) _virtualScroll!: CdkVirtualScrollViewport;
   @ViewChildren(MatMenuTrigger) _menuTriggers!: QueryList<MatMenuTrigger>;
   dataSource?: RoonListDataSource | Item[];
+  readonly $imageSize: Signal<number>;
+  readonly $isBigFonts: Signal<boolean>;
   readonly $isOneColumn: Signal<boolean>;
+  readonly $itemSize: Signal<number>;
   readonly $layoutClass: Signal<string>;
 
   constructor(
@@ -97,6 +101,21 @@ export class RoonBrowseListComponent implements OnChanges, AfterViewChecked {
     this._inputValues = new Map<string, string>();
     this.$isOneColumn = settingsService.isOneColumn();
     this.$layoutClass = settingsService.displayModeClass();
+    this.$isBigFonts = settingsService.isBigFonts();
+    this.$itemSize = computed(() => {
+      if (this.$isBigFonts()) {
+        return 161;
+      } else {
+        return 91;
+      }
+    });
+    this.$imageSize = computed(() => {
+      if (this.$isBigFonts()) {
+        return 120;
+      } else {
+        return 70;
+      }
+    });
   }
 
   ngOnChanges(changes: SimpleChanges) {

@@ -6,6 +6,7 @@ import { ZoneCurrentTrackComponent } from "@components/zone-current-track/zone-c
 import { ZoneImageComponent } from "@components/zone-image/zone-image.component";
 import { CompactLayoutComponent } from "@components/zone-layouts/compact-layout/compact-layout.component";
 import { OneColumnLayoutComponent } from "@components/zone-layouts/one-column-layout/one-column-layout.component";
+import { TenFeetLayoutComponent } from "@components/zone-layouts/ten-feet-layout/ten-feet-layout.component";
 import { WideLayoutComponent } from "@components/zone-layouts/wide-layout/wide-layout.component";
 import { ZoneProgressionComponent } from "@components/zone-progression/zone-progression.component";
 import { ZoneQueueComponent } from "@components/zone-queue/zone-queue.component";
@@ -39,6 +40,7 @@ import { SettingsService } from "@services/settings.service";
     ZoneQueueComponent,
     ZoneVolumeComponent,
     SpatialNavigableContainerDirective,
+    TenFeetLayoutComponent,
   ],
   templateUrl: "./zone-container.component.html",
   styleUrl: "./zone-container.component.scss",

@@ -31,8 +31,10 @@ describe("RoonBrowseDialogComponent", () => {
   };
   let settingsService: {
     displayedZoneId: jest.Mock;
+    isBigFonts: jest.Mock;
   };
   let $zoneId: WritableSignal<string>;
+  let $isBigFonts: WritableSignal<boolean>;
   let afterClosedDialog: jest.Mock;
   let afterClosedObservable: Subject<void>;
   let exploreObservable: Subject<RoonApiBrowseLoadResponse>;
@@ -63,8 +65,10 @@ describe("RoonBrowseDialogComponent", () => {
       loadPath: jest.fn().mockImplementation(() => loadPathObservable),
     };
     $zoneId = signal("zone_id");
+    $isBigFonts = signal(false);
     settingsService = {
       displayedZoneId: jest.fn().mockImplementation(() => $zoneId),
+      isBigFonts: jest.fn().mockImplementation(() => $isBigFonts),
     };
     await MockBuilder(RoonBrowseDialogComponent)
       .mock(MAT_DIALOG_DATA, dialogData)

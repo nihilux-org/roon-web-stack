@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, signal, WritableSignal } from "@angular/core";
+import { ChangeDetectionStrategy, Component, Signal, signal, WritableSignal } from "@angular/core";
 import { MatButton } from "@angular/material/button";
 import { MatCheckbox } from "@angular/material/checkbox";
 import { MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle } from "@angular/material/dialog";
@@ -40,6 +40,7 @@ export class ZoneGroupingDialogComponent {
   readonly mainOutput: OutputDescription;
   readonly $groupedOutputs: WritableSignal<GroupOutputDescription[]>;
   readonly $canGroupOutputs: WritableSignal<GroupOutputDescription[]>;
+  readonly $isSmallScreen: Signal<boolean>;
 
   constructor(
     dialogRef: MatDialogRef<ZoneGroupingDialogComponent>,
@@ -85,6 +86,7 @@ export class ZoneGroupingDialogComponent {
         })
         .sort((o1, o2) => o1.display_name.localeCompare(o2.display_name))
     );
+    this.$isSmallScreen = this._settingsService.isSmallScreen();
   }
 
   toggleGroupedOutput(index: number) {

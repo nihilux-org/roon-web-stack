@@ -1,6 +1,6 @@
 <h2 mat-dialog-title>Transfer zone</h2>
 <mat-divider />
-<mat-dialog-content>
+<mat-dialog-content class="zone-transfer" [class.is-small-screen]="$isSmallScreen()">
   <span class="from-zone"><mat-icon fontIcon="speaker" />{{currentZone}}</span>
   <mat-divider />
   <h4 nrSnContainer>to zone:</h4>

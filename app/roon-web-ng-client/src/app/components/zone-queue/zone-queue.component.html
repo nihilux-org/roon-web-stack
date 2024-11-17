@@ -4,8 +4,9 @@
     (@toggleQueue.done)="onQueueTrackToggled()"
     (@toggleQueue.start)="onQueueTrackToggleStart($event)"
     [@.disabled]="disabled"
-    [itemSize]="101"
+    [itemSize]="$itemSize()"
     class="queue"
+    [class.is-big-fonts]="$isBigFonts()"
     nrSnContainer [nrSnIgnore]="!open"
   >
     <ol>
@@ -15,8 +16,8 @@
               <nr-roon-image
                 [src]="track.image_key"
                 [alt]="track.title + ' cover'"
-                [height]="70"
-                [width]="70"
+                [height]="$imageSize()"
+                [width]="$imageSize()"
                 class="track-image"
                 priority="false"
               />

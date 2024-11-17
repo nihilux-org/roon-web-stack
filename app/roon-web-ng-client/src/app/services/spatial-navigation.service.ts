@@ -73,12 +73,7 @@ export class SpatialNavigationService implements OnDestroy {
       }
       event.preventDefault();
       if (this._focusedElement || this._dialogElement) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-assignment
-        this._focusedElement = getNextFocus(event.target, event.key, scope) ?? this.getStarter();
-        if (this._focusedElement?.getAttribute("disabled") === "true") {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-assignment
-          this._focusedElement = getNextFocus(this._focusedElement, event.key, scope) ?? this.getStarter();
-        }
+        this._focusedElement = this.getNextFocus(this._focusedElement, event.key, scope);
       } else {
         this._focusedElement = this.getStarter();
       }
@@ -105,5 +100,16 @@ export class SpatialNavigationService implements OnDestroy {
 
   private getStarter(): HTMLElement | undefined {
     return this._starter.at(-1);
+  }
+
+  private getNextFocus(current: HTMLElement | undefined, key: string, scope: HTMLElement): HTMLElement | undefined {
+    let candidate = current;
+    let disabled = false;
+    do {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-assignment
+      candidate = getNextFocus(candidate, key, scope) as HTMLElement | undefined;
+      disabled = candidate?.getAttribute("disabled") === "true";
+    } while (disabled);
+    return candidate ?? this.getStarter();
   }
 }

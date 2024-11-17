@@ -67,9 +67,12 @@ export class ZoneQueueComponent implements AfterViewInit {
   @Input({ required: true }) $trackDisplay!: Signal<TrackDisplay>;
   private readonly _roonService: RoonService;
   private readonly _spatialNavigationService: SpatialNavigationService;
+  readonly $isBigFonts: Signal<boolean>;
   readonly $zoneId: Signal<string>;
   readonly $queue: Signal<QueueTrack[]>;
   readonly $displayQueue: Signal<boolean>;
+  readonly $imageSize: Signal<number>;
+  readonly $itemSize: Signal<number>;
   readonly $layoutClass: Signal<string>;
   disabled: boolean;
   @ViewChild(CdkVirtualScrollViewport) _virtualScroll?: CdkVirtualScrollViewport;
@@ -82,6 +85,7 @@ export class ZoneQueueComponent implements AfterViewInit {
   ) {
     this._roonService = roonService;
     this._spatialNavigationService = spatialNavigationService;
+    this.$isBigFonts = settingsService.isBigFonts();
     this.$displayQueue = settingsService.displayQueueTrack();
     this.open = this.$displayQueue();
     this.$zoneId = settingsService.displayedZoneId();
@@ -99,6 +103,20 @@ export class ZoneQueueComponent implements AfterViewInit {
         equal: deepEqual,
       }
     );
+    this.$imageSize = computed(() => {
+      if (this.$isBigFonts()) {
+        return 120;
+      } else {
+        return 70;
+      }
+    });
+    this.$itemSize = computed(() => {
+      if (this.$isBigFonts()) {
+        return 161;
+      } else {
+        return 101;
+      }
+    });
     this.$layoutClass = settingsService.displayModeClass();
     this.disabled = true;
   }

@@ -7,10 +7,11 @@ import { CustomActionEditorComponent } from "@components/custom-action-editor/cu
 import { SettingsDialogComponent } from "@components/settings-dialog/settings-dialog.component";
 import { SpatialNavigableContainerDirective } from "@directives/spatial-navigable-container.directive";
 import { SpatialNavigableStarterDirective } from "@directives/spatial-navigable-starter.directive";
-import { CustomAction, SettingsDialogConfig } from "@model/client";
+import { CustomAction, SettingsDialogConfig, SettingsDialogConfigBigFonts } from "@model/client";
 import { CustomActionsService } from "@services/custom-actions.service";
 import { DialogService } from "@services/dialog.service";
 import { RoonService } from "@services/roon.service";
+import { SettingsService } from "@services/settings.service";
 
 @Component({
   selector: "nr-custom-actions-manager",
@@ -37,6 +38,7 @@ export class CustomActionsManagerComponent {
   private readonly _dialogService: DialogService;
   private readonly _customActionsService: CustomActionsService;
   private readonly _roonService: RoonService;
+  private readonly _$isBigFont: Signal<boolean>;
   readonly $isEditing: Signal<boolean>;
   readonly $customActions: Signal<CustomAction[]>;
   readonly $selectedTab: Signal<number>;
@@ -46,11 +48,13 @@ export class CustomActionsManagerComponent {
     @Inject(MAT_DIALOG_DATA) public data: { reset: boolean },
     dialogService: DialogService,
     customActionsService: CustomActionsService,
-    roonService: RoonService
+    roonService: RoonService,
+    settingsService: SettingsService
   ) {
     this._dialogService = dialogService;
     this._customActionsService = customActionsService;
     this._roonService = roonService;
+    this._$isBigFont = settingsService.isBigFonts();
     this.$isEditing = this._customActionsService.isEditing();
     this.$customActions = computed(() =>
       this._customActionsService
@@ -72,8 +76,9 @@ export class CustomActionsManagerComponent {
         this._customActionsService.cancelEdition();
       }
     } else {
+      const config = this._$isBigFont() ? SettingsDialogConfigBigFonts : SettingsDialogConfig;
       this._dialogService.open(SettingsDialogComponent, {
-        ...SettingsDialogConfig,
+        ...config,
         data: {
           selectedTab: 1,
         },

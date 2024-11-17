@@ -28,6 +28,78 @@
     initial-value: 105px;
   }
 
+  @property --queue-list-padding {
+    syntax: "<length>";
+    inherits: true;
+    initial-value: 10px;
+  }
+
+  @property --queue-item-height {
+    syntax: "<length>";
+    inherits: true;
+    initial-value: 100px;
+  }
+
+  @property --queue-item-image-height {
+    syntax: "<length>";
+    inherits: true;
+    initial-value: 70px;
+  }
+
+  @property --queue-item-padding {
+    syntax: "<length>";
+    inherits: true;
+    initial-value: 15px;
+  }
+
+  @property --queue-item-margin {
+    syntax: "<length>";
+    inherits: true;
+    initial-value: 15px;
+  }
+
+  @property --queue-item-divider-margin {
+    syntax: "<length>";
+    inherits: true;
+    initial-value: 95px;
+  }
+
+  @property --queue-item-track-title-margin {
+    syntax: "<length>";
+    inherits: true;
+    initial-value: 5px;
+  }
+
+  @property --queue-item-track-album-margin {
+    syntax: "<length>";
+    inherits: true;
+    initial-value: 3px;
+  }
+
+  @property --ten-feet-blur-background-color  {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: rgba(0, 0, 0, .5);;
+  }
+
+  @property --ten-feet-blur-background-color-dialog  {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: rgba(0, 0, 0, .75);;
+  }
+
+  @property --ten-feet-mdc-dialog-supporting-text-color  {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: rgba(255, 255, 255, .9);
+  }
+
+  .light-theme {
+    --ten-feet-blur-background-color: rgba(255, 255, 255, .6);
+    --ten-feet-blur-background-color-dialog: rgba(255, 255, 255, .75);
+    --ten-feet-mdc-dialog-supporting-text-color: rgb(0, 0, 0, .9);
+  }
+
   .queue {
     .cdk-virtual-scroll-content-wrapper {
       max-width: 100% !important;
@@ -37,6 +109,13 @@
   .roon-list {
     .cdk-virtual-scroll-orientation-vertical .cdk-virtual-scroll-content-wrapper {
       max-width: 100% !important;
+    }
+    .roon-item-info.roon-item-prompt {
+      mat-form-field {
+        div.mat-mdc-form-field-subscript-wrapper {
+          display: none;
+        }
+      }
     }
   }
 
@@ -57,6 +136,41 @@
   .custom-actions-tabs {
     .mat-mdc-tab-header {
       display: none;
+    }
+  }
+
+  .nr-menu-custom {
+    &.ten-feet {
+      --mat-menu-item-label-text-line-height: 4rem;
+      --mat-menu-item-label-text-size: 1.5rem;
+      max-width: fit-content;
+      @include nr.ten-feet-blur();
+    }
+  }
+
+  .nr-dialog-custom {
+    &.ten-feet {
+      --mdc-dialog-container-color: var(--ten-feet-blur-background-color-dialog);
+      --mdc-dialog-supporting-text-line-height: 2rem;
+      --mdc-dialog-supporting-text-size: 1.5rem;
+      --mdc-dialog-supporting-text-color: var(--ten-feet-mdc-dialog-supporting-text-color);
+      --mdc-dialog-subhead-size: 2rem;
+      --mdc-dialog-subhead-line-height: 2.4rem;
+      --mat-checkbox-label-text-size: 1.5rem;
+      h2 {
+        padding-top: 0.6rem;
+        padding-bottom: 1.5rem;
+      }
+      .mat-mdc-tab-header {
+        --mdc-secondary-navigation-tab-container-height: 64px;
+        --mat-tab-header-label-text-size: 28px;
+        --mat-tab-header-label-text-line-height: 36px;
+      }
+      @include nr.mat-button-size(1.5rem);
+      @include nr.ten-feet-blur();
+      .mat-mdc-button:has(.material-icons,mat-icon,[matButtonIcon]) {
+        padding: 32px;
+      }
     }
   }
 }

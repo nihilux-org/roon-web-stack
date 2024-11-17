@@ -9,6 +9,17 @@
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    &.is-big-fonts {
+      .settings {
+        margin-top: 40px;
+        .setting {
+          padding-bottom: 40px;
+          label {
+            width: 240px;
+          }
+        }
+      }
+    }
   }
   mat-tab-group {
     width: 100%;

@@ -6,6 +6,18 @@
     justify-content: flex-start;
     align-items: center;
     padding-top: 24px;
+    &.is-big-fonts {
+      padding-bottom: 24px;
+      @include nr.icon-button-size(48px, 36px, 6px);
+      --mdc-filled-button-label-text-size: 24px;
+      --mdc-filled-button-container-color: transparent;
+      .mat-mdc-unelevated-button {
+        padding: 26px;
+      }
+      > mat-icon {
+        @include nr.mat-icon-size(48px);
+      }
+    }
   }
   mat-dialog-content {
     width: 100%;

@@ -1,0 +1,74 @@
+@use "../../../styles/mixins" as nr;
+
+:host {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  .zone-display {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    .layout-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+      padding: 1rem;
+      display: flex;
+      place-content: flex-end;
+      flex-direction: column;
+      .zone-info {
+        max-width: 42%;
+        border-radius: 16px;
+        width: fit-content;
+        @include nr.ten-feet-blur();
+      }
+      .zone-progression {
+        width: 100%;
+      }
+      .zone-commands {
+        position: fixed;
+        bottom: 90px;
+        left: 0;
+        width: 100%;
+      }
+      .zone-actions {
+        position: fixed;
+        top: 1rem;
+        right: 1rem;
+        width: 40%;
+        display: flex;
+        flex-direction: column;
+        row-gap: 20px;
+        height: 958px;
+        > div {
+          padding: 25px;
+          border-radius: 16px;
+          @include nr.ten-feet-blur();
+          &:first-child {
+            padding-bottom: 0;
+          }
+          &.settings {
+            display: flex;
+            place-content: space-evenly;
+            nr-zone-selector {
+              flex-basis: 528px;
+            }
+            > div {
+              flex-basis: 90px;
+              height: 90px;
+              border-radius: 16px;
+              border: 1px solid var(--mat-text-button-state-layer-color);
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              @include nr.icon-button-size(120px, 48px, 36px);
+            }
+          }
+        }
+      }
+    }
+  }
+}

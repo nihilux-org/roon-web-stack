@@ -38,13 +38,13 @@ export class DialogService {
       ...config,
       panelClass,
     });
+    const element = this._openedDialog.componentRef?.location.nativeElement as unknown as HTMLElement;
+    const spatialNavigationDialog = element.parentElement ?? element;
     this._openedDialog.afterOpened().subscribe(() => {
       if (this._isIdleWatched) {
         this._idleService.stopWatch();
       }
-      this._spatialNavigationService.dialogOpened(
-        this._openedDialog?.componentRef?.location.nativeElement as unknown as HTMLElement
-      );
+      this._spatialNavigationService.dialogOpened(spatialNavigationDialog);
     });
     this._openedDialog.beforeClosed().subscribe(() => {
       if (this._isIdleWatched) {

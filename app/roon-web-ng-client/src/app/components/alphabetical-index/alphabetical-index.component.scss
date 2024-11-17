@@ -7,7 +7,16 @@
   align-items: center;
   button {
     @include nr.button-reset();
-    padding-left: 20px;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-left: 10px;
+    width: 1.5em;
+    text-align: center;
+  }
+  &.is-big-fonts {
+    button {
+      line-height: 30px;
+    }
   }
   @media screen and (max-height: 840px) {
     button {

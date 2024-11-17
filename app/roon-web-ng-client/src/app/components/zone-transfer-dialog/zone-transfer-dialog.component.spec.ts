@@ -11,6 +11,7 @@ import { ZoneTransferDialogComponent } from "./zone-transfer-dialog.component";
 describe("ZoneTransferDialogComponent", () => {
   let $roonState: WritableSignal<ApiState>;
   let $displayedZoneId: WritableSignal<string>;
+  let $isSmallScreen: WritableSignal<boolean>;
   let commands: Command[];
   let commandCallbacks: CommandCallback[];
   let roonService: {
@@ -20,6 +21,7 @@ describe("ZoneTransferDialogComponent", () => {
   let settingsService: {
     displayedZoneId: jest.Mock;
     saveDisplayedZoneId: jest.Mock;
+    isSmallScreen: jest.Mock;
   };
   let closeDialog: jest.Mock;
   let component: ZoneTransferDialogComponent;
@@ -32,6 +34,7 @@ describe("ZoneTransferDialogComponent", () => {
       outputs: [],
     });
     $displayedZoneId = signal("zone_id");
+    $isSmallScreen = signal(false);
     commands = [];
     commandCallbacks = [];
     roonService = {
@@ -46,6 +49,7 @@ describe("ZoneTransferDialogComponent", () => {
       saveDisplayedZoneId: jest.fn().mockImplementation((zone_id: string) => {
         $displayedZoneId.set(zone_id);
       }),
+      isSmallScreen: jest.fn().mockImplementation(() => $isSmallScreen),
     };
     closeDialog = jest.fn();
     await MockBuilder(ZoneTransferDialogComponent)

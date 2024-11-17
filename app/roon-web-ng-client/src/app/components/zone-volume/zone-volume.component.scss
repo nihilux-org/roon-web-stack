@@ -12,4 +12,28 @@
       justify-content: space-between;
     }
   }
+  &.ten-feet {
+    .zone-volume-large {
+      span {
+        @include nr.ten-feet-button(510px, 40px, 1rem, 0, 8px);
+      }
+      > div:not(:last-child) {
+        margin-bottom: 15px;
+        > div {
+          width: 40px;
+          height: 40px;
+          border: 1px solid var(--mat-text-button-state-layer-color);
+          border-radius: 8px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+      }
+      .zone-volume-actions {
+        span {
+          @include nr.ten-feet-button(310px, 40px, 1rem, 0, 8px);
+        }
+      }
+    }
+  }
 }

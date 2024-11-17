@@ -29,4 +29,14 @@
       flex-basis: 60%;
     }
   }
+  &.ten-feet {
+    > div {
+      .buttons {
+        flex-basis: inherit;
+        padding: 10px;
+        border-radius: 30px;
+        @include nr.ten-feet-blur();
+      }
+    }
+  }
 }

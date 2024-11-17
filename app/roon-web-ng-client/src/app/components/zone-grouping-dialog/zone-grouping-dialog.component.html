@@ -1,10 +1,10 @@
 <h2 mat-dialog-title>Zone grouping</h2>
 <mat-divider />
-<mat-dialog-content class="zone-grouping">
+<mat-dialog-content class="zone-grouping" [class.is-small-screen]="$isSmallScreen()">
   <span class="from-zone"><mat-icon fontIcon="speaker" />{{mainOutput.display_name}}</span>
   <mat-divider />
   @if ($groupedOutputs().length > 0) {
-    <h3 nrSnContainer>Currently in zone:</h3>
+    <h3 nrSnContainer>Currently in group:</h3>
     @for (output of $groupedOutputs(); track output.output_id; let index = $index) {
       <p>
         <mat-checkbox

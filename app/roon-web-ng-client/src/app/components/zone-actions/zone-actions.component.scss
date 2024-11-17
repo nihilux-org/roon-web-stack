@@ -35,3 +35,21 @@
     justify-content: center;
   }
 }
+
+:host.ten-feet {
+  flex-direction: column;
+  margin: 0;
+  .actions {
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    span {
+      @include nr.ten-feet-button();
+      &:last-child, &:nth-last-child(2) {
+        // margin-bottom: 0;
+      }
+    }
+  }
+  .settings {
+    display: none;
+  }
+}

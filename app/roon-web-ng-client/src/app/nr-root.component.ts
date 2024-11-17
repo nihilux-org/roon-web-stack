@@ -9,6 +9,7 @@ import { ZoneContainerComponent } from "@components/zone-container/zone-containe
 import { ZoneSelectorComponent } from "@components/zone-selector/zone-selector.component";
 import { SpatialNavigableRootDirective } from "@directives/spatial-navigable-root.directive";
 import { RoonState } from "@model";
+import { DisplayMode } from "@model/client";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
 
@@ -58,7 +59,8 @@ export class NrRootComponent implements OnDestroy {
       }
     );
     const $isOneColumn = settingsService.isOneColumn();
-    this.$isWithFullScreen = computed(() => !$isOneColumn());
+    const $displayMode = settingsService.displayMode();
+    this.$isWithFullScreen = computed(() => !$isOneColumn() && $displayMode() !== DisplayMode.TEN_FEET);
     this._closeDialogsEffect = effect(() => {
       this.$clientState();
       this._matDialog.closeAll();

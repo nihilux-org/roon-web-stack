@@ -21,9 +21,11 @@ describe("ZoneGroupingDialogComponent", () => {
     command: jest.Mock;
   };
   let $displayedZoneId: WritableSignal<string>;
+  let $isSmallScreen: WritableSignal<boolean>;
   let settingsService: {
     displayedZoneId: jest.Mock;
     saveDisplayedZoneId: jest.Mock;
+    isSmallScreen: jest.Mock;
   };
   let closeDialog: jest.Mock;
   let component: ZoneGroupingDialogComponent;
@@ -57,11 +59,13 @@ describe("ZoneGroupingDialogComponent", () => {
       roonState: jest.fn().mockImplementation(() => $roonState),
     };
     $displayedZoneId = signal("zone_id");
+    $isSmallScreen = signal(false);
     settingsService = {
       displayedZoneId: jest.fn().mockImplementation(() => $displayedZoneId),
       saveDisplayedZoneId: jest.fn().mockImplementation((zone_id: string) => {
         $displayedZoneId.set(zone_id);
       }),
+      isSmallScreen: jest.fn().mockImplementation(() => $isSmallScreen),
     };
     await MockBuilder(ZoneGroupingDialogComponent)
       .mock(RoonService, roonService as Partial<RoonService>)
