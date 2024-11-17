@@ -1,4 +1,4 @@
-<div mat-dialog-title class="browse-dialog-title" nrSnContainer>
+<div mat-dialog-title class="browse-dialog-title" nrSnContainer [class.is-big-fonts]="$isBigFont()">
   @if (isRecording) {
     <h3 class="is-recording-title">Custom Action Recording:</h3>
   }
@@ -32,7 +32,7 @@
       (clickedItem)="onItemClicked($event)"
       (recordedAction)="onRecordedAction($event)" />
     @if (withIndex) {
-      <nr-alphabetical-index (clickedLetter)="onIndexClicked($event)" nrSnContainer />
+      <nr-alphabetical-index [class.is-big-fonts]="$isBigFont()" (clickedLetter)="onIndexClicked($event)" nrSnContainer />
     }
   }
 </mat-dialog-content>

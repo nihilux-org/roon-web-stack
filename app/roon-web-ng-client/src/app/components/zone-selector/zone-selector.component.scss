@@ -1,0 +1,14 @@
+:host.ten-feet {
+  button {
+    height: 90px;
+    width: 100%;
+    border-radius: 16px;
+    border: 1px solid var(--mat-text-button-state-layer-color);
+    font-size: 1.5rem;
+  }
+  .mat-mdc-button > .mat-icon {
+    font-size: 1.5rem;
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+}

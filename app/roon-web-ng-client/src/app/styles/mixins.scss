@@ -64,14 +64,18 @@
   }
 }
 
+@mixin mat-icon-size($font-size) {
+  font-size: $font-size;
+  width: $font-size;
+  height: $font-size;
+}
+
 @mixin mat-button-size($font-size) {
   & {
     --mdc-text-button-label-text-size: #{$font-size};
   }
   .mat-mdc-button > .mat-icon {
-    font-size: $font-size;
-    width: $font-size;
-    height: $font-size;
+    @include mat-icon-size(#{$font-size});
   }
 }
 
@@ -81,9 +85,30 @@
     --mdc-icon-button-icon-size: #{$font-size};
     padding: $padding;
     mat-icon {
-      height: $font-size;
-      width: $font-size;
-      font-size: $font-size;
+      @include mat-icon-size(#{$font-size});
     }
+  }
+}
+
+@mixin ten-feet-button($width: 310px, $height: 90px, $font-size: 1.5rem, $margin-bottom: 25px, $border-radius: 16px) {
+  min-width: $width;
+  text-align: center;
+  line-height: $height;
+  margin-bottom: $margin-bottom;
+  button {
+    height: $height;
+    width: 100%;
+    border-radius: $border-radius;
+    border: 1px solid var(--mat-text-button-state-layer-color);
+    font-size: $font-size;
+  }
+  @include mat-button-size($font-size);
+}
+
+@mixin ten-feet-blur($blur: 10px, $background-color: var(--ten-feet-blur-background-color)) {
+  & {
+    backdrop-filter: blur(#{$blur});
+    --webkit-backdrop-filter: blur(#{$blur});
+    background-color: $background-color;
   }
 }

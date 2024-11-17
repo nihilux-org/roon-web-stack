@@ -12,12 +12,16 @@
   .from-zone {
     display: flex;
     margin-bottom: 20px;
+    align-items: center;
     mat-icon {
       margin-right: 10px;
     }
   }
   mat-divider {
     min-width: 250px;
+  }
+  &:not(.is-small-screen) {
+    min-width: 480px;
   }
 }
 

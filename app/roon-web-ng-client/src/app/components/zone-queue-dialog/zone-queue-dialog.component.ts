@@ -35,7 +35,7 @@ export class ZoneQueueDialogComponent implements OnDestroy {
     this.$trackDisplay = data.$trackDisplay;
     this.queueComponentTemplateRef = data.queueComponentTemplateRef;
     this.queueComponentTemplateContext = {
-      class: "in-dialog",
+      class: `in-dialog ${this._settingsService.displayModeClass()()}`,
     };
     this._dialogRefCloseSubscription = this._dialogRef.beforeClosed().subscribe(() => {
       this._settingsService.saveDisplayQueueTrack(false);

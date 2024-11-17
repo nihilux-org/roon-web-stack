@@ -1,5 +1,5 @@
 <h2 mat-dialog-title>Settings</h2>
-<mat-dialog-content>
+<mat-dialog-content [class.is-big-fonts]="$isBigFonts()">
   <mat-tab-group [selectedIndex]="selectedTab" animationDuration="200ms">
     <mat-tab label="General" bodyClass="settings-tab">
       <ng-template matTabContent>
@@ -49,7 +49,7 @@
             <button mat-button id="action-recorder" (click)="openCustomActionsManager()">
               <mat-icon fontIcon="dashboard_customize" />Manage custom Actions
             </button>
-            <mat-menu #actionSelector="matMenu" yPosition="below" xPosition="after">
+            <mat-menu #actionSelector="matMenu" yPosition="below" xPosition="after" class="nr-menu-custom" [class]="$layoutClass()">
               @for (da of $availableActions(); track da.id) {
                 <button mat-menu-item (click)="addAction(da)"><mat-icon [fontIcon]="da.button.icon" />{{da.button.label}}</button>
               }

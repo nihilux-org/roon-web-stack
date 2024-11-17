@@ -1,8 +1,8 @@
-<div class="roon-list" [class.is-small-screen]="$isOneColumn()" nrSnContainer>
+<div class="roon-list" [class.is-small-screen]="$isOneColumn()" [class.is-big-fonts]="$isBigFonts()" nrSnContainer>
   @if(content.list.subtitle) {
     <h3>{{sanitizeSubtitle(content.list.subtitle)}}</h3>
   }
-  <cdk-virtual-scroll-viewport [itemSize]="91">
+  <cdk-virtual-scroll-viewport [itemSize]="$itemSize()">
     <ol>
       <li *cdkVirtualFor="let item of dataSource; let last = last; let index = index">
         @if (item) {
@@ -18,8 +18,8 @@
                 class="roon-item-image"
                 [src]="item.image_key ?? content.list.image_key "
                 [alt]="item.title + ' cover'"
-                [height]="70"
-                [width]="70"
+                [height]="$imageSize()"
+                [width]="$imageSize()"
                 priority="false"
               />
             } @else if(!$isOneColumn()) {

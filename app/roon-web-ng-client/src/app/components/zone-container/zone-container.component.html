@@ -2,7 +2,7 @@
   <nr-zone-actions [$trackDisplay]="$trackDisplay" [queueComponentTemplateRef]="zoneQueue" [class]="layoutClass" class="zone-actions" nrSnContainer />
 </ng-template>
 <ng-template #zoneCommands let-layoutClass="class">
-  <nr-zone-commands [$zoneCommands]="$zoneCommands" [class]="layoutClass" class="zone-commands" [zoneVolume]="zoneVolume" nrSnContainer />
+  <nr-zone-commands [$zoneCommands]="$zoneCommands" [class]="layoutClass" class="zone-commands" [zoneVolume]="$layout() !== DisplayMode.TEN_FEET ? zoneVolume : undefined" nrSnContainer />
 </ng-template>
 <ng-template #zoneCurrentTrack let-layoutClass="class">
   <nr-zone-current-track [$isOneColumn]="$isOneColumn" [$trackDisplay]="$trackDisplay" [class]="layoutClass" class="zone-current-track"/>
@@ -54,6 +54,22 @@
   }
   @case (DisplayMode.WIDE) {
     <nr-wide-layout
+      [layout]="{
+        zoneActions,
+        zoneCommands,
+        zoneCurrentTrack,
+        zoneImage,
+        zoneProgression,
+        zoneQueue,
+        zoneVolume,
+        context: {
+          class: $layoutClass(),
+        },
+      }"
+    />
+  }
+  @case (DisplayMode.TEN_FEET) {
+    <nr-ten-feet-layout
       [layout]="{
         zoneActions,
         zoneCommands,

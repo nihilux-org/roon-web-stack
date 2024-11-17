@@ -46,7 +46,7 @@ export class SettingsService implements OnDestroy {
   private static readonly DISPLAY_QUEUE_TRACK_KEY = "nr.DISPLAY_QUEUE_TRACK";
   private static readonly DISPLAY_MODE_KEY = "nr.DISPLAY_MODE";
   private static readonly ACTIONS_KEY = "nr.ACTIONS";
-  private static readonly DISPLAY_MODE_CLASSES = ["one-column", "compact", "wide"];
+  private static readonly DISPLAY_MODE_CLASSES = ["one-column", "compact", "wide", "ten-feet"];
   private readonly _breakpointObserver: BreakpointObserver;
   private readonly _customActionsService: CustomActionsService;
   private readonly _$actions: WritableSignal<Action[]>;
@@ -59,6 +59,7 @@ export class SettingsService implements OnDestroy {
   private readonly _$displayQueueTrack: WritableSignal<boolean>;
   private readonly _$displayMode: WritableSignal<DisplayMode>;
   private readonly _$displayModeClass: Signal<string>;
+  private readonly _$isBigFonts: Signal<boolean>;
   private readonly _$isOneColumn: Signal<boolean>;
   private readonly _$isSmallScreen: Signal<boolean>;
   private readonly _$isSmallTablet: Signal<boolean>;
@@ -92,12 +93,18 @@ export class SettingsService implements OnDestroy {
           case DisplayMode.COMPACT:
             displayModeClass = SettingsService.DISPLAY_MODE_CLASSES[1];
             break;
+          case DisplayMode.TEN_FEET:
+            displayModeClass = SettingsService.DISPLAY_MODE_CLASSES[3];
+            break;
           case DisplayMode.WIDE:
             displayModeClass = SettingsService.DISPLAY_MODE_CLASSES[2];
             break;
         }
       }
       return displayModeClass;
+    });
+    this._$isBigFonts = computed(() => {
+      return this._$displayMode() === DisplayMode.TEN_FEET;
     });
     this._$allActions = computed(() => {
       const customActions = this._$customActions();
@@ -250,6 +257,10 @@ export class SettingsService implements OnDestroy {
 
   displayModeClasses(): string[] {
     return SettingsService.DISPLAY_MODE_CLASSES;
+  }
+
+  isBigFonts(): Signal<boolean> {
+    return this._$isBigFonts;
   }
 
   saveActions(actions: Action[]) {

@@ -13,7 +13,6 @@ import { MatButton, MatIconButton } from "@angular/material/button";
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
-  MatDialogClose,
   MatDialogContent,
   MatDialogRef,
   MatDialogTitle,
@@ -25,7 +24,12 @@ import { CustomActionsManagerComponent } from "@components/custom-actions-manage
 import { RoonBrowseListComponent } from "@components/roon-browse-list/roon-browse-list.component";
 import { SpatialNavigableContainerDirective } from "@directives/spatial-navigable-container.directive";
 import { RoonApiBrowseHierarchy, RoonApiBrowseLoadResponse, RoonPath } from "@model";
-import { CustomActionsManagerDialogConfig, NavigationEvent, RecordedAction } from "@model/client";
+import {
+  CustomActionsManagerDialogConfig,
+  CustomActionsManagerDialogConfigBigFonts,
+  NavigationEvent,
+  RecordedAction,
+} from "@model/client";
 import { CustomActionsService } from "@services/custom-actions.service";
 import { DialogService } from "@services/dialog.service";
 import { RoonService } from "@services/roon.service";
@@ -38,7 +42,6 @@ import { SettingsService } from "@services/settings.service";
     AlphabeticalIndexComponent,
     MatButton,
     MatDialogActions,
-    MatDialogClose,
     MatDialogContent,
     MatDialogTitle,
     MatIcon,
@@ -62,6 +65,7 @@ export class RoonBrowseDialogComponent implements OnInit {
   readonly zoneId: string;
   readonly hierarchy: RoonApiBrowseHierarchy;
   readonly $dialogTitle: WritableSignal<string[]>;
+  readonly $isBigFont: Signal<boolean>;
   readonly $loading: WritableSignal<boolean>;
   readonly $itemsInTitle: Signal<number>;
   content?: RoonApiBrowseLoadResponse | undefined = undefined;
@@ -86,6 +90,7 @@ export class RoonBrowseDialogComponent implements OnInit {
     this.hierarchy = data.path.hierarchy;
     this.isRecording = data.isRecording;
     this.$dialogTitle = signal([]);
+    this.$isBigFont = settingsService.isBigFonts();
     this.$loading = signal(true);
     const $isOneColumn = settingsService.isOneColumn();
     this.$itemsInTitle = computed(
@@ -110,8 +115,9 @@ export class RoonBrowseDialogComponent implements OnInit {
         set_display_offset: true,
       });
       if (this.isRecording) {
+        const config = this.$isBigFont() ? CustomActionsManagerDialogConfigBigFonts : CustomActionsManagerDialogConfig;
         this._dialogService.open(CustomActionsManagerComponent, {
-          ...CustomActionsManagerDialogConfig,
+          ...config,
         });
       }
     });

@@ -12,8 +12,9 @@ import { CustomActionsManagerComponent } from "@components/custom-actions-manage
 import { RoonBrowseDialogComponent } from "@components/roon-browse-dialog/roon-browse-dialog.component";
 import { SpatialNavigableContainerDirective } from "@directives/spatial-navigable-container.directive";
 import { RoonApiBrowseHierarchy } from "@model";
-import { CustomActionsManagerDialogConfig } from "@model/client";
+import { CustomActionsManagerDialogConfig, CustomActionsManagerDialogConfigBigFonts } from "@model/client";
 import { DialogService } from "@services/dialog.service";
+import { SettingsService } from "@services/settings.service";
 
 interface RecordableHierarchy {
   hierarchy: RoonApiBrowseHierarchy;
@@ -77,21 +78,28 @@ export class CustomActionRecorderComponent {
     },
   ];
   private readonly _dialogService: DialogService;
+  private readonly _$isBigFont: Signal<boolean>;
   readonly $hierarchy: Signal<RoonApiBrowseHierarchy | undefined>;
   readonly $path: Signal<string[]>;
   readonly $actionIndex: Signal<number | undefined>;
   private _isRecording: boolean;
 
-  constructor(dialogService: DialogService, dialogRef: MatDialogRef<CustomActionRecorderComponent>) {
+  constructor(
+    dialogService: DialogService,
+    settingsService: SettingsService,
+    dialogRef: MatDialogRef<CustomActionRecorderComponent>
+  ) {
     this._dialogService = dialogService;
+    this._$isBigFont = settingsService.isBigFonts();
     this.$hierarchy = signal(undefined);
     this.$path = signal([]);
     this.$actionIndex = signal(undefined);
     this._isRecording = false;
     dialogRef.afterClosed().subscribe(() => {
       if (!this._isRecording) {
+        const config = this._$isBigFont() ? CustomActionsManagerDialogConfigBigFonts : CustomActionsManagerDialogConfig;
         this._dialogService.open(CustomActionsManagerComponent, {
-          ...CustomActionsManagerDialogConfig,
+          ...config,
         });
       }
     });

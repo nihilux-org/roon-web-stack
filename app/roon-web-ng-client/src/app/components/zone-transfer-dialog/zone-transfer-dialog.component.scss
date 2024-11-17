@@ -2,30 +2,35 @@
   h2 {
     padding-bottom: 18px;
   }
-  mat-divider {
-    min-width: 250px;
-  }
-  .from-zone {
-    display: flex;
-    margin-bottom: 20px;
-    mat-icon {
-      margin-right: 10px;
-    }
-  }
-  button {
-    margin-bottom: 20px;
-  }
   mat-dialog-actions {
     button {
       margin: 0 8px 8px 0;
     }
   }
+  .zone-transfer {
+    mat-divider {
+      min-width: 250px;
+
+    }
+    .from-zone {
+      display: flex;
+      margin-bottom: 20px;
+      align-items: center;
+      mat-icon {
+        margin-right: 10px;
+      }
+    }
+    button {
+      margin-bottom: 20px;
+    }
+    &:not(.is-small-screen) {
+      min-width: 480px;
+    }
+  }
 }
 
 @media screen and (max-width: 300px) {
-  .zone-grouping {
-    mat-divider {
-      min-width: 170px;
-    }
+  mat-divider {
+    min-width: 170px;
   }
 }

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from "@angular/core";
+import { ChangeDetectionStrategy, Component, Signal } from "@angular/core";
 import { MatButton } from "@angular/material/button";
 import { MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle } from "@angular/material/dialog";
 import { MatDivider } from "@angular/material/divider";
@@ -34,6 +34,7 @@ export class ZoneTransferDialogComponent {
   private readonly _currentZoneId: string;
   readonly currentZone: string;
   readonly transferableZones: ZoneDescription[];
+  readonly $isSmallScreen: Signal<boolean>;
 
   constructor(
     dialogRef: MatDialogRef<ZoneTransferDialogComponent>,
@@ -52,6 +53,7 @@ export class ZoneTransferDialogComponent {
     this.transferableZones = zones.filter((zd) => {
       return zd.zone_id !== this._currentZoneId;
     });
+    this.$isSmallScreen = this._settingsService.isSmallScreen();
   }
 
   onTransferZoneSelected(to_zone_id: string) {
