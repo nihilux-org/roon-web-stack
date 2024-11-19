@@ -4,10 +4,9 @@ import { ChangeDetectionStrategy, Component, computed, Input, Signal, TemplateRe
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { ZoneSelectorComponent } from "@components/zone-selector/zone-selector.component";
-import { ZoneVolumeComponent } from "@components/zone-volume/zone-volume.component";
-import { SpatialNavigableStarterDirective } from "@directives/spatial-navigable-starter.directive";
 import { Command, CommandType } from "@model";
 import { DisplayMode, ZoneCommands, ZoneCommandState } from "@model/client";
+import { NgxSpatialNavigableStarterDirective } from "@nihilux/ngx-spatial-navigable";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
 
@@ -18,9 +17,8 @@ import { SettingsService } from "@services/settings.service";
     MatButtonModule,
     MatIconModule,
     NgTemplateOutlet,
-    SpatialNavigableStarterDirective,
+    NgxSpatialNavigableStarterDirective,
     ZoneSelectorComponent,
-    ZoneVolumeComponent,
   ],
   templateUrl: "./zone-commands.component.html",
   styleUrl: "./zone-commands.component.scss",

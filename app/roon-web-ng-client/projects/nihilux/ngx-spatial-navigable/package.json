@@ -1,0 +1,13 @@
+{
+  "name": "@nihilux/ngx-spatial-navigable",
+  "version": "0.0.1",
+  "peerDependencies": {
+    "@angular/common": "18.2.12",
+    "@angular/core": "18.2.12",
+    "@bbc/tv-lrud-spatial": "0.0.12"
+  },
+  "dependencies": {
+    "tslib": "2.8.1"
+  },
+  "sideEffects": false
+}

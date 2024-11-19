@@ -15,10 +15,10 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { MatMenuModule, MatMenuTrigger } from "@angular/material/menu";
 import { ApiState, ZoneDescription } from "@model";
+import { NgxSpatialNavigableService } from "@nihilux/ngx-spatial-navigable";
 import { IdleService } from "@services/idle.service";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
-import { SpatialNavigationService } from "@services/spatial-navigation.service";
 
 @Component({
   selector: "nr-zone-selector",
@@ -36,7 +36,7 @@ export class ZoneSelectorComponent implements OnDestroy {
   private readonly _closeMenuOnIdleEffect: EffectRef;
   private readonly _idleService: IdleService;
   private readonly _settingsService: SettingsService;
-  private readonly _spatialNavigationService: SpatialNavigationService;
+  private readonly _spatialNavigableService: NgxSpatialNavigableService;
   private readonly _$zoneId: Signal<string>;
   private readonly _$roonState: Signal<ApiState>;
   readonly $label: Signal<string>;
@@ -47,11 +47,11 @@ export class ZoneSelectorComponent implements OnDestroy {
     idleService: IdleService,
     roonService: RoonService,
     settingsService: SettingsService,
-    spatialNavigationService: SpatialNavigationService
+    spatialNavigableService: NgxSpatialNavigableService
   ) {
     this._idleService = idleService;
     this._settingsService = settingsService;
-    this._spatialNavigationService = spatialNavigationService;
+    this._spatialNavigableService = spatialNavigableService;
     this.withoutLabel = false;
     this.xPosition = "before";
     this.yPosition = "above";
@@ -82,11 +82,11 @@ export class ZoneSelectorComponent implements OnDestroy {
   }
 
   onSelectorOpen() {
-    this._spatialNavigationService.suspendSpatialNavigation();
+    this._spatialNavigableService.suspendSpatialNavigation();
   }
 
   onSelectorClose() {
-    this._spatialNavigationService.resumeSpatialNavigation();
+    this._spatialNavigableService.resumeSpatialNavigation();
   }
 
   ngOnDestroy() {

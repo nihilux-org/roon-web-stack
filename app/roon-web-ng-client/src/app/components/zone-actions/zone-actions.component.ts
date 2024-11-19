@@ -19,7 +19,6 @@ import {
 } from "@model/client";
 import { DialogService } from "@services/dialog.service";
 import { FullscreenService } from "@services/fullscreen.service";
-import { IdleService } from "@services/idle.service";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
 
@@ -35,7 +34,6 @@ export class ZoneActionsComponent {
   @Input({ required: true }) $trackDisplay!: Signal<TrackDisplay>;
   @Input({ required: true }) queueComponentTemplateRef!: TemplateRef<LayoutContext>;
   private readonly _dialogService: DialogService;
-  private readonly _idleService: IdleService;
   private readonly _settingsService: SettingsService;
   private readonly _roonService: RoonService;
   private readonly _$isQueueInModal: Signal<boolean>;
@@ -48,12 +46,10 @@ export class ZoneActionsComponent {
   constructor(
     dialogService: DialogService,
     fullScreenService: FullscreenService,
-    idleService: IdleService,
     roonService: RoonService,
     settingsService: SettingsService
   ) {
     this._dialogService = dialogService;
-    this._idleService = idleService;
     this._roonService = roonService;
     this._settingsService = settingsService;
     this._$isOneColumn = this._settingsService.isOneColumn();

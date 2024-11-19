@@ -1,40 +1,30 @@
 import { DOCUMENT } from "@angular/common";
-import { effect, EffectRef, Inject, Injectable, OnDestroy, Signal } from "@angular/core";
+import { Inject, Injectable, OnDestroy } from "@angular/core";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { getNextFocus } from "@bbc/tv-lrud-spatial";
-import { IdleService } from "@services/idle.service";
 
 @Injectable({
   providedIn: "root",
 })
-export class SpatialNavigationService implements OnDestroy {
+export class NgxSpatialNavigableService implements OnDestroy {
   private readonly _document: Document;
-  private readonly _idleEffect: EffectRef;
-  private readonly _isIdle: Signal<boolean>;
   private _rootElement?: HTMLElement;
   private readonly _starter: HTMLElement[];
   private _dialogElement?: HTMLElement;
   private _focusedElement?: HTMLElement;
   private _isActive: boolean;
 
-  constructor(@Inject(DOCUMENT) document: Document, idleService: IdleService) {
+  constructor(@Inject(DOCUMENT) document: Document) {
     this._document = document;
     this._isActive = true;
     this._starter = [];
     this._document.addEventListener("keydown", (event: KeyboardEvent) => {
       this.handleKeyDown(event);
     });
-    this._isIdle = idleService.isIdle();
-    this._idleEffect = effect(() => {
-      if (this._isIdle()) {
-        delete this._focusedElement;
-      }
-    });
   }
 
   ngOnDestroy(): void {
-    this._idleEffect.destroy();
     this._document.removeEventListener("keydown", (event: KeyboardEvent) => {
       this.handleKeyDown(event);
     });
@@ -96,6 +86,10 @@ export class SpatialNavigationService implements OnDestroy {
 
   dialogClosed() {
     delete this._dialogElement;
+  }
+
+  resetSpatialNavigation() {
+    delete this._focusedElement;
   }
 
   private getStarter(): HTMLElement | undefined {

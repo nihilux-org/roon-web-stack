@@ -20,19 +20,20 @@ import {
 } from "@angular/core";
 import { MatButton, MatIconButton } from "@angular/material/button";
 import { MatDivider } from "@angular/material/divider";
-import { MatFormField, MatHint, MatLabel } from "@angular/material/form-field";
+import { MatFormField, MatLabel } from "@angular/material/form-field";
 import { MatIcon } from "@angular/material/icon";
 import { MatInput } from "@angular/material/input";
 import { MatMenu, MatMenuContent, MatMenuItem, MatMenuTrigger } from "@angular/material/menu";
 import { RoonImageComponent } from "@components/roon-image/roon-image.component";
-import { SpatialNavigableContainerDirective } from "@directives/spatial-navigable-container.directive";
-import { SpatialNavigableElementDirective } from "@directives/spatial-navigable-element.directive";
-import { SpatialNavigableStarterDirective } from "@directives/spatial-navigable-starter.directive";
 import { Item, RoonApiBrowseHierarchy, RoonApiBrowseLoadResponse } from "@model";
 import { NavigationEvent, RecordedAction } from "@model/client";
+import {
+  NgxSpatialNavigableContainerDirective,
+  NgxSpatialNavigableService,
+  NgxSpatialNavigableStarterDirective,
+} from "@nihilux/ngx-spatial-navigable";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
-import { SpatialNavigationService } from "@services/spatial-navigation.service";
 
 interface MenuTriggerData {
   item_key: string;
@@ -50,7 +51,6 @@ interface MenuTriggerData {
     MatButton,
     MatDivider,
     MatFormField,
-    MatHint,
     MatIcon,
     MatIconButton,
     MatInput,
@@ -60,9 +60,8 @@ interface MenuTriggerData {
     MatMenuItem,
     MatMenuTrigger,
     RoonImageComponent,
-    SpatialNavigableContainerDirective,
-    SpatialNavigableElementDirective,
-    SpatialNavigableStarterDirective,
+    NgxSpatialNavigableContainerDirective,
+    NgxSpatialNavigableStarterDirective,
   ],
   templateUrl: "./roon-browse-list.component.html",
   styleUrl: "./roon-browse-list.component.scss",
@@ -71,7 +70,7 @@ interface MenuTriggerData {
 export class RoonBrowseListComponent implements OnChanges, AfterViewChecked {
   private static readonly SUBTITLE_SPLITTER = /\s?\/?\s?\[\[\d*\|/;
   private readonly _roonService: RoonService;
-  private readonly _spatialNavigationService: SpatialNavigationService;
+  private readonly _spatialNavigableService: NgxSpatialNavigableService;
   private readonly _inputValues: Map<string, string>;
   private _noActionClicked = true;
   @Input({ required: true }) hierarchy!: RoonApiBrowseHierarchy;
@@ -94,10 +93,10 @@ export class RoonBrowseListComponent implements OnChanges, AfterViewChecked {
   constructor(
     roonService: RoonService,
     settingsService: SettingsService,
-    spatialNavigationService: SpatialNavigationService
+    spatialNavigableService: NgxSpatialNavigableService
   ) {
     this._roonService = roonService;
-    this._spatialNavigationService = spatialNavigationService;
+    this._spatialNavigableService = spatialNavigableService;
     this._inputValues = new Map<string, string>();
     this.$isOneColumn = settingsService.isOneColumn();
     this.$layoutClass = settingsService.displayModeClass();
@@ -240,9 +239,9 @@ export class RoonBrowseListComponent implements OnChanges, AfterViewChecked {
         if (actionLoadResponse.list.hint === "action_list") {
           menuTriggerData.actions = actionLoadResponse.items;
           menuTrigger.openMenu();
-          this._spatialNavigationService.suspendSpatialNavigation();
+          this._spatialNavigableService.suspendSpatialNavigation();
           const menuClosedSub = menuTrigger.menuClosed.subscribe(() => {
-            this._spatialNavigationService.resumeSpatialNavigation();
+            this._spatialNavigableService.resumeSpatialNavigation();
             menuTriggerData.actions = [];
             if (this._noActionClicked) {
               void this._roonService

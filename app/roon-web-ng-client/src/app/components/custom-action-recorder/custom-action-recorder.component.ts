@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Signal, signal } from "@angular/core";
-import { MatButton, MatFabButton, MatMiniFabButton } from "@angular/material/button";
+import { MatButton, MatFabButton } from "@angular/material/button";
 import {
   MatDialogActions,
   MatDialogConfig,
@@ -10,9 +10,9 @@ import {
 import { MatIcon } from "@angular/material/icon";
 import { CustomActionsManagerComponent } from "@components/custom-actions-manager/custom-actions-manager.component";
 import { RoonBrowseDialogComponent } from "@components/roon-browse-dialog/roon-browse-dialog.component";
-import { SpatialNavigableContainerDirective } from "@directives/spatial-navigable-container.directive";
 import { RoonApiBrowseHierarchy } from "@model";
 import { CustomActionsManagerDialogConfig, CustomActionsManagerDialogConfigBigFonts } from "@model/client";
+import { NgxSpatialNavigableContainerDirective } from "@nihilux/ngx-spatial-navigable";
 import { DialogService } from "@services/dialog.service";
 import { SettingsService } from "@services/settings.service";
 
@@ -32,8 +32,7 @@ interface RecordableHierarchy {
     MatDialogTitle,
     MatFabButton,
     MatIcon,
-    MatMiniFabButton,
-    SpatialNavigableContainerDirective,
+    NgxSpatialNavigableContainerDirective,
   ],
   templateUrl: "./custom-action-recorder.component.html",
   styleUrl: "./custom-action-recorder.component.scss",

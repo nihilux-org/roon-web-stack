@@ -1,7 +1,7 @@
-<div mat-dialog-title class="volume-header" nrSnContainer>
-  <div nrSnContainer>
+<div mat-dialog-title class="volume-header" ngxSnContainer>
+  <div ngxSnContainer>
     <span>
-      <button mat-icon-button (click)="onOpenTransferDialog()" nrSnStarter id="zone-volume-transfer"><mat-icon fontIcon="sync_alt" /></button>
+      <button mat-icon-button (click)="onOpenTransferDialog()" ngxSnStarter id="zone-volume-transfer"><mat-icon fontIcon="sync_alt" /></button>
       @if ($canGroup()) {
         <button mat-icon-button (click)="onOpenGroupDialog()" id="zone-volume-group"><mat-icon fontIcon="link" /></button>
       }
@@ -26,12 +26,12 @@
       }
       <span class="volume-output-name">{{output.display_name}}</span>
     }
-    <div class="volume-control" nrSnContainer>
+    <div class="volume-control" ngxSnContainer>
       @if (output.volume) {
         <button mat-icon-button (click)="onOutputMute($event, output.output_id)" [id]="'zone-volume-' + output.output_id + '-mute'"><mat-icon [fontIcon]="output.volume.is_muted ? 'volume_off' : 'volume_up'" /></button>
         @if (output.volume.type !== "incremental") {
           <span class="volume-value">{{sliderValue.valueAsNumber}}</span>
-          <span class="volume-slider" [class.is-small-screen]="$isSmallScreen()" nrSnElement nrSnIgnore="true">
+          <span class="volume-slider" [class.is-small-screen]="$isSmallScreen()" nrSnElement ngxSnIgnore="true">
             <sub>{{output.volume.hard_limit_min ?? output.volume.min ?? 0}}</sub>
             <mat-slider
               [max]="output.volume.hard_limit_max ?? output.volume.max ?? 100"

@@ -4,7 +4,7 @@
   <span class="from-zone"><mat-icon fontIcon="speaker" />{{mainOutput.display_name}}</span>
   <mat-divider />
   @if ($groupedOutputs().length > 0) {
-    <h3 nrSnContainer>Currently in group:</h3>
+    <h3 ngxSnContainer>Currently in group:</h3>
     @for (output of $groupedOutputs(); track output.output_id; let index = $index) {
       <p>
         <mat-checkbox
@@ -21,7 +21,7 @@
     <mat-divider />
   }
   @if ($canGroupOutputs().length > 0) {
-    <h3 nrSnContainer>Add to zone:</h3>
+    <h3 ngxSnContainer>Add to zone:</h3>
     @for (output of $canGroupOutputs(); track output.output_id; let index = $index) {
       <p>
         <mat-checkbox
@@ -36,6 +36,6 @@
     }
   }
 </mat-dialog-content>
-<mat-dialog-actions align="end" nrSnContainer>
-  <button nrSnStarter mat-button id="zone-grouping-cancel" (click)="onSave()"><mat-icon fontIcon="save" />Save</button>
+<mat-dialog-actions align="end" ngxSnContainer>
+  <button ngxSnStarter mat-button id="zone-grouping-cancel" (click)="onSave()"><mat-icon fontIcon="save" />Save</button>
 </mat-dialog-actions>

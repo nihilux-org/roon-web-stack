@@ -13,6 +13,10 @@
     "src/**/*.spec.ts",
     "src/**/*.mock.ts",
     "src/**/*.d.ts",
+    "projects/**/*.ts",
+    "projects/**/*.spec.ts",
+    "projects/**/*.mock.ts",
+    "projects/**/*.d.ts",
     "server.ts"
   ]
 }
