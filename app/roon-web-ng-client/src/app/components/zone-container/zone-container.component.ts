@@ -11,7 +11,6 @@ import { WideLayoutComponent } from "@components/zone-layouts/wide-layout/wide-l
 import { ZoneProgressionComponent } from "@components/zone-progression/zone-progression.component";
 import { ZoneQueueComponent } from "@components/zone-queue/zone-queue.component";
 import { ZoneVolumeComponent } from "@components/zone-volume/zone-volume.component";
-import { SpatialNavigableContainerDirective } from "@directives/spatial-navigable-container.directive";
 import { ZoneState } from "@model";
 import {
   DEFAULT_ZONE_PROGRESSION,
@@ -22,6 +21,7 @@ import {
   ZoneCommandState,
   ZoneProgression,
 } from "@model/client";
+import { NgxSpatialNavigableContainerDirective } from "@nihilux/ngx-spatial-navigable";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
 
@@ -30,7 +30,9 @@ import { SettingsService } from "@services/settings.service";
   standalone: true,
   imports: [
     CompactLayoutComponent,
+    NgxSpatialNavigableContainerDirective,
     OneColumnLayoutComponent,
+    TenFeetLayoutComponent,
     WideLayoutComponent,
     ZoneActionsComponent,
     ZoneCommandsComponent,
@@ -39,8 +41,6 @@ import { SettingsService } from "@services/settings.service";
     ZoneProgressionComponent,
     ZoneQueueComponent,
     ZoneVolumeComponent,
-    SpatialNavigableContainerDirective,
-    TenFeetLayoutComponent,
   ],
   templateUrl: "./zone-container.component.html",
   styleUrl: "./zone-container.component.scss",

@@ -3,15 +3,15 @@
 <mat-dialog-content class="zone-transfer" [class.is-small-screen]="$isSmallScreen()">
   <span class="from-zone"><mat-icon fontIcon="speaker" />{{currentZone}}</span>
   <mat-divider />
-  <h4 nrSnContainer>to zone:</h4>
+  <h4 ngxSnContainer>to zone:</h4>
   @for (zone of transferableZones; track zone.zone_id; let index = $index;) {
     <div>
       <button
         [id]="'zone-transfer-to-' + zone.zone_id"
         mat-button
         (click)="onTransferZoneSelected(zone.zone_id)"
-        nrSnStarter
-        [nrSnIgnore]="index !== 0"
+        ngxSnStarter
+        [ngxSnIgnore]="index !== 0"
       ><mat-icon fontIcon="speaker" />{{zone.display_name}}</button>
     </div>
   }

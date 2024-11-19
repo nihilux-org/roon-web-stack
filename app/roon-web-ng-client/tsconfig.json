@@ -27,9 +27,6 @@
       "@components/*": [
         "./src/app/components/*"
       ],
-      "@directives/*": [
-        "./src/app/directives/*"
-      ],
       "@mock/*": [
         "./src/mock/*"
       ],
@@ -38,6 +35,9 @@
       ],
       "@model": [
         "../../packages/roon-web-model/src/index.d.ts"
+      ],
+      "@nihilux/ngx-spatial-navigable": [
+        "./projects/nihilux/ngx-spatial-navigable/src/public-api.ts"
       ],
       "@model/client": [
         "./src/app/model"

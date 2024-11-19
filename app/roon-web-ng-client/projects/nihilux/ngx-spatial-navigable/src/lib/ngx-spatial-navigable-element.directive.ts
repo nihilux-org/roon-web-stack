@@ -11,10 +11,10 @@ import {
 
 @Directive({
   standalone: true,
-  selector: "[nrSnElement]",
+  selector: "[ngxSnElement]",
 })
-export class SpatialNavigableElementDirective implements OnDestroy, OnChanges {
-  @Input({ required: false, transform: booleanAttribute }) nrSnIgnore: boolean = false;
+export class NgxSpatialNavigableElementDirective implements OnDestroy, OnChanges {
+  @Input({ required: false, transform: booleanAttribute }) ngxSnIgnore: boolean = false;
 
   private readonly _htmlElement: HTMLElement;
   private readonly _renderer: Renderer2;
@@ -30,8 +30,8 @@ export class SpatialNavigableElementDirective implements OnDestroy, OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     for (const changeKey in changes) {
-      if (changeKey === "nrSnIgnore") {
-        if (this.nrSnIgnore) {
+      if (changeKey === "ngxSnIgnore") {
+        if (this.ngxSnIgnore) {
           this._renderer.addClass(this._htmlElement, "lrud-ignore");
         } else {
           this._renderer.removeClass(this._htmlElement, "lrud-ignore");

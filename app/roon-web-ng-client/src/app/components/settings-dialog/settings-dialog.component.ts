@@ -22,9 +22,6 @@ import { MatMenu, MatMenuItem, MatMenuTrigger } from "@angular/material/menu";
 import { MatTab, MatTabContent, MatTabGroup } from "@angular/material/tabs";
 import { CustomActionsManagerComponent } from "@components/custom-actions-manager/custom-actions-manager.component";
 import { ZoneSelectorComponent } from "@components/zone-selector/zone-selector.component";
-import { SpatialNavigableContainerDirective } from "@directives/spatial-navigable-container.directive";
-import { SpatialNavigableElementDirective } from "@directives/spatial-navigable-element.directive";
-import { SpatialNavigableStarterDirective } from "@directives/spatial-navigable-starter.directive";
 import {
   Action,
   ChosenTheme,
@@ -34,10 +31,14 @@ import {
   Theme,
   Themes,
 } from "@model/client";
+import {
+  NgxSpatialNavigableContainerDirective,
+  NgxSpatialNavigableService,
+  NgxSpatialNavigableStarterDirective,
+} from "@nihilux/ngx-spatial-navigable";
 import { DialogService } from "@services/dialog.service";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
-import { SpatialNavigationService } from "@services/spatial-navigation.service";
 
 @Component({
   selector: "nr-settings-dialog",
@@ -58,9 +59,8 @@ import { SpatialNavigationService } from "@services/spatial-navigation.service";
     MatTab,
     MatTabContent,
     MatTabGroup,
-    SpatialNavigableContainerDirective,
-    SpatialNavigableElementDirective,
-    SpatialNavigableStarterDirective,
+    NgxSpatialNavigableContainerDirective,
+    NgxSpatialNavigableStarterDirective,
     ZoneSelectorComponent,
   ],
   templateUrl: "./settings-dialog.component.html",
@@ -71,7 +71,7 @@ export class SettingsDialogComponent implements OnDestroy {
   private readonly _dialogRef: MatDialogRef<SettingsDialogComponent>;
   private readonly _dialogService: DialogService;
   private readonly _settingsService: SettingsService;
-  private readonly _spatialNavigationService: SpatialNavigationService;
+  private readonly _spatialNavigableService: NgxSpatialNavigableService;
   private readonly _layoutChangeEffect: EffectRef;
   readonly displayModeLabels: Map<DisplayMode, string>;
   readonly $actions: Signal<Action[]>;
@@ -89,12 +89,12 @@ export class SettingsDialogComponent implements OnDestroy {
     dialogService: DialogService,
     roonService: RoonService,
     settingsService: SettingsService,
-    spatialNavigationService: SpatialNavigationService
+    spatialNavigableService: NgxSpatialNavigableService
   ) {
     this._dialogRef = dialogRef;
     this._dialogService = dialogService;
     this._settingsService = settingsService;
-    this._spatialNavigationService = spatialNavigationService;
+    this._spatialNavigableService = spatialNavigableService;
     this.displayModeLabels = new Map<DisplayMode, string>();
     this.displayModeLabels.set(DisplayMode.COMPACT, "Compact");
     this.displayModeLabels.set(DisplayMode.WIDE, "Wide");
@@ -196,10 +196,10 @@ export class SettingsDialogComponent implements OnDestroy {
   }
 
   onMenOpen() {
-    this._spatialNavigationService.suspendSpatialNavigation();
+    this._spatialNavigableService.suspendSpatialNavigation();
   }
 
   onMenuClosed() {
-    this._spatialNavigationService.resumeSpatialNavigation();
+    this._spatialNavigableService.resumeSpatialNavigation();
   }
 }

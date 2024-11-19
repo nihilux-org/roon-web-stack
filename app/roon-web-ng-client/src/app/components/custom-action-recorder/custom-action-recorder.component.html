@@ -1,7 +1,7 @@
 <h2 mat-dialog-title>Custom Actions Recorder</h2>
 <mat-dialog-content>
   <h4>Choose a kind of content:</h4>
-  <div class="hierarchies-container" nrSnContainer>
+  <div class="hierarchies-container" ngxSnContainer>
     @for (h of recordableHierarchies; track h.hierarchy) {
       <div class="hierarchy">
         <button mat-fab extended color="primary"  (click)="startRecording(h)">

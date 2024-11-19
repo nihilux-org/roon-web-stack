@@ -5,9 +5,11 @@ import { MatIcon } from "@angular/material/icon";
 import { MatTab, MatTabContent, MatTabGroup } from "@angular/material/tabs";
 import { CustomActionEditorComponent } from "@components/custom-action-editor/custom-action-editor.component";
 import { SettingsDialogComponent } from "@components/settings-dialog/settings-dialog.component";
-import { SpatialNavigableContainerDirective } from "@directives/spatial-navigable-container.directive";
-import { SpatialNavigableStarterDirective } from "@directives/spatial-navigable-starter.directive";
 import { CustomAction, SettingsDialogConfig, SettingsDialogConfigBigFonts } from "@model/client";
+import {
+  NgxSpatialNavigableContainerDirective,
+  NgxSpatialNavigableStarterDirective,
+} from "@nihilux/ngx-spatial-navigable";
 import { CustomActionsService } from "@services/custom-actions.service";
 import { DialogService } from "@services/dialog.service";
 import { RoonService } from "@services/roon.service";
@@ -27,8 +29,8 @@ import { SettingsService } from "@services/settings.service";
     MatTab,
     MatTabContent,
     MatTabGroup,
-    SpatialNavigableContainerDirective,
-    SpatialNavigableStarterDirective,
+    NgxSpatialNavigableContainerDirective,
+    NgxSpatialNavigableStarterDirective,
   ],
   templateUrl: "./custom-actions-manager.component.html",
   styleUrl: "./custom-actions-manager.component.scss",

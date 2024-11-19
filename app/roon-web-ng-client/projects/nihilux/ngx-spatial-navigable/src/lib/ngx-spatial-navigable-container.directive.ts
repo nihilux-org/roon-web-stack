@@ -12,12 +12,12 @@ import {
 
 @Directive({
   standalone: true,
-  selector: "[nrSnContainer]",
+  selector: "[ngxSnContainer]",
 })
-export class SpatialNavigableContainerDirective implements OnChanges, OnInit, OnDestroy {
-  @Input({ required: false, transform: booleanAttribute }) nrSnPrioritizeChildren: boolean = true;
-  @Input({ required: false, transform: booleanAttribute }) nrSnIgnore: boolean = false;
-  @Input({ required: false }) nrSnBlockExit: string = "";
+export class NgxSpatialNavigableContainerDirective implements OnChanges, OnInit, OnDestroy {
+  @Input({ required: false, transform: booleanAttribute }) ngxSnPrioritizeChildren: boolean = true;
+  @Input({ required: false, transform: booleanAttribute }) ngxSnIgnore: boolean = false;
+  @Input({ required: false }) ngxSnBlockExit: string = "";
 
   private readonly _htmlElement: HTMLElement;
   private readonly _renderer: Renderer2;
@@ -44,14 +44,14 @@ export class SpatialNavigableContainerDirective implements OnChanges, OnInit, On
         this.setPrioritizeChildren();
       } else if (changeKey === "nrSnBlockExit") {
         this.setBlockExit();
-      } else if (changeKey === "nrSnIgnore") {
+      } else if (changeKey === "ngxSnIgnore") {
         this.setIgnoreClass();
       }
     }
   }
 
   private setIgnoreClass() {
-    if (this.nrSnIgnore) {
+    if (this.ngxSnIgnore) {
       this._renderer.addClass(this._htmlElement, "lrud-ignore");
     } else {
       this._renderer.removeClass(this._htmlElement, "lrud-ignore");
@@ -59,10 +59,10 @@ export class SpatialNavigableContainerDirective implements OnChanges, OnInit, On
   }
 
   private setPrioritizeChildren() {
-    this._htmlElement.setAttribute("data-lrud-prioritise-children", `${this.nrSnPrioritizeChildren}`);
+    this._htmlElement.setAttribute("data-lrud-prioritise-children", `${this.ngxSnPrioritizeChildren}`);
   }
 
   private setBlockExit() {
-    this._htmlElement.setAttribute("data-block-exit", this.nrSnBlockExit);
+    this._htmlElement.setAttribute("data-block-exit", this.ngxSnBlockExit);
   }
 }

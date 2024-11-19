@@ -1,4 +1,4 @@
-<div mat-dialog-title class="browse-dialog-title" nrSnContainer [class.is-big-fonts]="$isBigFont()">
+<div mat-dialog-title class="browse-dialog-title" ngxSnContainer [class.is-big-fonts]="$isBigFont()">
   @if (isRecording) {
     <h3 class="is-recording-title">Custom Action Recording:</h3>
   }
@@ -32,11 +32,11 @@
       (clickedItem)="onItemClicked($event)"
       (recordedAction)="onRecordedAction($event)" />
     @if (withIndex) {
-      <nr-alphabetical-index [class.is-big-fonts]="$isBigFont()" (clickedLetter)="onIndexClicked($event)" nrSnContainer />
+      <nr-alphabetical-index [class.is-big-fonts]="$isBigFont()" (clickedLetter)="onIndexClicked($event)" ngxSnContainer />
     }
   }
 </mat-dialog-content>
-<mat-dialog-actions align="end" nrSnContainer>
+<mat-dialog-actions align="end" ngxSnContainer>
   @if (isRecording) {
     <button mat-button (click)="closeDialog()" id="roon-dialog-cancel"><mat-icon fontIcon="cancel"/>Cancel</button>
     <button mat-button (click)="closeDialog()" id="roon-dialog-save"><mat-icon fontIcon="save"/>Save</button>

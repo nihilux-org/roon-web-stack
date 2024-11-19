@@ -4,10 +4,12 @@ import { MatCheckbox } from "@angular/material/checkbox";
 import { MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle } from "@angular/material/dialog";
 import { MatDivider } from "@angular/material/divider";
 import { MatIcon } from "@angular/material/icon";
-import { SpatialNavigableContainerDirective } from "@directives/spatial-navigable-container.directive";
-import { SpatialNavigableStarterDirective } from "@directives/spatial-navigable-starter.directive";
 import { CommandResult, CommandType, GroupCommand, OutputDescription } from "@model";
 import { CommandCallback } from "@model/client";
+import {
+  NgxSpatialNavigableContainerDirective,
+  NgxSpatialNavigableStarterDirective,
+} from "@nihilux/ngx-spatial-navigable";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
 
@@ -26,8 +28,8 @@ export interface GroupOutputDescription extends OutputDescription {
     MatDialogTitle,
     MatDivider,
     MatIcon,
-    SpatialNavigableContainerDirective,
-    SpatialNavigableStarterDirective,
+    NgxSpatialNavigableContainerDirective,
+    NgxSpatialNavigableStarterDirective,
   ],
   templateUrl: "./zone-grouping-dialog.component.html",
   styleUrl: "./zone-grouping-dialog.component.scss",

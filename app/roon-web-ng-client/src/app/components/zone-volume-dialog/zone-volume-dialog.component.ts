@@ -6,10 +6,11 @@ import { MatIcon } from "@angular/material/icon";
 import { MatSlider, MatSliderThumb } from "@angular/material/slider";
 import { ZoneGroupingDialogComponent } from "@components/zone-grouping-dialog/zone-grouping-dialog.component";
 import { ZoneTransferDialogComponent } from "@components/zone-transfer-dialog/zone-transfer-dialog.component";
-import { SpatialNavigableContainerDirective } from "@directives/spatial-navigable-container.directive";
-import { SpatialNavigableElementDirective } from "@directives/spatial-navigable-element.directive";
-import { SpatialNavigableStarterDirective } from "@directives/spatial-navigable-starter.directive";
 import { Output } from "@model";
+import {
+  NgxSpatialNavigableContainerDirective,
+  NgxSpatialNavigableStarterDirective,
+} from "@nihilux/ngx-spatial-navigable";
 import { DialogService } from "@services/dialog.service";
 import { SettingsService } from "@services/settings.service";
 import { VolumeService } from "@services/volume.service";
@@ -25,9 +26,8 @@ import { VolumeService } from "@services/volume.service";
     MatIconButton,
     MatSlider,
     MatSliderThumb,
-    SpatialNavigableContainerDirective,
-    SpatialNavigableElementDirective,
-    SpatialNavigableStarterDirective,
+    NgxSpatialNavigableContainerDirective,
+    NgxSpatialNavigableStarterDirective,
   ],
   templateUrl: "./zone-volume-dialog.component.html",
   styleUrl: "./zone-volume-dialog.component.scss",

@@ -3,10 +3,10 @@
   <mat-tab-group [selectedIndex]="selectedTab" animationDuration="200ms">
     <mat-tab label="General" bodyClass="settings-tab">
       <ng-template matTabContent>
-        <div class="settings" nrSnContainer>
+        <div class="settings" ngxSnContainer>
           <div class="setting">
             <label for="theme-selector">Theme:</label>
-            <button nrSnStarter mat-button id="theme-selector" [matMenuTriggerFor]="themeSelector" (menuOpened)="onMenOpen()" (menuClosed)="onMenuClosed()">
+            <button ngxSnStarter mat-button id="theme-selector" [matMenuTriggerFor]="themeSelector" (menuOpened)="onMenOpen()" (menuClosed)="onMenuClosed()">
               <mat-icon [fontIcon]="chosenTheme()().icon" />{{chosenTheme()().label}}
             </button>
             <mat-menu #themeSelector="matMenu" yPosition="below" xPosition="after" class="nr-menu-custom" [class]="$layoutClass()">
@@ -41,9 +41,9 @@
     </mat-tab>
     <mat-tab label="Actions" bodyClass="settings-tab">
       <ng-template matTabContent>
-        <div class="settings actions" nrSnContainer>
+        <div class="settings actions" ngxSnContainer>
           <div class="actions-configuration">
-            <button mat-button nrSnStarter id="actions-selector" [matMenuTriggerFor]="actionSelector" [disabled]="$availableActions().length === 0" (menuOpened)="onMenOpen()" (menuClosed)="onMenuClosed()">
+            <button mat-button ngxSnStarter id="actions-selector" [matMenuTriggerFor]="actionSelector" [disabled]="$availableActions().length === 0" (menuOpened)="onMenOpen()" (menuClosed)="onMenuClosed()">
               <mat-icon fontIcon="action_key" />Add Action
             </button>
             <button mat-button id="action-recorder" (click)="openCustomActionsManager()">
@@ -56,7 +56,7 @@
             </mat-menu>
           </div>
           <div class="active-actions-container">
-            <div cdkDropList (cdkDropListDropped)="onActionsReordered($event)" class="active-actions" nrSnContainer>
+            <div cdkDropList (cdkDropListDropped)="onActionsReordered($event)" class="active-actions" ngxSnContainer>
               @for (a of $actions(); track a.id) {
                 <div class="active-action" cdkDrag>
                   <span class="active-action-label">
@@ -65,7 +65,7 @@
                   </span>
                   <span>
                     <button mat-icon-button [id]="'action-remove-' + a.id" (click)="removeAction(a)"><mat-icon fontIcon="cancel" /></button>
-                    <button mat-icon-button nrSnElement nrSnIgnore="true" cdkDragHandle><mat-icon fontIcon="reorder" /></button>
+                    <button mat-icon-button nrSnElement ngxSnIgnore="true" cdkDragHandle><mat-icon fontIcon="reorder" /></button>
                   </span>
                 </div>
               }
@@ -76,6 +76,6 @@
     </mat-tab>
   </mat-tab-group>
 </mat-dialog-content>
-<mat-dialog-actions align="end" nrSnContainer>
+<mat-dialog-actions align="end" ngxSnContainer>
   <button mat-button id="settings-save" (click)="onSave()"><mat-icon fontIcon="save" />Save</button>
 </mat-dialog-actions>

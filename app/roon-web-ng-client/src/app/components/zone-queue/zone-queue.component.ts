@@ -16,13 +16,11 @@ import {
 import { MatDividerModule } from "@angular/material/divider";
 import { MatMenu, MatMenuContent, MatMenuItem, MatMenuTrigger } from "@angular/material/menu";
 import { RoonImageComponent } from "@components/roon-image/roon-image.component";
-import { SpatialNavigableContainerDirective } from "@directives/spatial-navigable-container.directive";
-import { SpatialNavigableElementDirective } from "@directives/spatial-navigable-element.directive";
 import { CommandType, QueueTrack } from "@model";
 import { TrackDisplay } from "@model/client";
+import { NgxSpatialNavigableContainerDirective, NgxSpatialNavigableService } from "@nihilux/ngx-spatial-navigable";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
-import { SpatialNavigationService } from "@services/spatial-navigation.service";
 
 @Component({
   selector: "nr-zone-queue",
@@ -36,9 +34,8 @@ import { SpatialNavigationService } from "@services/spatial-navigation.service";
     MatMenuContent,
     MatMenuItem,
     MatMenuTrigger,
+    NgxSpatialNavigableContainerDirective,
     RoonImageComponent,
-    SpatialNavigableContainerDirective,
-    SpatialNavigableElementDirective,
   ],
   templateUrl: "./zone-queue.component.html",
   styleUrl: "./zone-queue.component.scss",
@@ -66,7 +63,7 @@ export class ZoneQueueComponent implements AfterViewInit {
   @HostBinding("class.open") open: boolean;
   @Input({ required: true }) $trackDisplay!: Signal<TrackDisplay>;
   private readonly _roonService: RoonService;
-  private readonly _spatialNavigationService: SpatialNavigationService;
+  private readonly _spatialNavigableService: NgxSpatialNavigableService;
   readonly $isBigFonts: Signal<boolean>;
   readonly $zoneId: Signal<string>;
   readonly $queue: Signal<QueueTrack[]>;
@@ -81,10 +78,10 @@ export class ZoneQueueComponent implements AfterViewInit {
   constructor(
     roonService: RoonService,
     settingsService: SettingsService,
-    spatialNavigationService: SpatialNavigationService
+    spatialNavigableService: NgxSpatialNavigableService
   ) {
     this._roonService = roonService;
-    this._spatialNavigationService = spatialNavigationService;
+    this._spatialNavigableService = spatialNavigableService;
     this.$isBigFonts = settingsService.isBigFonts();
     this.$displayQueue = settingsService.displayQueueTrack();
     this.open = this.$displayQueue();
@@ -125,11 +122,11 @@ export class ZoneQueueComponent implements AfterViewInit {
     const menuTrigger = this._menuTriggers.find((mt) => mt.menuData === queue_item_id);
     if (menuTrigger) {
       menuTrigger.menuData = { queue_item_id };
-      this._spatialNavigationService.suspendSpatialNavigation();
+      this._spatialNavigableService.suspendSpatialNavigation();
       menuTrigger.openMenu();
       const closeSub = menuTrigger.menuClosed.subscribe(() => {
         menuTrigger.menuData = queue_item_id;
-        this._spatialNavigationService.resumeSpatialNavigation();
+        this._spatialNavigableService.resumeSpatialNavigation();
         closeSub.unsubscribe();
       });
     }

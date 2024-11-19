@@ -39,10 +39,12 @@ export class EventSourceMock {
     return this._onerror;
   }
 
-  set onerror(listener: () => void) {
+  set onerror(listener: (() => void) | undefined) {
     this._onerror = () => {
       this._state = 0;
-      listener();
+      if (listener) {
+        listener();
+      }
     };
   }
 

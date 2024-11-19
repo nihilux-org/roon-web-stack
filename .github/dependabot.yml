@@ -34,8 +34,6 @@ updates:
         update-types:
           - "version-update:semver-major"
           - "version-update:semver-minor"
-      - dependency-name: "eslint"
-        version: ["9.15.0"]
       - dependency-name: "@gquittet/graceful-server"
         update-types:
           - "version-update:semver-major"

@@ -60,6 +60,7 @@
     "jest": "29.7.0",
     "jsdom-testing-mocks": "1.13.1",
     "ng-mocks": "14.13.1",
+    "ng-packagr": "18.2.1",
     "prettier": "3.3.3",
     "typescript": "5.5.4",
     "zone.js": "~0.15.0"

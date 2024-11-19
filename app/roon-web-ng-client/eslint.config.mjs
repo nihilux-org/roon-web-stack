@@ -19,7 +19,7 @@ const compat = new FlatCompat({
 });
 
 export default [{
-    ignores: ["projects/**/*", "**/setup-jest.ts"],
+    ignores: ["**/setup-jest.ts"],
 }, {
     languageOptions: {
         globals: {
@@ -72,18 +72,6 @@ export default [{
     },
 
     rules: {
-        "@angular-eslint/directive-selector": ["error", {
-            type: "attribute",
-            prefix: "nr",
-            style: "camelCase",
-        }],
-
-        "@angular-eslint/component-selector": ["error", {
-            type: "element",
-            prefix: "nr",
-            style: "kebab-case",
-        }],
-
         "no-console": "error",
 
         "simple-import-sort/imports": ["error", {
@@ -108,7 +96,22 @@ export default [{
             allowNumber: true,
         }],
     },
-}, ...fixupConfigRules(compat.extends(
+}, {
+  files: ["src/**/*.ts"],
+  rules: {
+    "@angular-eslint/directive-selector": ["error", {
+      type: "attribute",
+      prefix: "nr",
+      style: "camelCase",
+    }],
+
+    "@angular-eslint/component-selector": ["error", {
+      type: "element",
+      prefix: "nr",
+      style: "kebab-case",
+    }],
+  }
+},...fixupConfigRules(compat.extends(
     "plugin:@angular-eslint/template/recommended",
     "plugin:@angular-eslint/template/accessibility",
 )).map(config => ({

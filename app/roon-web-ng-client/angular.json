@@ -1,103 +1,148 @@
 {
-	"$schema": "./node_modules/@angular/cli/lib/config/schema.json",
-	"version": 1,
-	"newProjectRoot": "projects",
-	"cli": {
-		"schematicCollections": [
-			"@angular-eslint/schematics"
-		],
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "projects",
+  "cli": {
+    "schematicCollections": [
+      "@angular-eslint/schematics"
+    ],
     "packageManager": "yarn"
-	},
-	"projects": {
-		"@nihilux/roon-web-ng-client": {
-			"projectType": "application",
-			"schematics": {
-				"@schematics/angular:component": {
-					"style": "scss"
-				}
-			},
-			"root": "",
-			"sourceRoot": "src",
-			"prefix": "nr",
-			"architect": {
-				"build": {
-					"builder": "@angular-devkit/build-angular:application",
-					"options": {
-						"outputPath": "dist/roon-web-ng-client",
-						"index": "src/index.html",
-						"browser": "src/main.ts",
-						"polyfills": [
+  },
+  "projects": {
+    "@nihilux/roon-web-ng-client": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "",
+      "sourceRoot": "src",
+      "prefix": "nr",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:application",
+          "options": {
+            "outputPath": "dist/roon-web-ng-client",
+            "index": "src/index.html",
+            "browser": "src/main.ts",
+            "polyfills": [
               "zone.js"
             ],
-						"tsConfig": "tsconfig.app.json",
-						"assets": [
-							"src/assets"
-						],
-						"styles": [
-							"src/styles.scss"
-						],
+            "tsConfig": "tsconfig.app.json",
+            "assets": [
+              "src/assets"
+            ],
+            "styles": [
+              "src/styles.scss"
+            ],
             "scripts": [],
             "webWorkerTsConfig": "tsconfig.worker.json"
-					},
-					"configurations": {
-						"production": {
-							"budgets": [
-								{
-									"type": "initial",
-									"maximumWarning": "850kb",
-									"maximumError": "1mb"
-								},
-								{
-									"type": "anyComponentStyle",
-									"maximumWarning": "2kb",
-									"maximumError": "4kb"
-								}
-							],
-							"outputHashing": "all"
-						},
-						"development": {
-							"optimization": false,
-							"extractLicenses": false,
-							"sourceMap": true
-						}
-					},
-					"defaultConfiguration": "production"
-				},
-				"serve": {
-					"builder": "@angular-devkit/build-angular:dev-server",
-					"configurations": {
-						"production": {
-							"buildTarget": "@nihilux/roon-web-ng-client:build:production"
-						},
-						"development": {
-							"buildTarget": "@nihilux/roon-web-ng-client:build:development",
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "850kb",
+                  "maximumError": "1mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2kb",
+                  "maximumError": "4kb"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "@nihilux/roon-web-ng-client:build:production"
+            },
+            "development": {
+              "buildTarget": "@nihilux/roon-web-ng-client:build:development",
               "proxyConfig": "src/proxy.conf.json"
-						}
-					},
-					"defaultConfiguration": "development"
-				},
-				"extract-i18n": {
-					"builder": "@angular-devkit/build-angular:extract-i18n",
-					"options": {
-						"buildTarget": "@nihilux/roon-web-ng-client:build"
-					}
-				},
-				"test": {
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "buildTarget": "@nihilux/roon-web-ng-client:build"
+          }
+        },
+        "test": {
           "builder": "@angular-builders/jest:run",
           "options": {
-            "webWorkerTsConfig": ["tsconfig.worker.json"]
+            "webWorkerTsConfig": [
+              "tsconfig.worker.json"
+            ]
           }
-				},
-				"lint": {
-					"builder": "@angular-eslint/builder:lint",
-					"options": {
-						"lintFilePatterns": [
-							"src/**/*.ts",
-							"src/**/*.html"
-						]
-					}
-				}
-			}
-		}
-	}
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
+          }
+        }
+      }
+    },
+    "@nihilux/ngx-spatial-navigable": {
+      "projectType": "library",
+      "root": "projects/nihilux/ngx-spatial-navigable",
+      "sourceRoot": "projects/nihilux/ngx-spatial-navigable/src",
+      "prefix": "ngx",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/nihilux/ngx-spatial-navigable/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/nihilux/ngx-spatial-navigable/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/nihilux/ngx-spatial-navigable/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-builders/jest:run",
+          "options": {
+            "tsConfig": "./tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "projects/nihilux/ngx-spatial-navigable/**/*.ts",
+              "projects/nihilux/ngx-spatial-navigable/**/*.html"
+            ],
+            "eslintConfig": "projects/nihilux/ngx-spatial-navigable/eslint.config.mjs"
+          }
+        }
+      }
+    }
+  }
 }

@@ -13,7 +13,6 @@ import {
 } from "@angular/core";
 import { MatIconButton } from "@angular/material/button";
 import { MatRipple } from "@angular/material/core";
-import { MatDivider } from "@angular/material/divider";
 import { MatIcon } from "@angular/material/icon";
 import { SettingsDialogComponent } from "@components/settings-dialog/settings-dialog.component";
 import { ZoneSelectorComponent } from "@components/zone-selector/zone-selector.component";
@@ -25,7 +24,7 @@ import { SettingsService } from "@services/settings.service";
 @Component({
   selector: "nr-ten-feet-layout",
   standalone: true,
-  imports: [MatDivider, MatIcon, MatIconButton, MatRipple, NgTemplateOutlet, ZoneSelectorComponent],
+  imports: [MatIcon, MatIconButton, MatRipple, NgTemplateOutlet, ZoneSelectorComponent],
   templateUrl: "./ten-feet-layout.component.html",
   styleUrl: "./ten-feet-layout.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
