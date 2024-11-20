@@ -14,9 +14,11 @@ import {
   Output,
   QueryList,
   Signal,
+  signal,
   SimpleChanges,
   ViewChild,
   ViewChildren,
+  WritableSignal,
 } from "@angular/core";
 import { MatButton, MatIconButton } from "@angular/material/button";
 import { MatDivider } from "@angular/material/divider";
@@ -90,6 +92,7 @@ export class RoonBrowseListComponent implements OnChanges, AfterViewChecked {
   readonly $isBigFonts: Signal<boolean>;
   readonly $isOneColumn: Signal<boolean>;
   readonly $itemSize: Signal<number>;
+  readonly $lastFocusedItemId: WritableSignal<string>;
   readonly $layoutClass: Signal<string>;
 
   constructor(
@@ -117,6 +120,7 @@ export class RoonBrowseListComponent implements OnChanges, AfterViewChecked {
         return 70;
       }
     });
+    this.$lastFocusedItemId = signal("");
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -139,6 +143,7 @@ export class RoonBrowseListComponent implements OnChanges, AfterViewChecked {
 
   ngAfterViewChecked() {
     if (this.scrollIndex > 1) {
+      this.$lastFocusedItemId.set(`roon-browse-item-${this.scrollIndex}`);
       this._virtualScroll.scrollToIndex(this.scrollIndex - 1, "instant");
       const scrollSub = this._virtualScroll.scrolledIndexChange.subscribe((scrolledIndex) => {
         if (scrolledIndex === this.scrollIndex - 1) {

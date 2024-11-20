@@ -12,6 +12,7 @@ import {
 import {
   containerClass,
   dataBlockDirectionAttribute,
+  dataContainerLastFocusChildId,
   dataContainerPrioritizedChildrenAttribute,
   ignoredClass,
 } from "./ngx-spatial-navigable-next-focus-finder";
@@ -24,6 +25,7 @@ export class NgxSpatialNavigableContainerDirective implements OnChanges, OnInit,
   @Input({ required: false, transform: booleanAttribute }) ngxSnPrioritizeChildren: boolean = true;
   @Input({ required: false, transform: booleanAttribute }) ngxSnIgnore: boolean = false;
   @Input({ required: false }) ngxSnBlockExit: string = "";
+  @Input({ required: false }) ngxFocusChildId: string = "";
 
   private readonly _htmlElement: HTMLElement;
   private readonly _renderer: Renderer2;
@@ -52,6 +54,8 @@ export class NgxSpatialNavigableContainerDirective implements OnChanges, OnInit,
         this.setBlockExit();
       } else if (changeKey === "ngxSnIgnore") {
         this.setIgnoreClass();
+      } else if (changeKey === "ngxFocusChildId") {
+        this._htmlElement.setAttribute(dataContainerLastFocusChildId, changes[changeKey].currentValue as string);
       }
     }
   }

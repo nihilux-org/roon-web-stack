@@ -2,7 +2,7 @@
   @if(content.list.subtitle) {
     <h3>{{sanitizeSubtitle(content.list.subtitle)}}</h3>
   }
-  <cdk-virtual-scroll-viewport [itemSize]="$itemSize()" ngxSnContainer>
+  <cdk-virtual-scroll-viewport [itemSize]="$itemSize()" ngxSnContainer [ngxFocusChildId]="$lastFocusedItemId()">
     <ol>
       <li *cdkVirtualFor="let item of dataSource; let last = last; let index = index">
         @if (item) {
