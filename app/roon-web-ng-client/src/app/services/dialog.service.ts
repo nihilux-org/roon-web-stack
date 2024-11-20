@@ -44,7 +44,8 @@ export class DialogService {
       if (this._isIdleWatched) {
         this._idleService.stopWatch();
       }
-      this._spatialNavigableService.dialogOpened(spatialNavigationDialog);
+      const autofocus = typeof config?.autoFocus === "string" ? config.autoFocus : false;
+      this._spatialNavigableService.dialogOpened(spatialNavigationDialog, autofocus);
     });
     this._openedDialog.beforeClosed().subscribe(() => {
       if (this._isIdleWatched) {
