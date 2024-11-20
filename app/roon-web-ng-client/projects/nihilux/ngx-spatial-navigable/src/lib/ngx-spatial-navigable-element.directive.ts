@@ -8,6 +8,7 @@ import {
   Renderer2,
   SimpleChanges,
 } from "@angular/core";
+import { ignoredClass } from "./ngx-spatial-navigable-next-focus-finder";
 
 @Directive({
   standalone: true,
@@ -25,16 +26,16 @@ export class NgxSpatialNavigableElementDirective implements OnDestroy, OnChanges
   }
 
   ngOnDestroy() {
-    this._renderer.removeClass(this._htmlElement, "lrud-ignore");
+    this._renderer.removeClass(this._htmlElement, ignoredClass);
   }
 
   ngOnChanges(changes: SimpleChanges) {
     for (const changeKey in changes) {
       if (changeKey === "ngxSnIgnore") {
         if (this.ngxSnIgnore) {
-          this._renderer.addClass(this._htmlElement, "lrud-ignore");
+          this._renderer.addClass(this._htmlElement, ignoredClass);
         } else {
-          this._renderer.removeClass(this._htmlElement, "lrud-ignore");
+          this._renderer.removeClass(this._htmlElement, ignoredClass);
         }
       }
     }

@@ -9,6 +9,12 @@ import {
   Renderer2,
   SimpleChanges,
 } from "@angular/core";
+import {
+  containerClass,
+  dataBlockDirectionAttribute,
+  dataContainerPrioritizedChildrenAttribute,
+  ignoredClass,
+} from "./ngx-spatial-navigable-next-focus-finder";
 
 @Directive({
   standalone: true,
@@ -31,18 +37,18 @@ export class NgxSpatialNavigableContainerDirective implements OnChanges, OnInit,
   }
 
   ngOnInit(): void {
-    this._renderer.addClass(this._htmlElement, "lrud-container");
+    this._renderer.addClass(this._htmlElement, containerClass);
   }
 
   ngOnDestroy() {
-    this._renderer.removeClass(this._htmlElement, "lrud-container");
+    this._renderer.removeClass(this._htmlElement, containerClass);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     for (const changeKey in changes) {
-      if (changeKey === "nrSnPrioritizeChildren") {
+      if (changeKey === "ngxSnPrioritizeChildren") {
         this.setPrioritizeChildren();
-      } else if (changeKey === "nrSnBlockExit") {
+      } else if (changeKey === "ngxSnBlockExit") {
         this.setBlockExit();
       } else if (changeKey === "ngxSnIgnore") {
         this.setIgnoreClass();
@@ -52,17 +58,17 @@ export class NgxSpatialNavigableContainerDirective implements OnChanges, OnInit,
 
   private setIgnoreClass() {
     if (this.ngxSnIgnore) {
-      this._renderer.addClass(this._htmlElement, "lrud-ignore");
+      this._renderer.addClass(this._htmlElement, ignoredClass);
     } else {
-      this._renderer.removeClass(this._htmlElement, "lrud-ignore");
+      this._renderer.removeClass(this._htmlElement, ignoredClass);
     }
   }
 
   private setPrioritizeChildren() {
-    this._htmlElement.setAttribute("data-lrud-prioritise-children", `${this.ngxSnPrioritizeChildren}`);
+    this._htmlElement.setAttribute(dataContainerPrioritizedChildrenAttribute, `${this.ngxSnPrioritizeChildren}`);
   }
 
   private setBlockExit() {
-    this._htmlElement.setAttribute("data-block-exit", this.ngxSnBlockExit);
+    this._htmlElement.setAttribute(dataBlockDirectionAttribute, this.ngxSnBlockExit);
   }
 }

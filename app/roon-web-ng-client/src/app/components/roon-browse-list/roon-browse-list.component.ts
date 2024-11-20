@@ -29,6 +29,7 @@ import { Item, RoonApiBrowseHierarchy, RoonApiBrowseLoadResponse } from "@model"
 import { NavigationEvent, RecordedAction } from "@model/client";
 import {
   NgxSpatialNavigableContainerDirective,
+  NgxSpatialNavigableElementDirective,
   NgxSpatialNavigableService,
   NgxSpatialNavigableStarterDirective,
 } from "@nihilux/ngx-spatial-navigable";
@@ -62,6 +63,7 @@ interface MenuTriggerData {
     RoonImageComponent,
     NgxSpatialNavigableContainerDirective,
     NgxSpatialNavigableStarterDirective,
+    NgxSpatialNavigableElementDirective,
   ],
   templateUrl: "./roon-browse-list.component.html",
   styleUrl: "./roon-browse-list.component.scss",

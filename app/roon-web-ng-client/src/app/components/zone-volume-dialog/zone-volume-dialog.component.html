@@ -31,7 +31,7 @@
         <button mat-icon-button (click)="onOutputMute($event, output.output_id)" [id]="'zone-volume-' + output.output_id + '-mute'"><mat-icon [fontIcon]="output.volume.is_muted ? 'volume_off' : 'volume_up'" /></button>
         @if (output.volume.type !== "incremental") {
           <span class="volume-value">{{sliderValue.valueAsNumber}}</span>
-          <span class="volume-slider" [class.is-small-screen]="$isSmallScreen()" nrSnElement ngxSnIgnore="true">
+          <span class="volume-slider" [class.is-small-screen]="$isSmallScreen()" ngxSnElement ngxSnIgnore="true">
             <sub>{{output.volume.hard_limit_min ?? output.volume.min ?? 0}}</sub>
             <mat-slider
               [max]="output.volume.hard_limit_max ?? output.volume.max ?? 100"
@@ -45,8 +45,8 @@
           </span>
         }
         <span class="volume-buttons">
-          <button nrSnElement mat-icon-button (click)="onVolumeStep($event, output.output_id, true)" [id]="'zone-volume-' + output.output_id + '-plus'"><mat-icon fontIcon="do_not_disturb_on" /></button>
-          <button nrSnElement mat-icon-button (click)="onVolumeStep($event, output.output_id)" [id]="'zone-volume-' + output.output_id + '-minus'"><mat-icon fontIcon="add_circle" /></button>
+          <button mat-icon-button (click)="onVolumeStep($event, output.output_id, true)" [id]="'zone-volume-' + output.output_id + '-plus'"><mat-icon fontIcon="do_not_disturb_on" /></button>
+          <button mat-icon-button (click)="onVolumeStep($event, output.output_id)" [id]="'zone-volume-' + output.output_id + '-minus'"><mat-icon fontIcon="add_circle" /></button>
         </span>
       } @else {
         <button mat-icon-button disabled><mat-icon fontIcon="volume_up" /></button>

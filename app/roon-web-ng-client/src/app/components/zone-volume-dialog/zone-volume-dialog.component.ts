@@ -9,6 +9,7 @@ import { ZoneTransferDialogComponent } from "@components/zone-transfer-dialog/zo
 import { Output } from "@model";
 import {
   NgxSpatialNavigableContainerDirective,
+  NgxSpatialNavigableElementDirective,
   NgxSpatialNavigableStarterDirective,
 } from "@nihilux/ngx-spatial-navigable";
 import { DialogService } from "@services/dialog.service";
@@ -28,6 +29,7 @@ import { VolumeService } from "@services/volume.service";
     MatSliderThumb,
     NgxSpatialNavigableContainerDirective,
     NgxSpatialNavigableStarterDirective,
+    NgxSpatialNavigableElementDirective,
   ],
   templateUrl: "./zone-volume-dialog.component.html",
   styleUrl: "./zone-volume-dialog.component.scss",
