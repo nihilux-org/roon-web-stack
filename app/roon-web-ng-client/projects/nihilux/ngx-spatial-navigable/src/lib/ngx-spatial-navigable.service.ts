@@ -1,8 +1,6 @@
 import { DOCUMENT } from "@angular/common";
 import { Inject, Injectable, OnDestroy } from "@angular/core";
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { getNextFocus } from "@bbc/tv-lrud-spatial";
+import { getNextFocus } from "./ngx-spatial-navigable-next-focus-finder";
 
 @Injectable({
   providedIn: "root",
@@ -63,7 +61,7 @@ export class NgxSpatialNavigableService implements OnDestroy {
       }
       event.preventDefault();
       if (this._focusedElement || this._dialogElement) {
-        this._focusedElement = this.getNextFocus(this._focusedElement, event.key, scope);
+        this._focusedElement = this.getNextFocus(this._focusedElement ?? null, event, scope);
       } else {
         this._focusedElement = this.getStarter();
       }
@@ -96,12 +94,11 @@ export class NgxSpatialNavigableService implements OnDestroy {
     return this._starter.at(-1);
   }
 
-  private getNextFocus(current: HTMLElement | undefined, key: string, scope: HTMLElement): HTMLElement | undefined {
+  private getNextFocus(current: HTMLElement | null, event: KeyboardEvent, scope: HTMLElement): HTMLElement | undefined {
     let candidate = current;
     let disabled = false;
     do {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      candidate = getNextFocus(candidate, key, scope) as HTMLElement | undefined;
+      candidate = getNextFocus(candidate, event, scope);
       disabled = candidate?.getAttribute("disabled") === "true";
     } while (disabled);
     return candidate ?? this.getStarter();

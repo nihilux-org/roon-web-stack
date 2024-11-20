@@ -33,6 +33,7 @@ import {
 } from "@model/client";
 import {
   NgxSpatialNavigableContainerDirective,
+  NgxSpatialNavigableElementDirective,
   NgxSpatialNavigableService,
   NgxSpatialNavigableStarterDirective,
 } from "@nihilux/ngx-spatial-navigable";
@@ -62,6 +63,7 @@ import { SettingsService } from "@services/settings.service";
     NgxSpatialNavigableContainerDirective,
     NgxSpatialNavigableStarterDirective,
     ZoneSelectorComponent,
+    NgxSpatialNavigableElementDirective,
   ],
   templateUrl: "./settings-dialog.component.html",
   styleUrl: "./settings-dialog.component.scss",

@@ -1,8 +1,8 @@
-<div class="roon-list" [class.is-small-screen]="$isOneColumn()" [class.is-big-fonts]="$isBigFonts()" ngxSnContainer>
+<div class="roon-list" [class.is-small-screen]="$isOneColumn()" [class.is-big-fonts]="$isBigFonts()">
   @if(content.list.subtitle) {
     <h3>{{sanitizeSubtitle(content.list.subtitle)}}</h3>
   }
-  <cdk-virtual-scroll-viewport [itemSize]="$itemSize()">
+  <cdk-virtual-scroll-viewport [itemSize]="$itemSize()" ngxSnContainer>
     <ol>
       <li *cdkVirtualFor="let item of dataSource; let last = last; let index = index">
         @if (item) {
@@ -45,7 +45,7 @@
               }
             </div>
             @if (item.hint === "action_list") {
-              <button mat-icon-button nrSnElement ngxSnIgnore="true"><mat-icon fontIcon="more_vert" /></button>
+              <button mat-icon-button ngxSnElement ngxSnIgnore="true"><mat-icon fontIcon="more_vert" /></button>
               <div [matMenuTriggerFor]="actionMenu" [matMenuTriggerData]="{ item_key: item.item_key, title: item.title, actions: [] }"></div>
             }
           </button>
