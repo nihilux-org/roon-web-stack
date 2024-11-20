@@ -4,8 +4,8 @@ export const dataBlockDirectionAttribute = "data-ngx-sn-block-direction";
 export const dataContainerPrioritizedChildrenAttribute = "data-ngx-sn-container-prioritized-children";
 export const dataContainerConsiderDistanceAttribute = "data-ngx-sn-container-consider-distance";
 export const dataOverlapAttribute = "'data-ngx-sn-overlap-threshold'";
+export const dataContainerLastFocusChildId = "data-ngx-sn-container-last-focus-child-id";
 
-const containerFocusedChildAttribute = "data-ngx-sn-container-focused";
 const focusableSelector = "[tabindex], a, input, button";
 const containerSelector = `nav, section, .${containerClass}`;
 const focusableContainerSelector = `[${dataContainerConsiderDistanceAttribute}]`;
@@ -251,8 +251,8 @@ const findNextFocusable = (elem: HTMLElement, exitDir: Direction, scope: HTMLEle
   // Get parent focus container
   const parentContainer = getParentContainer(elem);
   if (parentContainer && elem.matches(focusableSelector)) {
-    parentContainer.setAttribute(containerFocusedChildAttribute, elem.id);
-    getParentFocusableContainer(parentContainer)?.setAttribute(containerFocusedChildAttribute, elem.id);
+    parentContainer.setAttribute(dataContainerLastFocusChildId, elem.id);
+    getParentFocusableContainer(parentContainer)?.setAttribute(dataContainerLastFocusChildId, elem.id);
   }
   let focusableCandidates: HTMLElement[] = [];
   // Get all siblings within a prioritised container
@@ -282,17 +282,17 @@ const findNextFocusable = (elem: HTMLElement, exitDir: Direction, scope: HTMLEle
       if (candidateContainer && !isAncestorContainer) {
         // Ignore active child behaviour when moving into a container that we
         // are already nested in
-        const lastActiveChildId = candidateContainer.getAttribute(containerFocusedChildAttribute);
+        const lastActiveChildId = candidateContainer.getAttribute(dataContainerLastFocusChildId);
         const lastActiveChild = lastActiveChildId ? document.getElementById(lastActiveChildId) : null;
         const newFocus = lastActiveChild || getFocusables(candidateContainer)[0];
-        getParentFocusableContainer(candidateContainer)?.setAttribute(containerFocusedChildAttribute, newFocus.id);
-        candidateContainer.setAttribute(containerFocusedChildAttribute, newFocus.id);
+        getParentFocusableContainer(candidateContainer)?.setAttribute(dataContainerLastFocusChildId, newFocus.id);
+        candidateContainer.setAttribute(dataContainerLastFocusChildId, newFocus.id);
         return newFocus;
       }
     }
     if (!candidateIsContainer) {
-      getParentFocusableContainer(candidateContainer)?.setAttribute(containerFocusedChildAttribute, candidate.id);
-      candidateContainer?.setAttribute(containerFocusedChildAttribute, candidate.id);
+      getParentFocusableContainer(candidateContainer)?.setAttribute(dataContainerLastFocusChildId, candidate.id);
+      candidateContainer?.setAttribute(dataContainerLastFocusChildId, candidate.id);
     }
     return candidate;
   }
