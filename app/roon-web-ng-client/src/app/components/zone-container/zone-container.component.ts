@@ -1,5 +1,5 @@
 import { deepEqual } from "fast-equals";
-import { ChangeDetectionStrategy, Component, computed, Signal } from "@angular/core";
+import { ChangeDetectionStrategy, Component, computed, inject, Signal } from "@angular/core";
 import { ZoneActionsComponent } from "@components/zone-actions/zone-actions.component";
 import { ZoneCommandsComponent } from "@components/zone-commands/zone-commands.component";
 import { ZoneCurrentTrackComponent } from "@components/zone-current-track/zone-current-track.component";
@@ -27,7 +27,6 @@ import { SettingsService } from "@services/settings.service";
 
 @Component({
   selector: "nr-zone-container",
-  standalone: true,
   imports: [
     CompactLayoutComponent,
     NgxSpatialNavigableContainerDirective,
@@ -57,9 +56,9 @@ export class ZoneContainerComponent {
   readonly $layoutClass: Signal<string>;
   readonly DisplayMode = DisplayMode;
 
-  constructor(roonService: RoonService, settingsService: SettingsService) {
-    this._settingsService = settingsService;
-    this._$zone = roonService.zoneState(settingsService.displayedZoneId());
+  constructor() {
+    this._settingsService = inject(SettingsService);
+    this._$zone = inject(RoonService).zoneState(this._settingsService.displayedZoneId());
     this.$trackDisplay = computed(
       () => {
         const { image_key, title, artist, disk } = this._$zone().nice_playing?.track ?? EMPTY_TRACK;

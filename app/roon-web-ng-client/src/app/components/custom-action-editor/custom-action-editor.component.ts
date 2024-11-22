@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, Signal } from "@angular/core";
+import { ChangeDetectionStrategy, Component, computed, inject, Signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MatButton } from "@angular/material/button";
 import { MatFormFieldModule, MatLabel } from "@angular/material/form-field";
@@ -14,7 +14,6 @@ import { SettingsService } from "@services/settings.service";
 
 @Component({
   selector: "nr-custom-action-editor",
-  standalone: true,
   imports: [
     FormsModule,
     MatButton,
@@ -38,14 +37,10 @@ export class CustomActionEditorComponent {
   readonly $path: Signal<string[]>;
   readonly $actionIndex: Signal<number | undefined>;
 
-  constructor(
-    customActionService: CustomActionsService,
-    dialogService: DialogService,
-    settingsService: SettingsService
-  ) {
-    this._customActionsService = customActionService;
-    this._dialogService = dialogService;
-    this._$isBigFonts = settingsService.isBigFonts();
+  constructor() {
+    this._customActionsService = inject(CustomActionsService);
+    this._dialogService = inject(DialogService);
+    this._$isBigFonts = inject(SettingsService).isBigFonts();
     this.$label = computed(() => this._customActionsService.label()() ?? "");
     this.$icon = computed(() => this._customActionsService.icon()() ?? "");
     this.$hierarchy = this._customActionsService.hierarchy();

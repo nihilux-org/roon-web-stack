@@ -1,5 +1,5 @@
 import { DOCUMENT } from "@angular/common";
-import { Inject, Injectable, OnDestroy } from "@angular/core";
+import { inject, Injectable, OnDestroy } from "@angular/core";
 import { getNextFocus } from "./ngx-spatial-navigable-next-focus-finder";
 
 @Injectable({
@@ -13,8 +13,8 @@ export class NgxSpatialNavigableService implements OnDestroy {
   private _focusedElement?: HTMLElement;
   private _isActive: boolean;
 
-  constructor(@Inject(DOCUMENT) document: Document) {
-    this._document = document;
+  constructor() {
+    this._document = inject<Document>(DOCUMENT);
     this._isActive = true;
     this._starter = [];
     this._document.addEventListener("keydown", (event: KeyboardEvent) => {

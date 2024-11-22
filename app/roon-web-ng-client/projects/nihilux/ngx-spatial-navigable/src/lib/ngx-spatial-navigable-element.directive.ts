@@ -2,6 +2,7 @@ import {
   booleanAttribute,
   Directive,
   ElementRef,
+  inject,
   Input,
   OnChanges,
   OnDestroy,
@@ -11,7 +12,6 @@ import {
 import { ignoredClass } from "./ngx-spatial-navigable-next-focus-finder";
 
 @Directive({
-  standalone: true,
   selector: "[ngxSnElement]",
 })
 export class NgxSpatialNavigableElementDirective implements OnDestroy, OnChanges {
@@ -20,9 +20,9 @@ export class NgxSpatialNavigableElementDirective implements OnDestroy, OnChanges
   private readonly _htmlElement: HTMLElement;
   private readonly _renderer: Renderer2;
 
-  constructor(el: ElementRef, renderer: Renderer2) {
-    this._htmlElement = el.nativeElement as HTMLElement;
-    this._renderer = renderer;
+  constructor() {
+    this._htmlElement = inject(ElementRef).nativeElement as HTMLElement;
+    this._renderer = inject(Renderer2);
   }
 
   ngOnDestroy() {

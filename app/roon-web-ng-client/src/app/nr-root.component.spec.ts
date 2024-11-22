@@ -1,6 +1,6 @@
-import { MockBuilder, MockRender } from "ng-mocks";
+import { MockProvider } from "ng-mocks";
 import { signal, WritableSignal } from "@angular/core";
-import { ComponentFixture } from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { ApiState, RoonState } from "@model";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
@@ -20,7 +20,7 @@ describe("NrRootComponent", () => {
     displayedZonedId: jest.Mock;
   };
 
-  beforeEach(async () => {
+  beforeEach(() => {
     $state = signal({
       state: RoonState.STARTING,
       zones: [],
@@ -35,10 +35,14 @@ describe("NrRootComponent", () => {
     settingsService = {
       displayedZonedId: jest.fn().mockImplementation(() => $displayedZoneId),
     };
-    await MockBuilder(NrRootComponent)
-      .mock(RoonService, roonService as Partial<RoonService>)
-      .mock(SettingsService, settingsService as Partial<SettingsService>);
-    fixture = MockRender(NrRootComponent);
+    TestBed.configureTestingModule({
+      providers: [
+        MockProvider(RoonService, roonService as Partial<RoonService>),
+        MockProvider(SettingsService, settingsService as Partial<SettingsService>),
+      ],
+      imports: [NrRootComponent],
+    });
+    fixture = TestBed.createComponent(NrRootComponent);
     component = fixture.componentInstance;
   });
 

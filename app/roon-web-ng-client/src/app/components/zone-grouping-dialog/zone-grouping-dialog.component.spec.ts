@@ -1,6 +1,6 @@
-import { MockBuilder, MockRender } from "ng-mocks";
+import { MockProvider } from "ng-mocks";
 import { signal, WritableSignal } from "@angular/core";
-import { ComponentFixture } from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { MatDialogRef } from "@angular/material/dialog";
 import { ApiState, Command, OutputDescription, RoonState, ZoneState } from "@model";
 import { CommandCallback, OutputCallback } from "@model/client";
@@ -31,7 +31,7 @@ describe("ZoneGroupingDialogComponent", () => {
   let component: ZoneGroupingDialogComponent;
   let fixture: ComponentFixture<ZoneGroupingDialogComponent>;
 
-  beforeEach(async () => {
+  beforeEach(() => {
     $roonState = signal({
       state: RoonState.SYNC,
       zones: [],
@@ -67,14 +67,18 @@ describe("ZoneGroupingDialogComponent", () => {
       }),
       isSmallScreen: jest.fn().mockImplementation(() => $isSmallScreen),
     };
-    await MockBuilder(ZoneGroupingDialogComponent)
-      .mock(RoonService, roonService as Partial<RoonService>)
-      .mock(SettingsService, settingsService as Partial<SettingsService>)
-      .mock(MatDialogRef<ZoneGroupingDialogComponent>, {
-        close: closeDialog,
-      });
+    TestBed.configureTestingModule({
+      providers: [
+        MockProvider(RoonService, roonService),
+        MockProvider(SettingsService, settingsService),
+        MockProvider(MatDialogRef<ZoneGroupingDialogComponent>, {
+          close: closeDialog,
+        }),
+      ],
+      imports: [ZoneGroupingDialogComponent],
+    });
 
-    fixture = MockRender(ZoneGroupingDialogComponent);
+    fixture = TestBed.createComponent(ZoneGroupingDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

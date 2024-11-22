@@ -1,5 +1,5 @@
 import { deepEqual } from "fast-equals";
-import { computed, Injectable, Signal } from "@angular/core";
+import { computed, inject, Injectable, Signal } from "@angular/core";
 import {
   CommandType,
   MuteCommand,
@@ -18,17 +18,19 @@ import { SettingsService } from "@services/settings.service";
 })
 export class VolumeService {
   private readonly _roonService: RoonService;
+  private readonly _$displayedZoneId: Signal<string>;
   private readonly _$zoneOutputs: Signal<Output[]>;
   private readonly _$isGrouped: Signal<boolean>;
   private readonly _$isGroupedZoneMute: Signal<boolean>;
   private readonly _$canGroup: Signal<boolean>;
   private readonly _$isMute: Signal<boolean>;
 
-  constructor(roonService: RoonService, settingsService: SettingsService) {
-    this._roonService = roonService;
+  constructor() {
+    this._roonService = inject(RoonService);
+    this._$displayedZoneId = inject(SettingsService).displayedZoneId();
     this._$zoneOutputs = computed(
       () => {
-        const $zone = this._roonService.zoneState(settingsService.displayedZoneId());
+        const $zone = this._roonService.zoneState(this._$displayedZoneId);
         return $zone().outputs.sort((o1, o2) => o1.display_name.localeCompare(o2.display_name));
       },
       {

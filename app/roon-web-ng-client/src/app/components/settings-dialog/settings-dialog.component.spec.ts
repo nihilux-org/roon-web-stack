@@ -1,8 +1,7 @@
-import { MockBuilder, MockRender } from "ng-mocks";
+import { MockProvider } from "ng-mocks";
 import { signal, WritableSignal } from "@angular/core";
-import { ComponentFixture } from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { MatTab } from "@angular/material/tabs";
 import { Action, ChosenTheme, DefaultActions, DisplayMode } from "@model/client";
 import { DialogService } from "@services/dialog.service";
 import { RoonService } from "@services/roon.service";
@@ -47,7 +46,7 @@ describe("SettingsDialogComponent", () => {
   let component: SettingsDialogComponent;
   let fixture: ComponentFixture<SettingsDialogComponent>;
 
-  beforeEach(async () => {
+  beforeEach(() => {
     selectedTab = 0;
     $chosenTheme = signal(ChosenTheme.BROWSER);
     $displayMode = signal(DisplayMode.WIDE);
@@ -88,17 +87,20 @@ describe("SettingsDialogComponent", () => {
     };
     addPanelClass = jest.fn();
     removePanelClass = jest.fn();
-    await MockBuilder(SettingsDialogComponent)
-      .mock(DialogService, dialogService as Partial<DialogService>)
-      .mock(SettingsService, settingsService as Partial<SettingsService>)
-      .mock(RoonService, roonService as Partial<RoonService>)
-      .mock(MatDialogRef<SettingsDialogComponent>, {
-        addPanelClass,
-        removePanelClass,
-      })
-      .mock(MAT_DIALOG_DATA, { selectedTab })
-      .keep(MatTab);
-    fixture = MockRender(SettingsDialogComponent);
+    TestBed.configureTestingModule({
+      providers: [
+        MockProvider(MAT_DIALOG_DATA, { selectedTab }),
+        MockProvider(DialogService, dialogService),
+        MockProvider(SettingsService, settingsService),
+        MockProvider(RoonService, roonService),
+        MockProvider(MatDialogRef<SettingsDialogComponent>, {
+          addPanelClass,
+          removePanelClass,
+        }),
+      ],
+      imports: [SettingsDialogComponent],
+    });
+    fixture = TestBed.createComponent(SettingsDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

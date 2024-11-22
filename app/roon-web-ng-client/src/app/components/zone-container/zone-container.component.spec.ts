@@ -1,6 +1,14 @@
-import { MockBuilder, MockedComponentFixture, MockRender, ngMocks } from "ng-mocks";
+import { MockComponent, MockProvider, ngMocks } from "ng-mocks";
 import { signal, WritableSignal } from "@angular/core";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { BrowserAnimationsModule, NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { ZoneActionsComponent } from "@components/zone-actions/zone-actions.component";
+import { ZoneCommandsComponent } from "@components/zone-commands/zone-commands.component";
+import { ZoneCurrentTrackComponent } from "@components/zone-current-track/zone-current-track.component";
+import { ZoneImageComponent } from "@components/zone-image/zone-image.component";
+import { ZoneProgressionComponent } from "@components/zone-progression/zone-progression.component";
+import { ZoneQueueComponent } from "@components/zone-queue/zone-queue.component";
+import { ZoneVolumeComponent } from "@components/zone-volume/zone-volume.component";
 import { Output, Zone, ZoneState } from "@model";
 import { DisplayMode } from "@model/client";
 import { RoonService } from "@services/roon.service";
@@ -9,18 +17,20 @@ import { ZoneContainerComponent } from "./zone-container.component";
 
 describe("ZoneContainerComponent", () => {
   let component: ZoneContainerComponent;
-  let fixture: MockedComponentFixture<ZoneContainerComponent>;
+  let fixture: ComponentFixture<ZoneContainerComponent>;
   let $displayedZoneId: WritableSignal<string>;
   let $displayMode: WritableSignal<DisplayMode>;
   let $displayQueueTrack: WritableSignal<boolean>;
   let $isOneColumn: WritableSignal<boolean>;
   let $displayModeClass: WritableSignal<string>;
+  let $ismSmallTablet: WritableSignal<boolean>;
   let settingsService: {
     displayedZoneId: jest.Mock;
     displayMode: jest.Mock;
     displayQueueTrack: jest.Mock;
     isOneColumn: jest.Mock;
     displayModeClass: jest.Mock;
+    isSmallTablet: jest.Mock;
   };
   let $zoneState: WritableSignal<ZoneState>;
   let roonService: {
@@ -28,29 +38,54 @@ describe("ZoneContainerComponent", () => {
   };
   ngMocks.globalReplace(BrowserAnimationsModule, NoopAnimationsModule);
 
-  beforeEach(async () => {
+  beforeEach(() => {
     $displayedZoneId = signal("zone_id");
     $displayMode = signal(DisplayMode.WIDE);
     $displayQueueTrack = signal(true);
     $isOneColumn = signal(false);
     $displayModeClass = signal("wide");
+    $ismSmallTablet = signal(false);
     settingsService = {
       displayedZoneId: jest.fn().mockImplementation(() => $displayedZoneId),
       displayMode: jest.fn().mockImplementation(() => $displayMode),
       displayQueueTrack: jest.fn().mockImplementation(() => $displayQueueTrack),
       isOneColumn: jest.fn().mockImplementation(() => $isOneColumn),
       displayModeClass: jest.fn().mockImplementation(() => $displayModeClass),
+      isSmallTablet: jest.fn().mockImplementation(() => $ismSmallTablet),
     };
     $zoneState = signal(ZONE_STATE);
     roonService = {
       zoneState: jest.fn().mockImplementation(() => $zoneState),
     };
-    await MockBuilder(ZoneContainerComponent)
-      .mock(SettingsService, settingsService as Partial<SettingsService>)
-      .mock(RoonService, roonService as Partial<RoonService>)
-      .keep(BrowserAnimationsModule);
-    fixture = MockRender(ZoneContainerComponent);
-    component = fixture.componentInstance as ZoneContainerComponent;
+    TestBed.configureTestingModule({
+      providers: [MockProvider(SettingsService, settingsService), MockProvider(RoonService, roonService)],
+      imports: [ZoneContainerComponent],
+    }).overrideComponent(ZoneContainerComponent, {
+      remove: {
+        imports: [
+          ZoneActionsComponent,
+          ZoneCommandsComponent,
+          ZoneCurrentTrackComponent,
+          ZoneImageComponent,
+          ZoneProgressionComponent,
+          ZoneQueueComponent,
+          ZoneVolumeComponent,
+        ],
+      },
+      add: {
+        imports: [
+          MockComponent(ZoneActionsComponent),
+          MockComponent(ZoneCommandsComponent),
+          MockComponent(ZoneCurrentTrackComponent),
+          MockComponent(ZoneImageComponent),
+          MockComponent(ZoneProgressionComponent),
+          MockComponent(ZoneQueueComponent),
+          MockComponent(ZoneVolumeComponent),
+        ],
+      },
+    });
+    fixture = TestBed.createComponent(ZoneContainerComponent);
+    component = fixture.componentInstance;
     fixture.detectChanges();
   });
 

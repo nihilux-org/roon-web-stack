@@ -1,6 +1,7 @@
-import { MockBuilder, MockedComponentFixture, MockRender } from "ng-mocks";
-import { Signal, signal, WritableSignal } from "@angular/core";
-import { Command, Output } from "@model";
+import { MockProvider } from "ng-mocks";
+import { signal, WritableSignal } from "@angular/core";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { Command } from "@model";
 import { DisplayMode, ZoneCommands, ZoneCommandState } from "@model/client";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
@@ -8,10 +9,7 @@ import { ZoneCommandsComponent } from "./zone-commands.component";
 
 describe("ZoneCommandsComponent", () => {
   let component: ZoneCommandsComponent;
-  let fixture: MockedComponentFixture<
-    ZoneCommandsComponent,
-    { $zoneCommands: Signal<ZoneCommands>; $zoneOutputs: Signal<Output[]> }
-  >;
+  let fixture: ComponentFixture<ZoneCommandsComponent>;
   let commands: Command[];
   let roonService: {
     command: jest.Mock;
@@ -19,13 +17,12 @@ describe("ZoneCommandsComponent", () => {
   let $isSmallScreen: WritableSignal<boolean>;
   let $displayMode: WritableSignal<DisplayMode>;
   let $zoneCommands: WritableSignal<ZoneCommands>;
-  let $zoneOutputs: WritableSignal<Output[]>;
   let settingsService: {
     isSmallScreen: jest.Mock;
     displayMode: jest.Mock;
   };
 
-  beforeEach(async () => {
+  beforeEach(() => {
     commands = [];
     roonService = {
       command: jest.fn().mockImplementation((command: Command) => {
@@ -39,15 +36,13 @@ describe("ZoneCommandsComponent", () => {
       displayMode: jest.fn().mockImplementation(() => $displayMode),
     };
     $zoneCommands = signal(ZONE_COMMANDS);
-    $zoneOutputs = signal([]);
-    await MockBuilder(ZoneCommandsComponent)
-      .mock(RoonService, roonService as Partial<RoonService>)
-      .mock(SettingsService, settingsService as Partial<SettingsService>);
-    fixture = MockRender(ZoneCommandsComponent, {
-      $zoneCommands,
-      $zoneOutputs,
+    TestBed.configureTestingModule({
+      providers: [MockProvider(RoonService, roonService), MockProvider(SettingsService, settingsService)],
+      imports: [ZoneCommandsComponent],
     });
-    component = fixture.componentInstance as unknown as ZoneCommandsComponent;
+    fixture = TestBed.createComponent(ZoneCommandsComponent);
+    fixture.componentRef.setInput("$zoneCommands", $zoneCommands);
+    component = fixture.componentInstance;
     fixture.detectChanges();
   });
 

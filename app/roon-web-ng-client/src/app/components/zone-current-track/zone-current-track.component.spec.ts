@@ -1,18 +1,15 @@
-import { MockBuilder, MockedComponentFixture, MockRender } from "ng-mocks";
-import { Signal, signal, WritableSignal } from "@angular/core";
+import { signal, WritableSignal } from "@angular/core";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { TrackDisplay } from "@model/client";
 import { ZoneCurrentTrackComponent } from "./zone-current-track.component";
 
 describe("ZoneCurrentTrackComponent", () => {
   let component: ZoneCurrentTrackComponent;
-  let fixture: MockedComponentFixture<
-    ZoneCurrentTrackComponent,
-    { $trackDisplay: Signal<TrackDisplay>; $isOneColumn: Signal<boolean> }
-  >;
+  let fixture: ComponentFixture<ZoneCurrentTrackComponent>;
   let $isOneColumn: WritableSignal<boolean>;
   let $trackDisplay: WritableSignal<TrackDisplay>;
 
-  beforeEach(async () => {
+  beforeEach(() => {
     $isOneColumn = signal(false);
     $trackDisplay = signal({
       title: "track_title",
@@ -23,13 +20,14 @@ describe("ZoneCurrentTrackComponent", () => {
         artist: "track_artist",
       },
     });
-    await MockBuilder(ZoneCurrentTrackComponent);
-
-    fixture = MockRender(ZoneCurrentTrackComponent, {
-      $isOneColumn,
-      $trackDisplay,
+    TestBed.configureTestingModule({
+      imports: [ZoneCurrentTrackComponent],
     });
-    component = fixture.componentInstance as ZoneCurrentTrackComponent;
+
+    fixture = TestBed.createComponent(ZoneCurrentTrackComponent);
+    fixture.componentRef.setInput("$isOneColumn", $isOneColumn);
+    fixture.componentRef.setInput("$trackDisplay", $trackDisplay);
+    component = fixture.componentInstance;
     fixture.detectChanges();
   });
 

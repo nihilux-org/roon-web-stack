@@ -7,6 +7,7 @@ import {
   Component,
   computed,
   HostBinding,
+  inject,
   Input,
   QueryList,
   Signal,
@@ -24,7 +25,6 @@ import { SettingsService } from "@services/settings.service";
 
 @Component({
   selector: "nr-zone-queue",
-  standalone: true,
   imports: [
     CdkFixedSizeVirtualScroll,
     CdkVirtualForOf,
@@ -75,13 +75,10 @@ export class ZoneQueueComponent implements AfterViewInit {
   @ViewChild(CdkVirtualScrollViewport) _virtualScroll?: CdkVirtualScrollViewport;
   @ViewChildren(MatMenuTrigger) _menuTriggers!: QueryList<MatMenuTrigger>;
 
-  constructor(
-    roonService: RoonService,
-    settingsService: SettingsService,
-    spatialNavigableService: NgxSpatialNavigableService
-  ) {
-    this._roonService = roonService;
-    this._spatialNavigableService = spatialNavigableService;
+  constructor() {
+    this._roonService = inject(RoonService);
+    this._spatialNavigableService = inject(NgxSpatialNavigableService);
+    const settingsService = inject(SettingsService);
     this.$isBigFonts = settingsService.isBigFonts();
     this.$displayQueue = settingsService.displayQueueTrack();
     this.open = this.$displayQueue();

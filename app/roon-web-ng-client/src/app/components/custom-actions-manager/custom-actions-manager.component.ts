@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, Inject, Signal } from "@angular/core";
+import { ChangeDetectionStrategy, Component, computed, inject, Signal } from "@angular/core";
 import { MatButton, MatIconButton } from "@angular/material/button";
 import { MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogTitle } from "@angular/material/dialog";
 import { MatIcon } from "@angular/material/icon";
@@ -17,7 +17,6 @@ import { SettingsService } from "@services/settings.service";
 
 @Component({
   selector: "nr-custom-actions-manager",
-  standalone: true,
   imports: [
     CustomActionEditorComponent,
     MatButton,
@@ -46,17 +45,12 @@ export class CustomActionsManagerComponent {
   readonly $selectedTab: Signal<number>;
   readonly $saveDisabled: Signal<boolean>;
 
-  constructor(
-    @Inject(MAT_DIALOG_DATA) public data: { reset: boolean },
-    dialogService: DialogService,
-    customActionsService: CustomActionsService,
-    roonService: RoonService,
-    settingsService: SettingsService
-  ) {
-    this._dialogService = dialogService;
-    this._customActionsService = customActionsService;
-    this._roonService = roonService;
-    this._$isBigFont = settingsService.isBigFonts();
+  constructor() {
+    const data = inject(MAT_DIALOG_DATA) as { reset: boolean };
+    this._dialogService = inject(DialogService);
+    this._customActionsService = inject(CustomActionsService);
+    this._roonService = inject(RoonService);
+    this._$isBigFont = inject(SettingsService).isBigFonts();
     this.$isEditing = this._customActionsService.isEditing();
     this.$customActions = computed(() =>
       this._customActionsService

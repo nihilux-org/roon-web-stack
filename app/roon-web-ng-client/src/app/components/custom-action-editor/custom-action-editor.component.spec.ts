@@ -1,14 +1,17 @@
-import { MockBuilder, MockedComponentFixture, MockRender } from "ng-mocks";
+import { MockProvider } from "ng-mocks";
 import { signal, WritableSignal } from "@angular/core";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { RoonApiBrowseHierarchy } from "@model";
 import { CustomActionsService } from "@services/custom-actions.service";
 import { DialogService } from "@services/dialog.service";
+import { SettingsService } from "@services/settings.service";
 import { CustomActionEditorComponent } from "./custom-action-editor.component";
 
 describe("CustomActionEditorComponent", () => {
   let dialogService: {
     open: jest.Mock;
   };
+  let $isBigFonts: WritableSignal<boolean>;
   let $label: WritableSignal<string>;
   let $icon: WritableSignal<string>;
   let $hierarchy: WritableSignal<RoonApiBrowseHierarchy | undefined>;
@@ -17,9 +20,9 @@ describe("CustomActionEditorComponent", () => {
   let saveLabel: jest.Mock;
   let saveIcon: jest.Mock;
   let component: CustomActionEditorComponent;
-  let fixture: MockedComponentFixture<CustomActionEditorComponent>;
+  let fixture: ComponentFixture<CustomActionEditorComponent>;
 
-  beforeEach(async () => {
+  beforeEach(() => {
     dialogService = {
       open: jest.fn(),
     };
@@ -34,19 +37,27 @@ describe("CustomActionEditorComponent", () => {
     saveIcon = jest.fn().mockImplementation((icon: string) => {
       $icon.set(icon);
     });
-    await MockBuilder(CustomActionEditorComponent)
-      .mock(DialogService, dialogService as Partial<DialogService>)
-      .mock(CustomActionsService, {
-        label: () => $label,
-        icon: () => $icon,
-        hierarchy: () => $hierarchy,
-        path: () => $path,
-        actionIndex: () => $actionIndex,
-        saveLabel,
-        saveIcon,
-      });
-    fixture = MockRender(CustomActionEditorComponent);
-    component = fixture.componentInstance as CustomActionEditorComponent;
+    $isBigFonts = signal(false);
+    TestBed.configureTestingModule({
+      providers: [
+        MockProvider(DialogService, dialogService as Partial<DialogService>),
+        MockProvider(CustomActionsService, {
+          label: () => $label,
+          icon: () => $icon,
+          hierarchy: () => $hierarchy,
+          path: () => $path,
+          actionIndex: () => $actionIndex,
+          saveLabel,
+          saveIcon,
+        }),
+        MockProvider(SettingsService, {
+          isBigFonts: () => $isBigFonts,
+        }),
+      ],
+      imports: [CustomActionEditorComponent],
+    });
+    fixture = TestBed.createComponent(CustomActionEditorComponent);
+    component = fixture.componentInstance;
     fixture.detectChanges();
   });
 

@@ -1,5 +1,5 @@
 import { ComponentType } from "@angular/cdk/overlay";
-import { Injectable, Signal } from "@angular/core";
+import { inject, Injectable, Signal } from "@angular/core";
 import { MatDialog, MatDialogConfig, MatDialogRef } from "@angular/material/dialog";
 import { NgxSpatialNavigableService } from "@nihilux/ngx-spatial-navigable";
 import { IdleService } from "@services/idle.service";
@@ -16,16 +16,11 @@ export class DialogService {
   private _openedDialog?: MatDialogRef<unknown>;
   private _isIdleWatched: boolean;
 
-  constructor(
-    dialog: MatDialog,
-    idleService: IdleService,
-    settingsService: SettingsService,
-    spatialNavigableService: NgxSpatialNavigableService
-  ) {
-    this._dialog = dialog;
-    this._idleService = idleService;
-    this._spatialNavigableService = spatialNavigableService;
-    this._$layoutClass = settingsService.displayModeClass();
+  constructor() {
+    this._dialog = inject(MatDialog);
+    this._idleService = inject(IdleService);
+    this._spatialNavigableService = inject(NgxSpatialNavigableService);
+    this._$layoutClass = inject(SettingsService).displayModeClass();
     this._isIdleWatched = false;
   }
 

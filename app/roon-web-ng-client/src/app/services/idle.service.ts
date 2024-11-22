@@ -1,4 +1,4 @@
-import { Injectable, OnDestroy, Signal, signal, WritableSignal } from "@angular/core";
+import { inject, Injectable, OnDestroy, Signal, signal, WritableSignal } from "@angular/core";
 import { NgxSpatialNavigableService } from "@nihilux/ngx-spatial-navigable";
 
 @Injectable({
@@ -10,8 +10,8 @@ export class IdleService implements OnDestroy {
   private readonly _onUserInteraction: () => void;
   private readonly _$isIdle: WritableSignal<boolean>;
   private _idleTimeoutId?: ReturnType<typeof setTimeout>;
-  constructor(spatialNavigableService: NgxSpatialNavigableService) {
-    this._spatialNavigableService = spatialNavigableService;
+  constructor() {
+    this._spatialNavigableService = inject(NgxSpatialNavigableService);
     this._$isIdle = signal(false);
     this._onUserInteraction = () => {
       this._$isIdle.set(false);

@@ -6,6 +6,7 @@ import {
   computed,
   effect,
   EffectRef,
+  inject,
   Input,
   OnDestroy,
   Signal,
@@ -22,7 +23,6 @@ import { SettingsService } from "@services/settings.service";
 
 @Component({
   selector: "nr-zone-selector",
-  standalone: true,
   imports: [MatButtonModule, MatIconModule, MatMenuModule],
   templateUrl: "./zone-selector.component.html",
   styleUrl: "./zone-selector.component.scss",
@@ -43,20 +43,15 @@ export class ZoneSelectorComponent implements OnDestroy {
   readonly $layoutClass: Signal<string>;
   readonly $zones: Signal<ZoneDescription[]>;
 
-  constructor(
-    idleService: IdleService,
-    roonService: RoonService,
-    settingsService: SettingsService,
-    spatialNavigableService: NgxSpatialNavigableService
-  ) {
-    this._idleService = idleService;
-    this._settingsService = settingsService;
-    this._spatialNavigableService = spatialNavigableService;
+  constructor() {
+    this._idleService = inject(IdleService);
+    this._settingsService = inject(SettingsService);
+    this._spatialNavigableService = inject(NgxSpatialNavigableService);
     this.withoutLabel = false;
     this.xPosition = "before";
     this.yPosition = "above";
     this._$zoneId = this._settingsService.displayedZoneId();
-    this._$roonState = roonService.roonState();
+    this._$roonState = inject(RoonService).roonState();
     this.$zones = computed(
       () => {
         return this._$roonState().zones;
@@ -69,7 +64,7 @@ export class ZoneSelectorComponent implements OnDestroy {
       const zoneId = this._$zoneId();
       return this.$zones().find((zd: ZoneDescription) => zd.zone_id === zoneId)?.display_name ?? "Zones";
     });
-    this.$layoutClass = settingsService.displayModeClass();
+    this.$layoutClass = this._settingsService.displayModeClass();
     this._closeMenuOnIdleEffect = effect(() => {
       if (this._idleService.isIdle()()) {
         this.menuTrigger.closeMenu();

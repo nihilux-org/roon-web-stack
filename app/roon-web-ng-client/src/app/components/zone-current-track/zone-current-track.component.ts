@@ -3,7 +3,6 @@ import { EMPTY_TRACK, TrackDisplay } from "@model/client";
 
 @Component({
   selector: "nr-zone-current-track",
-  standalone: true,
   imports: [],
   templateUrl: "./zone-current-track.component.html",
   styleUrl: "./zone-current-track.component.scss",

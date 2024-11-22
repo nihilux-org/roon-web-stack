@@ -2,7 +2,7 @@ import { deepEqual } from "fast-equals";
 import { DeviceDetectorService } from "ngx-device-detector";
 import { Observable } from "rxjs";
 import { DOCUMENT } from "@angular/common";
-import { computed, Inject, Injectable, Signal, signal, WritableSignal } from "@angular/core";
+import { computed, inject, Injectable, Signal, signal, WritableSignal } from "@angular/core";
 import {
   ApiState,
   ClientRoonApiBrowseLoadOptions,
@@ -79,19 +79,15 @@ export class RoonService {
   private _version: string;
   private _startResolve?: () => void;
 
-  constructor(
-    @Inject(DOCUMENT) document: Document,
-    deviceDetectorService: DeviceDetectorService,
-    customActionsService: CustomActionsService,
-    visibilityService: VisibilityService
-  ) {
+  constructor() {
+    const document = inject<Document>(DOCUMENT);
     if (document.defaultView === null) {
       throw new Error("this app does not support server rendering!");
     }
     this._window = document.defaultView;
-    this._deviceDetectorService = deviceDetectorService;
-    this._customActionsService = customActionsService;
-    this._visibilityService = visibilityService;
+    this._deviceDetectorService = inject(DeviceDetectorService);
+    this._customActionsService = inject(CustomActionsService);
+    this._visibilityService = inject(VisibilityService);
     this._$roonState = signal(
       {
         state: RoonState.STARTING,

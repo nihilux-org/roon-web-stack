@@ -5,7 +5,6 @@ import { EMPTY_TRACK, TrackDisplay, TrackImage } from "@model/client";
 
 @Component({
   selector: "nr-zone-image",
-  standalone: true,
   imports: [RoonImageComponent],
   templateUrl: "./zone-image.component.html",
   styleUrl: "./zone-image.component.scss",

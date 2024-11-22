@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Signal } from "@angular/core";
+import { ChangeDetectionStrategy, Component, inject, Signal } from "@angular/core";
 import { MatButton } from "@angular/material/button";
 import { MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle } from "@angular/material/dialog";
 import { MatDivider } from "@angular/material/divider";
@@ -14,7 +14,6 @@ import { SettingsService } from "@services/settings.service";
 
 @Component({
   selector: "nr-zone-transfer-dialog",
-  standalone: true,
   imports: [
     MatButton,
     MatDialogActions,
@@ -38,14 +37,10 @@ export class ZoneTransferDialogComponent {
   readonly transferableZones: ZoneDescription[];
   readonly $isSmallScreen: Signal<boolean>;
 
-  constructor(
-    dialogRef: MatDialogRef<ZoneTransferDialogComponent>,
-    roonService: RoonService,
-    settingsService: SettingsService
-  ) {
-    this._dialogRef = dialogRef;
-    this._roonService = roonService;
-    this._settingsService = settingsService;
+  constructor() {
+    this._dialogRef = inject<MatDialogRef<ZoneTransferDialogComponent>>(MatDialogRef);
+    this._roonService = inject(RoonService);
+    this._settingsService = inject(SettingsService);
     this._currentZoneId = this._settingsService.displayedZoneId()();
     const zones = this._roonService.roonState()().zones;
     this.currentZone =

@@ -1,6 +1,10 @@
-import { MockBuilder, MockedComponentFixture, MockRender, ngMocks } from "ng-mocks";
-import { Component, TemplateRef } from "@angular/core";
-import { LayoutContext, LayoutData } from "@model/client";
+import { MockComponent, MockProvider } from "ng-mocks";
+import { Component, Input, Signal, signal, ViewChild, WritableSignal } from "@angular/core";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { ZoneSelectorComponent } from "@components/zone-selector/zone-selector.component";
+import { DialogService } from "@services/dialog.service";
+import { IdleService } from "@services/idle.service";
+import { SettingsService } from "@services/settings.service";
 import { TenFeetLayoutComponent } from "./ten-feet-layout.component";
 
 @Component({
@@ -26,59 +30,74 @@ import { TenFeetLayoutComponent } from "./ten-feet-layout.component";
     <ng-template #zoneVolume let-layoutClass="class">
       <div class="zone-volume"></div>
     </ng-template>
+    <nr-ten-feet-layout
+      [layout]="{
+        zoneActions,
+        zoneCommands,
+        zoneCurrentTrack,
+        zoneImage,
+        zoneProgression,
+        zoneQueue,
+        zoneVolume,
+        context: {
+          class: $layoutClass(),
+        },
+      }"
+    />
   `,
+  imports: [TenFeetLayoutComponent],
 })
-// eslint-disable-next-line @angular-eslint/component-class-suffix,@typescript-eslint/no-extraneous-class
-class TemplateProducer {}
+class TemplateProducerComponent {
+  @Input() $layoutClass!: Signal<string>;
+  @ViewChild(TenFeetLayoutComponent) tenFeetLayoutComponent!: TenFeetLayoutComponent;
+}
 
 describe("TenFeetLayoutComponent", () => {
   let component: TenFeetLayoutComponent;
-  let fixture: MockedComponentFixture<TenFeetLayoutComponent, { layout: LayoutData }>;
-  let layout: LayoutData;
-  let zoneActions: TemplateRef<LayoutContext>;
-  let zoneCommands: TemplateRef<LayoutContext>;
-  let zoneCurrentTrack: TemplateRef<LayoutContext>;
-  let zoneImage: TemplateRef<LayoutContext>;
-  let zoneProgression: TemplateRef<LayoutContext>;
-  let zoneQueue: TemplateRef<LayoutContext>;
-  let zoneVolume: TemplateRef<LayoutContext>;
-  let layoutContext: LayoutContext;
+  let fixture: ComponentFixture<TemplateProducerComponent>;
+  let $layoutClass: WritableSignal<string>;
+  let $isIdle: WritableSignal<boolean>;
+  let $isBigFonts: WritableSignal<boolean>;
+  let settingsService: {
+    isBigFonts: jest.Mock;
+  };
+  let idleService: {
+    isIdle: jest.Mock;
+  };
+  let closeDialog: jest.Mock;
 
-  beforeEach(async () => {
-    await MockBuilder(TemplateProducer, TenFeetLayoutComponent);
-    const templateProducerFixture = MockRender(TemplateProducer);
-    zoneActions = ngMocks.findTemplateRef(templateProducerFixture.debugElement, "zoneActions");
-    zoneCommands = ngMocks.findTemplateRef(templateProducerFixture.debugElement, "zoneCommands");
-    zoneCurrentTrack = ngMocks.findTemplateRef(templateProducerFixture.debugElement, "zoneCurrentTrack");
-    zoneImage = ngMocks.findTemplateRef(templateProducerFixture.debugElement, "zoneImage");
-    zoneProgression = ngMocks.findTemplateRef(templateProducerFixture.debugElement, "zoneProgression");
-    zoneQueue = ngMocks.findTemplateRef(templateProducerFixture.debugElement, "zoneQueue");
-    zoneVolume = ngMocks.findTemplateRef(templateProducerFixture.debugElement, "zoneVolume");
-    layoutContext = {
-      class: "ten-feet",
+  beforeEach(() => {
+    $layoutClass = signal("layout-class");
+    $isIdle = signal(false);
+    $isBigFonts = signal(false);
+    settingsService = {
+      isBigFonts: jest.fn().mockImplementation(() => $isBigFonts),
     };
-    layout = {
-      zoneActions,
-      zoneCommands,
-      zoneCurrentTrack,
-      zoneImage,
-      zoneProgression,
-      zoneQueue,
-      zoneVolume,
-      context: layoutContext,
+    idleService = {
+      isIdle: jest.fn().mockImplementation(() => $isIdle),
     };
-
-    fixture = MockRender(
-      TenFeetLayoutComponent,
-      {
-        layout,
+    closeDialog = jest.fn();
+    TestBed.configureTestingModule({
+      imports: [TenFeetLayoutComponent, TemplateProducerComponent],
+      providers: [
+        MockProvider(SettingsService, settingsService),
+        MockProvider(IdleService, idleService),
+        MockProvider(DialogService, {
+          close: closeDialog,
+        }),
+      ],
+    }).overrideComponent(TenFeetLayoutComponent, {
+      remove: {
+        imports: [ZoneSelectorComponent],
       },
-      {
-        reset: true,
-      }
-    );
-    component = fixture.componentInstance as unknown as TenFeetLayoutComponent;
+      add: {
+        imports: [MockComponent(ZoneSelectorComponent)],
+      },
+    });
+    fixture = TestBed.createComponent(TemplateProducerComponent);
+    fixture.componentRef.setInput("$layoutClass", $layoutClass);
     fixture.detectChanges();
+    component = fixture.componentInstance.tenFeetLayoutComponent;
   });
 
   it("should create", () => {

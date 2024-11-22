@@ -1,7 +1,7 @@
-import { MockBuilder, MockRender } from "ng-mocks";
+import { MockProvider } from "ng-mocks";
 import { Subject } from "rxjs";
 import { Signal, signal, WritableSignal } from "@angular/core";
-import { ComponentFixture } from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { TrackDisplay } from "@model/client";
 import { SettingsService } from "@services/settings.service";
@@ -23,7 +23,7 @@ describe("ZoneQueueDialogComponent", () => {
   let component: ZoneQueueDialogComponent;
   let fixture: ComponentFixture<ZoneQueueDialogComponent>;
 
-  beforeEach(async () => {
+  beforeEach(() => {
     $trackDisplay = signal({
       title: "track_title",
       image_key: "track_image_key",
@@ -44,15 +44,19 @@ describe("ZoneQueueDialogComponent", () => {
     };
     beforeClosedDialogObservable = new Subject<void>();
     closeDialog = jest.fn();
-    await MockBuilder(ZoneQueueDialogComponent)
-      .mock(MAT_DIALOG_DATA, dialogData)
-      .mock(SettingsService, settingsService as Partial<SettingsService>)
-      .mock(MatDialogRef<ZoneQueueDialogComponent>, {
-        close: closeDialog,
-        beforeClosed: () => beforeClosedDialogObservable,
-      });
+    TestBed.configureTestingModule({
+      imports: [ZoneQueueDialogComponent],
+      providers: [
+        MockProvider(MAT_DIALOG_DATA, dialogData),
+        MockProvider(SettingsService, settingsService),
+        MockProvider(MatDialogRef<ZoneQueueDialogComponent>, {
+          close: closeDialog,
+          beforeClosed: () => beforeClosedDialogObservable,
+        }),
+      ],
+    });
 
-    fixture = MockRender(ZoneQueueDialogComponent);
+    fixture = TestBed.createComponent(ZoneQueueDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

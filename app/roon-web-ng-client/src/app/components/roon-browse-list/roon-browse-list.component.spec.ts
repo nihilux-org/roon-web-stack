@@ -1,7 +1,7 @@
-import { MockBuilder, MockedComponentFixture, MockRender } from "ng-mocks";
-import { EventEmitter, signal, WritableSignal } from "@angular/core";
+import { MockProvider } from "ng-mocks";
+import { signal, WritableSignal } from "@angular/core";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { RoonApiBrowseHierarchy, RoonApiBrowseLoadResponse } from "@model";
-import { NavigationEvent } from "@model/client";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
 import { RoonBrowseListComponent } from "./roon-browse-list.component";
@@ -20,23 +20,13 @@ describe("RoonBrowseListComponent", () => {
     isBigFonts: jest.Mock;
   };
   let content: RoonApiBrowseLoadResponse;
-  let clickedItem: EventEmitter<NavigationEvent>;
   let zoneId: string;
   let hierarchy: RoonApiBrowseHierarchy;
   let scrollIndex: number;
   let component: RoonBrowseListComponent;
-  let fixture: MockedComponentFixture<
-    RoonBrowseListComponent,
-    {
-      content: RoonApiBrowseLoadResponse;
-      zoneId: string;
-      hierarchy: RoonApiBrowseHierarchy;
-      scrollIndex: number;
-      clickedItem: EventEmitter<NavigationEvent>;
-    }
-  >;
+  let fixture: ComponentFixture<RoonBrowseListComponent>;
 
-  beforeEach(async () => {
+  beforeEach(() => {
     roonService = {
       load: jest.fn(),
       navigate: jest.fn(),
@@ -61,18 +51,16 @@ describe("RoonBrowseListComponent", () => {
     zoneId = "zone_id";
     hierarchy = "browse";
     scrollIndex = 0;
-    clickedItem = new EventEmitter<NavigationEvent>();
-    await MockBuilder(RoonBrowseListComponent)
-      .mock(RoonService, roonService as Partial<RoonService>)
-      .mock(SettingsService, settingsService as Partial<SettingsService>);
-    fixture = MockRender(RoonBrowseListComponent, {
-      content,
-      zoneId,
-      hierarchy,
-      scrollIndex,
-      clickedItem,
+    TestBed.configureTestingModule({
+      providers: [MockProvider(RoonService, roonService), MockProvider(SettingsService, settingsService)],
+      imports: [RoonBrowseListComponent],
     });
-    component = fixture.componentInstance as RoonBrowseListComponent;
+    fixture = TestBed.createComponent(RoonBrowseListComponent);
+    fixture.componentRef.setInput("content", content);
+    fixture.componentRef.setInput("hierarchy", hierarchy);
+    fixture.componentRef.setInput("scrollIndex", scrollIndex);
+    fixture.componentRef.setInput("zoneId", zoneId);
+    component = fixture.componentInstance;
     fixture.detectChanges();
   });
 

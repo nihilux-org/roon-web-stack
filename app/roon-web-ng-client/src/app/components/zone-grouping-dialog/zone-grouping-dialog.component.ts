@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Signal, signal, WritableSignal } from "@angular/core";
+import { ChangeDetectionStrategy, Component, inject, Signal, signal, WritableSignal } from "@angular/core";
 import { MatButton } from "@angular/material/button";
 import { MatCheckbox } from "@angular/material/checkbox";
 import { MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle } from "@angular/material/dialog";
@@ -19,7 +19,6 @@ export interface GroupOutputDescription extends OutputDescription {
 
 @Component({
   selector: "nr-zone-grouping-dialog",
-  standalone: true,
   imports: [
     MatButton,
     MatCheckbox,
@@ -44,14 +43,10 @@ export class ZoneGroupingDialogComponent {
   readonly $canGroupOutputs: WritableSignal<GroupOutputDescription[]>;
   readonly $isSmallScreen: Signal<boolean>;
 
-  constructor(
-    dialogRef: MatDialogRef<ZoneGroupingDialogComponent>,
-    roonService: RoonService,
-    settingsService: SettingsService
-  ) {
-    this._dialogRef = dialogRef;
-    this._roonService = roonService;
-    this._settingsService = settingsService;
+  constructor() {
+    this._dialogRef = inject<MatDialogRef<ZoneGroupingDialogComponent>>(MatDialogRef);
+    this._roonService = inject(RoonService);
+    this._settingsService = inject(SettingsService);
     const outputs = this._roonService.roonState()().outputs;
     const zoneState = this._roonService.zoneState(this._settingsService.displayedZoneId())();
     // safe because the ZoneGroupingDialogComponent can't be open if current zone hasn't at least 1 output

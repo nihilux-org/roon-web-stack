@@ -1,20 +1,21 @@
-import { MockBuilder, MockedComponentFixture, MockRender } from "ng-mocks";
-import { Signal, signal, WritableSignal } from "@angular/core";
+import { signal, WritableSignal } from "@angular/core";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { DEFAULT_ZONE_PROGRESSION, ZoneProgression } from "@model/client";
 import { ZoneProgressionComponent } from "./zone-progression.component";
 
 describe("ZoneProgressionComponent", () => {
   let component: ZoneProgressionComponent;
-  let fixture: MockedComponentFixture<ZoneProgressionComponent, { $zoneProgression: Signal<ZoneProgression> }>;
+  let fixture: ComponentFixture<ZoneProgressionComponent>;
   let $zoneProgression: WritableSignal<ZoneProgression>;
 
-  beforeEach(async () => {
+  beforeEach(() => {
     $zoneProgression = signal(DEFAULT_ZONE_PROGRESSION);
-    await MockBuilder(ZoneProgressionComponent);
-    fixture = MockRender(ZoneProgressionComponent, {
-      $zoneProgression,
+    TestBed.configureTestingModule({
+      imports: [ZoneProgressionComponent],
     });
-    component = fixture.componentInstance as ZoneProgressionComponent;
+    fixture = TestBed.createComponent(ZoneProgressionComponent);
+    fixture.componentRef.setInput("$zoneProgression", $zoneProgression);
+    component = fixture.componentInstance;
     fixture.detectChanges();
   });
 

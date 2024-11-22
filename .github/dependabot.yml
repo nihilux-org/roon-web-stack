@@ -18,6 +18,7 @@ updates:
       angular:
         patterns:
          - "@angular*"
+         - "ng-packagr"
       production-dependencies:
         dependency-type: "production"
         exclude-patterns:
@@ -26,6 +27,7 @@ updates:
         dependency-type: "development"
         exclude-patterns:
         - "@angular*"
+        - "ng-packagr"
     ignore:
       - dependency-name: "nanoid"
         update-types:

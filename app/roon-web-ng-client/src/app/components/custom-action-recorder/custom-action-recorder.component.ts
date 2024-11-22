@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Signal, signal } from "@angular/core";
+import { ChangeDetectionStrategy, Component, inject, Signal, signal } from "@angular/core";
 import { MatButton, MatFabButton } from "@angular/material/button";
 import {
   MatDialogActions,
@@ -24,7 +24,6 @@ interface RecordableHierarchy {
 
 @Component({
   selector: "nr-custom-action-recorder",
-  standalone: true,
   imports: [
     MatButton,
     MatDialogActions,
@@ -83,25 +82,25 @@ export class CustomActionRecorderComponent {
   readonly $actionIndex: Signal<number | undefined>;
   private _isRecording: boolean;
 
-  constructor(
-    dialogService: DialogService,
-    settingsService: SettingsService,
-    dialogRef: MatDialogRef<CustomActionRecorderComponent>
-  ) {
-    this._dialogService = dialogService;
-    this._$isBigFont = settingsService.isBigFonts();
+  constructor() {
+    this._dialogService = inject(DialogService);
+    this._$isBigFont = inject(SettingsService).isBigFonts();
     this.$hierarchy = signal(undefined);
     this.$path = signal([]);
     this.$actionIndex = signal(undefined);
     this._isRecording = false;
-    dialogRef.afterClosed().subscribe(() => {
-      if (!this._isRecording) {
-        const config = this._$isBigFont() ? CustomActionsManagerDialogConfigBigFonts : CustomActionsManagerDialogConfig;
-        this._dialogService.open(CustomActionsManagerComponent, {
-          ...config,
-        });
-      }
-    });
+    inject<MatDialogRef<CustomActionRecorderComponent>>(MatDialogRef)
+      .afterClosed()
+      .subscribe(() => {
+        if (!this._isRecording) {
+          const config = this._$isBigFont()
+            ? CustomActionsManagerDialogConfigBigFonts
+            : CustomActionsManagerDialogConfig;
+          this._dialogService.open(CustomActionsManagerComponent, {
+            ...config,
+          });
+        }
+      });
   }
 
   startRecording(hierarchy: RecordableHierarchy) {
