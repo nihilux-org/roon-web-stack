@@ -18,10 +18,9 @@ describe("SettingsDialogComponent", () => {
   let $actions: WritableSignal<Action[]>;
   let $availableAction: WritableSignal<Action[]>;
   let $layoutClass: WritableSignal<string>;
-  let displayModeClasses: string[];
   let settingsService: {
     chosenTheme: jest.Mock;
-    saveIsDarkTheme: jest.Mock;
+    saveChosenTheme: jest.Mock;
     displayMode: jest.Mock;
     saveDisplayMode: jest.Mock;
     isSmallScreen: jest.Mock;
@@ -30,7 +29,6 @@ describe("SettingsDialogComponent", () => {
     saveActions: jest.Mock;
     availableActions: jest.Mock;
     displayModeClass: jest.Mock;
-    displayModeClasses: jest.Mock;
     isBigFonts: jest.Mock;
   };
   let version: string;
@@ -56,10 +54,9 @@ describe("SettingsDialogComponent", () => {
     $actions = signal(DefaultActions);
     $availableAction = signal([]);
     $layoutClass = signal("wide");
-    displayModeClasses = ["wide", "one-column", "compact"];
     settingsService = {
       chosenTheme: jest.fn().mockImplementation(() => $chosenTheme),
-      saveIsDarkTheme: jest.fn().mockImplementation((chosenTheme: ChosenTheme) => {
+      saveChosenTheme: jest.fn().mockImplementation((chosenTheme: ChosenTheme) => {
         $chosenTheme.set(chosenTheme);
       }),
       displayMode: jest.fn().mockImplementation(() => $displayMode),
@@ -74,7 +71,6 @@ describe("SettingsDialogComponent", () => {
       }),
       availableActions: jest.fn().mockImplementation(() => $availableAction),
       displayModeClass: jest.fn().mockImplementation(() => $layoutClass),
-      displayModeClasses: jest.fn().mockImplementation(() => displayModeClasses),
       isBigFonts: jest.fn().mockImplementation(() => $isBigFonts),
     };
     version = "version";

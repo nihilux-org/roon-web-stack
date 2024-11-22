@@ -19,10 +19,10 @@
             <div class="setting">
               <label for="display-mode-selector">Display mode:</label>
               <button mat-button id="display-mode-selector" [matMenuTriggerFor]="displayModeSelector" (menuOpened)="onMenOpen()" (menuClosed)="onMenuClosed()">
-                <mat-icon fontIcon="display_settings" />{{displayModeLabel(displayMode()())}}
+                <mat-icon fontIcon="display_settings" />{{$displayMode()}}
               </button>
               <mat-menu #displayModeSelector="matMenu" yPosition="below" xPosition="after" class="nr-menu-custom" [class]="$layoutClass()">
-                @for (dm of displayModes(); track dm.id) {
+                @for (dm of displayModes; track dm.id) {
                   <button mat-menu-item (click)="setDisplayMode(dm.id)"><mat-icon fontIcon="display_settings" />{{dm.label}}</button>
                 }
               </mat-menu>
