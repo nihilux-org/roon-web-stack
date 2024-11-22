@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Signal } from "@angular/core";
+import { ChangeDetectionStrategy, Component, inject, Signal } from "@angular/core";
 import { MatIconButton } from "@angular/material/button";
 import { MatDialogContent, MatDialogTitle } from "@angular/material/dialog";
 import { MatDivider } from "@angular/material/divider";
@@ -18,7 +18,6 @@ import { VolumeService } from "@services/volume.service";
 
 @Component({
   selector: "nr-zone-volume-dialog",
-  standalone: true,
   imports: [
     MatDialogContent,
     MatDialogTitle,
@@ -44,11 +43,11 @@ export class ZoneVolumeDialogComponent {
   readonly $isGroup: Signal<boolean>;
   readonly $isGroupedZoneMute: Signal<boolean>;
 
-  constructor(dialogService: DialogService, settingsService: SettingsService, volumeService: VolumeService) {
-    this._dialogService = dialogService;
-    this._volumeService = volumeService;
+  constructor() {
+    this._dialogService = inject(DialogService);
+    this._volumeService = inject(VolumeService);
     this.$outputs = this._volumeService.outputs();
-    this.$isSmallScreen = settingsService.isSmallScreen();
+    this.$isSmallScreen = inject(SettingsService).isSmallScreen();
     this.$canGroup = this._volumeService.canGroup();
     this.$isGroup = this._volumeService.isGrouped();
     this.$isGroupedZoneMute = this._volumeService.isGroupedZoneMute();

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, Input, Signal, TemplateRef } from "@angular/core";
+import { ChangeDetectionStrategy, Component, computed, inject, Input, Signal, TemplateRef } from "@angular/core";
 import { MatButton, MatIconButton } from "@angular/material/button";
 import { MatDialogConfig } from "@angular/material/dialog";
 import { MatIcon } from "@angular/material/icon";
@@ -24,7 +24,6 @@ import { SettingsService } from "@services/settings.service";
 
 @Component({
   selector: "nr-zone-actions",
-  standalone: true,
   imports: [MatButton, MatIcon, MatIconButton, FullScreenToggleComponent],
   templateUrl: "./zone-actions.component.html",
   styleUrl: "./zone-actions.component.scss",
@@ -43,15 +42,10 @@ export class ZoneActionsComponent {
   readonly $actions: Signal<Action[]>;
   readonly $withFullscreen: Signal<boolean>;
 
-  constructor(
-    dialogService: DialogService,
-    fullScreenService: FullscreenService,
-    roonService: RoonService,
-    settingsService: SettingsService
-  ) {
-    this._dialogService = dialogService;
-    this._roonService = roonService;
-    this._settingsService = settingsService;
+  constructor() {
+    this._dialogService = inject(DialogService);
+    this._roonService = inject(RoonService);
+    this._settingsService = inject(SettingsService);
     this._$isOneColumn = this._settingsService.isOneColumn();
     this._$isSmallTablet = this._settingsService.isSmallTablet();
     this._$isQueueInModal = computed(() => {
@@ -64,7 +58,7 @@ export class ZoneActionsComponent {
       return $isSmallScreen() || this._$isSmallTablet();
     });
     this.$actions = this._settingsService.actions();
-    const supportsFullScreen = fullScreenService.supportsFullScreen();
+    const supportsFullScreen = inject(FullscreenService).supportsFullScreen();
     this.$withFullscreen = computed(() => {
       return supportsFullScreen && this._$isOneColumn();
     });

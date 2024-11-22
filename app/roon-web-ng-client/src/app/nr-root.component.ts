@@ -1,6 +1,15 @@
 import { deepEqual } from "fast-equals";
 import { CommonModule } from "@angular/common";
-import { ChangeDetectionStrategy, Component, computed, effect, EffectRef, OnDestroy, Signal } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  EffectRef,
+  inject,
+  OnDestroy,
+  Signal,
+} from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { MatProgressSpinner } from "@angular/material/progress-spinner";
 import { ExtensionNotEnabledComponent } from "@components/extension-not-enabled/extension-not-enabled.component";
@@ -15,7 +24,6 @@ import { SettingsService } from "@services/settings.service";
 
 @Component({
   selector: "nr-root",
-  standalone: true,
   imports: [
     CommonModule,
     ExtensionNotEnabledComponent,
@@ -35,8 +43,10 @@ export class NrRootComponent implements OnDestroy {
   readonly $clientState: Signal<string>;
   readonly $isWithFullScreen: Signal<boolean>;
 
-  constructor(roonService: RoonService, settingsService: SettingsService, matDialog: MatDialog) {
-    this._matDialog = matDialog;
+  constructor() {
+    const roonService = inject(RoonService);
+    const settingsService = inject(SettingsService);
+    this._matDialog = inject(MatDialog);
     const $displayedZoneId = settingsService.displayedZoneId();
     const $apiState = roonService.roonState();
     const $isGrouping = roonService.isGrouping();

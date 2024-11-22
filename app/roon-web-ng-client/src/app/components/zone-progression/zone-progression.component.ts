@@ -4,7 +4,6 @@ import { ZoneProgression } from "@model/client";
 
 @Component({
   selector: "nr-zone-progression",
-  standalone: true,
   imports: [MatProgressBarModule],
   templateUrl: "./zone-progression.component.html",
   styleUrl: "./zone-progression.component.scss",

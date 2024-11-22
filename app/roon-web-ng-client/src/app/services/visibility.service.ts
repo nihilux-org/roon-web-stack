@@ -1,5 +1,5 @@
 import { DOCUMENT } from "@angular/common";
-import { Inject, Injectable, OnDestroy } from "@angular/core";
+import { inject, Injectable, OnDestroy } from "@angular/core";
 import { VisibilityListener, VisibilityState } from "@model/client";
 
 interface VisibilityEvent {
@@ -17,8 +17,8 @@ export class VisibilityService implements OnDestroy {
   private readonly _windowListener: () => void;
   private _lastEvent: VisibilityEvent;
 
-  constructor(@Inject(DOCUMENT) document: Document) {
-    this._document = document;
+  constructor() {
+    this._document = inject<Document>(DOCUMENT);
     this._visibilityListener = [];
     this._windowListener = () => {
       const visibilityEvent = this.buildVisibilityEvent();

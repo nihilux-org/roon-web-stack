@@ -5,8 +5,10 @@ import {
   computed,
   effect,
   EffectRef,
+  inject,
   Injectable,
   OnDestroy,
+  Renderer2,
   RendererFactory2,
   Signal,
   signal,
@@ -49,6 +51,7 @@ export class SettingsService implements OnDestroy {
   private static readonly DISPLAY_MODE_CLASSES = ["one-column", "compact", "wide", "ten-feet"];
   private readonly _breakpointObserver: BreakpointObserver;
   private readonly _customActionsService: CustomActionsService;
+  private readonly _renderer: Renderer2;
   private readonly _$actions: WritableSignal<Action[]>;
   private readonly _$allActions: Signal<Action[]>;
   private readonly _$availableActions: Signal<Action[]>;
@@ -67,13 +70,9 @@ export class SettingsService implements OnDestroy {
   private readonly _reloadActionsEffect: EffectRef;
   private _breakPointSubscription?: Subscription;
 
-  constructor(
-    rendererFactory: RendererFactory2,
-    breakPointObserver: BreakpointObserver,
-    customActionsService: CustomActionsService
-  ) {
-    this._breakpointObserver = breakPointObserver;
-    this._customActionsService = customActionsService;
+  constructor() {
+    this._breakpointObserver = inject(BreakpointObserver);
+    this._customActionsService = inject(CustomActionsService);
     this._$displayedZoneId = signal(localStorage.getItem(SettingsService.DISPLAYED_ZONE_ID_KEY) ?? "", {
       equal: deepEqual,
     });
@@ -111,15 +110,10 @@ export class SettingsService implements OnDestroy {
       return [...DefaultActions, ...customActions];
     });
     this._$actions = signal(this.loadActionsFromLocalStorage());
-    this._reloadActionsEffect = effect(
-      () => {
-        this._$customActions();
-        this._$actions.set(this.loadActionsFromLocalStorage());
-      },
-      {
-        allowSignalWrites: true,
-      }
-    );
+    this._reloadActionsEffect = effect(() => {
+      this._$customActions();
+      this._$actions.set(this.loadActionsFromLocalStorage());
+    });
     this._$availableActions = computed(() => {
       const allActions = this._$allActions();
       const actions = this._$actions();
@@ -171,7 +165,7 @@ export class SettingsService implements OnDestroy {
         equal: deepEqual,
       }
     );
-    const renderer = rendererFactory.createRenderer(null, null);
+    this._renderer = inject(RendererFactory2).createRenderer(null, null);
     // FIXME?: should this be more semantically placed in nr-root.component?
     this._themeEffect = effect(() => {
       let isDarkTheme: boolean;
@@ -187,9 +181,9 @@ export class SettingsService implements OnDestroy {
           break;
       }
       if (isDarkTheme) {
-        renderer.removeClass(window.document.body, "light-theme");
+        this._renderer.removeClass(window.document.body, "light-theme");
       } else {
-        renderer.addClass(window.document.body, "light-theme");
+        this._renderer.addClass(window.document.body, "light-theme");
       }
     });
     this._breakPointSubscription = this._breakpointObserver

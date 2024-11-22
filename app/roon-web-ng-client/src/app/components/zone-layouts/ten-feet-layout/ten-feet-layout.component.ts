@@ -6,6 +6,7 @@ import {
   computed,
   effect,
   EffectRef,
+  inject,
   Input,
   OnDestroy,
   OnInit,
@@ -23,7 +24,6 @@ import { SettingsService } from "@services/settings.service";
 
 @Component({
   selector: "nr-ten-feet-layout",
-  standalone: true,
   imports: [MatIcon, MatIconButton, MatRipple, NgTemplateOutlet, ZoneSelectorComponent],
   templateUrl: "./ten-feet-layout.component.html",
   styleUrl: "./ten-feet-layout.component.scss",
@@ -113,10 +113,10 @@ export class TenFeetLayoutComponent implements OnInit, OnDestroy {
   readonly $isIdle: Signal<boolean>;
   readonly $animationState: Signal<string>;
 
-  constructor(dialog: DialogService, idleService: IdleService, settingsService: SettingsService) {
-    this._dialogService = dialog;
-    this._idleService = idleService;
-    this._$isBigFont = settingsService.isBigFonts();
+  constructor() {
+    this._dialogService = inject(DialogService);
+    this._idleService = inject(IdleService);
+    this._$isBigFont = inject(SettingsService).isBigFonts();
     this.$isIdle = this._idleService.isIdle();
     this._closeDialogsOnIdleEffect = effect(() => {
       if (this.$isIdle()) {

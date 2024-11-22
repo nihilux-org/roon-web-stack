@@ -3,7 +3,6 @@ import { AfterViewInit, ChangeDetectionStrategy, Component } from "@angular/core
 
 @Component({
   selector: "nr-extension-not-enabled",
-  standalone: true,
   imports: [],
   templateUrl: "./extension-not-enabled.component.html",
   styleUrl: "./extension-not-enabled.component.scss",

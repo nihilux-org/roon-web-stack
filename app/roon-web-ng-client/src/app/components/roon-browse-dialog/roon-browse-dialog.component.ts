@@ -3,7 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  Inject,
+  inject,
   OnInit,
   Signal,
   signal,
@@ -37,7 +37,6 @@ import { SettingsService } from "@services/settings.service";
 
 @Component({
   selector: "nr-roon-browse-dialog",
-  standalone: true,
   imports: [
     AlphabeticalIndexComponent,
     MatButton,
@@ -73,18 +72,13 @@ export class RoonBrowseDialogComponent implements OnInit {
   scrollIndex: number;
   withIndex: boolean;
 
-  constructor(
-    @Inject(MAT_DIALOG_DATA) data: { path: RoonPath; isRecording: boolean },
-    customActionsService: CustomActionsService,
-    dialogService: DialogService,
-    roonService: RoonService,
-    settingsService: SettingsService,
-    dialogRef: MatDialogRef<RoonBrowseDialogComponent>
-  ) {
+  constructor() {
+    const data = inject(MAT_DIALOG_DATA) as { path: RoonPath; isRecording: boolean };
+    const settingsService = inject(SettingsService);
     this.zoneId = settingsService.displayedZoneId()();
-    this._customActionsService = customActionsService;
-    this._dialogService = dialogService;
-    this._roonService = roonService;
+    this._customActionsService = inject(CustomActionsService);
+    this._dialogService = inject(DialogService);
+    this._roonService = inject(RoonService);
     this._firstPath = data.path;
     this._scrollIndexes = [];
     this.hierarchy = data.path.hierarchy;
@@ -108,19 +102,23 @@ export class RoonBrowseDialogComponent implements OnInit {
     this.withIndex = false;
     this.scrollIndex = 0;
     this.isPaginated = true;
-    dialogRef.afterClosed().subscribe(() => {
-      void this._roonService.browse({
-        hierarchy: this.hierarchy,
-        pop_all: true,
-        set_display_offset: true,
-      });
-      if (this.isRecording) {
-        const config = this.$isBigFont() ? CustomActionsManagerDialogConfigBigFonts : CustomActionsManagerDialogConfig;
-        this._dialogService.open(CustomActionsManagerComponent, {
-          ...config,
+    inject<MatDialogRef<RoonBrowseDialogComponent>>(MatDialogRef)
+      .afterClosed()
+      .subscribe(() => {
+        void this._roonService.browse({
+          hierarchy: this.hierarchy,
+          pop_all: true,
+          set_display_offset: true,
         });
-      }
-    });
+        if (this.isRecording) {
+          const config = this.$isBigFont()
+            ? CustomActionsManagerDialogConfigBigFonts
+            : CustomActionsManagerDialogConfig;
+          this._dialogService.open(CustomActionsManagerComponent, {
+            ...config,
+          });
+        }
+      });
   }
 
   ngOnInit() {

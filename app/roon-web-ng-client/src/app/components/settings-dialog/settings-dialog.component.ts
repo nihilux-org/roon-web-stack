@@ -5,7 +5,7 @@ import {
   computed,
   effect,
   EffectRef,
-  Inject,
+  inject,
   OnDestroy,
   Signal,
 } from "@angular/core";
@@ -43,7 +43,6 @@ import { SettingsService } from "@services/settings.service";
 
 @Component({
   selector: "nr-settings-dialog",
-  standalone: true,
   imports: [
     CdkDrag,
     CdkDragHandle,
@@ -85,18 +84,12 @@ export class SettingsDialogComponent implements OnDestroy {
   readonly $layoutClass: Signal<string>;
   readonly version: string;
   readonly selectedTab: number;
-  constructor(
-    @Inject(MAT_DIALOG_DATA) data: { selectedTab: number },
-    dialogRef: MatDialogRef<SettingsDialogComponent>,
-    dialogService: DialogService,
-    roonService: RoonService,
-    settingsService: SettingsService,
-    spatialNavigableService: NgxSpatialNavigableService
-  ) {
-    this._dialogRef = dialogRef;
-    this._dialogService = dialogService;
-    this._settingsService = settingsService;
-    this._spatialNavigableService = spatialNavigableService;
+  constructor() {
+    const data = inject(MAT_DIALOG_DATA) as { selectedTab: number };
+    this._dialogRef = inject<MatDialogRef<SettingsDialogComponent>>(MatDialogRef);
+    this._dialogService = inject(DialogService);
+    this._settingsService = inject(SettingsService);
+    this._spatialNavigableService = inject(NgxSpatialNavigableService);
     this.displayModeLabels = new Map<DisplayMode, string>();
     this.displayModeLabels.set(DisplayMode.COMPACT, "Compact");
     this.displayModeLabels.set(DisplayMode.WIDE, "Wide");
@@ -118,7 +111,7 @@ export class SettingsDialogComponent implements OnDestroy {
     this.$isOneColumn = this._settingsService.isOneColumn();
     this.$layoutClass = this._settingsService.displayModeClass();
     this.selectedTab = data.selectedTab;
-    this.version = roonService.version();
+    this.version = inject(RoonService).version();
   }
 
   ngOnDestroy(): void {

@@ -1,15 +1,18 @@
 import { DOCUMENT } from "@angular/common";
-import { Inject, Injectable, OnDestroy, Signal, signal, WritableSignal } from "@angular/core";
+import { inject, Injectable, OnDestroy, Signal, signal, WritableSignal } from "@angular/core";
 
 @Injectable({
   providedIn: "root",
 })
 export class FullscreenService implements OnDestroy {
+  private readonly _document: Document;
+
   private static readonly ENTER_FULL_SCREEN_ICON = "open_in_full";
   private static readonly EXIT_FULL_SCREEN_ICON = "close_fullscreen";
   private readonly _$icon: WritableSignal<string>;
 
-  constructor(@Inject(DOCUMENT) private readonly _document: Document) {
+  constructor() {
+    this._document = inject<Document>(DOCUMENT);
     if (this._document.fullscreenElement) {
       this._$icon = signal(FullscreenService.EXIT_FULL_SCREEN_ICON);
     } else {

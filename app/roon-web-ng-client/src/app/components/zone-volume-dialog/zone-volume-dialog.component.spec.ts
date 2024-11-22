@@ -1,6 +1,6 @@
-import { MockBuilder, MockRender } from "ng-mocks";
+import { MockProvider } from "ng-mocks";
 import { Signal, signal, WritableSignal } from "@angular/core";
-import { ComponentFixture } from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { Output } from "@model";
 import { DialogService } from "@services/dialog.service";
 import { SettingsService } from "@services/settings.service";
@@ -28,7 +28,7 @@ describe("ZoneVolumeDialogComponent", () => {
   let component: ZoneVolumeDialogComponent;
   let fixture: ComponentFixture<ZoneVolumeDialogComponent>;
 
-  beforeEach(async () => {
+  beforeEach(() => {
     $isSmallScreen = signal(false);
     $outputs = signal([]);
     $canGroup = signal(false);
@@ -46,12 +46,16 @@ describe("ZoneVolumeDialogComponent", () => {
       isGrouped: jest.fn().mockImplementation(() => $isGroup),
       isGroupedZoneMute: jest.fn().mockImplementation(() => $isGroupedZoneMute),
     };
-    await MockBuilder(ZoneVolumeDialogComponent)
-      .mock(DialogService, dialogService as Partial<DialogService>)
-      .mock(SettingsService, settingsService as Partial<SettingsService>)
-      .mock(VolumeService, volumeService as Partial<VolumeService>);
+    TestBed.configureTestingModule({
+      imports: [ZoneVolumeDialogComponent],
+      providers: [
+        MockProvider(DialogService, dialogService),
+        MockProvider(SettingsService, settingsService),
+        MockProvider(VolumeService, volumeService),
+      ],
+    });
 
-    fixture = MockRender(ZoneVolumeDialogComponent);
+    fixture = TestBed.createComponent(ZoneVolumeDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

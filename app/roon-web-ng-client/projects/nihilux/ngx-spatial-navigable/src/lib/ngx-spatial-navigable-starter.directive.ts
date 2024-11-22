@@ -1,8 +1,7 @@
-import { booleanAttribute, Directive, ElementRef, Input, OnDestroy, OnInit } from "@angular/core";
+import { booleanAttribute, Directive, ElementRef, inject, Input, OnDestroy, OnInit } from "@angular/core";
 import { NgxSpatialNavigableService } from "@nihilux/ngx-spatial-navigable";
 
 @Directive({
-  standalone: true,
   selector: "[ngxSnStarter]",
 })
 export class NgxSpatialNavigableStarterDirective implements OnInit, OnDestroy {
@@ -10,9 +9,9 @@ export class NgxSpatialNavigableStarterDirective implements OnInit, OnDestroy {
   private readonly _htmlElement: HTMLElement;
   private readonly _spatialNavigableService: NgxSpatialNavigableService;
 
-  constructor(el: ElementRef<HTMLElement>, spatialNavigableService: NgxSpatialNavigableService) {
-    this._htmlElement = el.nativeElement;
-    this._spatialNavigableService = spatialNavigableService;
+  constructor() {
+    this._htmlElement = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
+    this._spatialNavigableService = inject(NgxSpatialNavigableService);
   }
 
   ngOnInit(): void {

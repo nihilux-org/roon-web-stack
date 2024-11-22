@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Output } from "@angul
 
 @Component({
   selector: "nr-alphabetical-index",
-  standalone: true,
   imports: [],
   templateUrl: "./alphabetical-index.component.html",
   styleUrl: "./alphabetical-index.component.scss",

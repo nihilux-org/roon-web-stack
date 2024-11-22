@@ -1,6 +1,6 @@
-import { MockBuilder, MockedComponentFixture, MockedDebugElement, MockRender, ngMocks } from "ng-mocks";
+import { MockProvider } from "ng-mocks";
 import { computed, Signal, signal, WritableSignal } from "@angular/core";
-import { BrowserAnimationsModule, NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { QueueState } from "@model";
 import { EMPTY_TRACK, TrackDisplay } from "@model/client";
 import { RoonService } from "@services/roon.service";
@@ -12,7 +12,6 @@ describe("ZoneQueueComponent", () => {
   let $queue: WritableSignal<QueueState>;
   let $trackDisplay: WritableSignal<TrackDisplay>;
   let $displayQueueTrack: WritableSignal<boolean>;
-  let $isOneColumn: WritableSignal<boolean>;
   let roonService: {
     queueState: jest.Mock;
   };
@@ -20,14 +19,10 @@ describe("ZoneQueueComponent", () => {
     displayedZoneId: jest.Mock;
     displayQueueTrack: jest.Mock;
   };
-  let component: MockedDebugElement<ZoneQueueComponent>;
-  let fixture: MockedComponentFixture<
-    ZoneQueueComponent,
-    { $isOneColumn: WritableSignal<boolean>; $trackDisplay: WritableSignal<TrackDisplay> }
-  >;
-  ngMocks.globalReplace(BrowserAnimationsModule, NoopAnimationsModule);
+  let component: ZoneQueueComponent;
+  let fixture: ComponentFixture<ZoneQueueComponent>;
 
-  beforeEach(async () => {
+  beforeEach(() => {
     $zoneId = signal("zone_id");
     $queue = signal({
       zone_id: "zone_id",
@@ -35,7 +30,6 @@ describe("ZoneQueueComponent", () => {
     });
     $trackDisplay = signal(EMPTY_TRACK);
     $displayQueueTrack = signal(true);
-    $isOneColumn = signal(false);
     roonService = {
       queueState: jest.fn().mockImplementation(($zoneId: Signal<string>) => {
         return computed(() => {
@@ -51,15 +45,13 @@ describe("ZoneQueueComponent", () => {
       displayedZoneId: jest.fn().mockImplementation(() => $zoneId),
       displayQueueTrack: jest.fn().mockImplementation(() => $displayQueueTrack),
     };
-    await MockBuilder(ZoneQueueComponent)
-      .mock(RoonService, roonService as Partial<RoonService>)
-      .mock(SettingsService, settingsService as Partial<SettingsService>)
-      .keep(BrowserAnimationsModule);
-    fixture = MockRender(ZoneQueueComponent, {
-      $isOneColumn,
-      $trackDisplay,
+    TestBed.configureTestingModule({
+      imports: [ZoneQueueComponent],
+      providers: [MockProvider(RoonService, roonService), MockProvider(SettingsService, settingsService)],
     });
-    component = fixture.point;
+    fixture = TestBed.createComponent(ZoneQueueComponent);
+    fixture.componentRef.setInput("$trackDisplay", $trackDisplay);
+    component = fixture.componentInstance;
     fixture.detectChanges();
   });
 

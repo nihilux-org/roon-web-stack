@@ -1,6 +1,7 @@
-import { MockBuilder, MockedComponentFixture, MockRender } from "ng-mocks";
+import { MockProvider } from "ng-mocks";
 import { Subject } from "rxjs";
 import { signal, WritableSignal } from "@angular/core";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { RoonApiBrowseLoadResponse, RoonPath } from "@model";
 import { DialogService } from "@services/dialog.service";
@@ -43,9 +44,9 @@ describe("RoonBrowseDialogComponent", () => {
   let previousObservable: Subject<RoonApiBrowseLoadResponse>;
   let loadPathObservable: Subject<RoonApiBrowseLoadResponse>;
   let component: RoonBrowseDialogComponent;
-  let fixture: MockedComponentFixture<RoonBrowseDialogComponent>;
+  let fixture: ComponentFixture<RoonBrowseDialogComponent>;
 
-  beforeEach(async () => {
+  beforeEach(() => {
     afterClosedObservable = new Subject<void>();
     afterClosedDialog = jest.fn().mockImplementation(() => afterClosedObservable);
     exploreObservable = new Subject<RoonApiBrowseLoadResponse>();
@@ -70,16 +71,20 @@ describe("RoonBrowseDialogComponent", () => {
       displayedZoneId: jest.fn().mockImplementation(() => $zoneId),
       isBigFonts: jest.fn().mockImplementation(() => $isBigFonts),
     };
-    await MockBuilder(RoonBrowseDialogComponent)
-      .mock(MAT_DIALOG_DATA, dialogData)
-      .mock(DialogService, dialogService as Partial<DialogService>)
-      .mock(RoonService, roonService as Partial<RoonService>)
-      .mock(SettingsService, settingsService as Partial<SettingsService>)
-      .mock(MatDialogRef<RoonBrowseDialogComponent>, {
-        afterClosed: afterClosedDialog,
-      });
-    fixture = MockRender(RoonBrowseDialogComponent);
-    component = fixture.componentInstance as RoonBrowseDialogComponent;
+    TestBed.configureTestingModule({
+      providers: [
+        MockProvider(MAT_DIALOG_DATA, dialogData),
+        MockProvider(DialogService, dialogService),
+        MockProvider(RoonService, roonService),
+        MockProvider(SettingsService, settingsService),
+        MockProvider(MatDialogRef<RoonBrowseDialogComponent>, {
+          afterClosed: afterClosedDialog,
+        }),
+      ],
+      imports: [RoonBrowseDialogComponent],
+    });
+    fixture = TestBed.createComponent(RoonBrowseDialogComponent);
+    component = fixture.componentInstance;
     fixture.detectChanges();
   });
 

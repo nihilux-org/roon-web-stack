@@ -1,6 +1,6 @@
-import { MockBuilder, MockRender } from "ng-mocks";
+import { MockProvider } from "ng-mocks";
 import { signal, WritableSignal } from "@angular/core";
-import { ComponentFixture } from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { MatDialogRef } from "@angular/material/dialog";
 import { ApiState, Command, RoonState } from "@model";
 import { CommandCallback } from "@model/client";
@@ -27,7 +27,7 @@ describe("ZoneTransferDialogComponent", () => {
   let component: ZoneTransferDialogComponent;
   let fixture: ComponentFixture<ZoneTransferDialogComponent>;
 
-  beforeEach(async () => {
+  beforeEach(() => {
     $roonState = signal({
       state: RoonState.SYNC,
       zones: [],
@@ -52,13 +52,17 @@ describe("ZoneTransferDialogComponent", () => {
       isSmallScreen: jest.fn().mockImplementation(() => $isSmallScreen),
     };
     closeDialog = jest.fn();
-    await MockBuilder(ZoneTransferDialogComponent)
-      .mock(RoonService, roonService as Partial<RoonService>)
-      .mock(SettingsService, settingsService as Partial<SettingsService>)
-      .mock(MatDialogRef<ZoneTransferDialogComponent>, {
-        close: closeDialog,
-      });
-    fixture = MockRender(ZoneTransferDialogComponent);
+    TestBed.configureTestingModule({
+      imports: [ZoneTransferDialogComponent],
+      providers: [
+        MockProvider(SettingsService, settingsService),
+        MockProvider(RoonService, roonService),
+        MockProvider(MatDialogRef<ZoneTransferDialogComponent>, {
+          close: closeDialog,
+        }),
+      ],
+    });
+    fixture = TestBed.createComponent(ZoneTransferDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

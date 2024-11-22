@@ -1,7 +1,7 @@
-import { MockBuilder, MockedComponentFixture, MockRender } from "ng-mocks";
+import { MockProvider } from "ng-mocks";
 import { signal, WritableSignal } from "@angular/core";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
-import { MatTab } from "@angular/material/tabs";
 import { CustomAction } from "@model/client";
 import { CustomActionsService } from "@services/custom-actions.service";
 import { DialogService } from "@services/dialog.service";
@@ -23,9 +23,9 @@ describe("CustomActionManagerComponent", () => {
   let deleteAction: jest.Mock;
   let command: jest.Mock;
   let component: CustomActionsManagerComponent;
-  let fixture: MockedComponentFixture<CustomActionsManagerComponent>;
+  let fixture: ComponentFixture<CustomActionsManagerComponent>;
 
-  beforeEach(async () => {
+  beforeEach(() => {
     $customActions = signal([]);
     $isEditing = signal(false);
     $isValid = signal(false);
@@ -36,25 +36,30 @@ describe("CustomActionManagerComponent", () => {
     deleteAction = jest.fn();
     command = jest.fn();
 
-    await MockBuilder(CustomActionsManagerComponent)
-      .mock(MAT_DIALOG_DATA, { reset: true })
-      .mock(DialogService, dialogService as Partial<DialogService>)
-      .mock(CustomActionsService, {
-        isEditing: () => $isEditing,
-        isValid: () => $isValid,
-        customActions: () => $customActions,
-        cancelEdition,
-        saveAction,
-        createAction,
-        editAction,
-        deleteAction,
-      })
-      .mock(RoonService, {
-        command,
-      })
-      .keep(MatTab);
-    fixture = MockRender(CustomActionsManagerComponent);
-    component = fixture.componentInstance as CustomActionsManagerComponent;
+    TestBed.configureTestingModule({
+      providers: [
+        MockProvider(DialogService, dialogService as Partial<DialogService>),
+        MockProvider(CustomActionsService, {
+          isEditing: () => $isEditing,
+          isValid: () => $isValid,
+          customActions: () => $customActions,
+          cancelEdition,
+          saveAction,
+          createAction,
+          editAction,
+          deleteAction,
+        }),
+        MockProvider(RoonService, {
+          command,
+        }),
+        MockProvider(MAT_DIALOG_DATA, {
+          reset: false,
+        }),
+      ],
+      imports: [CustomActionsManagerComponent],
+    });
+    fixture = TestBed.createComponent(CustomActionsManagerComponent);
+    component = fixture.componentInstance;
     fixture.detectChanges();
   });
 

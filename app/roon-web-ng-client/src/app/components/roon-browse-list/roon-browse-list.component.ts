@@ -8,6 +8,7 @@ import {
   Component,
   computed,
   EventEmitter,
+  inject,
   Input,
   numberAttribute,
   OnChanges,
@@ -27,7 +28,7 @@ import { MatIcon } from "@angular/material/icon";
 import { MatInput } from "@angular/material/input";
 import { MatMenu, MatMenuContent, MatMenuItem, MatMenuTrigger } from "@angular/material/menu";
 import { RoonImageComponent } from "@components/roon-image/roon-image.component";
-import { Item, RoonApiBrowseHierarchy, RoonApiBrowseLoadResponse } from "@model";
+import { Item, ItemHint, RoonApiBrowseHierarchy, RoonApiBrowseLoadResponse } from "@model";
 import { NavigationEvent, RecordedAction } from "@model/client";
 import {
   NgxSpatialNavigableContainerDirective,
@@ -46,7 +47,6 @@ interface MenuTriggerData {
 
 @Component({
   selector: "nr-roon-browse-list",
-  standalone: true,
   imports: [
     CdkFixedSizeVirtualScroll,
     CdkVirtualForOf,
@@ -95,13 +95,10 @@ export class RoonBrowseListComponent implements OnChanges, AfterViewChecked {
   readonly $lastFocusedItemId: WritableSignal<string>;
   readonly $layoutClass: Signal<string>;
 
-  constructor(
-    roonService: RoonService,
-    settingsService: SettingsService,
-    spatialNavigableService: NgxSpatialNavigableService
-  ) {
-    this._roonService = roonService;
-    this._spatialNavigableService = spatialNavigableService;
+  constructor() {
+    const settingsService = inject(SettingsService);
+    this._roonService = inject(RoonService);
+    this._spatialNavigableService = inject(NgxSpatialNavigableService);
     this._inputValues = new Map<string, string>();
     this.$isOneColumn = settingsService.isOneColumn();
     this.$layoutClass = settingsService.displayModeClass();
@@ -175,7 +172,7 @@ export class RoonBrowseListComponent implements OnChanges, AfterViewChecked {
     }
   }
 
-  onItemClicked(scrollIndex: number, title: string, item_key?: string, hint?: string, hasInput?: boolean) {
+  onItemClicked(scrollIndex: number, title: string, item_key?: string, hint?: ItemHint | null, hasInput?: boolean) {
     if (item_key && hint === "action_list") {
       this.onActionListClicked(item_key);
     } else if (item_key && hint === "action") {

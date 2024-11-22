@@ -16,7 +16,7 @@
             @if (item.image_key !== null || content.list.image_key) {
               <nr-roon-image
                 class="roon-item-image"
-                [src]="item.image_key ?? content.list.image_key "
+                [src]="item.image_key ?? content.list.image_key ?? ''"
                 [alt]="item.title + ' cover'"
                 [height]="$imageSize()"
                 [width]="$imageSize()"

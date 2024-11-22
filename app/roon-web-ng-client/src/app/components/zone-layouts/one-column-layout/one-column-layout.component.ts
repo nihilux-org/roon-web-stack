@@ -4,7 +4,6 @@ import { LayoutData } from "@model/client";
 
 @Component({
   selector: "nr-one-column-layout",
-  standalone: true,
   imports: [NgTemplateOutlet],
   templateUrl: "./one-column-layout.component.html",
   styleUrl: "./one-column-layout.component.scss",
