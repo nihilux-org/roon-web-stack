@@ -22,6 +22,7 @@ import {
   CustomAction,
   DefaultActions,
   DisplayMode,
+  DisplayModesData,
   LibraryAction,
   RadiosAction,
   ToggleQueueAction,
@@ -48,7 +49,6 @@ export class SettingsService implements OnDestroy {
   private static readonly DISPLAY_QUEUE_TRACK_KEY = "nr.DISPLAY_QUEUE_TRACK";
   private static readonly DISPLAY_MODE_KEY = "nr.DISPLAY_MODE";
   private static readonly ACTIONS_KEY = "nr.ACTIONS";
-  private static readonly DISPLAY_MODE_CLASSES = ["one-column", "compact", "wide", "ten-feet"];
   private readonly _breakpointObserver: BreakpointObserver;
   private readonly _customActionsService: CustomActionsService;
   private readonly _renderer: Renderer2;
@@ -84,21 +84,11 @@ export class SettingsService implements OnDestroy {
     this._$customActions = this._customActionsService.customActions();
     this._$displayMode = signal(this.loadDisplayModeFromLocalStorage(DisplayMode.WIDE));
     this._$displayModeClass = computed(() => {
-      let displayModeClass = "";
+      let displayModeClass;
       if (this._$isOneColumn()) {
-        displayModeClass = SettingsService.DISPLAY_MODE_CLASSES[0];
+        displayModeClass = DisplayModesData[DisplayMode.ONE_COLUMN].class;
       } else {
-        switch (this._$displayMode()) {
-          case DisplayMode.COMPACT:
-            displayModeClass = SettingsService.DISPLAY_MODE_CLASSES[1];
-            break;
-          case DisplayMode.TEN_FEET:
-            displayModeClass = SettingsService.DISPLAY_MODE_CLASSES[3];
-            break;
-          case DisplayMode.WIDE:
-            displayModeClass = SettingsService.DISPLAY_MODE_CLASSES[2];
-            break;
-        }
+        displayModeClass = DisplayModesData[this._$displayMode()].class;
       }
       return displayModeClass;
     });
@@ -247,10 +237,6 @@ export class SettingsService implements OnDestroy {
 
   displayModeClass(): Signal<string> {
     return this._$displayModeClass;
-  }
-
-  displayModeClasses(): string[] {
-    return SettingsService.DISPLAY_MODE_CLASSES;
   }
 
   isBigFonts(): Signal<boolean> {

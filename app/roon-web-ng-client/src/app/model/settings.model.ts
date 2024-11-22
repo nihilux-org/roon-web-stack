@@ -34,13 +34,6 @@ export type ClientBreakpoints = {
   [key: string]: boolean;
 };
 
-export enum DisplayMode {
-  COMPACT = "COMPACT",
-  ONE_COLUMN = "ONE_COLUMN",
-  WIDE = "WIDE",
-  TEN_FEET = "TEN_FEET",
-}
-
 export const SettingsDialogConfig: MatDialogConfig = {
   restoreFocus: false,
   width: "500px",

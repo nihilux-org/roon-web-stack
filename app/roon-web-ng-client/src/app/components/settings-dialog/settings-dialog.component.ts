@@ -28,6 +28,9 @@ import {
   CustomActionsManagerDialogConfig,
   CustomActionsManagerDialogConfigBigFonts,
   DisplayMode,
+  DisplayModesData,
+  SettingsDialogConfig,
+  SettingsDialogConfigBigFonts,
   Theme,
   Themes,
 } from "@model/client";
@@ -74,7 +77,7 @@ export class SettingsDialogComponent implements OnDestroy {
   private readonly _settingsService: SettingsService;
   private readonly _spatialNavigableService: NgxSpatialNavigableService;
   private readonly _layoutChangeEffect: EffectRef;
-  readonly displayModeLabels: Map<DisplayMode, string>;
+  private readonly _$displayMode: Signal<DisplayMode>;
   readonly $actions: Signal<Action[]>;
   readonly $availableActions: Signal<Action[]>;
   readonly $chosenTheme: Signal<Theme>;
@@ -82,6 +85,8 @@ export class SettingsDialogComponent implements OnDestroy {
   readonly $isOneColumn: Signal<boolean>;
   readonly $isSmallScreen: Signal<boolean>;
   readonly $layoutClass: Signal<string>;
+  readonly $displayMode: Signal<string>;
+  readonly displayModes: { id: DisplayMode; label: string }[];
   readonly version: string;
   readonly selectedTab: number;
   constructor() {
@@ -90,16 +95,25 @@ export class SettingsDialogComponent implements OnDestroy {
     this._dialogService = inject(DialogService);
     this._settingsService = inject(SettingsService);
     this._spatialNavigableService = inject(NgxSpatialNavigableService);
-    this.displayModeLabels = new Map<DisplayMode, string>();
-    this.displayModeLabels.set(DisplayMode.COMPACT, "Compact");
-    this.displayModeLabels.set(DisplayMode.WIDE, "Wide");
-    this.displayModeLabels.set(DisplayMode.TEN_FEET, "10 Feet");
     this._layoutChangeEffect = effect(() => {
-      for (const displayModeClass of this._settingsService.displayModeClasses()) {
-        this._dialogRef.removePanelClass(displayModeClass);
+      for (const dmData of Object.values(DisplayModesData)) {
+        this._dialogRef.removePanelClass(dmData.class);
       }
+      const config = this.$isBigFonts() ? SettingsDialogConfigBigFonts : SettingsDialogConfig;
+      this._dialogRef.updateSize(config.width, config.height);
       this._dialogRef.addPanelClass(this.$layoutClass());
     });
+    this.displayModes = [];
+    for (const [id, dmData] of Object.entries(DisplayModesData)) {
+      if (dmData.label) {
+        this.displayModes.push({
+          id: id as DisplayMode,
+          label: dmData.label,
+        });
+      }
+    }
+    this._$displayMode = this._settingsService.displayMode();
+    this.$displayMode = computed(() => DisplayModesData[this._$displayMode()].label ?? "");
     this.$chosenTheme = computed(() => {
       const chosenTheme = this._settingsService.chosenTheme()() as ChosenTheme;
       return Themes.find((t) => t.id === chosenTheme) ?? Themes[0];
@@ -145,18 +159,6 @@ export class SettingsDialogComponent implements OnDestroy {
   onReload() {
     this.onSave();
     window.location.reload();
-  }
-
-  displayModeLabel(displayMode: DisplayMode) {
-    return this.displayModeLabels.get(displayMode) ?? "Unknown display mode 🤷";
-  }
-
-  displayModes() {
-    const displayModes: { id: DisplayMode; label: string }[] = [];
-    for (const [id, label] of this.displayModeLabels) {
-      displayModes.push({ id, label });
-    }
-    return displayModes;
   }
 
   addAction(action: Action) {
