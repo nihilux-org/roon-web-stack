@@ -2,8 +2,7 @@
 @use "./app/styles/global" as nr;
 @use "./app/styles/variables" as nr-variables;
 
-@include mat.core();
-
+@include mat.app-background();
 @include mat.button-theme(nr-variables.$roon-web-ng-client-dark-theme);
 @include mat.checkbox-theme(nr-variables.$roon-web-ng-client-dark-theme);
 @include mat.core-theme(nr-variables.$roon-web-ng-client-dark-theme);
