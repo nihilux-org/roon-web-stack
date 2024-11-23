@@ -26,10 +26,12 @@
     }
   }
 </div>
-<div class="settings">
-    <button
-      mat-icon-button
-      (click)="openSettingsDialog()"
-      id="zone-action-settings"
-    ><mat-icon fontIcon="settings" /></button>
+@if ($withSettings()) {
+  <div class="settings">
+      <button
+        mat-icon-button
+        (click)="openSettingsDialog()"
+        id="zone-action-settings"
+      ><mat-icon fontIcon="settings" /></button>
 </div>
+}

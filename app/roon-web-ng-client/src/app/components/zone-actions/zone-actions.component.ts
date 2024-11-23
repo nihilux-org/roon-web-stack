@@ -35,33 +35,30 @@ export class ZoneActionsComponent {
   private readonly _dialogService: DialogService;
   private readonly _settingsService: SettingsService;
   private readonly _roonService: RoonService;
+  private readonly _withFullScreen: boolean;
   private readonly _$isQueueInModal: Signal<boolean>;
   private readonly _$isOneColumn: Signal<boolean>;
   private readonly _$isSmallTablet: Signal<boolean>;
+  private readonly _$isTenFeet: Signal<boolean>;
   readonly $isIconsOnly: Signal<boolean>;
   readonly $actions: Signal<Action[]>;
   readonly $withFullscreen: Signal<boolean>;
+  readonly $withSettings: Signal<boolean>;
 
   constructor() {
     this._dialogService = inject(DialogService);
     this._roonService = inject(RoonService);
     this._settingsService = inject(SettingsService);
+    this._withFullScreen = inject(FullscreenService).supportsFullScreen();
     this._$isOneColumn = this._settingsService.isOneColumn();
     this._$isSmallTablet = this._settingsService.isSmallTablet();
-    this._$isQueueInModal = computed(() => {
-      return (
-        this._$isOneColumn() || this._$isSmallTablet() || this._settingsService.displayMode()() === DisplayMode.TEN_FEET
-      );
-    });
+    this._$isQueueInModal = computed(() => this._$isOneColumn() || this._$isSmallTablet() || this._$isTenFeet());
     const $isSmallScreen = this._settingsService.isSmallScreen();
-    this.$isIconsOnly = computed(() => {
-      return $isSmallScreen() || this._$isSmallTablet();
-    });
+    this._$isTenFeet = computed(() => this._settingsService.displayMode()() === DisplayMode.TEN_FEET);
+    this.$isIconsOnly = computed(() => $isSmallScreen() || this._$isSmallTablet());
     this.$actions = this._settingsService.actions();
-    const supportsFullScreen = inject(FullscreenService).supportsFullScreen();
-    this.$withFullscreen = computed(() => {
-      return supportsFullScreen && this._$isOneColumn();
-    });
+    this.$withFullscreen = computed(() => this._withFullScreen && this._$isOneColumn());
+    this.$withSettings = computed(() => !this._$isTenFeet());
   }
 
   executeAction(action: Action) {

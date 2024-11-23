@@ -5,10 +5,8 @@ import {
   Component,
   computed,
   effect,
-  EffectRef,
   inject,
   Input,
-  OnDestroy,
   Signal,
   ViewChild,
 } from "@angular/core";
@@ -28,12 +26,11 @@ import { SettingsService } from "@services/settings.service";
   styleUrl: "./zone-selector.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ZoneSelectorComponent implements OnDestroy {
+export class ZoneSelectorComponent {
   @Input({ required: false, transform: booleanAttribute }) withoutLabel: boolean;
   @Input({ required: false }) xPosition: "before" | "after";
   @Input({ required: false }) yPosition: "below" | "above";
   @ViewChild(MatMenuTrigger) menuTrigger!: MatMenuTrigger;
-  private readonly _closeMenuOnIdleEffect: EffectRef;
   private readonly _idleService: IdleService;
   private readonly _settingsService: SettingsService;
   private readonly _spatialNavigableService: NgxSpatialNavigableService;
@@ -65,7 +62,7 @@ export class ZoneSelectorComponent implements OnDestroy {
       return this.$zones().find((zd: ZoneDescription) => zd.zone_id === zoneId)?.display_name ?? "Zones";
     });
     this.$layoutClass = this._settingsService.displayModeClass();
-    this._closeMenuOnIdleEffect = effect(() => {
+    effect(() => {
       if (this._idleService.isIdle()()) {
         this.menuTrigger.closeMenu();
       }
@@ -82,9 +79,5 @@ export class ZoneSelectorComponent implements OnDestroy {
 
   onSelectorClose() {
     this._spatialNavigableService.resumeSpatialNavigation();
-  }
-
-  ngOnDestroy() {
-    this._closeMenuOnIdleEffect.destroy();
   }
 }

@@ -29,7 +29,7 @@ import {
   NavigationEvent,
   RecordedAction,
 } from "@model/client";
-import { NgxSpatialNavigableContainerDirective } from "@nihilux/ngx-spatial-navigable";
+import { NgxSpatialNavigableContainerDirective, NgxSpatialNavigableService } from "@nihilux/ngx-spatial-navigable";
 import { CustomActionsService } from "@services/custom-actions.service";
 import { DialogService } from "@services/dialog.service";
 import { RoonService } from "@services/roon.service";
@@ -58,6 +58,7 @@ export class RoonBrowseDialogComponent implements OnInit {
   private readonly _customActionsService: CustomActionsService;
   private readonly _dialogService: DialogService;
   private readonly _roonService: RoonService;
+  private readonly _spatialNavigationService: NgxSpatialNavigableService;
   private readonly _firstPath: RoonPath;
   private readonly _scrollIndexes: number[];
   readonly isRecording: boolean;
@@ -79,6 +80,7 @@ export class RoonBrowseDialogComponent implements OnInit {
     this._customActionsService = inject(CustomActionsService);
     this._dialogService = inject(DialogService);
     this._roonService = inject(RoonService);
+    this._spatialNavigationService = inject(NgxSpatialNavigableService);
     this._firstPath = data.path;
     this._scrollIndexes = [];
     this.hierarchy = data.path.hierarchy;
@@ -203,6 +205,7 @@ export class RoonBrowseDialogComponent implements OnInit {
     this.content = content;
     this.scrollIndex = scrollIndex;
     this.withIndex = RoonBrowseDialogComponent.TITLES_WITH_INDEX.includes(content.list.title);
+    this._spatialNavigationService.resetSpatialNavigation();
     this.$loading.set(false);
   }
 }

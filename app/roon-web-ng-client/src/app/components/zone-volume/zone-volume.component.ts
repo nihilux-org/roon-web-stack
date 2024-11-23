@@ -9,13 +9,21 @@ import { ZoneTransferDialogComponent } from "@components/zone-transfer-dialog/zo
 import { ZoneVolumeDialogComponent } from "@components/zone-volume-dialog/zone-volume-dialog.component";
 import { Output } from "@model";
 import { DisplayMode } from "@model/client";
+import { NgxSpatialNavigableContainerDirective } from "@nihilux/ngx-spatial-navigable";
 import { DialogService } from "@services/dialog.service";
 import { SettingsService } from "@services/settings.service";
 import { VolumeService } from "@services/volume.service";
 
 @Component({
   selector: "nr-zone-volume",
-  imports: [MatButtonModule, MatIconModule, MatMenuModule, MatSliderModule, MatRipple],
+  imports: [
+    MatButtonModule,
+    MatIconModule,
+    MatMenuModule,
+    MatSliderModule,
+    MatRipple,
+    NgxSpatialNavigableContainerDirective,
+  ],
   templateUrl: "./zone-volume.component.html",
   styleUrl: "./zone-volume.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,

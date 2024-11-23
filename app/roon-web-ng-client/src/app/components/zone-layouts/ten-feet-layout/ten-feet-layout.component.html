@@ -2,7 +2,7 @@
   <div class="ten-feet-image" [@zoneImage]="$animationState()">
     <ng-container [ngTemplateOutlet]="layout.zoneImage" [ngTemplateOutletContext]="layout.context"></ng-container>
   </div>
-  <div class="layout-overlay">
+  <div class="layout-overlay" ngxSnContainer>
     <div class="zone-info" [@zoneInfo]="$animationState()">
       <ng-container [ngTemplateOutlet]="layout.zoneCurrentTrack" [ngTemplateOutletContext]="layout.context"></ng-container>
     </div>
@@ -12,17 +12,17 @@
     <div class="zone-progression">
       <ng-container [ngTemplateOutlet]="layout.zoneProgression" [ngTemplateOutletContext]="layout.context"></ng-container>
     </div>
-    <div class="zone-actions" [@zoneActions]="$animationState()">
+    <div class="zone-actions" [@zoneActions]="$animationState()" ngxSnContainer>
       <div>
         <ng-container [ngTemplateOutlet]="layout.zoneActions" [ngTemplateOutletContext]="layout.context"></ng-container>
       </div>
-      <div class="settings">
+      <div class="settings" ngxSnContainer>
         <nr-zone-selector class="ten-feet" withoutLabel="false" />
         <div matRipple>
           <button mat-icon-button (click)="onOpenSettingsDialog()"><mat-icon fontIcon="settings" /></button>
         </div>
       </div>
-      <div>
+      <div ngxSnContainer>
         <ng-container [ngTemplateOutlet]="layout.zoneVolume" [ngTemplateOutletContext]="layout.context"></ng-container>
       </div>
     </div>
