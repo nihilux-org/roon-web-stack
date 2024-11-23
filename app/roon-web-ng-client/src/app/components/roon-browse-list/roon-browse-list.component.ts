@@ -117,7 +117,7 @@ export class RoonBrowseListComponent implements OnChanges, AfterViewChecked {
         return 70;
       }
     });
-    this.$lastFocusedItemId = signal("");
+    this.$lastFocusedItemId = signal("roon-browse-item-0");
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -140,12 +140,12 @@ export class RoonBrowseListComponent implements OnChanges, AfterViewChecked {
 
   ngAfterViewChecked() {
     if (this.scrollIndex > 1) {
-      this.$lastFocusedItemId.set(`roon-browse-item-${this.scrollIndex}`);
       this._virtualScroll.scrollToIndex(this.scrollIndex - 1, "instant");
       const scrollSub = this._virtualScroll.scrolledIndexChange.subscribe((scrolledIndex) => {
         if (scrolledIndex === this.scrollIndex - 1) {
           this.scrollIndex = 0;
           scrollSub.unsubscribe();
+          this.$lastFocusedItemId.set(`roon-browse-item-${scrolledIndex + 1}`);
         }
       });
     }

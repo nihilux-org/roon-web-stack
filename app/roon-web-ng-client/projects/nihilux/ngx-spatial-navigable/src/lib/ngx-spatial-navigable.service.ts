@@ -1,13 +1,13 @@
 import { DOCUMENT } from "@angular/common";
 import { inject, Injectable, OnDestroy } from "@angular/core";
-import { getNextFocus } from "./ngx-spatial-navigable-next-focus-finder";
+import { Direction, getNextFocus, isSnKeyboardEvent } from "./ngx-spatial-navigable-utils";
 
 @Injectable({
   providedIn: "root",
 })
 export class NgxSpatialNavigableService implements OnDestroy {
   private readonly _document: Document;
-  private _rootElement?: HTMLElement;
+  private _rootElement: HTMLElement;
   private readonly _starter: HTMLElement[];
   private _dialogElement?: HTMLElement;
   private _focusedElement?: HTMLElement;
@@ -20,6 +20,7 @@ export class NgxSpatialNavigableService implements OnDestroy {
     this._document.addEventListener("keydown", (event: KeyboardEvent) => {
       this.handleKeyDown(event);
     });
+    this._rootElement = document.body;
   }
 
   ngOnDestroy(): void {
@@ -48,7 +49,9 @@ export class NgxSpatialNavigableService implements OnDestroy {
       return;
     }
     const element = event.target as HTMLElement;
-    if (["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(event.key)) {
+    const direction = isSnKeyboardEvent(event);
+    if (direction) {
+      event.preventDefault();
       if (
         ["ArrowLeft", "ArrowRight"].includes(event.key) &&
         ["text", "password", "email", "number", "search", "tel", "url"].includes(element.getAttribute("type") ?? "")
@@ -56,12 +59,8 @@ export class NgxSpatialNavigableService implements OnDestroy {
         return;
       }
       const scope = this._dialogElement ?? this._rootElement;
-      if (!scope) {
-        return;
-      }
-      event.preventDefault();
-      if (this._focusedElement || this._dialogElement) {
-        this._focusedElement = this.getNextFocus(this._focusedElement ?? null, event, scope);
+      if (this._focusedElement) {
+        this._focusedElement = this.getNextFocus(this._focusedElement ?? null, direction, scope);
       } else {
         this._focusedElement = this.getStarter();
       }
@@ -82,6 +81,7 @@ export class NgxSpatialNavigableService implements OnDestroy {
     delete this._focusedElement;
     if (autofocus) {
       this._focusedElement = this._document.querySelector(autofocus) ?? undefined;
+      this._focusedElement?.focus();
     }
   }
 
@@ -97,11 +97,11 @@ export class NgxSpatialNavigableService implements OnDestroy {
     return this._starter.at(-1);
   }
 
-  private getNextFocus(current: HTMLElement | null, event: KeyboardEvent, scope: HTMLElement): HTMLElement | undefined {
+  private getNextFocus(current: HTMLElement | null, direction: Direction, scope: HTMLElement): HTMLElement | undefined {
     let candidate = current;
     let disabled = false;
     do {
-      candidate = getNextFocus(candidate, event, scope);
+      candidate = getNextFocus(candidate, direction, scope);
       disabled = candidate?.getAttribute("disabled") === "true";
     } while (disabled);
     return candidate ?? this.getStarter();

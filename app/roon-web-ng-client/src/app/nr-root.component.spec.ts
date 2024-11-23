@@ -2,6 +2,7 @@ import { MockProvider } from "ng-mocks";
 import { signal, WritableSignal } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { ApiState, RoonState } from "@model";
+import { DialogService } from "@services/dialog.service";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
 import { NrRootComponent } from "./nr-root.component";
@@ -12,6 +13,9 @@ describe("NrRootComponent", () => {
   let $displayedZoneId: WritableSignal<string>;
   let $state: WritableSignal<ApiState>;
   let $isGrouping: WritableSignal<boolean>;
+  let dialogService: {
+    close: jest.Mock;
+  };
   let roonService: {
     roonState: jest.Mock;
     isGrouping: jest.Mock;
@@ -21,6 +25,9 @@ describe("NrRootComponent", () => {
   };
 
   beforeEach(() => {
+    dialogService = {
+      close: jest.fn(),
+    };
     $state = signal({
       state: RoonState.STARTING,
       zones: [],
@@ -36,11 +43,12 @@ describe("NrRootComponent", () => {
       displayedZonedId: jest.fn().mockImplementation(() => $displayedZoneId),
     };
     TestBed.configureTestingModule({
+      imports: [NrRootComponent],
       providers: [
-        MockProvider(RoonService, roonService as Partial<RoonService>),
+        MockProvider(DialogService, dialogService),
+        MockProvider(RoonService, roonService),
         MockProvider(SettingsService, settingsService as Partial<SettingsService>),
       ],
-      imports: [NrRootComponent],
     });
     fixture = TestBed.createComponent(NrRootComponent);
     component = fixture.componentInstance;

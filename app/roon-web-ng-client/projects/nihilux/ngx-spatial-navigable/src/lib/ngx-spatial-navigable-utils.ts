@@ -211,15 +211,13 @@ const getParentFocusableContainer = (startingCandidate: HTMLElement | null): HTM
   return startingCandidate;
 };
 
-export const getNextFocus = (elem: HTMLElement | null, event: KeyboardEvent, scope: HTMLElement | null) => {
+export const getNextFocus = (elem: HTMLElement | null, exitDir: Direction, scope: HTMLElement | null) => {
   if (!scope) {
     scope = document.body;
   }
   if (!elem) {
     return getFocusables(scope)[0];
   }
-  // eslint-disable-next-line @typescript-eslint/no-deprecated
-  const exitDir = event.key ? _keyCodeMap[event.key] : _keyCodeMap[event.keyCode];
   const focusable = findNextFocusable(elem, exitDir, scope);
   if (focusable) {
     return focusable;
@@ -299,14 +297,19 @@ const findNextFocusable = (elem: HTMLElement, exitDir: Direction, scope: HTMLEle
   return null;
 };
 
-enum Direction {
+export const isSnKeyboardEvent: (event: KeyboardEvent) => Direction | undefined = (event: KeyboardEvent) => {
+  // eslint-disable-next-line @typescript-eslint/no-deprecated
+  return _keyCodeMap[event.key] || _keyCodeMap[event.keyCode];
+};
+
+export enum Direction {
   LEFT = "left",
   RIGHT = "right",
   UP = "up",
   DOWN = "down",
 }
 
-type KeyCodeMap = { [key: number | string]: Direction };
+type KeyCodeMap = { [key: number | string]: Direction | undefined };
 
 const _keyCodeMap: KeyCodeMap = {
   4: Direction.LEFT,

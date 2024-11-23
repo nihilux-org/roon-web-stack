@@ -1,14 +1,5 @@
 import { CdkDrag, CdkDragDrop, CdkDragHandle, CdkDropList, moveItemInArray } from "@angular/cdk/drag-drop";
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  effect,
-  EffectRef,
-  inject,
-  OnDestroy,
-  Signal,
-} from "@angular/core";
+import { ChangeDetectionStrategy, Component, computed, effect, inject, Signal } from "@angular/core";
 import { MatButton, MatIconButton } from "@angular/material/button";
 import {
   MAT_DIALOG_DATA,
@@ -71,12 +62,11 @@ import { SettingsService } from "@services/settings.service";
   styleUrl: "./settings-dialog.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SettingsDialogComponent implements OnDestroy {
+export class SettingsDialogComponent {
   private readonly _dialogRef: MatDialogRef<SettingsDialogComponent>;
   private readonly _dialogService: DialogService;
   private readonly _settingsService: SettingsService;
   private readonly _spatialNavigableService: NgxSpatialNavigableService;
-  private readonly _layoutChangeEffect: EffectRef;
   private readonly _$displayMode: Signal<DisplayMode>;
   readonly $actions: Signal<Action[]>;
   readonly $availableActions: Signal<Action[]>;
@@ -95,7 +85,7 @@ export class SettingsDialogComponent implements OnDestroy {
     this._dialogService = inject(DialogService);
     this._settingsService = inject(SettingsService);
     this._spatialNavigableService = inject(NgxSpatialNavigableService);
-    this._layoutChangeEffect = effect(() => {
+    effect(() => {
       for (const dmData of Object.values(DisplayModesData)) {
         this._dialogRef.removePanelClass(dmData.class);
       }
@@ -126,10 +116,6 @@ export class SettingsDialogComponent implements OnDestroy {
     this.$layoutClass = this._settingsService.displayModeClass();
     this.selectedTab = data.selectedTab;
     this.version = inject(RoonService).version();
-  }
-
-  ngOnDestroy(): void {
-    this._layoutChangeEffect.destroy();
   }
 
   chosenThemes() {

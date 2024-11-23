@@ -5,7 +5,6 @@ import {
   Component,
   computed,
   effect,
-  EffectRef,
   inject,
   Input,
   OnDestroy,
@@ -18,13 +17,21 @@ import { MatIcon } from "@angular/material/icon";
 import { SettingsDialogComponent } from "@components/settings-dialog/settings-dialog.component";
 import { ZoneSelectorComponent } from "@components/zone-selector/zone-selector.component";
 import { LayoutData, SettingsDialogConfig, SettingsDialogConfigBigFonts } from "@model/client";
+import { NgxSpatialNavigableContainerDirective } from "@nihilux/ngx-spatial-navigable";
 import { DialogService } from "@services/dialog.service";
 import { IdleService } from "@services/idle.service";
 import { SettingsService } from "@services/settings.service";
 
 @Component({
   selector: "nr-ten-feet-layout",
-  imports: [MatIcon, MatIconButton, MatRipple, NgTemplateOutlet, ZoneSelectorComponent],
+  imports: [
+    MatIcon,
+    MatIconButton,
+    MatRipple,
+    NgTemplateOutlet,
+    ZoneSelectorComponent,
+    NgxSpatialNavigableContainerDirective,
+  ],
   templateUrl: "./ten-feet-layout.component.html",
   styleUrl: "./ten-feet-layout.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -108,7 +115,6 @@ export class TenFeetLayoutComponent implements OnInit, OnDestroy {
   @Input({ required: true }) layout!: LayoutData;
   private readonly _dialogService: DialogService;
   private readonly _idleService: IdleService;
-  private readonly _closeDialogsOnIdleEffect: EffectRef;
   private readonly _$isBigFont: Signal<boolean>;
   readonly $isIdle: Signal<boolean>;
   readonly $animationState: Signal<string>;
@@ -118,7 +124,7 @@ export class TenFeetLayoutComponent implements OnInit, OnDestroy {
     this._idleService = inject(IdleService);
     this._$isBigFont = inject(SettingsService).isBigFonts();
     this.$isIdle = this._idleService.isIdle();
-    this._closeDialogsOnIdleEffect = effect(() => {
+    effect(() => {
       if (this.$isIdle()) {
         this._dialogService.close();
       }
@@ -138,7 +144,6 @@ export class TenFeetLayoutComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this._idleService.stopWatch();
-    this._closeDialogsOnIdleEffect.destroy();
   }
 
   onOpenSettingsDialog(): void {

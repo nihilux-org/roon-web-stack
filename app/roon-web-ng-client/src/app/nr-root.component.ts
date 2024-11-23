@@ -1,16 +1,6 @@
 import { deepEqual } from "fast-equals";
 import { CommonModule } from "@angular/common";
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  effect,
-  EffectRef,
-  inject,
-  OnDestroy,
-  Signal,
-} from "@angular/core";
-import { MatDialog } from "@angular/material/dialog";
+import { ChangeDetectionStrategy, Component, computed, effect, inject, Signal } from "@angular/core";
 import { MatProgressSpinner } from "@angular/material/progress-spinner";
 import { ExtensionNotEnabledComponent } from "@components/extension-not-enabled/extension-not-enabled.component";
 import { FullScreenToggleComponent } from "@components/full-screen-toggle/full-screen-toggle.component";
@@ -19,6 +9,7 @@ import { ZoneSelectorComponent } from "@components/zone-selector/zone-selector.c
 import { RoonState } from "@model";
 import { DisplayMode } from "@model/client";
 import { NgxSpatialNavigableRootDirective } from "@nihilux/ngx-spatial-navigable";
+import { DialogService } from "@services/dialog.service";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
 
@@ -37,16 +28,15 @@ import { SettingsService } from "@services/settings.service";
   styleUrl: "./nr-root.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NrRootComponent implements OnDestroy {
-  private readonly _matDialog: MatDialog;
-  private readonly _closeDialogsEffect: EffectRef;
+export class NrRootComponent {
+  private readonly _dialogService: DialogService;
   readonly $clientState: Signal<string>;
   readonly $isWithFullScreen: Signal<boolean>;
 
   constructor() {
+    this._dialogService = inject(DialogService);
     const roonService = inject(RoonService);
     const settingsService = inject(SettingsService);
-    this._matDialog = inject(MatDialog);
     const $displayedZoneId = settingsService.displayedZoneId();
     const $apiState = roonService.roonState();
     const $isGrouping = roonService.isGrouping();
@@ -71,13 +61,9 @@ export class NrRootComponent implements OnDestroy {
     const $isOneColumn = settingsService.isOneColumn();
     const $displayMode = settingsService.displayMode();
     this.$isWithFullScreen = computed(() => !$isOneColumn() && $displayMode() !== DisplayMode.TEN_FEET);
-    this._closeDialogsEffect = effect(() => {
+    effect(() => {
       this.$clientState();
-      this._matDialog.closeAll();
+      this._dialogService.close();
     });
-  }
-
-  ngOnDestroy() {
-    this._closeDialogsEffect.destroy();
   }
 }

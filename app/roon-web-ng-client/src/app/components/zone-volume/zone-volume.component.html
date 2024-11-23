@@ -5,40 +5,88 @@
     </button>
   </div>
 } @else {
-  <div class="zone-volume-large">
+  <div class="zone-volume-large" ngxSnContainer>
     @if ($isGrouped()) {
       <div>
         <div matRipple>
-          <button mat-icon-button (click)="onGroupedVolumeStep(true)"><mat-icon fontIcon="do_not_disturb_on" /></button>
+          <button
+            mat-icon-button
+            (click)="onGroupedVolumeStep(true)"
+            id="volume-large-grouped-volume-minus"
+          >
+            <mat-icon fontIcon="do_not_disturb_on" />
+          </button>
         </div>
         <span>
-          <button mat-button (click)="onGroupedMuteToggle()"><mat-icon [fontIcon]="$isMuted() ? 'volume_off' : 'volume_up'" />Grouped zone</button>
+          <button
+            mat-button
+            (click)="onGroupedMuteToggle()"
+            id="volume-large-grouped-volume-mute-toggle"
+          >
+            <mat-icon [fontIcon]="$isMuted() ? 'volume_off' : 'volume_up'" />Grouped zone
+          </button>
         </span>
         <div matRipple>
-          <button mat-icon-button (click)="onGroupedVolumeStep(false)"><mat-icon fontIcon="add_circle" /></button>
+          <button
+            mat-icon-button
+            (click)="onGroupedVolumeStep(false)"
+            id="volume-large-grouped-volume-plus"
+          >
+            <mat-icon fontIcon="add_circle" />
+          </button>
         </div>
       </div>
     }
     @for (output of $outputs(); track output.output_id) {
       <div>
         <div matRipple>
-          <button mat-icon-button (click)="onVolumeStep(output.output_id, true)"><mat-icon fontIcon="do_not_disturb_on" /></button>
+          <button
+            mat-icon-button
+            (click)="onVolumeStep(output.output_id, true)"
+            [id]="'volume-large-volume-' + output.output_id + '-volume-minus'"
+          >
+            <mat-icon fontIcon="do_not_disturb_on" />
+          </button>
         </div>
         <span>
-          <button mat-button (click)="onMuteToggle(output.output_id)"><mat-icon [fontIcon]="output.volume?.is_muted ? 'volume_off' : 'volume_up'" />{{output.display_name}} {{output.volume?.value ?? ""}}</button>
+          <button
+            mat-button
+            (click)="onMuteToggle(output.output_id)"
+            [id]="'volume-large-volume-' + output.output_id + '-mute-toggle'"
+          >
+            <mat-icon [fontIcon]="output.volume?.is_muted ? 'volume_off' : 'volume_up'" />{{output.display_name}} {{output.volume?.value ?? ""}}
+          </button>
         </span>
         <div matRipple>
-          <button mat-icon-button (click)="onVolumeStep(output.output_id, false)"><mat-icon fontIcon="add_circle" /></button>
+          <button
+            mat-icon-button
+            (click)="onVolumeStep(output.output_id, false)"
+            [id]="'volume-large-volume-' + output.output_id + '-volume-plus'"
+          >
+            <mat-icon fontIcon="add_circle" />
+          </button>
         </div>
       </div>
     }
     <div class="zone-volume-actions">
       <span>
-        <button mat-button (click)="onOpenTransferDialog()"><mat-icon fontIcon="sync_alt"/>Transfer zone</button>
+        <button
+          mat-button
+          (click)="onOpenTransferDialog()"
+          id="volume-large-volume-transfer"
+        >
+          <mat-icon fontIcon="sync_alt"/>Transfer zone
+        </button>
       </span>
       @if ($canGroup()) {
         <span>
-          <button mat-button (click)="onOpenGroupDialog()"><mat-icon fontIcon="link"/>Group</button>
+          <button
+            mat-button
+            (click)="onOpenGroupDialog()"
+            id="volume-large-volume-group"
+          >
+            <mat-icon fontIcon="link"/>Group
+          </button>
         </span>
       }
     </div>

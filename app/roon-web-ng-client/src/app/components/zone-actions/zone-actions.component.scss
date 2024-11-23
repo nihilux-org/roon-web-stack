@@ -44,12 +44,6 @@
     justify-content: space-evenly;
     span {
       @include nr.ten-feet-button();
-      &:last-child, &:nth-last-child(2) {
-        // margin-bottom: 0;
-      }
     }
-  }
-  .settings {
-    display: none;
   }
 }

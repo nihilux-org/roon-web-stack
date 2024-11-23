@@ -14,7 +14,7 @@
               class="roon-list-item"
               [id]="'roon-browse-item-' + index"
               ngxSnStarter
-              [ngxSnIgnore]="index !== 0"
+              [ngxSnIgnore]="$lastFocusedItemId() !== 'roon-browse-item-' + index"
             >
               @if (item.image_key !== null || content.list.image_key) {
                 <nr-roon-image
