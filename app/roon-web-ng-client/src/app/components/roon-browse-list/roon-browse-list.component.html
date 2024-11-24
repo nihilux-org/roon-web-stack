@@ -9,7 +9,7 @@
       <ol>
         <li *cdkVirtualFor="let item of dataSource; let last = last; let index = index">
           @if (item) {
-            @let hasInput = item.input_prompt !== undefined;
+            @let hasPrompt = item.input_prompt !== undefined;
             <button
               (click)="!item.input_prompt ? onItemClicked(index, item.title, item.item_key, item.hint, false) : true"
               class="roon-list-item"
@@ -17,7 +17,7 @@
               ngxSnStarter
               [ngxSnStarterIgnore]="$lastFocusedItemId() !== 'roon-browse-item-' + index"
               ngxSnElement
-              [ngxSnFocusOnFirstInput]="hasInput"
+              [ngxSnFocusOnFirstInput]="hasPrompt"
             >
               @if (item.image_key !== null || content.list.image_key) {
                 <nr-roon-image
@@ -31,14 +31,8 @@
               } @else if(!$isOneColumn()) {
                 <div class="roon-item-image"></div>
               }
-              <div class="roon-item-info" [class.roon-item-prompt]="hasInput">
-                @if (!(item.input_prompt && $isOneColumn())) {
-                  <span>{{item.title}}</span>
-                  @if (item.subtitle) {
-                    <span>{{sanitizeSubtitle(item.subtitle)}}</span>
-                  }
-                }
-                @if (hasInput) {
+              <div class="roon-item-info" [class.roon-item-prompt]="hasPrompt">
+                @if (hasPrompt) {
                   <mat-form-field appearance="outline">
                     <mat-label>{{item.input_prompt?.prompt}}</mat-label>
                     <input
@@ -49,6 +43,11 @@
                     />
                   </mat-form-field>
                   <button mat-button (click)="onItemClicked(index, item.title, item.item_key, item.hint, true)">{{item.input_prompt?.action}}</button>
+                } @else {
+                  <span>{{item.title}}</span>
+                  @if (item.subtitle) {
+                    <span>{{sanitizeSubtitle(item.subtitle)}}</span>
+                  }
                 }
               </div>
               @if (item.hint === "action_list") {

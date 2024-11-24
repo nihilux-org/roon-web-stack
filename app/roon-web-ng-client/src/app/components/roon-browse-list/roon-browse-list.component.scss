@@ -53,8 +53,6 @@
           min-width: 0;
           mat-form-field {
             flex-grow: 1;
-            margin-left: 30px;
-            height: 80%;
           }
           button {
             margin-left: 20px;
@@ -85,6 +83,11 @@
       }
     }
     &.is-big-fonts {
+      --mat-form-field-container-height: 70px;
+      --mat-form-field-container-text-line-height: 42px;
+      --mdc-outlined-text-field-label-text-size: 24px;
+      --mat-form-field-outlined-label-text-populated-size: 24px;
+      --mat-form-field-container-text-size: 24px;
       --roon-list-item-height: 120px;
       --roon-list-item-padding: 20px;
       --roon-list-item-divider-margin: 145px;
