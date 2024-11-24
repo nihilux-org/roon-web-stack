@@ -1,6 +1,12 @@
 import { DOCUMENT } from "@angular/common";
 import { inject, Injectable, OnDestroy } from "@angular/core";
-import { Direction, getNextFocus, isSnKeyboardEvent } from "./ngx-spatial-navigable-utils";
+import {
+  containerClass,
+  dataContainerPrioritizedChildrenAttribute,
+  Direction,
+  getNextFocus,
+  isSnKeyboardEvent,
+} from "./ngx-spatial-navigable-utils";
 
 @Injectable({
   providedIn: "root",
@@ -48,23 +54,16 @@ export class NgxSpatialNavigableService implements OnDestroy {
     if (!this._isActive) {
       return;
     }
-    const element = event.target as HTMLElement;
     const direction = isSnKeyboardEvent(event);
     if (direction) {
       event.preventDefault();
-      if (
-        ["ArrowLeft", "ArrowRight"].includes(event.key) &&
-        ["text", "password", "email", "number", "search", "tel", "url"].includes(element.getAttribute("type") ?? "")
-      ) {
-        return;
-      }
       const scope = this._dialogElement ?? this._rootElement;
       if (this._focusedElement) {
         this._focusedElement = this.getNextFocus(this._focusedElement ?? null, direction, scope);
       } else {
         this._focusedElement = this.getStarter();
       }
-      this._focusedElement?.focus();
+      this.focus();
     }
   }
 
@@ -76,16 +75,20 @@ export class NgxSpatialNavigableService implements OnDestroy {
     this._isActive = true;
   }
 
-  dialogOpened(htmlElement: HTMLElement | undefined, autofocus: string | false) {
+  dialogOpened(htmlElement: HTMLElement, autofocus: string | false) {
     this._dialogElement = htmlElement;
+    this._dialogElement.classList.add(containerClass);
+    this._dialogElement.setAttribute(dataContainerPrioritizedChildrenAttribute, "true");
     delete this._focusedElement;
     if (autofocus) {
       this._focusedElement = this._document.querySelector(autofocus) ?? undefined;
-      this._focusedElement?.focus();
+      this.focus();
     }
   }
 
   dialogClosed() {
+    this._dialogElement?.classList.remove(containerClass);
+    this._dialogElement?.removeAttribute(dataContainerPrioritizedChildrenAttribute);
     delete this._dialogElement;
   }
 
@@ -105,5 +108,11 @@ export class NgxSpatialNavigableService implements OnDestroy {
       disabled = candidate?.getAttribute("disabled") === "true";
     } while (disabled);
     return candidate ?? this.getStarter();
+  }
+
+  private focus(): void {
+    if (this._focusedElement) {
+      this._focusedElement.focus();
+    }
   }
 }
