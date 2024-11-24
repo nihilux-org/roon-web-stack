@@ -18,6 +18,7 @@
               [ngxSnStarterIgnore]="$lastFocusedItemId() !== 'roon-browse-item-' + index"
               ngxSnElement
               [ngxSnFocusOnFirstInput]="hasPrompt"
+              tabindex="0"
             >
               @if (item.image_key !== null || content.list.image_key) {
                 <nr-roon-image

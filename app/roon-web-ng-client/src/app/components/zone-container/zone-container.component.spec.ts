@@ -11,6 +11,7 @@ import { ZoneQueueComponent } from "@components/zone-queue/zone-queue.component"
 import { ZoneVolumeComponent } from "@components/zone-volume/zone-volume.component";
 import { Output, Zone, ZoneState } from "@model";
 import { DisplayMode } from "@model/client";
+import { NgxSpatialNavigableService } from "@nihilux/ngx-spatial-navigable";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
 import { ZoneContainerComponent } from "./zone-container.component";
@@ -36,6 +37,9 @@ describe("ZoneContainerComponent", () => {
   let roonService: {
     zoneState: jest.Mock;
   };
+  let spatialNavigationService: {
+    resetSpatialNavigation: jest.Mock;
+  };
   ngMocks.globalReplace(BrowserAnimationsModule, NoopAnimationsModule);
 
   beforeEach(() => {
@@ -57,8 +61,15 @@ describe("ZoneContainerComponent", () => {
     roonService = {
       zoneState: jest.fn().mockImplementation(() => $zoneState),
     };
+    spatialNavigationService = {
+      resetSpatialNavigation: jest.fn(),
+    };
     TestBed.configureTestingModule({
-      providers: [MockProvider(SettingsService, settingsService), MockProvider(RoonService, roonService)],
+      providers: [
+        MockProvider(SettingsService, settingsService),
+        MockProvider(RoonService, roonService),
+        MockProvider(NgxSpatialNavigableService, spatialNavigationService),
+      ],
       imports: [ZoneContainerComponent],
     }).overrideComponent(ZoneContainerComponent, {
       remove: {
