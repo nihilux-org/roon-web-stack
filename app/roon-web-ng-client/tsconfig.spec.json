@@ -16,7 +16,6 @@
     "projects/**/*.ts",
     "projects/**/*.spec.ts",
     "projects/**/*.mock.ts",
-    "projects/**/*.d.ts",
-    "server.ts"
+    "projects/**/*.d.ts"
   ]
 }

@@ -25,11 +25,11 @@ export class NgxSpatialNavigableContainerDirective implements OnInit, OnDestroy 
   readonly ngxSnPrioritizeChildren = input<boolean, string | boolean>(true, {
     transform: booleanAttribute,
   });
-  readonly ngxSnIgnore = input<boolean, string | boolean>(false, {
+  readonly ngxSnContainerIgnore = input<boolean, string | boolean>(false, {
     transform: booleanAttribute,
   });
   readonly ngxSnBlockExit = input<string>("");
-  readonly ngxFocusChildId = input<string>("");
+  readonly ngxSnFocusedChildId = input<string>("");
 
   private readonly _htmlElement: HTMLElement;
   private readonly _renderer: Renderer2;
@@ -38,7 +38,7 @@ export class NgxSpatialNavigableContainerDirective implements OnInit, OnDestroy 
     this._htmlElement = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
     this._renderer = inject(Renderer2);
     effect(() => {
-      if (this.ngxSnIgnore()) {
+      if (this.ngxSnContainerIgnore()) {
         this._renderer.addClass(this._htmlElement, ignoredClass);
       } else {
         this._renderer.removeClass(this._htmlElement, ignoredClass);
@@ -51,7 +51,7 @@ export class NgxSpatialNavigableContainerDirective implements OnInit, OnDestroy 
       this._htmlElement.setAttribute(dataContainerPrioritizedChildrenAttribute, `${this.ngxSnPrioritizeChildren()}`);
     });
     effect(() => {
-      this._htmlElement.setAttribute(dataContainerLastFocusChildId, this.ngxFocusChildId());
+      this._htmlElement.setAttribute(dataContainerLastFocusChildId, this.ngxSnFocusedChildId());
     });
   }
 

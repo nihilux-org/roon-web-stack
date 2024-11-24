@@ -6,7 +6,10 @@ import { MatDivider } from "@angular/material/divider";
 import { MatIcon } from "@angular/material/icon";
 import { CommandResult, CommandType, GroupCommand, OutputDescription } from "@model";
 import { CommandCallback } from "@model/client";
-import { NgxSpatialNavigableStarterDirective } from "@nihilux/ngx-spatial-navigable";
+import {
+  NgxSpatialNavigableElementDirective,
+  NgxSpatialNavigableStarterDirective,
+} from "@nihilux/ngx-spatial-navigable";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
 
@@ -25,6 +28,7 @@ export interface GroupOutputDescription extends OutputDescription {
     MatDivider,
     MatIcon,
     NgxSpatialNavigableStarterDirective,
+    NgxSpatialNavigableElementDirective,
   ],
   templateUrl: "./zone-grouping-dialog.component.html",
   styleUrl: "./zone-grouping-dialog.component.scss",

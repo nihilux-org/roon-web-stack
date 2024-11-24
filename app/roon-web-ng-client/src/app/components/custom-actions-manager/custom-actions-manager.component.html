@@ -12,7 +12,7 @@
                   <span>{{ca.button.label}}</span>
                 </span>
                 <span>
-                  <button mat-icon-button [id]="'custom-action-edit-' + ca.id" ngxSnStarter [ngxSnIgnore]="index !== 0" (click)="editCustomAction(ca)"><mat-icon fontIcon="edit" /></button>
+                  <button mat-icon-button [id]="'custom-action-edit-' + ca.id" ngxSnStarter [ngxSnStarterIgnore]="index !== 0" (click)="editCustomAction(ca)"><mat-icon fontIcon="edit" /></button>
                   <button mat-icon-button [id]="'custom-action-delete-' + ca.id" (click)="deleteCustomAction(ca.id)"><mat-icon fontIcon="cancel" /></button>
                 </span>
               </div>
@@ -35,7 +35,7 @@
     </mat-tab>
   </mat-tab-group>
 </mat-dialog-content>
-<mat-dialog-actions align="end" ngxSnContainer>
+<mat-dialog-actions align="end">
   @if ($isEditing()) {
     <button mat-button id="custom-action-recorder-cancel" (click)="onCancel()"><mat-icon fontIcon="cancel" />Cancel</button>
     <button mat-button id="custom-action-recorder-save" (click)="onSave()" [disabled]="$saveDisabled()"><mat-icon fontIcon="save" />Save</button>
