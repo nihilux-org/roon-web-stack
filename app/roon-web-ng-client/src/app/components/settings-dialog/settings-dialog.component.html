@@ -56,7 +56,7 @@
             </mat-menu>
           </div>
           <div class="active-actions-container">
-            <div cdkDropList (cdkDropListDropped)="onActionsReordered($event)" class="active-actions" ngxSnContainer>
+            <div cdkDropList (cdkDropListDropped)="onActionsReordered($event)" class="active-actions">
               @for (a of $actions(); track a.id) {
                 <div class="active-action" cdkDrag>
                   <span class="active-action-label">
