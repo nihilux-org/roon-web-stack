@@ -21,7 +21,7 @@ import {
   ZoneCommandState,
   ZoneProgression,
 } from "@model/client";
-import { NgxSpatialNavigableContainerDirective } from "@nihilux/ngx-spatial-navigable";
+import { NgxSpatialNavigableContainerDirective, NgxSpatialNavigableService } from "@nihilux/ngx-spatial-navigable";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
 
@@ -136,5 +136,6 @@ export class ZoneContainerComponent {
       }
     });
     this.$layoutClass = this._settingsService.displayModeClass();
+    inject(NgxSpatialNavigableService).resetSpatialNavigation();
   }
 }
