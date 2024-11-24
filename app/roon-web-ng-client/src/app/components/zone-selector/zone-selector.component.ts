@@ -7,6 +7,7 @@ import {
   effect,
   inject,
   Input,
+  input,
   Signal,
   ViewChild,
 } from "@angular/core";
@@ -30,6 +31,7 @@ export class ZoneSelectorComponent {
   @Input({ required: false, transform: booleanAttribute }) withoutLabel: boolean;
   @Input({ required: false }) xPosition: "before" | "after";
   @Input({ required: false }) yPosition: "below" | "above";
+  readonly idSuffix = input<string>("");
   @ViewChild(MatMenuTrigger) menuTrigger!: MatMenuTrigger;
   private readonly _idleService: IdleService;
   private readonly _settingsService: SettingsService;
@@ -39,6 +41,7 @@ export class ZoneSelectorComponent {
   readonly $label: Signal<string>;
   readonly $layoutClass: Signal<string>;
   readonly $zones: Signal<ZoneDescription[]>;
+  readonly $idSuffix: Signal<string>;
 
   constructor() {
     this._idleService = inject(IdleService);
@@ -65,6 +68,14 @@ export class ZoneSelectorComponent {
     effect(() => {
       if (this._idleService.isIdle()()) {
         this.menuTrigger.closeMenu();
+      }
+    });
+    this.$idSuffix = computed(() => {
+      const suffix = this.idSuffix();
+      if (suffix.length > 0) {
+        return `-${suffix}`;
+      } else {
+        return suffix;
       }
     });
   }

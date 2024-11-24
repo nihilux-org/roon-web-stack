@@ -1,12 +1,14 @@
 import { nanoid } from "nanoid";
-import { computed, Injectable, Signal, signal, WritableSignal } from "@angular/core";
+import { computed, inject, Injectable, Signal, signal, WritableSignal } from "@angular/core";
 import { CommandType, RoonApiBrowseHierarchy, SharedConfigCommand } from "@model";
 import { ActionType, CustomAction, EditedCustomAction, SharedCustomActions } from "@model/client";
+import { NgxSpatialNavigableService } from "@nihilux/ngx-spatial-navigable";
 
 @Injectable({
   providedIn: "root",
 })
 export class CustomActionsService {
+  private readonly _spatialNavigationService: NgxSpatialNavigableService;
   private readonly _$customActions: WritableSignal<CustomAction[]>;
   private readonly _$editedAction: WritableSignal<EditedCustomAction | undefined>;
   private readonly _$isEditing: Signal<boolean>;
@@ -18,9 +20,13 @@ export class CustomActionsService {
   private readonly _$actionIndex: Signal<number | undefined>;
 
   constructor() {
+    this._spatialNavigationService = inject(NgxSpatialNavigableService);
     this._$customActions = signal([]);
     this._$editedAction = signal(undefined);
-    this._$isEditing = computed(() => this._$editedAction() !== undefined);
+    this._$isEditing = computed(() => {
+      this._spatialNavigationService.resetSpatialNavigation();
+      return this._$editedAction() !== undefined;
+    });
     this._$isValid = computed(() => {
       const editedAction = this._$editedAction();
       if (editedAction) {

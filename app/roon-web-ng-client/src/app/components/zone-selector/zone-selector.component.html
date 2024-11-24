@@ -4,7 +4,7 @@
     [matMenuTriggerFor]="zoneSelector"
     (menuOpened)="onSelectorOpen()"
     (menuClosed)="onSelectorClose()"
-    id="zone-selector-icon"
+    [id]="'zone-selector-icon' + $idSuffix()"
   ><mat-icon fontIcon="speaker" /></button>
 } @else {
   <button
@@ -12,7 +12,7 @@
     [matMenuTriggerFor]="zoneSelector"
     (menuOpened)="onSelectorOpen()"
     (menuClosed)="onSelectorClose()"
-    id="zone-selector-labeled"
+    [id]="'zone-selector-labeled' + $idSuffix()"
   ><mat-icon fontIcon="speaker" />{{$label()}}</button>
 }
 

@@ -20,7 +20,9 @@
               <span>No custom action has been defined yet</span>
             }
           </div>
-          <button mat-button id="create-custom-action" (click)="createCustomAction()"><mat-icon fontIcon="playlist_add_circle" />Create a Custom Action</button>
+          <div ngxSnContainer>
+            <button mat-button id="create-custom-action" (click)="createCustomAction()"><mat-icon fontIcon="playlist_add_circle" />Create a Custom Action</button>
+          </div>
         </div>
       </ng-template>
     </mat-tab>
