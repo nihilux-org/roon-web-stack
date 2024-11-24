@@ -8,6 +8,7 @@
     [ngModel]="$label()"
     (ngModelChange)="saveLabel($event)"
     [required]="true"
+    ngxSnStarter
   />
   @if (labelInputControl.hasError('required')) {
     <mat-error>
@@ -26,7 +27,6 @@
       [ngModel]="$icon()"
       (ngModelChange)="saveIcon($event)"
       [required]="true"
-      ngxSnStarter
     />
     @if (iconInputControl.hasError('required')) {
       <mat-error>

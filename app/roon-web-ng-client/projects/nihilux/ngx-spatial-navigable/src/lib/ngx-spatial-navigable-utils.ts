@@ -5,7 +5,6 @@ export const dataContainerPrioritizedChildrenAttribute = "data-ngx-sn-container-
 export const dataContainerConsiderDistanceAttribute = "data-ngx-sn-container-consider-distance";
 export const dataOverlapAttribute = "'data-ngx-sn-overlap-threshold'";
 export const dataContainerLastFocusChildId = "data-ngx-sn-container-last-focus-child-id";
-export const focusedContainsInputClass = "ngx-sn-contains-input";
 
 const focusableSelector = "[tabindex], a, input, button";
 const containerSelector = `nav, section, .${containerClass}`;
@@ -72,22 +71,22 @@ interface Point {
 
 const getMidpointForEdge = (rect: DOMRect, dir: Direction): Point => {
   switch (dir) {
-    case Direction.LEFT:
+    case MappedDirection.LEFT:
       return { x: rect.left, y: (rect.top + rect.bottom) / 2 };
-    case Direction.RIGHT:
+    case MappedDirection.RIGHT:
       return { x: rect.right, y: (rect.top + rect.bottom) / 2 };
-    case Direction.UP:
+    case MappedDirection.UP:
       return { x: (rect.left + rect.right) / 2, y: rect.top };
-    case Direction.DOWN:
+    case MappedDirection.DOWN:
       return { x: (rect.left + rect.right) / 2, y: rect.bottom };
   }
 };
 
 const getNearestPoint = (point: Point, dir: Direction, rect: DOMRect): Point => {
-  if (dir === Direction.LEFT || dir === Direction.RIGHT) {
+  if (dir === MappedDirection.LEFT || dir === MappedDirection.RIGHT) {
     // When moving horizontally...
     // The nearest X is always the nearest edge, left or right
-    const x = dir === Direction.LEFT ? rect.right : rect.left;
+    const x = dir === MappedDirection.LEFT ? rect.right : rect.left;
 
     // If the start point is higher than the rect, nearest Y is the top corner
     if (point.y < rect.top) {
@@ -102,7 +101,7 @@ const getNearestPoint = (point: Point, dir: Direction, rect: DOMRect): Point => 
   } else {
     // When moving vertically...
     // The nearest Y is always the nearest edge, top or bottom
-    const y = dir === Direction.UP ? rect.bottom : rect.top;
+    const y = dir === MappedDirection.UP ? rect.bottom : rect.top;
 
     // If the start point is left-er than the rect, nearest X is the left corner
     if (point.x < rect.left) {
@@ -140,7 +139,7 @@ const getBlockedExitDirs = (container: HTMLElement | null, candidateContainer: H
   return currentAncestorContainers.reduce((acc: Set<Direction>, cur: HTMLElement) => {
     (cur.getAttribute(dataBlockDirectionAttribute) ?? "")
       .split(" ")
-      .filter((dirAttributeValue) => dirAttributeValue in Direction)
+      .filter((dirAttributeValue) => dirAttributeValue in MappedDirection)
       .forEach((dir) => acc.add(dir as Direction));
     return acc;
   }, new Set<Direction>());
@@ -163,18 +162,22 @@ const isValidCandidate = (
     x:
       entryRect.left +
       entryRect.width *
-        (exitDir === Direction.LEFT ? 1 - entryWeighting : exitDir === Direction.RIGHT ? entryWeighting : 0.5),
+        (exitDir === MappedDirection.LEFT
+          ? 1 - entryWeighting
+          : exitDir === MappedDirection.RIGHT
+            ? entryWeighting
+            : 0.5),
     y:
       entryRect.top +
       entryRect.height *
-        (exitDir === Direction.UP ? 1 - entryWeighting : exitDir === Direction.DOWN ? entryWeighting : 0.5),
+        (exitDir === MappedDirection.UP ? 1 - entryWeighting : exitDir === MappedDirection.DOWN ? entryWeighting : 0.5),
   };
 
   return (
-    (exitDir === Direction.LEFT && isRight(exitPoint, weightedEntryPoint)) ||
-    (exitDir === Direction.RIGHT && isRight(weightedEntryPoint, exitPoint)) ||
-    (exitDir === Direction.UP && isBelow(exitPoint, weightedEntryPoint)) ||
-    (exitDir === Direction.DOWN && isBelow(weightedEntryPoint, exitPoint))
+    (exitDir === MappedDirection.LEFT && isRight(exitPoint, weightedEntryPoint)) ||
+    (exitDir === MappedDirection.RIGHT && isRight(weightedEntryPoint, exitPoint)) ||
+    (exitDir === MappedDirection.UP && isBelow(exitPoint, weightedEntryPoint)) ||
+    (exitDir === MappedDirection.DOWN && isBelow(weightedEntryPoint, exitPoint))
   );
 };
 
@@ -225,17 +228,17 @@ export const getNextFocus = (elem: HTMLElement | null, exitDir: Direction, scope
   }
   let alternateDirection: Direction;
   switch (exitDir) {
-    case Direction.LEFT:
-      alternateDirection = Direction.UP;
+    case MappedDirection.LEFT:
+      alternateDirection = MappedDirection.UP;
       break;
-    case Direction.RIGHT:
-      alternateDirection = Direction.DOWN;
+    case MappedDirection.RIGHT:
+      alternateDirection = MappedDirection.DOWN;
       break;
-    case Direction.UP:
-      alternateDirection = Direction.LEFT;
+    case MappedDirection.UP:
+      alternateDirection = MappedDirection.LEFT;
       break;
-    case Direction.DOWN:
-      alternateDirection = Direction.RIGHT;
+    case MappedDirection.DOWN:
+      alternateDirection = MappedDirection.RIGHT;
       break;
   }
   const newStart = getParentContainer(elem);
@@ -298,47 +301,86 @@ const findNextFocusable = (elem: HTMLElement, exitDir: Direction, scope: HTMLEle
   return null;
 };
 
-export const isSnKeyboardEvent: (event: KeyboardEvent) => Direction | undefined = (event: KeyboardEvent) => {
+export const isSnKeyboardEvent: (event: KeyboardEvent) => { direction?: Direction; substitueEvent?: KeyboardEvent } = (
+  event: KeyboardEvent
+) => {
   // eslint-disable-next-line @typescript-eslint/no-deprecated
-  return _keyCodeMap[event.key] || _keyCodeMap[event.keyCode];
+  const mappedDirection = _keyCodeMap[event.key] || _keyCodeMap[event.keyCode];
+  if (mappedDirection === MappedDirection.BACK || mappedDirection === MappedDirection.EXIT) {
+    const substitueEvent = new KeyboardEvent("keydown", {
+      key: "Escape",
+      keyCode: 27,
+      which: 27,
+    });
+    return {
+      substitueEvent,
+    };
+  } else {
+    if (eventShouldBeIgnored(mappedDirection, event)) {
+      return {};
+    } else {
+      return {
+        direction: mappedDirection,
+      };
+    }
+  }
 };
 
-export enum Direction {
+const eventShouldBeIgnored: (direction: Direction | undefined, event: KeyboardEvent) => boolean = (
+  direction,
+  event
+) => {
+  if (direction === MappedDirection.LEFT || direction === MappedDirection.RIGHT) {
+    const element = event.target as HTMLElement;
+    return element.tagName === "INPUT" && element.getAttribute("type") === "text";
+  }
+  return false;
+};
+
+export type Direction = MappedDirection.UP | MappedDirection.DOWN | MappedDirection.LEFT | MappedDirection.RIGHT;
+
+export enum MappedDirection {
   LEFT = "left",
   RIGHT = "right",
   UP = "up",
   DOWN = "down",
+  BACK = "back",
+  EXIT = "exit",
 }
 
-type KeyCodeMap = { [key: number | string]: Direction | undefined };
+type KeyCodeMap = { [key: number | string]: MappedDirection | undefined };
 
 const _keyCodeMap: KeyCodeMap = {
-  4: Direction.LEFT,
-  21: Direction.LEFT,
-  37: Direction.LEFT,
-  214: Direction.LEFT,
-  205: Direction.LEFT,
-  218: Direction.LEFT,
-  5: Direction.RIGHT,
-  22: Direction.RIGHT,
-  39: Direction.RIGHT,
-  213: Direction.RIGHT,
-  206: Direction.RIGHT,
-  217: Direction.RIGHT,
-  29460: Direction.UP,
-  19: Direction.UP,
-  38: Direction.UP,
-  211: Direction.UP,
-  203: Direction.UP,
-  215: Direction.UP,
-  29461: Direction.DOWN,
-  20: Direction.DOWN,
-  40: Direction.DOWN,
-  212: Direction.DOWN,
-  204: Direction.DOWN,
-  216: Direction.DOWN,
-  ArrowLeft: Direction.LEFT,
-  ArrowRight: Direction.RIGHT,
-  ArrowUp: Direction.UP,
-  ArrowDown: Direction.DOWN,
+  4: MappedDirection.LEFT,
+  21: MappedDirection.LEFT,
+  37: MappedDirection.LEFT,
+  214: MappedDirection.LEFT,
+  205: MappedDirection.LEFT,
+  218: MappedDirection.LEFT,
+  5: MappedDirection.RIGHT,
+  22: MappedDirection.RIGHT,
+  39: MappedDirection.RIGHT,
+  213: MappedDirection.RIGHT,
+  206: MappedDirection.RIGHT,
+  217: MappedDirection.RIGHT,
+  29460: MappedDirection.UP,
+  19: MappedDirection.UP,
+  38: MappedDirection.UP,
+  211: MappedDirection.UP,
+  203: MappedDirection.UP,
+  215: MappedDirection.UP,
+  29461: MappedDirection.DOWN,
+  20: MappedDirection.DOWN,
+  40: MappedDirection.DOWN,
+  212: MappedDirection.DOWN,
+  204: MappedDirection.DOWN,
+  216: MappedDirection.DOWN,
+  10009: MappedDirection.BACK,
+  10182: MappedDirection.EXIT,
+  ArrowLeft: MappedDirection.LEFT,
+  ArrowRight: MappedDirection.RIGHT,
+  ArrowUp: MappedDirection.UP,
+  ArrowDown: MappedDirection.DOWN,
+  Back: MappedDirection.BACK,
+  Exit: MappedDirection.EXIT,
 };

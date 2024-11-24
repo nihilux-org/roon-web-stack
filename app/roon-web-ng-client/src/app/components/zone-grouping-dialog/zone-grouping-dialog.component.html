@@ -14,7 +14,11 @@
           [color]="output.state === 'indeterminate' ? 'warn' : 'primary'"
           [id]="'zone-grouped-' + output.output_id"
           ngxSnStarter
-          [ngxSnIgnore]="index !== 0"
+          [ngxSnStarterIgnore]="index !== 0"
+          [ngxSnStarterFocusOnFirstInput]="true"
+          ngxSnElement
+          [ngxSnFocusOnFirstInput]="true"
+          [ngxSnClickOnEnter]="true"
         >
             <mat-icon fontIcon="speaker"/>{{output.display_name}}
         </mat-checkbox>
@@ -32,7 +36,11 @@
           color="primary"
           [id]="'zone-grouping-' + output.output_id"
           ngxSnStarter
-          [ngxSnIgnore]="$groupedOutputs().length > 0 || index !== 0"
+          [ngxSnStarterIgnore]="$groupedOutputs().length > 0 || index !== 0"
+          [ngxSnStarterFocusOnFirstInput]="true"
+          ngxSnElement
+          [ngxSnFocusOnFirstInput]="true"
+          [ngxSnClickOnEnter]="true"
         >
           <mat-icon fontIcon="speaker"/>{{output.display_name}}
         </mat-checkbox>

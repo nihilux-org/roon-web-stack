@@ -9,6 +9,10 @@ describe("NgxSpatialNavigableService", () => {
     service = TestBed.inject(NgxSpatialNavigableService);
   });
 
+  afterEach(() => {
+    service.ngOnDestroy();
+  });
+
   it("should be created", () => {
     expect(service).toBeTruthy();
   });

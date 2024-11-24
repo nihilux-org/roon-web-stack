@@ -51,11 +51,12 @@ export class NgxSpatialNavigableService implements OnDestroy {
   }
 
   private handleKeyDown(event: KeyboardEvent) {
-    if (!this._isActive) {
+    const { direction, substitueEvent } = isSnKeyboardEvent(event);
+    if (substitueEvent) {
+      this._document.dispatchEvent(substitueEvent);
       return;
     }
-    const direction = isSnKeyboardEvent(event);
-    if (direction) {
+    if (direction && this._isActive) {
       event.preventDefault();
       const scope = this._dialogElement ?? this._rootElement;
       if (this._focusedElement) {
@@ -90,6 +91,7 @@ export class NgxSpatialNavigableService implements OnDestroy {
     this._dialogElement?.classList.remove(containerClass);
     this._dialogElement?.removeAttribute(dataContainerPrioritizedChildrenAttribute);
     delete this._dialogElement;
+    delete this._focusedElement;
   }
 
   resetSpatialNavigation() {
@@ -111,8 +113,6 @@ export class NgxSpatialNavigableService implements OnDestroy {
   }
 
   private focus(): void {
-    if (this._focusedElement) {
-      this._focusedElement.focus();
-    }
+    this._focusedElement?.focus();
   }
 }

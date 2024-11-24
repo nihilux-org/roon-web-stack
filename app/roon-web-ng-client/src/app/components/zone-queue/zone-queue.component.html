@@ -7,7 +7,8 @@
     [itemSize]="$itemSize()"
     class="queue"
     [class.is-big-fonts]="$isBigFonts()"
-    ngxSnContainer [ngxSnIgnore]="!open"
+    ngxSnContainer
+    [ngxSnContainerIgnore]="!open"
   >
     <ol>
         <li *cdkVirtualFor="let track of $queue(); let last = last; let index = index;">
