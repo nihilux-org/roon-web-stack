@@ -9,6 +9,7 @@
     [class.is-big-fonts]="$isBigFonts()"
     ngxSnContainer
     [ngxSnContainerIgnore]="!open"
+    [ngxSnContainerRememberLastFocusedChild]="true"
   >
     <ol>
         <li *cdkVirtualFor="let track of $queue(); let last = last; let index = index;">

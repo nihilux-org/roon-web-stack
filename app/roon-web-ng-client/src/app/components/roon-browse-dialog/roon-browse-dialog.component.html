@@ -32,7 +32,7 @@
       (clickedItem)="onItemClicked($event)"
       (recordedAction)="onRecordedAction($event)" />
     @if (withIndex) {
-      <nr-alphabetical-index [class.is-big-fonts]="$isBigFont()" (clickedLetter)="onIndexClicked($event)" ngxSnContainer />
+      <nr-alphabetical-index [class.is-big-fonts]="$isBigFont()" (clickedLetter)="onIndexClicked($event)" ngxSnContainer [ngxSnContainerRememberLastFocusedChild]="true" />
     }
   }
 </mat-dialog-content>

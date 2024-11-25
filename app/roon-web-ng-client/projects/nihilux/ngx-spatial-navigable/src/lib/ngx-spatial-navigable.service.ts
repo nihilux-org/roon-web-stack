@@ -81,7 +81,9 @@ export class NgxSpatialNavigableService implements OnDestroy {
 
   dialogOpened(htmlElement: HTMLElement, autofocus: string | false) {
     this._dialogElement = htmlElement;
-    this._dialogElement.classList.add(containerClass);
+    if (!this._dialogElement.classList.contains(containerClass)) {
+      this._dialogElement.classList.add(containerClass);
+    }
     this._dialogElement.setAttribute(dataContainerPrioritizedChildrenAttribute, "true");
     delete this._focusedElement;
     if (autofocus) {

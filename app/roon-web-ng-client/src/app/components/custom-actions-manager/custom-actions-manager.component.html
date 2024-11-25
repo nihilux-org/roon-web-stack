@@ -3,8 +3,8 @@
   <mat-tab-group class="custom-actions-tabs" [selectedIndex]="$selectedTab()" animationDuration="0ms">
     <mat-tab label="Manager">
       <ng-template matTabContent>
-        <div class="custom-actions-wrapper">
-          <div class="custom-actions-container" ngxSnContainer>
+        <div class="custom-actions-wrapper" ngxSnContainer>
+          <div class="custom-actions-container">
             @for (ca of $customActions(); track ca.id; let index = $index) {
               <div class="custom-action">
                 <span class="custom-action-label">
@@ -20,7 +20,7 @@
               <span>No custom action has been defined yet</span>
             }
           </div>
-          <div ngxSnContainer>
+          <div>
             <button mat-button id="create-custom-action" (click)="createCustomAction()"><mat-icon fontIcon="playlist_add_circle" />Create a Custom Action</button>
           </div>
         </div>

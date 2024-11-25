@@ -15,6 +15,7 @@ import {
   dataContainerConsiderDistanceAttribute,
   dataContainerLastFocusChildId,
   dataContainerPrioritizedChildrenAttribute,
+  dataRememberLastFocusedChildId,
   ignoredClass,
 } from "./ngx-spatial-navigable-utils";
 
@@ -26,6 +27,9 @@ export class NgxSpatialNavigableContainerDirective implements OnInit, OnDestroy 
     transform: booleanAttribute,
   });
   readonly ngxSnContainerIgnore = input<boolean, string | boolean>(false, {
+    transform: booleanAttribute,
+  });
+  readonly ngxSnContainerRememberLastFocusedChild = input<boolean, string | boolean>(false, {
     transform: booleanAttribute,
   });
   readonly ngxSnBlockExit = input<string>("");
@@ -52,6 +56,12 @@ export class NgxSpatialNavigableContainerDirective implements OnInit, OnDestroy 
     });
     effect(() => {
       this._htmlElement.setAttribute(dataContainerLastFocusChildId, this.ngxSnFocusedChildId());
+    });
+    effect(() => {
+      this._htmlElement.setAttribute(
+        dataRememberLastFocusedChildId,
+        `${this.ngxSnContainerRememberLastFocusedChild()}`
+      );
     });
   }
 
