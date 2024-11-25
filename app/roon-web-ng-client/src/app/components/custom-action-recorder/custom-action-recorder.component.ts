@@ -12,7 +12,10 @@ import { CustomActionsManagerComponent } from "@components/custom-actions-manage
 import { RoonBrowseDialogComponent } from "@components/roon-browse-dialog/roon-browse-dialog.component";
 import { RoonApiBrowseHierarchy } from "@model";
 import { CustomActionsManagerDialogConfig, CustomActionsManagerDialogConfigBigFonts } from "@model/client";
-import { NgxSpatialNavigableContainerDirective } from "@nihilux/ngx-spatial-navigable";
+import {
+  NgxSpatialNavigableContainerDirective,
+  NgxSpatialNavigableStarterDirective,
+} from "@nihilux/ngx-spatial-navigable";
 import { DialogService } from "@services/dialog.service";
 import { SettingsService } from "@services/settings.service";
 
@@ -32,6 +35,7 @@ interface RecordableHierarchy {
     MatFabButton,
     MatIcon,
     NgxSpatialNavigableContainerDirective,
+    NgxSpatialNavigableStarterDirective,
   ],
   templateUrl: "./custom-action-recorder.component.html",
   styleUrl: "./custom-action-recorder.component.scss",

@@ -5,6 +5,7 @@ export const dataContainerPrioritizedChildrenAttribute = "data-ngx-sn-container-
 export const dataContainerConsiderDistanceAttribute = "data-ngx-sn-container-consider-distance";
 export const dataOverlapAttribute = "'data-ngx-sn-overlap-threshold'";
 export const dataContainerLastFocusChildId = "data-ngx-sn-container-last-focus-child-id";
+export const dataRememberLastFocusedChildId = "data-ngx-sn-container-remember-last-focused-child-id";
 
 const focusableSelector = "[tabindex], a, input, button";
 const containerSelector = `nav, section, .${containerClass}`;
@@ -19,6 +20,10 @@ const getParentContainer = (elem: HTMLElement): HTMLElement | null => {
     return elem.parentElement;
   }
   return getParentContainer(elem.parentElement);
+};
+
+const containerRememberChildId = (container: HTMLElement): boolean => {
+  return container.getAttribute(dataRememberLastFocusedChildId) !== "false";
 };
 
 const getFocusables = (scope: HTMLElement | null): HTMLElement[] => {
@@ -37,13 +42,15 @@ const getFocusables = (scope: HTMLElement | null): HTMLElement[] => {
 const getAllFocusables = (scope: HTMLElement): HTMLElement[] => {
   const contained = new Set<HTMLElement>();
   const containers = toArray(scope.querySelectorAll(containerSelector)).filter((container) => {
-    const inContainer = getFocusables(container);
-    if (inContainer.length > 0) {
-      inContainer.forEach((focusable) => contained.add(focusable));
-      return true;
-    } else {
-      return false;
+    const containerRemembersChildId = containerRememberChildId(container);
+    if (containerRemembersChildId) {
+      const inContainer = getFocusables(container);
+      if (inContainer.length > 0) {
+        inContainer.forEach((focusable) => contained.add(focusable));
+        return true;
+      }
     }
+    return false;
   });
   const focusables = getFocusables(scope).filter((focusable) => !contained.has(focusable));
   return [...containers, ...focusables];
@@ -252,7 +259,7 @@ export const getNextFocus = (elem: HTMLElement | null, exitDir: Direction, scope
 const findNextFocusable = (elem: HTMLElement, exitDir: Direction, scope: HTMLElement): HTMLElement | null => {
   // Get parent focus container
   const parentContainer = getParentContainer(elem);
-  if (parentContainer && elem.matches(focusableSelector)) {
+  if (parentContainer && elem.matches(focusableSelector) && containerRememberChildId(parentContainer)) {
     parentContainer.setAttribute(dataContainerLastFocusChildId, elem.id);
     getParentFocusableContainer(parentContainer)?.setAttribute(dataContainerLastFocusChildId, elem.id);
   }
@@ -281,7 +288,7 @@ const findNextFocusable = (elem: HTMLElement, exitDir: Direction, scope: HTMLEle
       if (blockedExitDirs.has(exitDir)) {
         continue;
       }
-      if (candidateContainer && !isAncestorContainer) {
+      if (candidateContainer && !isAncestorContainer && containerRememberChildId(candidateContainer)) {
         // Ignore active child behaviour when moving into a container that we
         // are already nested in
         const lastActiveChildId = candidateContainer.getAttribute(dataContainerLastFocusChildId);
@@ -292,7 +299,7 @@ const findNextFocusable = (elem: HTMLElement, exitDir: Direction, scope: HTMLEle
         return newFocus;
       }
     }
-    if (!candidateIsContainer) {
+    if (!candidateIsContainer && parentContainer && containerRememberChildId(parentContainer)) {
       getParentFocusableContainer(candidateContainer)?.setAttribute(dataContainerLastFocusChildId, candidate.id);
       candidateContainer?.setAttribute(dataContainerLastFocusChildId, candidate.id);
     }

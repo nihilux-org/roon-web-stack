@@ -2,9 +2,9 @@
 <mat-dialog-content>
   <h4>Choose a kind of content:</h4>
   <div class="hierarchies-container" ngxSnContainer>
-    @for (h of recordableHierarchies; track h.hierarchy) {
+    @for (h of recordableHierarchies; track h.hierarchy; let index = $index) {
       <div class="hierarchy">
-        <button mat-fab extended color="primary"  (click)="startRecording(h)">
+        <button mat-fab extended color="primary"  (click)="startRecording(h)" ngxSnStarter [ngxSnStarterIgnore]="index !== 0">
           <mat-icon>{{h.icon}}</mat-icon>
           {{h.label}}
         </button>

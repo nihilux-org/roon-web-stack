@@ -5,7 +5,7 @@
   <!-- ugly workaround because snyc rendering leads to a truncated scroll viewport, should be removed asap -->
   <!-- TODO: try to fix by fixing also zoneless cdk scroll? -->
   @defer (on timer(0)) {
-    <cdk-virtual-scroll-viewport [itemSize]="$itemSize()" ngxSnContainer [ngxSnFocusedChildId]="$lastFocusedItemId()">
+    <cdk-virtual-scroll-viewport [itemSize]="$itemSize()" ngxSnContainer [ngxSnFocusedChildId]="$lastFocusedItemId()" [ngxSnContainerRememberLastFocusedChild]="true">
       <ol>
         <li *cdkVirtualFor="let item of dataSource; let last = last; let index = index">
           @if (item) {
