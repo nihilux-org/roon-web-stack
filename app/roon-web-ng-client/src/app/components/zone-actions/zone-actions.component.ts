@@ -15,7 +15,6 @@ import {
   LoadAction,
   SettingsDialogConfig,
   SettingsDialogConfigBigFonts,
-  TrackDisplay,
 } from "@model/client";
 import { DialogService } from "@services/dialog.service";
 import { FullscreenService } from "@services/fullscreen.service";
@@ -30,7 +29,6 @@ import { SettingsService } from "@services/settings.service";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ZoneActionsComponent {
-  @Input({ required: true }) $trackDisplay!: Signal<TrackDisplay>;
   @Input({ required: true }) queueComponentTemplateRef!: TemplateRef<LayoutContext>;
   private readonly _dialogService: DialogService;
   private readonly _settingsService: SettingsService;
@@ -108,13 +106,12 @@ export class ZoneActionsComponent {
     if (this._$isQueueInModal()) {
       this._settingsService.saveDisplayQueueTrack(true);
       this._dialogService.open(ZoneQueueDialogComponent, {
-        restoreFocus: false,
+        autoFocus: "button.track:first-of-type",
         height: "95svh",
         maxHeight: "95svh",
         width: "95svw",
         maxWidth: "95svw",
         data: {
-          $trackDisplay: this.$trackDisplay,
           queueComponentTemplateRef: this.queueComponentTemplateRef,
         },
       });

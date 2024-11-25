@@ -9,11 +9,15 @@
     [class.is-big-fonts]="$isBigFonts()"
     ngxSnContainer
     [ngxSnContainerIgnore]="!open"
-    tabindex="0"
   >
     <ol>
         <li *cdkVirtualFor="let track of $queue(); let last = last; let index = index;">
-          <button (click)="openActionMenu(track.queue_item_id)" class="track" [id]="'queue-item-' + track.queue_item_id">
+          <button
+            (click)="openActionMenu(track.queue_item_id)"
+            class="track"
+            [id]="'queue-item-' + track.queue_item_id"
+            tabindex="0"
+          >
             @if (track.image_key !== undefined) {
               <nr-roon-image
                 [src]="track.image_key"
