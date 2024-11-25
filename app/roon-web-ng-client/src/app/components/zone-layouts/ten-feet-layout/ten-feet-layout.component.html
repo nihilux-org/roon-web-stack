@@ -17,7 +17,7 @@
         <ng-container [ngTemplateOutlet]="layout.zoneActions" [ngTemplateOutletContext]="layout.context"></ng-container>
       </div>
       <div class="settings" ngxSnContainer>
-        <nr-zone-selector class="ten-feet" withoutLabel="false" />
+        <nr-zone-selector class="ten-feet" withoutLabel="false" idSuffix="ten-feet" />
         <div matRipple>
           <button mat-icon-button (click)="onOpenSettingsDialog()"><mat-icon fontIcon="settings" /></button>
         </div>
