@@ -51,6 +51,10 @@
           margin-bottom: var(--queue-item-track-album-margin);
         }
       }
+      .no-track {
+        display: inline-block;
+        white-space: break-spaces;
+      }
     }
     &.is-big-fonts {
       --queue-item-height: 160px;
