@@ -85,7 +85,7 @@ export class RoonBrowseListComponent implements OnChanges, AfterViewChecked {
   @Input({ required: true, transform: booleanAttribute }) isRecording!: boolean;
   @Output() clickedItem = new EventEmitter<NavigationEvent>();
   @Output() recordedAction = new EventEmitter<RecordedAction>();
-  @ViewChild(CdkVirtualScrollViewport) _virtualScroll!: CdkVirtualScrollViewport;
+  @ViewChild(CdkVirtualScrollViewport) _virtualScroll?: CdkVirtualScrollViewport;
   @ViewChildren(MatMenuTrigger) _menuTriggers!: QueryList<MatMenuTrigger>;
   dataSource?: RoonListDataSource | Item[];
   readonly $imageSize: Signal<number>;
@@ -139,7 +139,7 @@ export class RoonBrowseListComponent implements OnChanges, AfterViewChecked {
   }
 
   ngAfterViewChecked() {
-    if (this.scrollIndex > 1) {
+    if (this.scrollIndex > 1 && this._virtualScroll) {
       this._virtualScroll.scrollToIndex(this.scrollIndex - 1, "instant");
       const scrollSub = this._virtualScroll.scrolledIndexChange.subscribe((scrolledIndex) => {
         if (scrolledIndex === this.scrollIndex - 1) {
