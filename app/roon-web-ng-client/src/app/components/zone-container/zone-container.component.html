@@ -1,5 +1,5 @@
 <ng-template #zoneActions let-layoutClass="class">
-  <nr-zone-actions [$trackDisplay]="$trackDisplay" [queueComponentTemplateRef]="zoneQueue" [class]="layoutClass" class="zone-actions" ngxSnContainer />
+  <nr-zone-actions [queueComponentTemplateRef]="zoneQueue" [class]="layoutClass" class="zone-actions" ngxSnContainer />
 </ng-template>
 <ng-template #zoneCommands let-layoutClass="class">
   <nr-zone-commands [$zoneCommands]="$zoneCommands" [class]="layoutClass" class="zone-commands" [zoneVolume]="$layout() !== DisplayMode.TEN_FEET ? zoneVolume : undefined" ngxSnContainer />
