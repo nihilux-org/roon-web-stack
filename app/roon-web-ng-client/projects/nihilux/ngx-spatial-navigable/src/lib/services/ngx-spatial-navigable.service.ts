@@ -1,12 +1,7 @@
 import { DOCUMENT } from "@angular/common";
 import { inject, Injectable, OnDestroy } from "@angular/core";
-import {
-  containerClass,
-  dataContainerPrioritizedChildrenAttribute,
-  Direction,
-  getNextFocus,
-  isSnKeyboardEvent,
-} from "./ngx-spatial-navigable-utils";
+import { containerClass, dataContainerPrioritizedChildrenAttribute } from "../model";
+import { Direction, getNextFocus, isSnKeyboardEvent } from "./ngx-spatial-navigable.utils";
 
 @Injectable({
   providedIn: "root",
