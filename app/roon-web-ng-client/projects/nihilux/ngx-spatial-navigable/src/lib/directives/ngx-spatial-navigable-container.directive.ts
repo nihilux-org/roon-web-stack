@@ -17,7 +17,7 @@ import {
   dataContainerPrioritizedChildrenAttribute,
   dataRememberLastFocusedChildId,
   ignoredClass,
-} from "./ngx-spatial-navigable-utils";
+} from "../model";
 
 @Directive({
   selector: "[ngxSnContainer]",

@@ -1,5 +1,5 @@
 import { booleanAttribute, Directive, effect, ElementRef, inject, input, OnDestroy, Renderer2 } from "@angular/core";
-import { ignoredClass } from "./ngx-spatial-navigable-utils";
+import { ignoredClass } from "../model";
 
 @Directive({
   selector: "[ngxSnElement]",
