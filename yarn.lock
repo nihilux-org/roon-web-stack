@@ -3385,7 +3385,7 @@ __metadata:
     globals: "npm:15.12.0"
     jest: "npm:29.7.0"
     jest-junit: "npm:16.0.0"
-    nanoid: "npm:3.3.7"
+    nanoid: "npm:3.3.8"
     node-roon-api: "github:OonihiloO/node-roon-api#fix/add-node-22-support"
     node-roon-api-browse: "github:roonlabs/node-roon-api-browse"
     node-roon-api-image: "github:roonlabs/node-roon-api-image"
@@ -3516,7 +3516,7 @@ __metadata:
     globals: "npm:15.12.0"
     jest: "npm:29.7.0"
     jsdom-testing-mocks: "npm:1.13.1"
-    nanoid: "npm:3.3.7"
+    nanoid: "npm:3.3.8"
     ng-mocks: "npm:14.13.1"
     ng-packagr: "npm:19.0.1"
     ngx-device-detector: "npm:8.0.0"
@@ -10910,7 +10910,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nanoid@npm:3.3.7, nanoid@npm:^3.3.7":
+"nanoid@npm:3.3.8":
+  version: 3.3.8
+  resolution: "nanoid@npm:3.3.8"
+  bin:
+    nanoid: bin/nanoid.cjs
+  checksum: 10c0/4b1bb29f6cfebf3be3bc4ad1f1296fb0a10a3043a79f34fbffe75d1621b4318319211cd420549459018ea3592f0d2f159247a6f874911d6d26eaaadda2478120
+  languageName: node
+  linkType: hard
+
+"nanoid@npm:^3.3.7":
   version: 3.3.7
   resolution: "nanoid@npm:3.3.7"
   bin:
