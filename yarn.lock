@@ -437,9 +437,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@angular/cdk@npm:19.0.0":
-  version: 19.0.0
-  resolution: "@angular/cdk@npm:19.0.0"
+"@angular/cdk@npm:19.0.1":
+  version: 19.0.1
+  resolution: "@angular/cdk@npm:19.0.1"
   dependencies:
     parse5: "npm:^7.1.2"
     tslib: "npm:^2.3.0"
@@ -450,7 +450,7 @@ __metadata:
   dependenciesMeta:
     parse5:
       optional: true
-  checksum: 10c0/542659c4fd19a08514b26c4ab5428ce1efcae6921243eb13d6bd27ed2f3a63466fc1625e087e9509da381cb9aa0ffded1ecd102ab9c84ad689916f4b475bbe44
+  checksum: 10c0/d021efced1022ba5e5a1df30f9a2c4f0dd9742bb85b5b6b37ca49963d584b6dd9f0bf142b7d895295ac5c400d2df062524af7e21dad740f33179552bd56f6ccb
   languageName: node
   linkType: hard
 
@@ -561,20 +561,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@angular/material@npm:19.0.0":
-  version: 19.0.0
-  resolution: "@angular/material@npm:19.0.0"
+"@angular/material@npm:19.0.1":
+  version: 19.0.1
+  resolution: "@angular/material@npm:19.0.1"
   dependencies:
     tslib: "npm:^2.3.0"
   peerDependencies:
     "@angular/animations": ^19.0.0 || ^20.0.0
-    "@angular/cdk": 19.0.0
+    "@angular/cdk": 19.0.1
     "@angular/common": ^19.0.0 || ^20.0.0
     "@angular/core": ^19.0.0 || ^20.0.0
     "@angular/forms": ^19.0.0 || ^20.0.0
     "@angular/platform-browser": ^19.0.0 || ^20.0.0
     rxjs: ^6.5.3 || ^7.4.0
-  checksum: 10c0/dd8ad1a2fac0b9437dd2f22e04c5c3c1b9aeaff936cc10c4044489063e4a83a8eced8ddcd42654995a8d78182348e1431d227a667151fde8fc06a208d3728115
+  checksum: 10c0/29350dc7de231316d4fa1ac65a5fcbf86722dfdb95ae9e5d6f5bdcc0e8202d2699fa02b3c6f03d1899686af1a01fbf9b017a8a0fc0b4b085cba327d40c101196
   languageName: node
   linkType: hard
 
@@ -3484,14 +3484,14 @@ __metadata:
     "@angular-eslint/schematics": "npm:18.4.2"
     "@angular-eslint/template-parser": "npm:18.4.2"
     "@angular/animations": "npm:19.0.1"
-    "@angular/cdk": "npm:19.0.0"
+    "@angular/cdk": "npm:19.0.1"
     "@angular/cli": "npm:19.0.2"
     "@angular/common": "npm:19.0.1"
     "@angular/compiler": "npm:19.0.1"
     "@angular/compiler-cli": "npm:19.0.1"
     "@angular/core": "npm:19.0.1"
     "@angular/forms": "npm:19.0.1"
-    "@angular/material": "npm:19.0.0"
+    "@angular/material": "npm:19.0.1"
     "@angular/platform-browser": "npm:19.0.1"
     "@angular/platform-browser-dynamic": "npm:19.0.1"
     "@eslint/compat": "npm:1.2.3"
