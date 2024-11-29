@@ -1,13 +1,3 @@
-import {
-  containerClass,
-  dataBlockDirectionAttribute,
-  dataContainerConsiderDistanceAttribute,
-  dataContainerLastFocusChildId,
-  dataContainerPrioritizedChildrenAttribute,
-  dataOverlapAttribute,
-  dataRememberLastFocusedChildId,
-  ignoredClass,
-} from "../model";
 /**
  * LRUD: Spatial Edition
  *
@@ -40,6 +30,17 @@ import {
  * copyright of the original file, published under Apache 2.0 license and belonging to the BBC (🤷).
  * Please contact the administrator of this repo for any claims about the copyright around this file.
  */
+import {
+  containerClass,
+  dataBlockDirectionAttribute,
+  dataContainerConsiderDistanceAttribute,
+  dataContainerLastFocusChildId,
+  dataContainerPrioritizedChildrenAttribute,
+  dataOverlapAttribute,
+  dataRememberLastFocusedChildId,
+  ignoredClass,
+} from "../model";
+
 const focusableSelector = "[tabindex], a, input, button";
 const containerSelector = `nav, section, .${containerClass}`;
 const focusableContainerSelector = `[${dataContainerConsiderDistanceAttribute}]`;
