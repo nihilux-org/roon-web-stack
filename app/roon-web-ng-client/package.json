@@ -43,7 +43,7 @@
     "@eslint/js": "9.15.0",
     "@nihilux/roon-web-model": "workspace:*",
     "@types/jest": "29.5.14",
-    "@types/node": "22.10.0",
+    "@types/node": "22.10.1",
     "@typescript-eslint/eslint-plugin": "8.16.0",
     "@typescript-eslint/parser": "8.16.0",
     "eslint": "9.15.0",
