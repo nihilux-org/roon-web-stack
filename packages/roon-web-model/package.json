@@ -1,6 +1,6 @@
 {
   "name": "@nihilux/roon-web-model",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "private": true,
   "types": "src/index.d.ts",
   "license": "MIT",

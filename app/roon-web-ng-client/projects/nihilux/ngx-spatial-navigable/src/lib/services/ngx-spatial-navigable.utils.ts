@@ -8,7 +8,38 @@ import {
   dataRememberLastFocusedChildId,
   ignoredClass,
 } from "../model";
-
+/**
+ * LRUD: Spatial Edition
+ *
+ *  @@@@@@@@@@@@@@@@@@@@@@   @@@@@@@@@@@@@@@@@@@@@@   @@@@@@@@@@@@@@@@@@@@@@
+ *  @@@@@@      '@@@@@@@@@   @@@@@@      '@@@@@@@@@   @@@@@@@@      '@@@@@@@
+ *  @@@@@@  @@.   @@@@@@@@   @@@@@@  @@.    @@@@@@@   @@@@@     @@@@.   @@@@
+ *  @@@@@@  @@@@  @@@@@@@@   @@@@@@  @@@@   @@@@@@@   @@@@   @@@@@@@@@@@@@@@
+ *  @@@@@@        @@@@@@@@   @@@@@@        @@@@@@@@   @@@   @@@@@@@@@@@@@@@@
+ *  @@@@@@  @@@@@.  @@@@@@   @@@@@@  @@@@@.  @@@@@@   @@@   @@@@@@@@@@@@@@@@
+ *  @@@@@@  @@@@@   @@@@@@   @@@@@@  @@@@@   @@@@@@   @@@@    @@@@@@@@/ @@@@
+ *  @@@@@@        /@@@@@@@   @@@@@@        /@@@@@@@   @@@@@@\,         @@@@@
+ *  @@@@@@@@@@@@@@@@@@@@@@   @@@@@@@@@@@@@@@@@@@@@@   @@@@@@@@@@@@@@@@@@@@@@
+ *
+ * Copyright (C) 2023 BBC.
+ *
+ * Modified by nihilux 2024
+ *
+ * Disclaimer: the code in this file is a Typescript port of the code coming from [lrud.js](https://github.com/bbc/lrud-spatial/blob/master/lib/lrud.js).
+ * On top of the Typescript conversion, the code has been modified to meet the behavior expected in this project.
+ * Here is a non-exhaustive list of the changes done in the code, on top of the conversion to Typescript:
+ *  - the polyfill for the `matches` method has been removed, therefore all the call to `matches` are done directly on the `Element` method
+ *  - the behavior to save its last focused child for a container is now dependent of an attribute on this container, otherwise the last focused child is not saved
+ *  - when focusables are fetched, if a container is found and is configured to remember the last focused child, its children are not returned.
+ *  - the attribute names and the classe names used have been modified
+ *  - the methods `isSnKeyboardEvent` and `eventShouldBeIgnored` are unique to this copy
+ * Still the logic and most of the code (especially top compute distance between elements) is a copy from the original code with addition of Typescript typings.
+ * The lack of configuration and the implication to request change in code used in an organisation of the size of the BBC made the choice to copy and cite
+ * more meaningful.
+ * Despite the modifications done, nihilux is not claiming any copyright on the code contained in this file, therefore, this file should be considered under the
+ * copyright of the original file, published under Apache 2.0 license and belonging to the BBC (🤷).
+ * Please contact the administrator of this repo for any claims about the copyright around this file.
+ */
 const focusableSelector = "[tabindex], a, input, button";
 const containerSelector = `nav, section, .${containerClass}`;
 const focusableContainerSelector = `[${dataContainerConsiderDistanceAttribute}]`;

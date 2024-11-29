@@ -2,6 +2,10 @@
 
 This library was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.2.0.
 
+This library reuse code and logic from [lrud.js](https://github.com/bbc/lrud-spatial/blob/master/lib/lrud.js).
+See [ngx-spatial-navigable.utils.ts](./src/lib/services/ngx-spatial-navigable.utils.ts) for more precision.
+The file [ngx-spatial-navigable.utils.ts](./src/lib/services/ngx-spatial-navigable.utils.ts) is published under the original license of [lrud.js](https://github.com/bbc/lrud-spatial/blob/master/lib/lrud.js) and should be considered as copyright of its original author.
+
 ## Code scaffolding
 
 Run `ng generate component component-name --project ngx-spatial-navigable` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module --project ngx-spatial-navigable`.
