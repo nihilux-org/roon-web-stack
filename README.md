@@ -183,6 +183,9 @@ It's stated everywhere it makes sens, and this is one of these places.
 
 See the [README.md](app/roon-web-api/src/roon-kit/README.md) in the corresponding source folder for more details (and here for the [model part](packages/roon-web-model/src/roon-kit/README.md)).
 
+This `monorepo` also includes code copied and adapted from [@bbc/lrud-spatial](https://github.com/bbc/lrud-spatial) in the `lib` `ngx-spatial-navigable`. More precisely, the code in [ngx-spatial-navigable.utils.ts](./app/roon-web-ng-client/projects/nihilux/ngx-spatial-navigable/src/lib/services/ngx-spatial-navigable.utils.ts) is mostly a copy and a `Typescript` conversion of the code in [lrud.js](https://github.com/bbc/lrud-spatial/blob/master/lib/lrud.js) in the [@bbc/lrud-spatial](https://github.com/bbc/lrud-spatial) project. Therefore, the file  [ngx-spatial-navigable.utils.ts](./app/roon-web-ng-client/projects/nihilux/ngx-spatial-navigable/src/lib/services/ngx-spatial-navigable.utils.ts) is published under the original license of the file [lrud.js](https://github.com/bbc/lrud-spatial/blob/master/lib/lrud.js) and should be considered as copyrighted by its original author.
+See the header and the `disclaimer` in the header of this file for more details.
+
 ## Credits
 
 This app would not have been possible without the vitality of open source projects, so thanks to all of them.
@@ -193,6 +196,7 @@ Sorry if I forgot anyone, please don't argue on the order.
 - [roon](https://roon.app) for [node roon api](https://github.com/RoonLabs/node-roon-api)
 - [Angular](https://github.com/angular)
 - [Angular Material](https://github.com/angular/components)
+- [@bbc/lrud-spatial](https://github.com/bbc/lrud-spatial)
 - [Fastify](https://github.com/fastify/fastify)
 - [Fastify SSE v2](https://github.com/mpetrunic/fastify-sse-v2)
 - [Fastify static](https://github.com/fastify/fastify-static)
