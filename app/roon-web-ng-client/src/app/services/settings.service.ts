@@ -49,6 +49,7 @@ export class SettingsService implements OnDestroy {
   private static readonly DISPLAY_QUEUE_TRACK_KEY = "nr.DISPLAY_QUEUE_TRACK";
   private static readonly DISPLAY_MODE_KEY = "nr.DISPLAY_MODE";
   private static readonly ACTIONS_KEY = "nr.ACTIONS";
+  private static readonly ROON_CLIENT_ID = "nr.ROON_CLIENT_ID";
   private readonly _breakpointObserver: BreakpointObserver;
   private readonly _customActionsService: CustomActionsService;
   private readonly _renderer: Renderer2;
@@ -257,6 +258,14 @@ export class SettingsService implements OnDestroy {
 
   availableActions(): Signal<Action[]> {
     return this._$availableActions;
+  }
+
+  roonClientId(): string | undefined {
+    return localStorage.getItem(SettingsService.ROON_CLIENT_ID) ?? undefined;
+  }
+
+  saveRoonClientId(roonClientId: string) {
+    localStorage.setItem(SettingsService.ROON_CLIENT_ID, roonClientId);
   }
 
   ngOnDestroy() {

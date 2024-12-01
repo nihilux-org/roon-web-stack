@@ -2,8 +2,8 @@ import {
   ApiState,
   ClientRoonApiBrowseLoadOptions,
   ClientRoonApiBrowseOptions,
-  ClientState,
   ClientStateListener,
+  ClientStatus,
   Command,
   CommandState,
   CommandStateListener,
@@ -69,7 +69,7 @@ class InternalRoonWebClient implements RoonWebClient {
     this._mustRefresh = false;
   }
 
-  start: () => Promise<void> = async () => {
+  start: (clientId?: string) => Promise<void> = async (clientId) => {
     if (this._isClosed) {
       this._abortController = new AbortController();
       const versionUrl = new URL("/api/version", this._apiHost);
@@ -89,8 +89,8 @@ class InternalRoonWebClient implements RoonWebClient {
       } else {
         throw new Error("unable to validate roon-web-stack version");
       }
-      const previousClientId = this._clientPath?.substring(5);
-      const registerPath = "/api/register" + (previousClientId ? `/${previousClientId}` : "");
+      const roonClientId = this.currentClientId() ?? clientId;
+      const registerPath = "/api/register" + (roonClientId ? `/${roonClientId}` : "");
       const registerUrl = new URL(registerPath, this._apiHost);
       const registerReq = new Request(registerUrl, {
         method: "POST",
@@ -109,7 +109,7 @@ class InternalRoonWebClient implements RoonWebClient {
           this.connectEventSource();
           this._isClosed = false;
           this._mustRefresh = false;
-          this.onClientStateMessage("started");
+          this.onClientStateMessage("started", this.currentClientId());
           return;
         }
       }
@@ -123,7 +123,7 @@ class InternalRoonWebClient implements RoonWebClient {
     this._eventSource?.close();
     delete this._eventSource;
     this._abortController?.abort();
-    return this.start();
+    await this.start();
   };
 
   refresh: () => Promise<void> = async () => {
@@ -496,9 +496,12 @@ class InternalRoonWebClient implements RoonWebClient {
     }
   };
 
-  private onClientStateMessage = (clientState: ClientState): void => {
+  private onClientStateMessage = (status: ClientStatus, roonClientId?: string): void => {
     for (const clientStateListener of this._clientStateListeners) {
-      clientStateListener(clientState);
+      clientStateListener({
+        status,
+        roonClientId,
+      });
     }
   };
 
@@ -535,6 +538,10 @@ class InternalRoonWebClient implements RoonWebClient {
     } else {
       return response;
     }
+  };
+
+  private currentClientId = (): string | undefined => {
+    return this._clientPath?.substring(5);
   };
 }
 

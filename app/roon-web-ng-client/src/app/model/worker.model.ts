@@ -31,6 +31,7 @@ export interface WorkerClientStartAction {
   action: "start-client";
   url: string;
   isDesktop: boolean;
+  roonClientId?: string;
 }
 
 export interface WorkerClientRefreshAction {

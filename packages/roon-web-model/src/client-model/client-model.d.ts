@@ -10,7 +10,7 @@ import {
 } from "../roon-kit";
 
 export interface RoonWebClient {
-  start: () => Promise<void>;
+  start: (roonClientId?: string) => Promise<void>;
   stop: () => Promise<void>;
   restart: () => Promise<void>;
   refresh: () => Promise<void>;
@@ -38,7 +38,12 @@ export interface RoonWebClientFactory {
   build: (apiUrl: URL) => RoonWebClient;
 }
 
-export type ClientState = "started" | "outdated" | "not-started" | "to-refresh";
+export type ClientStatus = "started" | "outdated" | "not-started" | "to-refresh";
+
+export interface ClientState {
+  status: ClientStatus;
+  roonClientId?: string;
+}
 
 export type ClientRoonApiBrowseOptions = Omit<RoonApiBrowseOptions, "multi_session_key">;
 

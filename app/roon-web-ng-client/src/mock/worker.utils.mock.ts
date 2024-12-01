@@ -10,7 +10,10 @@ export const roonWorkerMock = {
       onMessageListener({
         data: {
           event: "clientState",
-          data: "started",
+          data: {
+            status: "started",
+            roonClientId: "roon_client_id",
+          },
         },
       } as MessageEvent<RawWorkerEvent>);
     } else if (m.event === "worker-api" && m.data.type === "version") {

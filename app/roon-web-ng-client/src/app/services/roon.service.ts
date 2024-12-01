@@ -45,6 +45,7 @@ import {
   WorkerClientActionMessage,
 } from "@model/client";
 import { CustomActionsService } from "@services/custom-actions.service";
+import { SettingsService } from "@services/settings.service";
 import { VisibilityService } from "@services/visibility.service";
 import { buildRoonWorker } from "@services/worker.utils";
 
@@ -57,6 +58,7 @@ export class RoonService {
   private readonly _window: Window;
   private readonly _deviceDetectorService: DeviceDetectorService;
   private readonly _customActionsService: CustomActionsService;
+  private readonly _settingsService: SettingsService;
   private readonly _visibilityService: VisibilityService;
   private readonly _$roonState: WritableSignal<ApiState>;
   private readonly _$isGrouping: WritableSignal<boolean>;
@@ -87,6 +89,7 @@ export class RoonService {
     this._window = document.defaultView;
     this._deviceDetectorService = inject(DeviceDetectorService);
     this._customActionsService = inject(CustomActionsService);
+    this._settingsService = inject(SettingsService);
     this._visibilityService = inject(VisibilityService);
     this._$roonState = signal(
       {
@@ -125,12 +128,14 @@ export class RoonService {
       this.dispatchWorkerEvent(m);
     };
     const isDesktop = this._deviceDetectorService.isDesktop() && !this._deviceDetectorService.isTablet();
+    const roonClientId = this._settingsService.roonClientId();
     const startMessage: WorkerClientActionMessage = {
       event: "worker-client",
       data: {
         action: "start-client",
         url: this._window.location.href,
         isDesktop,
+        roonClientId,
       },
     };
     this._worker.postMessage(startMessage);
@@ -514,16 +519,18 @@ export class RoonService {
   }
 
   private onClientState(clientState: ClientState) {
-    switch (clientState) {
+    switch (clientState.status) {
       case "outdated":
         this._window.location.reload();
         break;
       case "started":
       case "not-started":
         if (this._startResolve) {
-          if (clientState === "not-started") {
+          if (clientState.status === "not-started") {
             // eslint-disable-next-line no-console
             console.error("startup failed, is roon-web-stack-extension enabled in roon settings?");
+          } else if (clientState.roonClientId) {
+            this._settingsService.saveRoonClientId(clientState.roonClientId);
           }
           this._isStarted = true;
           this._startResolve();
