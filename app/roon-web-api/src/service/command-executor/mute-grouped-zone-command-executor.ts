@@ -1,6 +1,7 @@
 import { CommandExecutor, FoundZone, MuteGroupedZoneCommand, MuteType, RoonMuteHow } from "@model";
+import { awaitAll } from "./command-executor-utils";
 
-export const executor: CommandExecutor<MuteGroupedZoneCommand, FoundZone> = (command, foundZone) => {
+export const executor: CommandExecutor<MuteGroupedZoneCommand, FoundZone> = async (command, foundZone) => {
   const { zone, server } = foundZone;
   const roonPromises: Promise<void>[] = [];
   for (const o of zone.outputs) {
@@ -20,5 +21,5 @@ export const executor: CommandExecutor<MuteGroupedZoneCommand, FoundZone> = (com
       roonPromises.push(server.services.RoonApiTransport.mute(o, muteHow));
     }
   }
-  return Promise.all(roonPromises).then(() => {});
+  await awaitAll(roonPromises);
 };

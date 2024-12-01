@@ -37,6 +37,12 @@ export const enum CommandType {
   SHARED_CONFIG = "SHARED_CONFIG",
 }
 
+export const enum InternalCommandType {
+  // queue bot actions
+  STOP_NEXT = "STOP_NEXT",
+  STANDBY_NEXT = "STANDBY_NEXT",
+}
+
 export interface PlayCommand {
   type: CommandType.PLAY;
   data: {
@@ -157,6 +163,24 @@ export interface SharedConfigCommand {
   };
 }
 
+export interface StopNextCommand {
+  type: InternalCommandType.STOP_NEXT;
+  data: {
+    zone_id: string;
+  };
+}
+
+export interface StandbyNextCommand {
+  type: InternalCommandType.STANDBY_NEXT;
+  data: {
+    zone_id: string;
+  };
+}
+
+export type QueueBotCommand = StandbyNextCommand | StopNextCommand;
+
+export type InternalCommand = QueueBotCommand;
+
 export type Command =
   | ControlCommand
   | VolumeCommand
@@ -178,6 +202,7 @@ export type ControlCommand =
 
 export interface CommandDispatcher {
   dispatch: (command: Command, notificationChannel: Subject<CommandState>) => string;
+  dispatchInternal: (internalCommand: InternalCommand) => void;
 }
 
 export interface FoundZone {
@@ -188,6 +213,11 @@ export interface FoundZone {
 export type ExecutionContext = FoundZone | RoonServer;
 
 export type CommandExecutor<T extends Command, U extends ExecutionContext> = (
+  command: T,
+  executionContext: U
+) => Promise<void>;
+
+export type InternalCommandExecutor<T extends InternalCommand, U extends ExecutionContext> = (
   command: T,
   executionContext: U
 ) => Promise<void>;

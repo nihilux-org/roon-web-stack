@@ -5,6 +5,7 @@ import { groupCommandExecutorMock } from "./command-executor/group-command-execu
 import { muteCommandExecutorMock } from "./command-executor/mute-command-executor.mock";
 import { muteGroupedZoneCommandExecutorMock } from "./command-executor/mute-grouped-zone-command-executor.mock";
 import { playFromHereCommandExecutorMock } from "./command-executor/play-from-here-command-executor.mock";
+import { queueBotInternalCommandExecutorMock } from "./command-executor/queue-bot-internal-command-executor.mock";
 import { sharedConfigCommandExecutor } from "./command-executor/shared-config-command-executor.mock";
 import { transferZoneCommandExecutorMock } from "./command-executor/transfer-zone-command-executor.mock";
 import { volumeCommandExecutorMock } from "./command-executor/volume-command-executor.mock";
@@ -17,11 +18,14 @@ import {
   CommandState,
   CommandType,
   GroupCommand,
+  InternalCommand,
+  InternalCommandType,
   MuteCommand,
   MuteGroupedZoneCommand,
   MuteType,
   Output,
   PlayFromHereCommand,
+  QueueBotCommand,
   RoonServer,
   SharedConfigCommand,
   TransferZoneCommand,
@@ -383,6 +387,48 @@ describe("command-dispatcher.ts test suite", () => {
       expect(sharedConfigCommandExecutor).toHaveBeenNthCalledWith(index + 1, command, server);
     });
   });
+
+  it("command-dispatcher#dispatchInternal should log an error without calling internalExecutor if associated zone is not found", async () => {
+    zone_by_zone_id.mockImplementation(() => null);
+    for (const internalCommand of internalCommands) {
+      commandDispatcher.dispatchInternal(internalCommand);
+    }
+    // ugly delay to let the underlying promises resolve
+    void (await new Promise((resolve) => {
+      setTimeout(resolve, 25);
+    }));
+    expect(queueBotInternalCommandExecutorMock).not.toHaveBeenCalled();
+    expect(loggerMock.error).toHaveBeenCalledTimes(internalCommands.length);
+    internalCommands.forEach((_, index) => {
+      expect(loggerMock.error).toHaveBeenNthCalledWith(
+        index + 1,
+        new Error("'zone_id' is not a known zone_id"),
+        "error while dispatching internal command '%s'",
+        JSON.stringify(internalCommands[index])
+      );
+    });
+  });
+
+  it("command-dispatcher#dispatchInternal should call queue-bot-internal-command-executor for QueueBotCommand", async () => {
+    const queueBotCommands: QueueBotCommand[] = internalCommands.filter(
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      (ic) => ic.type === InternalCommandType.STOP_NEXT || ic.type === InternalCommandType.STANDBY_NEXT
+    );
+    for (const queueBotCommand of queueBotCommands) {
+      commandDispatcher.dispatchInternal(queueBotCommand);
+    }
+    // ugly delay to let the underlying promises resolve
+    void (await new Promise((resolve) => {
+      setTimeout(resolve, 25);
+    }));
+    expect(queueBotInternalCommandExecutorMock).toHaveBeenCalledTimes(queueBotCommands.length);
+    queueBotCommands.forEach((ic, index) => {
+      expect(queueBotInternalCommandExecutorMock).toHaveBeenNthCalledWith(index + 1, ic, {
+        server,
+        zone,
+      });
+    });
+  });
 });
 
 const output_id = "output_id";
@@ -605,6 +651,21 @@ const commands: Command[] = [
       sharedConfigUpdate: {
         customActions: [],
       },
+    },
+  },
+];
+
+const internalCommands: InternalCommand[] = [
+  {
+    type: InternalCommandType.STANDBY_NEXT,
+    data: {
+      zone_id,
+    },
+  },
+  {
+    type: InternalCommandType.STOP_NEXT,
+    data: {
+      zone_id,
     },
   },
 ];
