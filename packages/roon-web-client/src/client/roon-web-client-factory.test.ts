@@ -166,9 +166,37 @@ describe("roon-web-client-factory.ts test suite", () => {
       expect(eventSourceMock?.getEventListener("zone")).not.toBeUndefined();
       expect(eventSourceMock?.getEventListener("queue")).not.toBeUndefined();
       expect(publishedClientStates).toHaveLength(1);
-      expect(publishedClientStates).toEqual(["started"]);
+      expect(publishedClientStates).toEqual([
+        {
+          status: "started",
+          roonClientId: "client_id",
+        },
+      ]);
     }
   );
+
+  it("RoonWebClient#start should use provided roonClientId, if present, during call to '/api/register'", async () => {
+    fetchMock.once(mockVersionGet).once(mockRegisterPost);
+    const client = roonWebClientFactory.build(API_URL);
+    client.onClientState(clientStateListener);
+    await client.start(other_client_id);
+    expect(fetchMock.mock.calls).toHaveLength(2);
+    const registerUrl = new URL("/api/register/" + other_client_id, API_URL);
+    const registerRequest = fetchMock.mock.calls[1][0] as Request;
+    expect(registerRequest.url).toEqual(registerUrl.toString());
+    expect(eventSourceMocks.size).toEqual(1);
+    const eventsUrl = new URL(other_client_path + "/events", API_URL);
+    expect(eventSourceMocks.has(eventsUrl.toString())).toBe(true);
+    expect(eventSourceMockConstructor).toHaveBeenCalledTimes(1);
+    expect(eventSourceMockConstructor).toHaveBeenCalledWith(eventsUrl);
+    expect(publishedClientStates).toHaveLength(1);
+    expect(publishedClientStates).toEqual([
+      {
+        status: "started",
+        roonClientId: other_client_id,
+      },
+    ]);
+  });
 
   it("RoonWebClient#start should return a rejected Promise without calling POST '/api/register' if any error occurred during the call of GET '/api/version'", () => {
     const error = new Error("network error");
@@ -1740,7 +1768,15 @@ describe("roon-web-client-factory.ts test suite", () => {
         .once(mockRegisterPost);
       client.onClientState(clientStateListener);
       await client.restart();
-      expect(publishedClientStates).toEqual(["outdated", "started"]);
+      expect(publishedClientStates).toEqual([
+        {
+          status: "outdated",
+        },
+        {
+          status: "started",
+          roonClientId: "client_id",
+        },
+      ]);
     }
   );
 
@@ -1835,6 +1871,8 @@ describe("roon-web-client-factory.ts test suite", () => {
 });
 
 const client_path = "/api/client_id";
+const other_client_id = "other_client_id";
+const other_client_path = "/api/other_client_id";
 const zone_id = "zone_id";
 const EVENTS_URL = new URL(`${client_path}/events`, API_URL);
 const COMMAND: Command = {
@@ -2059,9 +2097,10 @@ const mockVersionGet: MockResponseInitFunction = (req: Request) => {
 
 const mockRegisterPost: MockResponseInitFunction = (req: Request) => {
   if (req.method === "POST" && req.url.startsWith(new URL("/api/register", API_URL).toString())) {
+    const Location = req.url.indexOf(other_client_id) > -1 ? other_client_path : client_path;
     return Promise.resolve({
       headers: {
-        Location: client_path,
+        Location,
       },
       status: 201,
     });

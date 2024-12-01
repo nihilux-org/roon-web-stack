@@ -39,7 +39,7 @@ addEventListener("message", (m: MessageEvent<WorkerActionMessage>) => {
 const onClientActionMessage = (clientAction: WorkerClientAction): void => {
   switch (clientAction.action) {
     case "start-client":
-      startClient(clientAction.url, clientAction.isDesktop);
+      startClient(clientAction.url, clientAction.isDesktop, clientAction.roonClientId);
       break;
     case "refresh-client":
       refreshClient();
@@ -50,7 +50,7 @@ const onClientActionMessage = (clientAction: WorkerClientAction): void => {
   }
 };
 
-const startClient = (url: string, isDesktop: boolean): void => {
+const startClient = (url: string, isDesktop: boolean, roonClientId?: string): void => {
   _isDesktop = isDesktop;
   _roonClient = roonWebClientFactory.build(new URL(url));
   _roonClient.onClientState((clientState) => {
@@ -96,7 +96,7 @@ const startClient = (url: string, isDesktop: boolean): void => {
     postMessage(message);
   });
   void _roonClient
-    .start()
+    .start(roonClientId)
     .then(() => {
       startHealthCheck();
     })
@@ -105,7 +105,9 @@ const startClient = (url: string, isDesktop: boolean): void => {
       console.error("error during RoonClient start", err);
       const message: ClientStateWorkerEvent = {
         event: "clientState",
-        data: "not-started",
+        data: {
+          status: "not-started",
+        },
       };
       postMessage(message);
     });
