@@ -10,6 +10,9 @@ import {
   CommandType,
   ExecutionContext,
   FoundZone,
+  InternalCommand,
+  InternalCommandExecutor,
+  InternalCommandType,
   RoonServer,
 } from "@model";
 import { executor as controlExecutor } from "./command-executor/control-command-executor";
@@ -17,6 +20,7 @@ import { executor as groupExecutor } from "./command-executor/group-command-exec
 import { executor as muteExecutor } from "./command-executor/mute-command-executor";
 import { executor as muteGroupedZoneExecutor } from "./command-executor/mute-grouped-zone-command-executor";
 import { executor as playFromHereExecutor } from "./command-executor/play-from-here-command-executor";
+import { internalExecutor as queueBotCommandExecutor } from "./command-executor/queue-bot-internal-command-executor";
 import { executor as sharedConfigExecutor } from "./command-executor/shared-config-command-executor";
 import { executor as transferZoneExecutor } from "./command-executor/transfer-zone-command-executor";
 import { executor as volumeExecutor } from "./command-executor/volume-command-executor";
@@ -56,6 +60,7 @@ const dispatch = (command: Command, controlChannel: Subject<CommandState>): stri
       break;
     case CommandType.SHARED_CONFIG:
       executeCommand(command_id, command, roon.server(), sharedConfigExecutor, controlChannel);
+      break;
   }
   return command_id;
 };
@@ -87,6 +92,27 @@ const executeCommand: <T extends Command, U extends ExecutionContext>(
     });
 };
 
+const dispatchInternal = (command: InternalCommand): void => {
+  switch (command.type) {
+    case InternalCommandType.STANDBY_NEXT:
+    case InternalCommandType.STOP_NEXT:
+      executeInternalCommand(command, findZone(command.data.zone_id), queueBotCommandExecutor);
+      break;
+  }
+};
+
+const executeInternalCommand: <T extends InternalCommand, U extends ExecutionContext>(
+  command: T,
+  executionContext: Promise<U>,
+  executor: InternalCommandExecutor<T, U>
+) => void = (command, executionContext, executor) => {
+  void executionContext
+    .then((ec) => executor(command, ec))
+    .catch((err: unknown) => {
+      logger.error(err, "error while dispatching internal command '%s'", JSON.stringify(command));
+    });
+};
+
 const findZone = async (zone_id: string): Promise<FoundZone> => {
   return roon.server().then((server: RoonServer): FoundZone => {
     const zone = server.services.RoonApiTransport.zone_by_zone_id(zone_id);
@@ -103,4 +129,5 @@ const findZone = async (zone_id: string): Promise<FoundZone> => {
 
 export const commandDispatcher: CommandDispatcher = {
   dispatch,
+  dispatchInternal,
 };

@@ -1,9 +1,11 @@
 import { loggerMock, retryMock } from "@mock";
 import { roonMock } from "../infrastructure/roon-extension.mock";
+import { commandDispatcherMock } from "../service/command-dispatcher.mock";
 import { dataConverterMock } from "./data-converter.mock";
 
 import { Subject } from "rxjs";
 import {
+  InternalCommandType,
   Queue,
   QueueChange,
   QueueItem,
@@ -183,6 +185,7 @@ describe("queue-manager.ts test suite", () => {
         tracks: [otherQueueTrack],
       },
     });
+    expect(commandDispatcherMock.dispatchInternal).not.toHaveBeenCalled();
   });
 
   it("QueueManager should safely handle a missing initial state in the events coming from roon API", async () => {
@@ -253,6 +256,56 @@ describe("queue-manager.ts test suite", () => {
     queueManager.stop();
     expect(queueManager.isStarted()).toEqual(false);
   });
+
+  it("QueueManager should handle Queue Bot STOP_NEXT functionality", async () => {
+    const states: RoonSseMessage[] = [];
+    roonSubject.subscribe((qs: RoonSseMessage) => {
+      states.push(qs);
+    });
+    const queueManager = queueManagerFactory.build(ZONE, roonSubject, QUEUE_SIZE);
+    await queueManager.start();
+    const firstChange: QueueChange = {
+      operation: "insert",
+      items: [queueBotStopQueueItem],
+      index: 0,
+    };
+    queueListener("Changed", {
+      changes: [firstChange],
+    } as unknown as RoonApiTransportQueue);
+    queueManager.stop();
+    expect(states).toHaveLength(2);
+    expect(commandDispatcherMock.dispatchInternal).toHaveBeenCalledWith({
+      type: InternalCommandType.STOP_NEXT,
+      data: {
+        zone_id: "zone_id",
+      },
+    });
+  });
+
+  it("QueueManager should handle Queue Bot STANDBY_NEXT functionality", async () => {
+    const states: RoonSseMessage[] = [];
+    roonSubject.subscribe((qs: RoonSseMessage) => {
+      states.push(qs);
+    });
+    const queueManager = queueManagerFactory.build(ZONE, roonSubject, QUEUE_SIZE);
+    await queueManager.start();
+    const firstChange: QueueChange = {
+      operation: "insert",
+      items: [queueBotSandbyQueueItem],
+      index: 0,
+    };
+    queueListener("Changed", {
+      changes: [firstChange],
+    } as unknown as RoonApiTransportQueue);
+    queueManager.stop();
+    expect(states).toHaveLength(2);
+    expect(commandDispatcherMock.dispatchInternal).toHaveBeenCalledWith({
+      type: InternalCommandType.STANDBY_NEXT,
+      data: {
+        zone_id: "zone_id",
+      },
+    });
+  });
 });
 
 const queueItem: QueueItem = {
@@ -289,6 +342,39 @@ const otherQueueItem: QueueItem = {
   },
   three_line: {
     line1: "other_line1",
+  },
+};
+
+const queueBotStopQueueItem: QueueItem = {
+  queue_item_id: 424242,
+  length: 4242,
+  image_key: "not_important",
+  one_line: {
+    line1: "Pause",
+  },
+  two_line: {
+    line1: "Pause",
+    line2: "Queue Bot",
+  },
+  three_line: {
+    line1: "Pause",
+    line2: "Queue Bot",
+  },
+};
+
+const queueBotSandbyQueueItem: QueueItem = {
+  queue_item_id: 424242,
+  length: 4242,
+  image_key: "not_important",
+  one_line: {
+    line1: "Standby",
+  },
+  two_line: {
+    line1: "Standby",
+    line2: "Queue Bot",
+  },
+  three_line: {
+    line1: "Standby",
   },
 };
 
