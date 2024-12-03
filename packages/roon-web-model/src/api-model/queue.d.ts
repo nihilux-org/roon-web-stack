@@ -1,6 +1,6 @@
 import { Subject } from "rxjs";
-import { QueueItem, RoonApiTransportQueue, RoonSubscriptionResponse, Zone } from "../roon-kit";
-import { RoonSseMessage, SseMessage, Track } from "./index";
+import { QueueItem, RoonApiTransportQueue, RoonSubscriptionResponse, SettingsManager, Zone } from "../roon-kit";
+import { Roon, RoonSseMessage, SseMessage, Track } from "./index";
 
 export interface Queue {
   zone_id: string;
@@ -33,4 +33,9 @@ export interface QueueState {
 
 export interface QueueSseMessage extends SseMessage<QueueState> {
   event: "queue";
+}
+
+export interface QueueBot {
+  start: (roon: Roon) => void;
+  watchQueue: (queue: Queue) => void;
 }

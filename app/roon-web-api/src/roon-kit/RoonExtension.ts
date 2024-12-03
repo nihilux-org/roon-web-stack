@@ -6,7 +6,9 @@ import {
   RoonApiStatus,
   RoonServer, RoonExtension,
   RoonExtensionOptions,
-  RoonServiceRequired, RoonApiSettings, SettingsLayout, SettingsValues,
+  RoonServiceRequired,
+  SettingsValues,
+  SettingsManager,
 } from "@model";
 import { TransientObject } from "./internals";
 import { RoonKit } from "./RoonKit";
@@ -15,7 +17,7 @@ import { RoonExtensionSettings } from "./RoonExtensionSettings";
 /**
  * Wrapper around the Roon API that simplifies initializing services and subscribing to zones.
  */
-export class Extension<T extends SettingsValues> extends EventEmitter implements RoonExtension, RoonApiSettings<T> {
+export class Extension<T extends SettingsValues> extends EventEmitter implements RoonExtension<T> {
   private _options: RoonExtensionOptions<T>;
   private readonly _api: RoonApi;
   private readonly _status: RoonApiStatus;
@@ -184,8 +186,8 @@ export class Extension<T extends SettingsValues> extends EventEmitter implements
     return transient.getObject();
   }
 
-  public update_settings(settingsLayout: SettingsLayout<T>) {
-    this._settings?.update_settings(settingsLayout);
+  public settings(): SettingsManager<T> | undefined {
+    return this._settings;
   }
 
   private ensureStarted(): TransientObject<RoonServer> {

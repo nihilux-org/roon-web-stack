@@ -8,6 +8,8 @@ import {
   RoonApiBrowseResponse,
   RoonApiImageResultOptions,
   RoonServer,
+  SettingsManager,
+  SettingsValues,
   Zone,
 } from "../roon-kit";
 import {
@@ -55,6 +57,15 @@ export interface ServerListener {
   (server: RoonServer): void;
 }
 
+export type QueueBotState = "enabled" | "disabled";
+
+export interface ExtensionSettings extends SettingsValues {
+  nr_queue_bot_state: QueueBotState;
+  nr_queue_bot_artist_name: string;
+  nr_queue_bot_pause_track_name: string;
+  nr_queue_bot_standby_track_name: string;
+}
+
 export interface Roon {
   onServerPaired: (listener: ServerListener) => void;
   onServerLost: (listener: ServerListener) => void;
@@ -69,6 +80,7 @@ export interface Roon {
   load: (options: RoonApiBrowseLoadOptions) => Promise<RoonApiBrowseLoadResponse>;
   updateSharedConfig: (shardConfigUpdate: SharedConfigUpdate) => void;
   sharedConfigEvents: () => Observable<SharedConfigMessage>;
+  settings: () => SettingsManager<ExtensionSettings> | undefined;
 }
 
 export interface RoonPath {
