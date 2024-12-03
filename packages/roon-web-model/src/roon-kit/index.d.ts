@@ -359,7 +359,7 @@ export type SettingsLayoutBuilder<T extends SettingsValues> = (
   roon_extension: RoonExtension
 ) => SettingsLayout<T>;
 
-export type SettingsDispatcher<T extends SettingsValues> = (roon_extension: RoonExtension, settings_values: T) => void;
+export type SettingsUpdateListener<T extends SettingsValues> = (settings: T) => void;
 
 export type SettingsValidator<T extends SettingsValues> = (
   settings_to_save: Partial<T>,
@@ -368,9 +368,15 @@ export type SettingsValidator<T extends SettingsValues> = (
 
 export interface RoonApiSettingsOptions<T extends SettingsValues> {
   build_layout: SettingsLayoutBuilder<T>;
-  dispatch_settings: SettingsDispatcher<T>;
   validate_settings: SettingsValidator<T>;
   default_values: T;
+}
+
+export interface SettingsManager<T extends SettingsValues> {
+  settings: () => T;
+  updateSettings: (settings_to_save: T) => void;
+  onSettings: (listener: SettingsUpdateListener<T>) => void;
+  offSettings: (listener: SettingsUpdateListener<T>) => void;
 }
 
 export type SettingsValues = { [key: string]: string | Zone | undefined };
@@ -443,7 +449,7 @@ export interface RoonExtensionOptions<T extends SettingsValues> {
   subscribe_zones?: boolean;
 }
 
-export interface RoonExtension {
+export interface RoonExtension<T extends SettingsValues> {
   on(eventName: "core_paired" | "core_unpaired", listener: (core: RoonServer) => void): this;
   off(eventName: "core_paired" | "core_unpaired", listener: (core: RoonServer) => void): this;
   once(eventName: "core_paired" | "core_unpaired", listener: (core: RoonServer) => void): this;
@@ -491,4 +497,5 @@ export interface RoonExtension {
   set_status(message: string, is_error: boolean = false): void;
   update_options(options: Partial<RoonExtensionOptions>): void;
   get_core(): Promise<RoonServer>;
+  settings(): SettingsManager<T> | undefined;
 }

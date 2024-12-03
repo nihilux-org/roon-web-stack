@@ -1,11 +1,9 @@
 import { Subject } from "rxjs";
 import { retryDecorator } from "ts-retry-promise";
-import { dataConverter } from "@data";
+import { dataConverter, queueBot } from "@data";
 import { logger, roon } from "@infrastructure";
 import {
-  InternalCommandType,
   Queue,
-  QueueBotCommand,
   QueueChange,
   QueueItem,
   QueueListener,
@@ -16,10 +14,6 @@ import {
   RoonSubscriptionResponse,
   Zone,
 } from "@model";
-import { commandDispatcher } from "@service";
-
-const QUEUE_BOT = "Queue Bot";
-const STANDBY_QUEUE_BOT_ACTION = "Standby";
 
 const queueListenerFactory = (
   queueManager: InternalQueueManager,
@@ -144,7 +138,7 @@ class InternalQueueManager implements QueueManager {
       this._queue = queue;
     }
     if (this._queue) {
-      this.queueBot(this._queue);
+      queueBot.watchQueue(this._queue);
       this._eventEmitter.next(dataConverter.toRoonSseMessage(this._queue));
     }
   };
@@ -160,27 +154,6 @@ class InternalQueueManager implements QueueManager {
       };
     } else {
       throw new Error("QueueManager has not been started");
-    }
-  };
-
-  private queueBot = (queue: Queue): void => {
-    if (queue.items.length > 0) {
-      const nextTrack = queue.items[0];
-      const artist = nextTrack.three_line.line2 ?? nextTrack.two_line.line2;
-      if (artist === QUEUE_BOT) {
-        const type =
-          nextTrack.three_line.line1 === STANDBY_QUEUE_BOT_ACTION
-            ? InternalCommandType.STANDBY_NEXT
-            : InternalCommandType.STOP_NEXT;
-        logger.debug("queueBot: %s", type);
-        const command: QueueBotCommand = {
-          type,
-          data: {
-            zone_id: queue.zone_id,
-          },
-        };
-        commandDispatcher.dispatchInternal(command);
-      }
     }
   };
 }

@@ -11,7 +11,7 @@ const browse = jest.fn();
 const load = jest.fn();
 const updateSharedConfig = jest.fn();
 const sharedConfigEvents = jest.fn();
-const update_settings = jest.fn();
+const settings = jest.fn();
 
 export const roonMock = {
   onServerPaired,
@@ -27,7 +27,7 @@ export const roonMock = {
   load,
   updateSharedConfig,
   sharedConfigEvents,
-  update_settings,
+  settings,
 };
 
 jest.mock("./roon-extension", () => ({

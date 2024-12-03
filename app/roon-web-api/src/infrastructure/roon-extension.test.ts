@@ -3,6 +3,7 @@ import { extensionMock, loggerMock } from "@mock";
 import { extension_version, logger } from "@infrastructure";
 import {
   CustomAction,
+  ExtensionSettings,
   OutputListener,
   Roon,
   RoonApiBrowse,
@@ -16,6 +17,7 @@ import {
   RoonServer,
   RoonSubscriptionResponse,
   ServerListener,
+  SettingsManager,
   SharedConfig,
   SharedConfigMessage,
   ZoneListener,
@@ -484,5 +486,13 @@ describe("roon-extension.ts test suite", () => {
     roon.updateSharedConfig({});
     expect(extensionMock.api().save_config).toHaveBeenCalledTimes(0);
     expect(sharedConfigMessages).toHaveLength(1);
+  });
+
+  it("roon#settings should delegate to RoonExtension#settings", () => {
+    const settingsManagerMock = {} as SettingsManager<ExtensionSettings>;
+    extensionMock.settings.mockImplementation(() => settingsManagerMock);
+    const settingsManager = roon.settings();
+    expect(settingsManager).toBe(settingsManagerMock);
+    expect(extensionMock.settings).toHaveBeenCalledTimes(1);
   });
 });

@@ -3,6 +3,7 @@ import { BehaviorSubject, Observable, Subject } from "rxjs";
 import { logger } from "@infrastructure";
 import {
   EmptyObject,
+  ExtensionSettings,
   OutputListener,
   Roon,
   RoonApiBrowseLoadOptions,
@@ -13,6 +14,7 @@ import {
   RoonExtension,
   RoonServer,
   ServerListener,
+  SettingsManager,
   SharedConfig,
   SharedConfigMessage,
   SharedConfigUpdate,
@@ -21,9 +23,9 @@ import {
 import { Extension } from "@roon-kit";
 import { settingsOptions } from "./roon-extension-settings";
 
-export const extension_version = "0.0.11-beta-3";
+export const extension_version = "0.0.11-beta-4";
 
-const extension: RoonExtension = new Extension({
+const extension: RoonExtension<ExtensionSettings> = new Extension({
   description: {
     extension_id: "roon-web-stack",
     display_name: "roon web stack",
@@ -157,6 +159,10 @@ const sharedConfigEvents = (): Observable<SharedConfigMessage> => {
   return sharedConfigSubject;
 };
 
+const settings = (): SettingsManager<ExtensionSettings> | undefined => {
+  return extension.settings();
+};
+
 export const roon: Roon = {
   onServerPaired,
   onServerLost,
@@ -171,4 +177,5 @@ export const roon: Roon = {
   load,
   updateSharedConfig,
   sharedConfigEvents,
+  settings,
 };

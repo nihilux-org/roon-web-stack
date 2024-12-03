@@ -1,5 +1,5 @@
 import { concatWith, from, Observable, Subject } from "rxjs";
-import { dataConverter, queueManagerFactory } from "@data";
+import { dataConverter, queueBot, queueManagerFactory } from "@data";
 import { logger, roon } from "@infrastructure";
 import {
   ApiState,
@@ -164,6 +164,7 @@ class InternalZoneManager implements ZoneManager {
       roon.onZones(this.zoneListener);
       roon.onOutputs(this.outputListener);
       if (firstPairing) {
+        queueBot.start(roon);
         this.updateState(RoonState.SYNCING);
         resolve();
       } else {

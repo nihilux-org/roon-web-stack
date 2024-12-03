@@ -1,23 +1,29 @@
 import {
-  RoonApiSettings, RoonApiSettingsOptions,
+  RoonApiSettings,
+  RoonApiSettingsOptions,
   RoonExtension,
   SaveSettingsStatus,
   SettingsLayout,
-  SettingsValues, ValidatedSettingsValues,
+  SettingsManager,
+  SettingsUpdateListener,
+  SettingsValues,
+  ValidatedSettingsValues,
 } from "@model";
 import { RoonKit } from "./RoonKit";
 
-export class RoonExtensionSettings<T extends SettingsValues> implements RoonApiSettings<T> {
+export class RoonExtensionSettings<T extends SettingsValues> implements SettingsManager<T> {
   private static readonly SETTINGS_CONFIG_KEY = "nr.SETTINGS_CONFIG_KEY";
   private readonly _roon_api_settings: RoonApiSettings<T>;
-  private readonly _roon_extension: RoonExtension;
+  private readonly _roon_extension: RoonExtension<T>;
   private readonly _options: RoonApiSettingsOptions<T>;
+  private readonly _listeners: SettingsUpdateListener<T>[];
   private _has_error: boolean;
   private _values: T;
 
-  constructor(roonExtension: RoonExtension, roonApiSettingsOptions: RoonApiSettingsOptions<T>) {
+  constructor(roonExtension: RoonExtension<T>, roonApiSettingsOptions: RoonApiSettingsOptions<T>) {
     this._roon_extension = roonExtension;
     this._options = roonApiSettingsOptions;
+    this._listeners = [];
     const savedValues: Partial<T> = this._roon_extension.api().load_config(RoonExtensionSettings.SETTINGS_CONFIG_KEY) ?? {};
     this._values =  {
       ...this._options.default_values,
@@ -32,22 +38,41 @@ export class RoonExtensionSettings<T extends SettingsValues> implements RoonApiS
       save_settings: (
         req: { send_complete: (status: SaveSettingsStatus, settingsLayout: { settings: SettingsLayout<T> }) => void },
         isDryRun: boolean,
-        settingToSave: { values: Partial<T> }
+        settingsToSave: { values: Partial<T> }
       ): void => {
-        const validatedSettings = this._options.validate_settings(settingToSave.values, this._roon_extension);
+        const validatedSettings = this._options.validate_settings(settingsToSave.values, this._roon_extension);
         this.apply_settings(validatedSettings);
         const status: SaveSettingsStatus = this._has_error ? "NotValid" : "Success";
         const settings = this._options.build_layout(this._values, this._has_error, this._roon_extension);
         req.send_complete(status, { settings });
-        if (!isDryRun && !this._has_error) {
-          this._options.dispatch_settings(this._roon_extension, this._values);
+        if (!isDryRun) {
+          this.dispatchSettings();
         }
       },
     });
   }
 
-  public update_settings(setting_layout: SettingsLayout<T>): void {
-    this._roon_api_settings.update_settings(setting_layout);
+  public onSettings(listener: SettingsUpdateListener<T>) {
+    this._listeners.push(listener);
+    listener(this._values);
+  }
+
+  public offSettings(listener: SettingsUpdateListener<T>) {
+    const listenerIndex = this._listeners.indexOf(listener);
+    if (listenerIndex !== -1) {
+      this._listeners.splice(listenerIndex, 1);
+    }
+  }
+
+  public settings(): T {
+    return this._values;
+  }
+
+  public updateSettings(settings: T): void {
+    const validated = this._options.validate_settings(settings, this._roon_extension);
+    this.apply_settings(validated);
+    this._roon_api_settings.update_settings(this._options.build_layout(this._values, this._has_error, this._roon_extension));
+    this.dispatchSettings();
   }
 
   protected apply_settings(settings_to_save: ValidatedSettingsValues<T>): void {
@@ -63,5 +88,13 @@ export class RoonExtensionSettings<T extends SettingsValues> implements RoonApiS
 
   public service(): RoonApiSettings<T> {
     return this._roon_api_settings;
+  }
+
+  private dispatchSettings() {
+    if (!this._has_error) {
+      for (const listener of this._listeners) {
+        listener(this._values);
+      }
+    }
   }
 }

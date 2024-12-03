@@ -1,6 +1,7 @@
 import { loggerMock } from "@mock";
 import { roonMock } from "../infrastructure/roon-extension.mock";
 import { dataConverterMock } from "./data-converter.mock";
+import { queueBotMock } from "./queue-bot-manager.mock";
 import { queueManagerFactoryMock } from "./queue-manager.mock";
 
 import { Subject } from "rxjs";
@@ -180,6 +181,15 @@ describe("zone-manager.ts test suite", () => {
     expect(roonMock.onServerLost).toHaveBeenCalledTimes(1);
     expect(roonMock.onServerLost).toHaveBeenCalledWith(serverLostListener);
     expect(roonMock.startExtension).toHaveBeenCalledTimes(1);
+  });
+
+  it("zoneManager#start should call queueBot#start when the connection with the server is established for the first time but not on reconnection", async () => {
+    await zoneManager.start();
+    expect(queueBotMock.start).toHaveBeenCalledTimes(1);
+    expect(queueBotMock.start).toHaveBeenCalledWith(roonMock);
+    serverLostListener(server);
+    serverPairedListener(server);
+    expect(queueBotMock.start).toHaveBeenCalledTimes(1);
   });
 
   it("zoneManager#start return a rejected Promise if zoneManager has already been started", async () => {

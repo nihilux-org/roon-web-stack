@@ -1,27 +1,20 @@
 import {
   DropdownSetting,
+  ExtensionSettings,
   GroupSetting,
   MutableSetting,
   RoonApiSettingsOptions,
-  SettingsDispatcher,
   SettingsLayoutBuilder,
   SettingsValidator,
   SettingsValues,
   StringSetting,
 } from "@model";
 
-export interface ExtensionSettings extends SettingsValues {
-  nr_queue_bot_state: string;
-  nr_queue_bot_artist_name: string;
-  nr_queue_bot_pause_track_name: string;
-  nr_queue_bot_standby_track_name: string;
-}
-
 const settingsLayoutBuilder: SettingsLayoutBuilder<ExtensionSettings> = (values, has_error) => {
   const queueBotActivation: DropdownSetting = {
     type: "dropdown",
     setting: "nr_queue_bot_state",
-    title: "activate Queue Bot feature",
+    title: "enable Queue Bot feature",
     values: [
       {
         title: "Yes",
@@ -95,10 +88,7 @@ const settingsValidator: SettingsValidator<ExtensionSettings> = (settings_to_sav
   };
 };
 
-const settingsDispatcher: SettingsDispatcher<ExtensionSettings> = () => {};
-
 export const settingsOptions: RoonApiSettingsOptions<ExtensionSettings> = {
-  dispatch_settings: settingsDispatcher,
   validate_settings: settingsValidator,
   build_layout: settingsLayoutBuilder,
   default_values: {

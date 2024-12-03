@@ -9,6 +9,7 @@ const api = () => ({
   save_config,
   load_config,
 });
+const settings = jest.fn();
 export const extensionMock = {
   on,
   off,
@@ -16,6 +17,7 @@ export const extensionMock = {
   get_core,
   start_discovery,
   api,
+  settings,
 };
 
 jest.mock(

@@ -1,10 +1,10 @@
 import { roonMock } from "./roon-extension.mock";
 
-import { RoonExtension } from "@model";
-import { ExtensionSettings, settingsOptions } from "./roon-extension-settings";
+import { ExtensionSettings, RoonExtension } from "@model";
+import { settingsOptions } from "./roon-extension-settings";
 
 describe("roon-extension-settings test suite", () => {
-  const roonExtension = roonMock as unknown as RoonExtension;
+  const roonExtension = roonMock as unknown as RoonExtension<ExtensionSettings>;
   it("settingsOptions should produce expected layout if Queue Bot is disabled", () => {
     const settingsLayout = settingsOptions.build_layout(DEFAULT_VALUES, false, roonExtension);
     expect(settingsLayout.layout).toHaveLength(1);
@@ -15,7 +15,7 @@ describe("roon-extension-settings test suite", () => {
         {
           type: "dropdown",
           setting: "nr_queue_bot_state",
-          title: "activate Queue Bot feature",
+          title: "enable Queue Bot feature",
           values: [
             {
               title: "Yes",
@@ -48,7 +48,7 @@ describe("roon-extension-settings test suite", () => {
         {
           type: "dropdown",
           setting: "nr_queue_bot_state",
-          title: "activate Queue Bot feature",
+          title: "enable Queue Bot feature",
           values: [
             {
               title: "Yes",
@@ -98,7 +98,7 @@ describe("roon-extension-settings test suite", () => {
         {
           type: "dropdown",
           setting: "nr_queue_bot_state",
-          title: "activate Queue Bot feature",
+          title: "enable Queue Bot feature",
           values: [
             {
               title: "Yes",
@@ -155,10 +155,6 @@ describe("roon-extension-settings test suite", () => {
       roonExtension
     );
     expect(validated.has_error).toBe(true);
-  });
-
-  it("settingsOptions should have a no-op settingsDispatcher", () => {
-    settingsOptions.dispatch_settings(roonExtension, DEFAULT_VALUES);
   });
 });
 
