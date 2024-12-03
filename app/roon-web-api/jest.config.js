@@ -9,6 +9,7 @@ module.exports = {
     "app.ts",
     "src/roon-kit/.",
     "src/infrastructure/logger.ts",
+    "src/infrastructure/host-info.ts",
     // FIXME: Coverage!
     "src/route/.",
     "src/service/register-graceful-shutdown.ts",

@@ -1,4 +1,5 @@
 import { extensionMock, loggerMock } from "@mock";
+import { hostInfoMock } from "./host-info.mock";
 
 import { extension_version, logger } from "@infrastructure";
 import {
@@ -27,6 +28,10 @@ describe("roon-extension.ts test suite", () => {
   let roon: Roon;
 
   beforeEach(() => {
+    hostInfoMock.host = "host";
+    hostInfoMock.hostname = "hostname";
+    hostInfoMock.port = 42;
+    hostInfoMock.ipV4 = "42.42.42.42";
     jest.isolateModules((): void => {
       import("./roon-extension")
         .then((module) => {
@@ -250,7 +255,7 @@ describe("roon-extension.ts test suite", () => {
     } as unknown as RoonServer;
     const listener: ServerListener = registeredListener as unknown as ServerListener;
     listener(server);
-    expect(extensionMock.set_status).toHaveBeenCalledWith("paired, port in use: 3000");
+    expect(extensionMock.set_status).toHaveBeenLastCalledWith("paired, exposed at http://42.42.42.42:42");
     expect(loggerMock.info).toHaveBeenCalledWith(
       `extension version: ${extension_version}, paired roon server: display_name (vdisplay_version - core_id)`
     );
