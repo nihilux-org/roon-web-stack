@@ -3,9 +3,13 @@ import {
   RoonApiBrowse,
   RoonApiImage,
   RoonApiOptions,
+  RoonApiSettings,
   RoonApiStatus,
   RoonApiTransport,
   RoonServer,
+  SaveSettingsStatus,
+  SettingsValues,
+  SettingsLayout,
 } from "@model";
 
 /**
@@ -47,6 +51,18 @@ export class RoonKit {
    * [[RoonApiTransport]] service imported from 'node-roon-api-transport' package.
    */
   public static readonly RoonApiTransport: new () => RoonApiTransport = require("node-roon-api-transport");
+
+  /**
+   * [[RoonApiSettings]] service imported from 'node-roon-api-settings' package.
+   */
+  public static readonly RoonApiSettings: new <T extends SettingsValues>(roon: RoonApi, options: {
+    save_settings: (
+      req: { send_complete: (status: SaveSettingsStatus, settings: { settings: SettingsLayout<T> }) => void },
+      isDryRun: boolean,
+      settingToSave: { values: Partial<T> }
+    ) => void;
+    get_settings: (sendSettings: (settingsLayout: SettingsLayout<T>) => void) => void
+  }) => RoonApiSettings<T> = require("node-roon-api-settings");
 
   /**
    * Creates a new [[RoonApi]] instance.

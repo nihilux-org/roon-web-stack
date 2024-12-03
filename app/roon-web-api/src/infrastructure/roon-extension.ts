@@ -19,8 +19,9 @@ import {
   ZoneListener,
 } from "@model";
 import { Extension } from "@roon-kit";
+import { settingsOptions } from "./roon-extension-settings";
 
-export const extension_version = "0.0.11-beta-2";
+export const extension_version = "0.0.11-beta-3";
 
 const extension: RoonExtension = new Extension({
   description: {
@@ -34,6 +35,7 @@ const extension: RoonExtension = new Extension({
   RoonApiBrowse: "required",
   RoonApiImage: "required",
   RoonApiTransport: "required",
+  RoonApiSettings: settingsOptions,
   subscribe_outputs: true,
   subscribe_zones: true,
   log_level: "none",
