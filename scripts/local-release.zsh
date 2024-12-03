@@ -6,7 +6,7 @@ colors;
 repo="nihiluxorg";
 app="roon-web-stack";
 tag="beta";
-platforms="linux/amd64,linux/arm64";
+platforms="linux/arm64";
 builder="multiplatform-builder";
 
 usage="local-release [-r|--repo <docker repo name>] [-a|--app <docker app name>] [-t|--tag <docker tag>] [-p|--platforms <docker arch>] [-b|--builder <docker buildx builder>] [-l|--local <flag to not push built image(s) to Docker Hub>]";

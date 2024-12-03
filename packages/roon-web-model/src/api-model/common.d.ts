@@ -28,6 +28,13 @@ import {
   ZoneState,
 } from "./index";
 
+export interface HostInfo {
+  host: string;
+  port: number;
+  ipV4?: string;
+  hostname: string;
+}
+
 export interface Playable {
   length?: string;
   image_key?: string;

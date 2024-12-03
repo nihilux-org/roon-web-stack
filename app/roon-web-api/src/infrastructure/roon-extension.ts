@@ -1,6 +1,5 @@
-import * as process from "process";
 import { BehaviorSubject, Observable, Subject } from "rxjs";
-import { logger } from "@infrastructure";
+import { hostInfo, logger } from "@infrastructure";
 import {
   EmptyObject,
   ExtensionSettings,
@@ -23,16 +22,16 @@ import {
 import { Extension } from "@roon-kit";
 import { settingsOptions } from "./roon-extension-settings";
 
-export const extension_version = "0.0.11-beta-4";
+export const extension_version = "0.0.11-beta-5";
 
 const extension: RoonExtension<ExtensionSettings> = new Extension({
   description: {
     extension_id: "roon-web-stack",
-    display_name: "roon web stack",
+    display_name: `roon web stack @${hostInfo.hostname}`,
     display_version: extension_version,
     publisher: "nihilux.org",
     email: "nihil@nihilux.org",
-    website: "https://github.com/nihilux-org/roon-web-stack",
+    website: `http://${hostInfo.ipV4}:${hostInfo.port}`,
   },
   RoonApiBrowse: "required",
   RoonApiImage: "required",
@@ -48,7 +47,7 @@ const onServerPaired = (listener: ServerListener): void => {
 };
 
 const onServerPairedDefaultListener: ServerListener = (server: RoonServer) => {
-  extension.set_status(`paired, port in use: ${process.env["PORT"] ?? "3000"}`);
+  extension.set_status(`paired, exposed at http://${hostInfo.ipV4}:${hostInfo.port}`);
   logger.info(
     `extension version: ${extension_version}, paired roon server: ${server.display_name} (v${server.display_version} - ${server.core_id})`
   );
