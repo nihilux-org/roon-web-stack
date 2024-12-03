@@ -6,25 +6,27 @@ import {
   RoonApiStatus,
   RoonServer, RoonExtension,
   RoonExtensionOptions,
-  RoonServiceRequired
+  RoonServiceRequired, RoonApiSettings, SettingsLayout, SettingsValues,
 } from "@model";
 import { TransientObject } from "./internals";
 import { RoonKit } from "./RoonKit";
+import { RoonExtensionSettings } from "./RoonExtensionSettings";
 
 /**
  * Wrapper around the Roon API that simplifies initializing services and subscribing to zones.
  */
-export class Extension extends EventEmitter implements RoonExtension {
-  private _options: RoonExtensionOptions;
+export class Extension<T extends SettingsValues> extends EventEmitter implements RoonExtension, RoonApiSettings<T> {
+  private _options: RoonExtensionOptions<T>;
   private readonly _api: RoonApi;
   private readonly _status: RoonApiStatus;
+  private readonly _settings?: RoonExtensionSettings<T>;
   private _core?: TransientObject<RoonServer>;
 
   /**
    * Creates a new `RoonExtension` instance.
    * @param options Settings used to configure the extension.
    */
-  constructor(options: RoonExtensionOptions) {
+  constructor(options: RoonExtensionOptions<T>) {
     super();
 
     // Assign default options
@@ -69,6 +71,10 @@ export class Extension extends EventEmitter implements RoonExtension {
     });
 
     this._status = new RoonKit.RoonApiStatus(this._api);
+
+    if (this._options.RoonApiSettings) {
+      this._settings = new RoonExtensionSettings(this, this._options.RoonApiSettings);
+    }
   }
 
   /**
@@ -92,6 +98,10 @@ export class Extension extends EventEmitter implements RoonExtension {
 
     // Add RoonApiStatus to list of provided services.
     provided_services.push(this._status);
+
+    if (this._settings) {
+      provided_services.push(this._settings.service());
+    }
 
     // Build list of required & optional services.
     const required_services: { new (): RequestedRoonServices }[] = [];
@@ -155,7 +165,7 @@ export class Extension extends EventEmitter implements RoonExtension {
    * Can only be called before `start_discover()` is called.
    * @param options Options to apply.
    */
-  public update_options(options: Partial<RoonExtensionOptions>): void {
+  public update_options(options: Partial<RoonExtensionOptions<T>>): void {
     if (this._core) {
       throw new Error(
         `RoonExtension: Can't update options after discovery has been started.`
@@ -172,6 +182,10 @@ export class Extension extends EventEmitter implements RoonExtension {
   public get_core(): Promise<RoonServer> {
     const transient = this.ensureStarted();
     return transient.getObject();
+  }
+
+  public update_settings(settingsLayout: SettingsLayout<T>) {
+    this._settings?.update_settings(settingsLayout);
   }
 
   private ensureStarted(): TransientObject<RoonServer> {

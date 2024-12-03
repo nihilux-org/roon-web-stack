@@ -347,14 +347,98 @@ export interface RoonApiStatus {
   set_status(message: string, is_error: boolean): void;
 }
 
+export type SaveSettingsStatus = "Success" | "NotValid";
+
+export interface RoonApiSettings<T extends SettingsValues> {
+  update_settings: (settingsLayout: SettingsLayout<T>) => void;
+}
+
+export type SettingsLayoutBuilder<T extends SettingsValues> = (
+  values: T,
+  has_error: boolean,
+  roon_extension: RoonExtension
+) => SettingsLayout<T>;
+
+export type SettingsDispatcher<T extends SettingsValues> = (roon_extension: RoonExtension, settings_values: T) => void;
+
+export type SettingsValidator<T extends SettingsValues> = (
+  settings_to_save: Partial<T>,
+  roon_extension: RoonExtension
+) => ValidatedSettingsValues<T>;
+
+export interface RoonApiSettingsOptions<T extends SettingsValues> {
+  build_layout: SettingsLayoutBuilder<T>;
+  dispatch_settings: SettingsDispatcher<T>;
+  validate_settings: SettingsValidator<T>;
+  default_values: T;
+}
+
+export type SettingsValues = { [key: string]: string | Zone | undefined };
+
+export interface ValidatedSettingsValues<T extends SettingsValues> {
+  values: Partial<T>;
+  has_error: boolean;
+}
+
+export type SettingType = "zone" | "string" | "dropdown" | "group" | "label" | "integer";
+
+export interface BaseSetting {
+  type: SettingType;
+  title: string;
+  subtitle?: string;
+}
+
+export interface MutableSetting extends BaseSetting {
+  setting: string;
+  error?: string;
+}
+
+export interface LabelSetting extends BaseSetting {
+  type: "label";
+}
+
+export interface ZoneSetting extends MutableSetting {
+  type: "zone";
+}
+
+export interface StringSetting extends MutableSetting {
+  type: "string";
+}
+
+export interface DropdownSetting extends MutableSetting {
+  type: "dropdown";
+  values: { title: string; value?: string }[];
+}
+
+export interface GroupSetting extends BaseSetting {
+  type: "group";
+  items: Setting[];
+  collapsable?: boolean;
+}
+
+export interface IntegerSetting extends MutableSetting {
+  type: "integer";
+  min?: number;
+  max?: number;
+}
+
+export type Setting = LabelSetting | ZoneSetting | StringSetting | DropdownSetting | GroupSetting | IntegerSetting;
+
+export interface SettingsLayout<T extends SettingsValues> {
+  values: T;
+  layout: Setting[];
+  has_error: boolean;
+}
+
 export type RoonServiceRequired = "not_required" | "required" | "optional";
 
-export interface RoonExtensionOptions {
+export interface RoonExtensionOptions<T extends SettingsValues> {
   description: RoonExtensionDescription;
   log_level?: "none" | "all";
   RoonApiBrowse?: RoonServiceRequired;
   RoonApiImage?: RoonServiceRequired;
   RoonApiTransport?: RoonServiceRequired;
+  RoonApiSettings?: RoonApiSettingsOptions<T>;
   subscribe_outputs?: boolean;
   subscribe_zones?: boolean;
 }
