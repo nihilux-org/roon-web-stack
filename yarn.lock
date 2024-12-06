@@ -3440,7 +3440,7 @@ __metadata:
     eslint-webpack-plugin: "npm:4.2.0"
     fastify: "npm:5.1.0"
     fastify-plugin: "npm:5.0.1"
-    fastify-sse-v2: "npm:4.2.0"
+    fastify-sse-v2: "npm:4.2.1"
     globals: "npm:15.13.0"
     jest: "npm:29.7.0"
     jest-junit: "npm:16.0.0"
@@ -7920,16 +7920,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fastify-sse-v2@npm:4.2.0":
-  version: 4.2.0
-  resolution: "fastify-sse-v2@npm:4.2.0"
+"fastify-sse-v2@npm:4.2.1":
+  version: 4.2.1
+  resolution: "fastify-sse-v2@npm:4.2.1"
   dependencies:
     fastify-plugin: "npm:^4.3.0"
     it-pushable: "npm:^1.4.2"
     it-to-stream: "npm:^1.0.0"
   peerDependencies:
     fastify: ">=4"
-  checksum: 10c0/cd012a5da724b7c64c4c98209ac3e7cb85ce5276f9760f4b20de9a04c9d5816bc87e84dd663bda06c95b239421553c01345641f94e0629bc032982921ce69257
+  checksum: 10c0/f578a07f6162567eb7b6ce79b782dbe25e666aecef521c665f3fe0e539bae42641e5beb48489fce09733d262ee190ddce4a79cf31f4c18b6137db20e399bd7e2
   languageName: node
   linkType: hard
 
