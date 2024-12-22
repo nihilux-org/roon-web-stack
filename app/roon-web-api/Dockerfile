@@ -1,4 +1,4 @@
-ARG ALPINE_VERSION=3.20
+ARG ALPINE_VERSION=3.21
 
 FROM node:22-alpine${ALPINE_VERSION} AS builder
 RUN mkdir -p /usr/src/roon-web-stack
