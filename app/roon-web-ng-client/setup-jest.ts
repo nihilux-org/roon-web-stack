@@ -1,4 +1,3 @@
-import 'jest-preset-angular/setup-jest';
 import { ngMocks } from 'ng-mocks'; // eslint-disable-line import/order
 import { nanoidMock } from "@mock/nanoid.mock";
 

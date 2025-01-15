@@ -95,6 +95,7 @@ export default [{
         "@typescript-eslint/restrict-template-expressions": ["error", {
             allowNumber: true,
         }],
+        "@typescript-eslint/no-misused-spread": "off",
     },
 }, {
   files: ["src/**/*.ts"],
