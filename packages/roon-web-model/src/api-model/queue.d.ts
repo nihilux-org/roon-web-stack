@@ -1,5 +1,5 @@
 import { Subject } from "rxjs";
-import { QueueItem, RoonApiTransportQueue, RoonSubscriptionResponse, SettingsManager, Zone } from "../roon-kit";
+import { QueueItem, RoonApiTransportQueue, RoonSubscriptionResponse, Zone } from "../roon-kit";
 import { Roon, RoonSseMessage, SseMessage, Track } from "./index";
 
 export interface Queue {
