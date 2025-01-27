@@ -3366,7 +3366,7 @@ __metadata:
     jsdom-testing-mocks: "npm:1.13.1"
     nanoid: "npm:3.3.8"
     ng-mocks: "npm:14.13.2"
-    ng-packagr: "npm:19.1.0"
+    ng-packagr: "npm:19.1.1"
     ngx-device-detector: "npm:9.0.0"
     prettier: "npm:3.4.2"
     rxjs: "npm:~7.8.0"
@@ -10582,9 +10582,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ng-packagr@npm:19.1.0":
-  version: 19.1.0
-  resolution: "ng-packagr@npm:19.1.0"
+"ng-packagr@npm:19.1.1":
+  version: 19.1.1
+  resolution: "ng-packagr@npm:19.1.1"
   dependencies:
     "@rollup/plugin-json": "npm:^6.1.0"
     "@rollup/wasm-node": "npm:^4.24.0"
@@ -10620,7 +10620,7 @@ __metadata:
       optional: true
   bin:
     ng-packagr: cli/main.js
-  checksum: 10c0/7d90c630d66c945bef5613a5fc12b39e6b753a86bb221329502afd1c46ed27b5dfb979f0ad55b26eb8e990a3ec17f9825c272f8b8a217e0f18c9ae0eb8eb0ff3
+  checksum: 10c0/a66392dc48c53ff1579c0bcd20dd61484a306f150df10a7a3cdebbcc029c0def8e7f817266b43c3f16ac3b8cd7eeac2ee374b9488c5798faf2cb8afa5a8040ee
   languageName: node
   linkType: hard
 
