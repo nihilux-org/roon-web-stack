@@ -25,7 +25,7 @@ describe("queue-bot-command-executor test suite", () => {
   });
 
   it(
-    "internalExecutor should call RoonApiTransport#control with 'pause' then call RoonApiTransport#control with 'next' " +
+    "internalExecutor should call RoonApiTransport#control with 'stop' then call RoonApiTransport#control with 'next' " +
       "then call RoonApiTransport#control with 'stop' and return for StopNextCommand if given is playing and next is allowed",
     async () => {
       const command = {
@@ -36,34 +36,16 @@ describe("queue-bot-command-executor test suite", () => {
       };
       await internalExecutor(command, foundZone);
       expect(control).toHaveBeenCalledTimes(3);
-      expect(control).toHaveBeenNthCalledWith(1, zone, "pause");
+      expect(control).toHaveBeenNthCalledWith(1, zone, "stop");
       expect(control).toHaveBeenNthCalledWith(2, zone, "next");
       expect(control).toHaveBeenNthCalledWith(3, zone, "stop");
       expect(standby).not.toHaveBeenCalled();
     }
   );
 
-  it("internalExecutor should call RoonApiTransport#control with 'stop' and return for StopNextCommand if given is playing and next is not allowed", async () => {
-    const command = {
-      type: InternalCommandType.STOP_NEXT,
-      data: {
-        zone_id,
-      },
-    };
-    try {
-      zone.is_next_allowed = false;
-      await internalExecutor(command, foundZone);
-      expect(control).toHaveBeenCalledTimes(1);
-      expect(control).toHaveBeenNthCalledWith(1, zone, "stop");
-      expect(standby).not.toHaveBeenCalled();
-    } finally {
-      zone.is_next_allowed = true;
-    }
-  });
-
   it(
-    "internalExecutor should call RoonApiTransport#control with 'pause' and return a failed promise without calling others" +
-      "RoonApiTransport#control for StopNextCommand if given is playing and the 'pause' call failed",
+    "internalExecutor should call RoonApiTransport#control with 'stop' and return a failed promise without calling others" +
+      "RoonApiTransport#control for StopNextCommand if given is playing and the 'stop' call failed",
     () => {
       const error = new Error("error");
       control.mockImplementationOnce(() => Promise.reject(error));
@@ -76,13 +58,13 @@ describe("queue-bot-command-executor test suite", () => {
       const executorPromise = internalExecutor(command, foundZone);
       void expect(executorPromise).rejects.toBe(error);
       expect(control).toHaveBeenCalledTimes(1);
-      expect(control).toHaveBeenNthCalledWith(1, zone, "pause");
+      expect(control).toHaveBeenNthCalledWith(1, zone, "stop");
       expect(standby).not.toHaveBeenCalled();
     }
   );
 
   it(
-    "internalExecutor should call RoonApiTransport#control with 'pause' then call RoonApiTransport#control with 'next' " +
+    "internalExecutor should call RoonApiTransport#control with 'stop' then call RoonApiTransport#control with 'next' " +
       "and return a failed promise without calling others RoonApiTransport#control for StopNextCommand if given is playing and the 'next' call failed",
     async () => {
       const error = new Error("error");
@@ -99,14 +81,14 @@ describe("queue-bot-command-executor test suite", () => {
         expect(e).toBe(error);
       }
       expect(control).toHaveBeenCalledTimes(2);
-      expect(control).toHaveBeenNthCalledWith(1, zone, "pause");
+      expect(control).toHaveBeenNthCalledWith(1, zone, "stop");
       expect(control).toHaveBeenNthCalledWith(2, zone, "next");
       expect(standby).not.toHaveBeenCalled();
     }
   );
 
   it(
-    "internalExecutor should call RoonApiTransport#control with 'pause' then call RoonApiTransport#control with 'next' " +
+    "internalExecutor should call RoonApiTransport#control with 'stop' then call RoonApiTransport#control with 'next' " +
       "then call RoonApiTransport#control with 'stop' and return a failed Promise for StopNextCommand if given is playing and next is allowed and `stop` failed",
     async () => {
       const error = new Error("error");
@@ -126,7 +108,7 @@ describe("queue-bot-command-executor test suite", () => {
         expect(e).toBe(error);
       }
       expect(control).toHaveBeenCalledTimes(3);
-      expect(control).toHaveBeenNthCalledWith(1, zone, "pause");
+      expect(control).toHaveBeenNthCalledWith(1, zone, "stop");
       expect(control).toHaveBeenNthCalledWith(2, zone, "next");
       expect(control).toHaveBeenNthCalledWith(3, zone, "stop");
       expect(standby).not.toHaveBeenCalled();
@@ -155,7 +137,7 @@ describe("queue-bot-command-executor test suite", () => {
   });
 
   it(
-    "internalExecutor should call RoonApiTransport#control with 'pause' then call RoonApiTransport#control with 'next' " +
+    "internalExecutor should call RoonApiTransport#control with 'stop' then call RoonApiTransport#control with 'next' " +
       "then call RoonApiTransport#control with 'stop', then call RoonApiTransport#standby for each output source_controls supporting standby and return " +
       "for StandbyNextCommand if given is playing and next is allowed",
     async () => {
@@ -167,7 +149,7 @@ describe("queue-bot-command-executor test suite", () => {
       };
       await internalExecutor(command, foundZone);
       expect(control).toHaveBeenCalledTimes(3);
-      expect(control).toHaveBeenNthCalledWith(1, zone, "pause");
+      expect(control).toHaveBeenNthCalledWith(1, zone, "stop");
       expect(control).toHaveBeenNthCalledWith(2, zone, "next");
       expect(control).toHaveBeenNthCalledWith(3, zone, "stop");
       expect(standby).toHaveBeenCalledTimes(3);
@@ -178,34 +160,8 @@ describe("queue-bot-command-executor test suite", () => {
   );
 
   it(
-    "internalExecutor should call RoonApiTransport#control with 'stop' " +
-      "then call RoonApiTransport#standby for each output source_controls supporting standby and return " +
-      "for StandbyNextCommand if given is playing and next is not allowed",
-    async () => {
-      const command = {
-        type: InternalCommandType.STANDBY_NEXT,
-        data: {
-          zone_id,
-        },
-      };
-      try {
-        zone.is_next_allowed = false;
-        await internalExecutor(command, foundZone);
-        expect(control).toHaveBeenCalledTimes(1);
-        expect(control).toHaveBeenNthCalledWith(1, zone, "stop");
-        expect(standby).toHaveBeenCalledTimes(3);
-        expect(standby).toHaveBeenNthCalledWith(1, output, { control_key: "1" });
-        expect(standby).toHaveBeenNthCalledWith(2, output, { control_key: "2" });
-        expect(standby).toHaveBeenNthCalledWith(3, other_output, { control_key: "1" });
-      } finally {
-        zone.is_next_allowed = true;
-      }
-    }
-  );
-
-  it(
-    "internalExecutor should call RoonApiTransport#control with 'pause' and return a failed promise without calling others" +
-      "RoonApiTransport#control nor RoonApiTransport#standby for StandbyNextCommand if given is playing and the 'pause' call failed",
+    "internalExecutor should call RoonApiTransport#control with 'stop' and return a failed promise without calling others" +
+      "RoonApiTransport#control nor RoonApiTransport#standby for StandbyNextCommand if given is playing and the 'stop' call failed",
     () => {
       const error = new Error("error");
       control.mockImplementationOnce(() => Promise.reject(error));
@@ -218,13 +174,13 @@ describe("queue-bot-command-executor test suite", () => {
       const executorPromise = internalExecutor(command, foundZone);
       void expect(executorPromise).rejects.toBe(error);
       expect(control).toHaveBeenCalledTimes(1);
-      expect(control).toHaveBeenNthCalledWith(1, zone, "pause");
+      expect(control).toHaveBeenNthCalledWith(1, zone, "stop");
       expect(standby).not.toHaveBeenCalled();
     }
   );
 
   it(
-    "internalExecutor should call RoonApiTransport#control with 'pause' then call RoonApiTransport#control with 'next' " +
+    "internalExecutor should call RoonApiTransport#control with 'stop' then call RoonApiTransport#control with 'next' " +
       "and return a failed promise without calling others RoonApiTransport#control nor RoonApiTransport#standby " +
       "for StandbyNextCommand if given is playing and the 'next' call failed",
     async () => {
@@ -242,14 +198,14 @@ describe("queue-bot-command-executor test suite", () => {
         expect(e).toBe(error);
       }
       expect(control).toHaveBeenCalledTimes(2);
-      expect(control).toHaveBeenNthCalledWith(1, zone, "pause");
+      expect(control).toHaveBeenNthCalledWith(1, zone, "stop");
       expect(control).toHaveBeenNthCalledWith(2, zone, "next");
       expect(standby).not.toHaveBeenCalled();
     }
   );
 
   it(
-    "internalExecutor should call RoonApiTransport#control with 'pause' then call RoonApiTransport#control with 'next' " +
+    "internalExecutor should call RoonApiTransport#control with 'stop' then call RoonApiTransport#control with 'next' " +
       "then call RoonApiTransport#control with 'stop' and return a failed Promise without calling RoonApiTransport#standby " +
       "for StandbyNextCommand if given is playing and next is allowed and `stop` failed",
     async () => {
@@ -270,7 +226,7 @@ describe("queue-bot-command-executor test suite", () => {
         expect(e).toBe(error);
       }
       expect(control).toHaveBeenCalledTimes(3);
-      expect(control).toHaveBeenNthCalledWith(1, zone, "pause");
+      expect(control).toHaveBeenNthCalledWith(1, zone, "stop");
       expect(control).toHaveBeenNthCalledWith(2, zone, "next");
       expect(control).toHaveBeenNthCalledWith(3, zone, "stop");
       expect(standby).not.toHaveBeenCalled();
