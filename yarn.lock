@@ -3495,7 +3495,7 @@ __metadata:
     "@gquittet/graceful-server": "npm:4.0.9"
     "@nihilux/roon-web-model": "workspace:*"
     "@types/jest": "npm:29.5.14"
-    "@types/node": "npm:22.13.5"
+    "@types/node": "npm:22.13.8"
     "@typescript-eslint/eslint-plugin": "npm:8.25.0"
     "@typescript-eslint/parser": "npm:8.25.0"
     eslint: "npm:9.21.0"
@@ -3503,7 +3503,7 @@ __metadata:
     eslint-config-standard: "npm:17.1.0"
     eslint-import-resolver-typescript: "npm:3.8.3"
     eslint-plugin-import: "npm:2.31.0"
-    eslint-plugin-n: "npm:17.15.1"
+    eslint-plugin-n: "npm:17.16.1"
     eslint-plugin-prettier: "npm:5.2.3"
     eslint-plugin-promise: "npm:7.2.1"
     eslint-plugin-simple-import-sort: "npm:12.1.1"
@@ -3522,7 +3522,7 @@ __metadata:
     node-roon-api-status: "github:roonlabs/node-roon-api-status"
     node-roon-api-transport: "github:roonlabs/node-roon-api-transport"
     nodemon-webpack-plugin: "npm:4.8.2"
-    prettier: "npm:3.5.2"
+    prettier: "npm:3.5.3"
     rimraf: "npm:6.0.1"
     rxjs: "npm:7.8.2"
     ts-jest: "npm:29.2.6"
@@ -3554,7 +3554,7 @@ __metadata:
     eslint-config-standard: "npm:17.1.0"
     eslint-import-resolver-typescript: "npm:3.8.3"
     eslint-plugin-import: "npm:2.31.0"
-    eslint-plugin-n: "npm:17.15.1"
+    eslint-plugin-n: "npm:17.16.1"
     eslint-plugin-prettier: "npm:5.2.3"
     eslint-plugin-promise: "npm:7.2.1"
     eslint-plugin-simple-import-sort: "npm:12.1.1"
@@ -3563,7 +3563,7 @@ __metadata:
     jest: "npm:29.7.0"
     jest-fetch-mock: "npm:3.0.3"
     jest-junit: "npm:16.0.0"
-    prettier: "npm:3.5.2"
+    prettier: "npm:3.5.3"
     rimraf: "npm:6.0.1"
     ts-jest: "npm:29.2.6"
     ts-loader: "npm:9.5.2"
@@ -3589,12 +3589,12 @@ __metadata:
     eslint-config-standard: "npm:17.1.0"
     eslint-import-resolver-typescript: "npm:3.8.3"
     eslint-plugin-import: "npm:2.31.0"
-    eslint-plugin-n: "npm:17.15.1"
+    eslint-plugin-n: "npm:17.16.1"
     eslint-plugin-prettier: "npm:5.2.3"
     eslint-plugin-promise: "npm:7.2.1"
     eslint-plugin-simple-import-sort: "npm:12.1.1"
     globals: "npm:16.0.0"
-    prettier: "npm:3.5.2"
+    prettier: "npm:3.5.3"
     rxjs: "npm:7.8.2"
     tslib: "npm:2.8.1"
     typescript: "npm:5.6.3"
@@ -3629,7 +3629,7 @@ __metadata:
     "@nihilux/roon-web-client": "workspace:*"
     "@nihilux/roon-web-model": "workspace:*"
     "@types/jest": "npm:29.5.14"
-    "@types/node": "npm:22.13.5"
+    "@types/node": "npm:22.13.8"
     "@typescript-eslint/eslint-plugin": "npm:8.25.0"
     "@typescript-eslint/parser": "npm:8.25.0"
     eslint: "npm:9.21.0"
@@ -3637,7 +3637,7 @@ __metadata:
     eslint-config-standard: "npm:17.1.0"
     eslint-import-resolver-typescript: "npm:3.8.3"
     eslint-plugin-import: "npm:2.31.0"
-    eslint-plugin-n: "npm:17.15.1"
+    eslint-plugin-n: "npm:17.16.1"
     eslint-plugin-prettier: "npm:5.2.3"
     eslint-plugin-promise: "npm:7.2.1"
     eslint-plugin-simple-import-sort: "npm:12.1.1"
@@ -3649,7 +3649,7 @@ __metadata:
     ng-mocks: "npm:14.13.2"
     ng-packagr: "npm:19.2.0"
     ngx-device-detector: "npm:9.0.0"
-    prettier: "npm:3.5.2"
+    prettier: "npm:3.5.3"
     rxjs: "npm:~7.8.2"
     tslib: "npm:2.8.1"
     typescript: "npm:5.6.3"
@@ -4700,12 +4700,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:22.13.5":
-  version: 22.13.5
-  resolution: "@types/node@npm:22.13.5"
+"@types/node@npm:22.13.8":
+  version: 22.13.8
+  resolution: "@types/node@npm:22.13.8"
   dependencies:
     undici-types: "npm:~6.20.0"
-  checksum: 10c0/a2e7ed7bb0690e439004779baedeb05159c5cc41ef6d81c7a6ebea5303fde4033669e1c0e41ff7453b45fd2fea8dbd55fddfcd052950c7fcae3167c970bca725
+  checksum: 10c0/bfc92b734a9dce6ac5daee0a52feccdf5dcb3804d895e4bc5384e2f4644612b8801725cd03c8c3c0888fb5eeb16b875877ac44b77641e0196dc1a837b1c2a366
   languageName: node
   linkType: hard
 
@@ -4904,7 +4904,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/utils@npm:8.25.0":
+"@typescript-eslint/utils@npm:8.25.0, @typescript-eslint/utils@npm:^8.21.0":
   version: 8.25.0
   resolution: "@typescript-eslint/utils@npm:8.25.0"
   dependencies:
@@ -7503,11 +7503,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-n@npm:17.15.1":
-  version: 17.15.1
-  resolution: "eslint-plugin-n@npm:17.15.1"
+"eslint-plugin-n@npm:17.16.1":
+  version: 17.16.1
+  resolution: "eslint-plugin-n@npm:17.16.1"
   dependencies:
     "@eslint-community/eslint-utils": "npm:^4.4.1"
+    "@typescript-eslint/utils": "npm:^8.21.0"
     enhanced-resolve: "npm:^5.17.1"
     eslint-plugin-es-x: "npm:^7.8.0"
     get-tsconfig: "npm:^4.8.1"
@@ -7515,9 +7516,10 @@ __metadata:
     ignore: "npm:^5.3.2"
     minimatch: "npm:^9.0.5"
     semver: "npm:^7.6.3"
+    ts-declaration-location: "npm:^1.0.5"
   peerDependencies:
     eslint: ">=8.23.0"
-  checksum: 10c0/0b52ffed0b80d74977e1157b4c0cc79efcdf81ea35d2997bdbf02f3d41f428f52ccb7fb3a08cf02e6fed8ae1bf4708d69fdf496e75b8b2bd3e671029d89ccc6c
+  checksum: 10c0/9298e143b637ddda59e4be3e569d916033552103f0f3df13bc82fb248430b478f3f552f4d76d81430476e6e57a5bf368ea76c83c1dd0fc2913acab0195acf441
   languageName: node
   linkType: hard
 
@@ -10785,7 +10787,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"minimatch@npm:^10.0.0":
+"minimatch@npm:^10.0.0, minimatch@npm:^10.0.1":
   version: 10.0.1
   resolution: "minimatch@npm:10.0.1"
   dependencies:
@@ -12146,12 +12148,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:3.5.2":
-  version: 3.5.2
-  resolution: "prettier@npm:3.5.2"
+"prettier@npm:3.5.3":
+  version: 3.5.3
+  resolution: "prettier@npm:3.5.3"
   bin:
     prettier: bin/prettier.cjs
-  checksum: 10c0/d7b597ed33f39c32ace675896ad187f06a3e48dc8a1e80051b5c5f0dae3586d53981704b8fda5ac3b080e6c2e0e197d239131b953702674f044351621ca5e1ac
+  checksum: 10c0/3880cb90b9dc0635819ab52ff571518c35bd7f15a6e80a2054c05dbc8a3aa6e74f135519e91197de63705bcb38388ded7e7230e2178432a1468005406238b877
   languageName: node
   linkType: hard
 
@@ -14035,6 +14037,17 @@ __metadata:
   peerDependencies:
     typescript: ">=4.8.4"
   checksum: 10c0/23fd56a958b332cac00150a652e4c84730df30571bd2faa1ba6d7b511356d1a61656621492bb6c7f15dd6e18847a1408357a0e406671d358115369a17f5bfedd
+  languageName: node
+  linkType: hard
+
+"ts-declaration-location@npm:^1.0.5":
+  version: 1.0.5
+  resolution: "ts-declaration-location@npm:1.0.5"
+  dependencies:
+    minimatch: "npm:^10.0.1"
+  peerDependencies:
+    typescript: ">=4.0.0"
+  checksum: 10c0/b733288856a360cc811fb030c384c9ac33c3e987f67bb90e584de472bc0a72d9aa078fdf901f20b62b94e758937cf3bcd99dff6cd7d9d278f51d515d85a6c67f
   languageName: node
   linkType: hard
 
