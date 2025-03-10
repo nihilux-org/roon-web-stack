@@ -3478,7 +3478,7 @@ __metadata:
     jest: "npm:29.7.0"
     jsdom-testing-mocks: "npm:1.13.1"
     nanoid: "npm:3.3.9"
-    ng-mocks: "npm:14.13.2"
+    ng-mocks: "npm:14.13.3"
     ng-packagr: "npm:19.2.0"
     ngx-device-detector: "npm:9.0.0"
     prettier: "npm:3.5.3"
@@ -10852,15 +10852,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ng-mocks@npm:14.13.2":
-  version: 14.13.2
-  resolution: "ng-mocks@npm:14.13.2"
+"ng-mocks@npm:14.13.3":
+  version: 14.13.3
+  resolution: "ng-mocks@npm:14.13.3"
   peerDependencies:
     "@angular/common": 5.0.0-alpha - 5 || 6.0.0-alpha - 6 || 7.0.0-alpha - 7 || 8.0.0-alpha - 8 || 9.0.0-alpha - 9 || 10.0.0-alpha - 10 || 11.0.0-alpha - 11 || 12.0.0-alpha - 12 || 13.0.0-alpha - 13 || 14.0.0-alpha - 14 || 15.0.0-alpha - 15 || 16.0.0-alpha - 16 || 17.0.0-alpha - 17 || 18.0.0-alpha - 18 || 19.0.0-alpha - 19
     "@angular/core": 5.0.0-alpha - 5 || 6.0.0-alpha - 6 || 7.0.0-alpha - 7 || 8.0.0-alpha - 8 || 9.0.0-alpha - 9 || 10.0.0-alpha - 10 || 11.0.0-alpha - 11 || 12.0.0-alpha - 12 || 13.0.0-alpha - 13 || 14.0.0-alpha - 14 || 15.0.0-alpha - 15 || 16.0.0-alpha - 16 || 17.0.0-alpha - 17 || 18.0.0-alpha - 18 || 19.0.0-alpha - 19
     "@angular/forms": 5.0.0-alpha - 5 || 6.0.0-alpha - 6 || 7.0.0-alpha - 7 || 8.0.0-alpha - 8 || 9.0.0-alpha - 9 || 10.0.0-alpha - 10 || 11.0.0-alpha - 11 || 12.0.0-alpha - 12 || 13.0.0-alpha - 13 || 14.0.0-alpha - 14 || 15.0.0-alpha - 15 || 16.0.0-alpha - 16 || 17.0.0-alpha - 17 || 18.0.0-alpha - 18 || 19.0.0-alpha - 19
     "@angular/platform-browser": 5.0.0-alpha - 5 || 6.0.0-alpha - 6 || 7.0.0-alpha - 7 || 8.0.0-alpha - 8 || 9.0.0-alpha - 9 || 10.0.0-alpha - 10 || 11.0.0-alpha - 11 || 12.0.0-alpha - 12 || 13.0.0-alpha - 13 || 14.0.0-alpha - 14 || 15.0.0-alpha - 15 || 16.0.0-alpha - 16 || 17.0.0-alpha - 17 || 18.0.0-alpha - 18 || 19.0.0-alpha - 19
-  checksum: 10c0/291e070baa808658267cea2cea28a1f2bcb888664f75057454580c717f87998cf9003250975a421655afa8a20384876dfa3b7fca758f80098324aa16b5301868
+  checksum: 10c0/a5660d3475f16ff58de639214f6a40de485ff0d242c58831aa7bb788b6c2774fc90c1c392ed4da09644a50e24e474a156f0b6dfe2084e2519bdf2a802c04483c
   languageName: node
   linkType: hard
 
