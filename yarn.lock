@@ -3251,7 +3251,7 @@ __metadata:
     globals: "npm:16.0.0"
     jest: "npm:29.7.0"
     jest-junit: "npm:16.0.0"
-    nanoid: "npm:3.3.9"
+    nanoid: "npm:3.3.11"
     node-roon-api: "github:roonlabs/node-roon-api"
     node-roon-api-browse: "github:roonlabs/node-roon-api-browse"
     node-roon-api-image: "github:roonlabs/node-roon-api-image"
@@ -3382,7 +3382,7 @@ __metadata:
     globals: "npm:16.0.0"
     jest: "npm:29.7.0"
     jsdom-testing-mocks: "npm:1.13.1"
-    nanoid: "npm:3.3.9"
+    nanoid: "npm:3.3.11"
     ng-mocks: "npm:14.13.3"
     ng-packagr: "npm:19.2.0"
     ngx-device-detector: "npm:9.0.0"
@@ -10663,16 +10663,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nanoid@npm:3.3.9":
-  version: 3.3.9
-  resolution: "nanoid@npm:3.3.9"
-  bin:
-    nanoid: bin/nanoid.cjs
-  checksum: 10c0/4515abe53db7b150cf77074558efc20d8e916d6910d557b5ce72e8bbf6f8e7554d3d7a0d180bfa65e5d8e99aa51b207aa8a3bf5f3b56233897b146d592e30b24
-  languageName: node
-  linkType: hard
-
-"nanoid@npm:^3.3.8":
+"nanoid@npm:3.3.11, nanoid@npm:^3.3.8":
   version: 3.3.11
   resolution: "nanoid@npm:3.3.11"
   bin:
