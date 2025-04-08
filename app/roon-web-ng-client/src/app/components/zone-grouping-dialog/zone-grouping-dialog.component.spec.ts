@@ -67,6 +67,7 @@ describe("ZoneGroupingDialogComponent", () => {
       }),
       isSmallScreen: jest.fn().mockImplementation(() => $isSmallScreen),
     };
+    closeDialog = jest.fn();
     TestBed.configureTestingModule({
       providers: [
         MockProvider(RoonService, roonService),

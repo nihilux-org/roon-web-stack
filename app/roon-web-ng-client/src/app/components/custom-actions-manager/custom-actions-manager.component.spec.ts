@@ -35,7 +35,10 @@ describe("CustomActionManagerComponent", () => {
     editAction = jest.fn();
     deleteAction = jest.fn();
     command = jest.fn();
-
+    dialogService = {
+      close: jest.fn(),
+      open: jest.fn(),
+    };
     TestBed.configureTestingModule({
       providers: [
         MockProvider(DialogService, dialogService as Partial<DialogService>),
