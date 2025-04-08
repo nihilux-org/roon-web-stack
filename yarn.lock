@@ -15,25 +15,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@angular-builders/common@npm:3.0.0":
-  version: 3.0.0
-  resolution: "@angular-builders/common@npm:3.0.0"
+"@angular-builders/common@npm:3.0.1":
+  version: 3.0.1
+  resolution: "@angular-builders/common@npm:3.0.1"
   dependencies:
     "@angular-devkit/core": "npm:^19.0.0"
     ts-node: "npm:^10.0.0"
     tsconfig-paths: "npm:^4.1.0"
-  checksum: 10c0/e51d4acd00fcb0bb423c6e9c9d129bc673a32e12e789146f2d2bd62fde411e17c4d379e97aca3f1f53704548b7ffa2293c4423f21d67c409831370c69dcf0819
+  checksum: 10c0/dae5305d7b56093e4cb13332358c54239d1d32437ed8d92f34e03915bdd95b68a319c9dca227ebd471d15658b9a774bdfb16baefe2f6cc0f2ed32a0cbf39b4c4
   languageName: node
   linkType: hard
 
-"@angular-builders/jest@npm:19.0.0":
-  version: 19.0.0
-  resolution: "@angular-builders/jest@npm:19.0.0"
+"@angular-builders/jest@npm:19.0.1":
+  version: 19.0.1
+  resolution: "@angular-builders/jest@npm:19.0.1"
   dependencies:
-    "@angular-builders/common": "npm:3.0.0"
+    "@angular-builders/common": "npm:3.0.1"
     "@angular-devkit/architect": "npm:>=0.1900.0 < 0.2000.0"
     "@angular-devkit/core": "npm:^19.0.0"
-    jest-preset-angular: "npm:14.4.2"
+    jest-preset-angular: "npm:14.5.4"
     lodash: "npm:^4.17.15"
   peerDependencies:
     "@angular-devkit/build-angular": ^19.0.0
@@ -41,7 +41,7 @@ __metadata:
     "@angular/core": ^19.0.0
     "@angular/platform-browser-dynamic": ^19.0.0
     jest: ">=29"
-  checksum: 10c0/d17e9cff9708da2c654f81ad2c6f9185c30c3168673a3d9135ffb193f0f7f36e710c895d2de433b874154dbe9ff0912cdf5a89904ecaed94d30acb895c2ec20c
+  checksum: 10c0/8da84b9e693421e12fdb61257567ca42b70d52a3d5faccb01ca6786009ab615db9384d1e29a1f5893c75c1eed7422d48f73dedfd5b8f0093b5197708d5c5f278
   languageName: node
   linkType: hard
 
@@ -3426,7 +3426,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@nihilux/roon-web-ng-client@workspace:app/roon-web-ng-client"
   dependencies:
-    "@angular-builders/jest": "npm:19.0.0"
+    "@angular-builders/jest": "npm:19.0.1"
     "@angular-devkit/build-angular": "npm:19.2.6"
     "@angular-eslint/builder": "npm:19.3.0"
     "@angular-eslint/eslint-plugin": "npm:19.3.0"
@@ -9519,7 +9519,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-environment-jsdom@npm:^29.0.0":
+"jest-environment-jsdom@npm:^29.7.0":
   version: 29.7.0
   resolution: "jest-environment-jsdom@npm:29.7.0"
   dependencies:
@@ -9668,27 +9668,31 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-preset-angular@npm:14.4.2":
-  version: 14.4.2
-  resolution: "jest-preset-angular@npm:14.4.2"
+"jest-preset-angular@npm:14.5.4":
+  version: 14.5.4
+  resolution: "jest-preset-angular@npm:14.5.4"
   dependencies:
     bs-logger: "npm:^0.2.6"
     esbuild: "npm:>=0.15.13"
     esbuild-wasm: "npm:>=0.15.13"
-    jest-environment-jsdom: "npm:^29.0.0"
-    jest-util: "npm:^29.0.0"
-    pretty-format: "npm:^29.0.0"
-    ts-jest: "npm:^29.0.0"
+    jest-environment-jsdom: "npm:^29.7.0"
+    jest-util: "npm:^29.7.0"
+    pretty-format: "npm:^29.7.0"
+    ts-jest: "npm:^29.3.0"
   peerDependencies:
     "@angular/compiler-cli": ">=15.0.0 <20.0.0"
     "@angular/core": ">=15.0.0 <20.0.0"
     "@angular/platform-browser-dynamic": ">=15.0.0 <20.0.0"
     jest: ^29.0.0
+    jsdom: ">=20.0.0"
     typescript: ">=4.8"
   dependenciesMeta:
     esbuild:
       optional: true
-  checksum: 10c0/f8447be640beff7a20d00d49a5afab3066568d0b12de8ae2d0c8e266ff1dd5b4b2bf1bed08bce2b178415a28d7b90f31702b36ff28fbf19e34b1d791cb235c97
+  peerDependenciesMeta:
+    jsdom:
+      optional: true
+  checksum: 10c0/e2e845c0e8ac0000b7e95c1359d5471951a5b659c5ce3b121864a25ad7a3d9960e8a80859d397dbd6448eb337471bb49361e8b1acb12b3600059d50bd3e0e08b
   languageName: node
   linkType: hard
 
@@ -13885,7 +13889,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-jest@npm:29.3.1":
+"ts-jest@npm:29.3.1, ts-jest@npm:^29.3.0":
   version: 29.3.1
   resolution: "ts-jest@npm:29.3.1"
   dependencies:
@@ -13920,44 +13924,6 @@ __metadata:
   bin:
     ts-jest: cli.js
   checksum: 10c0/5df9239223b974fc61bbe018d4e72bbdbea530c4b624fab0936a152438a58e97ce0d0cee2258d10e7ecebbf0ab699ab41d0a52fc5b5f13201cdac4419ab0fe04
-  languageName: node
-  linkType: hard
-
-"ts-jest@npm:^29.0.0":
-  version: 29.3.0
-  resolution: "ts-jest@npm:29.3.0"
-  dependencies:
-    bs-logger: "npm:^0.2.6"
-    ejs: "npm:^3.1.10"
-    fast-json-stable-stringify: "npm:^2.1.0"
-    jest-util: "npm:^29.0.0"
-    json5: "npm:^2.2.3"
-    lodash.memoize: "npm:^4.1.2"
-    make-error: "npm:^1.3.6"
-    semver: "npm:^7.7.1"
-    type-fest: "npm:^4.37.0"
-    yargs-parser: "npm:^21.1.1"
-  peerDependencies:
-    "@babel/core": ">=7.0.0-beta.0 <8"
-    "@jest/transform": ^29.0.0
-    "@jest/types": ^29.0.0
-    babel-jest: ^29.0.0
-    jest: ^29.0.0
-    typescript: ">=4.3 <6"
-  peerDependenciesMeta:
-    "@babel/core":
-      optional: true
-    "@jest/transform":
-      optional: true
-    "@jest/types":
-      optional: true
-    babel-jest:
-      optional: true
-    esbuild:
-      optional: true
-  bin:
-    ts-jest: cli.js
-  checksum: 10c0/c6a6b80e056a6d78679307fc859ebaafa9809bd707e5679b4f3e75b774137d840e607401698059e98497dac299c8c90305eae7ae8464cb1c6f161edfa8de0903
   languageName: node
   linkType: hard
 
@@ -14098,7 +14064,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"type-fest@npm:^4.37.0, type-fest@npm:^4.38.0":
+"type-fest@npm:^4.38.0":
   version: 4.38.0
   resolution: "type-fest@npm:4.38.0"
   checksum: 10c0/db9990d682a08697cf8ae67ac3cdbca734c742c96615e8888401d7d54e376b390e6a5d3be25fe3b4b439e1bb88a7da461da678a614ece8caccd9c0a07dd2e5f4
