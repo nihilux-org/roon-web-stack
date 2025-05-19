@@ -3502,13 +3502,13 @@ __metadata:
     "@gquittet/graceful-server": "npm:4.0.9"
     "@nihilux/roon-web-model": "workspace:*"
     "@types/jest": "npm:29.5.14"
-    "@types/node": "npm:22.15.18"
+    "@types/node": "npm:22.15.19"
     "@typescript-eslint/eslint-plugin": "npm:8.32.1"
     "@typescript-eslint/parser": "npm:8.32.1"
     eslint: "npm:9.27.0"
     eslint-config-prettier: "npm:10.1.5"
     eslint-config-standard: "npm:17.1.0"
-    eslint-import-resolver-typescript: "npm:4.3.4"
+    eslint-import-resolver-typescript: "npm:4.3.5"
     eslint-plugin-import: "npm:2.31.0"
     eslint-plugin-n: "npm:17.18.0"
     eslint-plugin-prettier: "npm:5.4.0"
@@ -3559,7 +3559,7 @@ __metadata:
     eslint: "npm:9.27.0"
     eslint-config-prettier: "npm:10.1.5"
     eslint-config-standard: "npm:17.1.0"
-    eslint-import-resolver-typescript: "npm:4.3.4"
+    eslint-import-resolver-typescript: "npm:4.3.5"
     eslint-plugin-import: "npm:2.31.0"
     eslint-plugin-n: "npm:17.18.0"
     eslint-plugin-prettier: "npm:5.4.0"
@@ -3594,7 +3594,7 @@ __metadata:
     eslint: "npm:9.27.0"
     eslint-config-prettier: "npm:10.1.5"
     eslint-config-standard: "npm:17.1.0"
-    eslint-import-resolver-typescript: "npm:4.3.4"
+    eslint-import-resolver-typescript: "npm:4.3.5"
     eslint-plugin-import: "npm:2.31.0"
     eslint-plugin-n: "npm:17.18.0"
     eslint-plugin-prettier: "npm:5.4.0"
@@ -3636,13 +3636,13 @@ __metadata:
     "@nihilux/roon-web-client": "workspace:*"
     "@nihilux/roon-web-model": "workspace:*"
     "@types/jest": "npm:29.5.14"
-    "@types/node": "npm:22.15.18"
+    "@types/node": "npm:22.15.19"
     "@typescript-eslint/eslint-plugin": "npm:8.32.1"
     "@typescript-eslint/parser": "npm:8.32.1"
     eslint: "npm:9.27.0"
     eslint-config-prettier: "npm:10.1.5"
     eslint-config-standard: "npm:17.1.0"
-    eslint-import-resolver-typescript: "npm:4.3.4"
+    eslint-import-resolver-typescript: "npm:4.3.5"
     eslint-plugin-import: "npm:2.31.0"
     eslint-plugin-n: "npm:17.18.0"
     eslint-plugin-prettier: "npm:5.4.0"
@@ -4714,12 +4714,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:22.15.18":
-  version: 22.15.18
-  resolution: "@types/node@npm:22.15.18"
+"@types/node@npm:22.15.19":
+  version: 22.15.19
+  resolution: "@types/node@npm:22.15.19"
   dependencies:
     undici-types: "npm:~6.21.0"
-  checksum: 10c0/e23178c568e2dc6b93b6aa3b8dfb45f9556e527918c947fe7406a4c92d2184c7396558912400c3b1b8d0fa952ec63819aca2b8e4d3545455fc6f1e9623e09ca6
+  checksum: 10c0/8ef52fa1a91b1c8891616d46f3921a9f3c65ad1c6bb62db7899c8c28643c13bf9d607a2403b1e5aceb3e6fa6749efc9e0ba5c39618a4872da6946437b0edbfbe
   languageName: node
   linkType: hard
 
@@ -7565,9 +7565,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-import-resolver-typescript@npm:4.3.4":
-  version: 4.3.4
-  resolution: "eslint-import-resolver-typescript@npm:4.3.4"
+"eslint-import-resolver-typescript@npm:4.3.5":
+  version: 4.3.5
+  resolution: "eslint-import-resolver-typescript@npm:4.3.5"
   dependencies:
     debug: "npm:^4.4.0"
     get-tsconfig: "npm:^4.10.0"
@@ -7584,7 +7584,7 @@ __metadata:
       optional: true
     eslint-plugin-import-x:
       optional: true
-  checksum: 10c0/dba14e699855a7c32756e5c5258075e787a6e7938123ace553d69e8f84cefb4e6364fb1935d6d5500f96de82cee79662fee1e826fa45c0672a83841c27cf6abe
+  checksum: 10c0/cc8f6e858b45d3a261dce4fec250a82f07c7356784ac8234cda9706386408a96c767599f2d0b9b84492bc79bed0eb24f6f376825662b8c4c66397738b5acba67
   languageName: node
   linkType: hard
 
