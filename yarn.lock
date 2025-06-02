@@ -3880,7 +3880,7 @@ __metadata:
     nanoid: "npm:3.3.11"
     ng-mocks: "npm:14.13.5"
     ng-packagr: "npm:20.0.0"
-    ngx-device-detector: "npm:9.0.0"
+    ngx-device-detector: "npm:10.0.2"
     prettier: "npm:3.5.3"
     rxjs: "npm:~7.8.2"
     tslib: "npm:2.8.1"
@@ -11704,15 +11704,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ngx-device-detector@npm:9.0.0":
-  version: 9.0.0
-  resolution: "ngx-device-detector@npm:9.0.0"
+"ngx-device-detector@npm:10.0.2":
+  version: 10.0.2
+  resolution: "ngx-device-detector@npm:10.0.2"
   dependencies:
-    tslib: "npm:^2.0.0"
+    tslib: "npm:^2.6.3"
   peerDependencies:
-    "@angular/common": ^19.0.0
-    "@angular/core": ^19.0.0
-  checksum: 10c0/e2271f36abb47062ed9094775f920a91d306648d2574af1decf9f9c558a35fddc99e92812051a2e0aa203b6375994b9a1ff2af7769568f7db381cbdf79c0a509
+    "@angular/common": ^20.0.0
+    "@angular/core": ^20.0.0
+  checksum: 10c0/652c7d0640f49c43b474f2ee09ba11387974aa4089eb6ab4a9bc2894a409f2ed5fa86bcc5b3cb6468d265a98d1fea3f1f4e05a7705eab58cd68be862dc28cb7a
   languageName: node
   linkType: hard
 
@@ -14875,7 +14875,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:2.8.1, tslib@npm:^2.0.0, tslib@npm:^2.1.0, tslib@npm:^2.3.0, tslib@npm:^2.4.0":
+"tslib@npm:2.8.1, tslib@npm:^2.0.0, tslib@npm:^2.1.0, tslib@npm:^2.3.0, tslib@npm:^2.4.0, tslib@npm:^2.6.3":
   version: 2.8.1
   resolution: "tslib@npm:2.8.1"
   checksum: 10c0/9c4759110a19c53f992d9aae23aac5ced636e99887b51b9e61def52611732872ff7668757d4e4c61f19691e36f4da981cd9485e869b4a7408d689f6bf1f14e62
