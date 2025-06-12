@@ -667,6 +667,105 @@ describe("zone-manager.ts test suite", () => {
     expect(messages).toHaveLength(7);
   });
 
+  it(
+    "zoneManager should handle gracefully 'Changed' zone events containing 'zones_seek_changed' " +
+      "without 'seek_position'",
+    async () => {
+      await zoneManager.start();
+      zoneListener(server, "Subscribed", {
+        zones: [ZONE, OTHER_ZONE],
+      });
+      const messages: RoonSseMessage[] = [];
+      zoneManager.events().subscribe((message) => messages.push(message));
+      zoneListener(server, "Changed", {
+        zones_seek_changed: [
+          {
+            zone_id: ZONE.zone_id,
+            seek_position: 420,
+            queue_time_remaining: 424242,
+          },
+        ],
+      });
+      zoneListener(server, "Changed", {
+        zones_seek_changed: [
+          {
+            zone_id: ZONE.zone_id,
+            queue_time_remaining: 424242,
+          },
+        ],
+      });
+      expect(messages).toHaveLength(7);
+    }
+  );
+
+  it(
+    "zoneManager should handle gracefully 'Changed' zone events containing 'zones_seek_changed' " +
+      "with 'seek_position' for a zone without 'now_playing'",
+    async () => {
+      await zoneManager.start();
+      zoneListener(server, "Subscribed", {
+        zones: [
+          {
+            ...ZONE,
+            now_playing: undefined,
+          },
+          OTHER_ZONE,
+        ],
+      });
+      const messages: RoonSseMessage[] = [];
+      zoneManager.events().subscribe((message) => messages.push(message));
+      zoneListener(server, "Changed", {
+        zones_seek_changed: [
+          {
+            zone_id: ZONE.zone_id,
+            seek_position: 420,
+            queue_time_remaining: 424242,
+          },
+        ],
+      });
+      zoneListener(server, "Changed", {
+        zones_seek_changed: [
+          {
+            zone_id: ZONE.zone_id,
+            queue_time_remaining: 424242,
+          },
+        ],
+      });
+      expect(messages).toHaveLength(7);
+    }
+  );
+
+  it(
+    "zoneManager should handle gracefully 'Changed' zone events containing " +
+      "'zones_seek_changed' without 'queue_time_remaining'",
+    async () => {
+      await zoneManager.start();
+      zoneListener(server, "Subscribed", {
+        zones: [ZONE, OTHER_ZONE],
+      });
+      const messages: RoonSseMessage[] = [];
+      zoneManager.events().subscribe((message) => messages.push(message));
+      zoneListener(server, "Changed", {
+        zones_seek_changed: [
+          {
+            zone_id: ZONE.zone_id,
+            seek_position: 420,
+            queue_time_remaining: 424242,
+          },
+        ],
+      });
+      zoneListener(server, "Changed", {
+        zones_seek_changed: [
+          {
+            zone_id: ZONE.zone_id,
+            seek_position: 420,
+          },
+        ],
+      });
+      expect(messages).toHaveLength(7);
+    }
+  );
+
   it("zoneManager#events should send 'complete' to Observers when event 'Unsubscribed' is received from roon", async () => {
     await zoneManager.start();
     zoneListener(server, "Subscribed", {
@@ -866,6 +965,21 @@ describe("zone-manager.ts test suite", () => {
       QUEUE_MESSAGE,
       ZONE_MESSAGE,
     ]);
+  });
+
+  it("zoneManager#events silently ignore any 'Subscribed' event concerning the Outputs of the zone and coming from roon API", async () => {
+    await zoneManager.start();
+    zoneListener(server, "Subscribed", {
+      zones: [ZONE, OTHER_ZONE, YET_ANOTHER_ZONE],
+    });
+    const states: RoonSseMessage[] = [];
+    zoneManager.events().subscribe((state) => states.push(state));
+    const response = "Subscribed" as RoonSubscriptionResponse;
+    const body = {
+      unknown_attribute: "unknown_attribute",
+    } as unknown as RoonApiTransportOutputs;
+    outputListener(server, response, body);
+    expect(states).toHaveLength(7);
   });
 
   it("zoneManager#events should log and ignore any event other than 'Changed' concerning the Outputs of the zone and coming from roon API", async () => {
@@ -1520,19 +1634,24 @@ describe("zone-manager.ts test suite", () => {
       zones: [ZONE, OTHER_ZONE],
     });
     serverLostListener(server);
-
-    otherQueueManager = {
-      queue: jest.fn().mockImplementation(() => {
-        throw error;
-      }),
-      stop: jest.fn(),
-      start: jest.fn().mockImplementation(() => Promise.reject(error)),
-      isStarted: jest.fn().mockImplementation(() => false),
-    } as unknown as QueueManager;
+    const errorPromise = new Promise<void>((resolve) => {
+      otherQueueManager = {
+        queue: jest.fn().mockImplementation(() => {
+          throw error;
+        }),
+        stop: jest.fn(),
+        start: jest.fn().mockImplementation(() => {
+          resolve();
+          return Promise.reject(error);
+        }),
+        isStarted: jest.fn().mockImplementation(() => false),
+      } as unknown as QueueManager;
+    });
     serverPairedListener(server);
     zoneListener(server, "Subscribed", {});
     const messages: RoonSseMessage[] = [];
     zoneManager.events().subscribe((m) => messages.push(m));
+    await errorPromise;
     expect(messages.length).toEqual(5);
   });
 

@@ -133,14 +133,10 @@ class InternalQueueManager implements QueueManager {
     retries: 200,
   });
 
-  private readonly internalPublish = (queue?: Queue): void => {
-    if (queue) {
-      this._queue = queue;
-    }
-    if (this._queue) {
-      queueBot.watchQueue(this._queue);
-      this._eventEmitter.next(dataConverter.toRoonSseMessage(this._queue));
-    }
+  private readonly internalPublish = (queue: Queue): void => {
+    this._queue = queue;
+    queueBot.watchQueue(this._queue);
+    this._eventEmitter.next(dataConverter.toRoonSseMessage(this._queue));
   };
 
   private ensureStarted = (): {
