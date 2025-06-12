@@ -189,8 +189,7 @@ class InternalZoneManager implements ZoneManager {
           });
       }
     }
-    /* c8 ignore next 3 */
-    if (this._state !== RoonState.SYNC) {
+    if (this._state !== RoonState.SYNC /* c8 ignore next */) {
       this.updateState(RoonState.SYNCING);
     }
   };
