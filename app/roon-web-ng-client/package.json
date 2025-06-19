@@ -56,7 +56,7 @@
     "eslint-plugin-promise": "7.2.1",
     "eslint-plugin-simple-import-sort": "12.1.1",
     "globals": "16.2.0",
-    "jest": "30.0.0",
+    "jest": "30.0.2",
     "jsdom-testing-mocks": "1.13.1",
     "ng-mocks": "14.13.5",
     "ng-packagr": "20.0.1",
