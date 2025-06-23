@@ -553,7 +553,6 @@ export const roonWebClientFactory: RoonWebClientFactory = {
   build,
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
 const parseJson = <T>(json: string): T | undefined => {
   try {
     return JSON.parse(json) as unknown as T;
@@ -562,4 +561,6 @@ const parseJson = <T>(json: string): T | undefined => {
   }
 };
 
-type CommandJsonResponse = { command_id: string };
+interface CommandJsonResponse {
+  command_id: string;
+}

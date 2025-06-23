@@ -7,7 +7,12 @@
     "declaration": true,
     "declarationMap": true,
     "inlineSources": true,
-    "types": []
+    "types": [],
+    "paths": {
+      "@nihilux/ngx-spatial-navigable": [
+        "./src/public-api.ts"
+      ]
+    }
   },
   "exclude": [
     "**/*.spec.ts"

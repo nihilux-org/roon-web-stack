@@ -12,7 +12,7 @@ export interface DisplayModeData {
   class: string;
 }
 
-export const DisplayModesData: { [key in DisplayMode]: DisplayModeData } = {
+export const DisplayModesData: Record<DisplayMode, DisplayModeData> = {
   COMPACT: {
     label: "Compact",
     class: "compact",

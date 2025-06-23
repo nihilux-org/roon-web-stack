@@ -166,7 +166,6 @@ export class CustomActionsService {
   saveAction(): SharedConfigCommand | undefined {
     const editedAction = this._$editedAction();
     if (editedAction !== undefined && this._$isValid()) {
-      /* eslint-disable @typescript-eslint/no-non-null-assertion */
       const customActions = this._$customActions();
       const previousAction = customActions.find((ca) => editedAction.id === ca.id);
       if (previousAction !== undefined) {

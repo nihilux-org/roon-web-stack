@@ -234,6 +234,7 @@ describe("roon-extension.ts test suite", () => {
   });
 
   it("roon#startExtension should register the default onServerPaired listener", () => {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     extensionMock.start_discovery.mockImplementation(() => {});
     let registeredListener = null;
     extensionMock.on.mockImplementation((eventName: string, listener: ServerListener) => {
@@ -263,6 +264,7 @@ describe("roon-extension.ts test suite", () => {
   });
 
   it("roon#startExtension should register the default onServerLost listener", () => {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     extensionMock.start_discovery.mockImplementation(() => {});
     let registeredListener = null;
     extensionMock.on.mockImplementation((eventName: string, listener: ServerListener) => {

@@ -1,5 +1,5 @@
 import { TestBed } from "@angular/core/testing";
-import { NgxSpatialNavigableService } from "./ngx-spatial-navigable.service";
+import { NgxSpatialNavigableService } from "@nihilux/ngx-spatial-navigable";
 
 describe("NgxSpatialNavigableService", () => {
   let service: NgxSpatialNavigableService;

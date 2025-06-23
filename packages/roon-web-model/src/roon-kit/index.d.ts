@@ -6,9 +6,7 @@
  */
 import { OutputDescription } from "../api-model";
 
-export type EmptyObject = {
-  [K in unknown]: never;
-};
+export type EmptyObject = Record<unknown, never>;
 
 export interface RoonExtensionDescription {
   extension_id: string;
@@ -42,8 +40,8 @@ export type RequestedRoonServices = RoonApiBrowse | RoonApiImage | RoonApiTransp
 export type ProvidedRoonServices = RoonApiStatus | object;
 
 export interface RoonServiceOptions {
-  required_services?: { new (): RequestedRoonServices }[];
-  optional_services?: { new (): RequestedRoonServices }[];
+  required_services?: (new () => RequestedRoonServices)[];
+  optional_services?: (new () => RequestedRoonServices)[];
   provided_services?: ProvidedRoonServices[];
 }
 
@@ -58,7 +56,7 @@ export type RoonSubscriptionResponse = "Subscribed" | "Changed" | "Unsubscribed"
 export interface RoonApi {
   // constructor(options: RoonApiOptions);
   init_services(services: RoonServiceOptions): this;
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
+
   load_config<T = unknown>(key: string): T | undefined;
   save_config(key: string, value: unknown): void;
   start_discovery(): void;
@@ -379,7 +377,7 @@ export interface SettingsManager<T extends SettingsValues> {
   offSettings: (listener: SettingsUpdateListener<T>) => void;
 }
 
-export type SettingsValues = { [key: string]: string | Zone | undefined };
+export type SettingsValues = Record<string, string | Zone | undefined>;
 
 export interface ValidatedSettingsValues<T extends SettingsValues> {
   values: Partial<T>;
@@ -451,41 +449,41 @@ export interface RoonExtensionOptions<T extends SettingsValues> {
 
 export interface RoonExtension<T extends SettingsValues> {
   on(eventName: "core_paired" | "core_unpaired", listener: (core: RoonServer) => void): this;
-  off(eventName: "core_paired" | "core_unpaired", listener: (core: RoonServer) => void): this;
-  once(eventName: "core_paired" | "core_unpaired", listener: (core: RoonServer) => void): this;
-  emit(eventName: "core_paired" | "core_unpaired", core: RoonServer): boolean;
-
   on(
     eventName: "subscribe_outputs",
     listener: (core: RoonServer, response: RoonSubscriptionResponse, body: RoonApiTransportOutputs) => void
   ): this;
+  on(
+    eventName: "subscribe_zones",
+    listener: (core: RoonServer, response: RoonSubscriptionResponse, body: RoonApiTransportZones) => void
+  ): this;
+
+  off(eventName: "core_paired" | "core_unpaired", listener: (core: RoonServer) => void): this;
   off(
     eventName: "subscribe_outputs",
     listener: (core: RoonServer, response: RoonSubscriptionResponse, body: RoonApiTransportOutputs) => void
   ): this;
+  off(eventName: "core_paired" | "core_unpaired", listener: (core: RoonServer) => void): this;
+  off(
+    eventName: "subscribe_zones",
+    listener: (core: RoonServer, response: RoonSubscriptionResponse, body: RoonApiTransportZones) => void
+  ): this;
+  once(eventName: "core_paired" | "core_unpaired", listener: (core: RoonServer) => void): this;
   once(
     eventName: "subscribe_outputs",
     listener: (core: RoonServer, response: RoonSubscriptionResponse, body: RoonApiTransportOutputs) => void
   ): this;
+  once(
+    eventName: "subscribe_zones",
+    listener: (core: RoonServer, response: RoonSubscriptionResponse, body: RoonApiTransportZones) => void
+  ): this;
+  emit(eventName: "core_paired" | "core_unpaired", core: RoonServer): boolean;
   emit(
     eventName: "subscribe_outputs",
     core: RoonServer,
     response: RoonSubscriptionResponse,
     body: RoonApiTransportOutputs
   ): boolean;
-
-  on(
-    eventName: "subscribe_zones",
-    listener: (core: RoonServer, response: RoonSubscriptionResponse, body: RoonApiTransportZones) => void
-  ): this;
-  off(
-    eventName: "subscribe_zones",
-    listener: (core: RoonServer, response: RoonSubscriptionResponse, body: RoonApiTransportZones) => void
-  ): this;
-  once(
-    eventName: "subscribe_zones",
-    listener: (core: RoonServer, response: RoonSubscriptionResponse, body: RoonApiTransportZones) => void
-  ): this;
   emit(
     eventName: "subscribe_zones",
     core: RoonServer,

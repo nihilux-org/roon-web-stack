@@ -48,9 +48,7 @@ export class EventSourceMock {
     };
   }
 
-  get OPEN(): number {
-    return 1;
-  }
+  readonly OPEN = 1;
 
   get readyState(): number {
     return this._state;

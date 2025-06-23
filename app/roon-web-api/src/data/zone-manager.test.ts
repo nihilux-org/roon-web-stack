@@ -622,7 +622,7 @@ describe("zone-manager.ts test suite", () => {
       },
     ]);
     expect(dataConverterMock.toRoonSseMessage).toHaveBeenCalledTimes(10);
-    const convertZoneArgs = dataConverterMock.toRoonSseMessage.mock.lastCall as Array<unknown>;
+    const convertZoneArgs = dataConverterMock.toRoonSseMessage.mock.lastCall as unknown[];
     expect(convertZoneArgs[0]).toEqual({
       ...OTHER_ZONE,
       queue_time_remaining: 424242,
@@ -771,7 +771,7 @@ describe("zone-manager.ts test suite", () => {
     zoneListener(server, "Subscribed", {
       zones: [ZONE, OTHER_ZONE, YET_ANOTHER_ZONE],
     });
-    let stopped: boolean = false;
+    let stopped = false;
     zoneManager.events().subscribe({
       complete: () => {
         stopped = true;
@@ -854,7 +854,7 @@ describe("zone-manager.ts test suite", () => {
     } as unknown as RoonApiTransportOutputs);
     expect(states).toHaveLength(8);
     expect(dataConverterMock.toRoonSseMessage).toHaveBeenCalledTimes(11);
-    const convertZoneArgs = dataConverterMock.toRoonSseMessage.mock.lastCall as Array<unknown>;
+    const convertZoneArgs = dataConverterMock.toRoonSseMessage.mock.lastCall as unknown[];
     expect(convertZoneArgs[0]).toEqual({
       ...ZONE,
       outputs: [

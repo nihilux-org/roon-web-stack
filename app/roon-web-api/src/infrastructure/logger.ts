@@ -2,7 +2,7 @@ import { LoggerOptions, pino } from "pino";
 import * as process from "process";
 
 export const buildLoggerOptions: (minLevel?: pino.Level) => LoggerOptions | undefined = (minLevel?: pino.Level) => {
-  const level = process.env["LOG_LEVEL"] ?? "info";
+  const level = process.env.LOG_LEVEL ?? "info";
   let shouldConfigureLogger = true;
   if (minLevel) {
     switch (minLevel) {

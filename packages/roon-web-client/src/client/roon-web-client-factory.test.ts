@@ -1719,6 +1719,7 @@ describe("roon-web-client-factory.ts test suite", () => {
     expect(eventSource).not.toBeUndefined();
     const eventSourceCloseSpy = jest.spyOn(
       eventSource ?? {
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
         close: () => {},
       },
       "close"
@@ -1735,6 +1736,7 @@ describe("roon-web-client-factory.ts test suite", () => {
     await client.start();
     fetchMock
       .once(() => {
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
         return new Promise(() => {});
       })
       .once(mockVersionGet)
@@ -1803,7 +1805,7 @@ describe("roon-web-client-factory.ts test suite", () => {
     const restartSpy = jest.spyOn(client, "restart");
     fetchMock.once(mockVersionGet).once(mockRegisterPost);
     const eventSource = eventSourceMocks.get(EVENTS_URL.toString());
-    if (eventSource && eventSource.onerror) {
+    if (eventSource?.onerror) {
       eventSource.onerror();
     }
     await client.refresh();
@@ -1819,7 +1821,7 @@ describe("roon-web-client-factory.ts test suite", () => {
     const restartSpy = jest.spyOn(client, "restart");
     fetchMock.once(mockVersionGet);
     const eventSource = eventSourceMocks.get(EVENTS_URL.toString());
-    if (eventSource && eventSource.onerror) {
+    if (eventSource?.onerror) {
       eventSource.onerror();
     }
     let error: Error | undefined = undefined;
@@ -2097,7 +2099,7 @@ const mockVersionGet: MockResponseInitFunction = (req: Request) => {
 
 const mockRegisterPost: MockResponseInitFunction = (req: Request) => {
   if (req.method === "POST" && req.url.startsWith(new URL("/api/register", API_URL).toString())) {
-    const Location = req.url.indexOf(other_client_id) > -1 ? other_client_path : client_path;
+    const Location = req.url.includes(other_client_id) ? other_client_path : client_path;
     return Promise.resolve({
       headers: {
         Location,

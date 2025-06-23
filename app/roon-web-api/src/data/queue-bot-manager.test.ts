@@ -217,6 +217,7 @@ describe("queue-bot-manager.ts test suite", () => {
   });
 
   it("queueBot should do nothing if no settingsManager is available", () => {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     roonMock.settings.mockImplementationOnce(() => {});
     queueBot.start(roonMock);
     queueBot.watchQueue({

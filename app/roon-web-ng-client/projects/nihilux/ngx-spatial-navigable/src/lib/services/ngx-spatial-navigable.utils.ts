@@ -65,7 +65,7 @@ const getFocusables = (scope: HTMLElement | null): HTMLElement[] => {
     return [];
   }
   const ignoredElements = toArray(scope.querySelectorAll("." + ignoredClass));
-  if (scope.className.indexOf(ignoredClass) > -1) {
+  if (scope.className.includes(ignoredClass)) {
     ignoredElements.push(scope);
   }
   return toArray(scope.querySelectorAll(focusableSelector))
@@ -169,8 +169,7 @@ const getBlockedExitDirs = (container: HTMLElement | null, candidateContainer: H
   const candidateAncestorContainers = collectContainers(candidateContainer);
   // Find common container for current container and candidate container and
   // remove everything above it
-  for (let i = 0; i < candidateAncestorContainers.length; i++) {
-    const commonCandidate = candidateAncestorContainers[i];
+  for (const commonCandidate of candidateAncestorContainers) {
     const spliceIndex = currentAncestorContainers.indexOf(commonCandidate);
     if (spliceIndex > -1) {
       currentAncestorContainers.splice(spliceIndex);
@@ -257,9 +256,7 @@ const getParentFocusableContainer = (startingCandidate: HTMLElement | null): HTM
 };
 
 export const getNextFocus = (elem: HTMLElement | null, exitDir: Direction, scope: HTMLElement | null) => {
-  if (!scope) {
-    scope = document.body;
-  }
+  scope ??= document.body;
   if (!elem) {
     return getFocusables(scope)[0];
   }
@@ -303,7 +300,6 @@ const findNextFocusable = (elem: HTMLElement, exitDir: Direction, scope: HTMLEle
     parentContainer?.getAttribute(dataContainerPrioritizedChildrenAttribute) !== "false" &&
     scope.contains(parentContainer)
   ) {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const focusableSiblings = getAllFocusables(parentContainer!);
     focusableCandidates = sortValidCandidates(focusableSiblings, elem, exitDir);
   }
@@ -327,7 +323,7 @@ const findNextFocusable = (elem: HTMLElement, exitDir: Direction, scope: HTMLEle
         // are already nested in
         const lastActiveChildId = candidateContainer.getAttribute(dataContainerLastFocusChildId);
         const lastActiveChild = lastActiveChildId ? document.getElementById(lastActiveChildId) : null;
-        const newFocus = lastActiveChild || getFocusables(candidateContainer)[0];
+        const newFocus = lastActiveChild ?? getFocusables(candidateContainer)[0];
         getParentFocusableContainer(candidateContainer)?.setAttribute(dataContainerLastFocusChildId, newFocus.id);
         candidateContainer.setAttribute(dataContainerLastFocusChildId, newFocus.id);
         return newFocus;
@@ -345,8 +341,7 @@ const findNextFocusable = (elem: HTMLElement, exitDir: Direction, scope: HTMLEle
 export const isSnKeyboardEvent: (event: KeyboardEvent) => { direction?: Direction; substitueEvent?: KeyboardEvent } = (
   event: KeyboardEvent
 ) => {
-  // eslint-disable-next-line @typescript-eslint/no-deprecated
-  const mappedDirection = _keyCodeMap[event.key] || _keyCodeMap[event.keyCode];
+  const mappedDirection = _keyCodeMap[event.key] ?? _keyCodeMap[event.keyCode];
   if (mappedDirection === MappedDirection.BACK || mappedDirection === MappedDirection.EXIT) {
     const substitueEvent = new KeyboardEvent("keydown", {
       key: "Escape",
@@ -389,7 +384,7 @@ export enum MappedDirection {
   EXIT = "exit",
 }
 
-type KeyCodeMap = { [key: number | string]: MappedDirection | undefined };
+type KeyCodeMap = Record<number | string, MappedDirection | undefined>;
 
 const _keyCodeMap: KeyCodeMap = {
   4: MappedDirection.LEFT,

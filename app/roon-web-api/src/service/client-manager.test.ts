@@ -42,6 +42,7 @@ describe("client-manager.ts test suite", () => {
     nanoidMock.mockImplementation(() => `${++client_id_counter}`);
     roonSseMessageSubject = new Subject<RoonSseMessage>();
     zoneManagerMock.start.mockImplementation(() => Promise.resolve());
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     zoneManagerMock.stop.mockImplementation(() => {});
     zoneManagerMock.zones.mockImplementation(() => ZONE_DESCRIPTIONS);
     zoneManagerMock.events.mockImplementation(() => roonSseMessageSubject);
@@ -57,6 +58,7 @@ describe("client-manager.ts test suite", () => {
   });
 
   it("clientManager#start should return the Promise returned by zoneManager#start", () => {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     const zoneManagerStartPromise = new Promise<void>(() => {});
     zoneManagerMock.start.mockImplementation(() => zoneManagerStartPromise);
     const startPromise = clientManager.start();

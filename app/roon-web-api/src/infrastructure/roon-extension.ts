@@ -81,7 +81,7 @@ const offOutputs = (outputListener: OutputListener): void => {
   extension.off("subscribe_outputs", outputListener);
 };
 
-let mustBeStarted: boolean = true;
+let mustBeStarted = true;
 
 const startExtension = (): void => {
   if (mustBeStarted) {

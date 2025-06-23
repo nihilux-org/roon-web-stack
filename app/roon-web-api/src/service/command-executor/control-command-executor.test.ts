@@ -34,7 +34,7 @@ describe("control-command.ts test suite", () => {
   });
 
   it("executor should call RoonApiTransport#control method with expected zone and expected action", () => {
-    const expectedRoonControls: { [key: string]: RoonApiTransportControl } = {
+    const expectedRoonControls: Record<string, RoonApiTransportControl> = {
       PLAY: "play",
       PAUSE: "pause",
       PLAY_PAUSE: "playpause",
