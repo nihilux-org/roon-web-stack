@@ -13,6 +13,7 @@ export const loggerMock = {
 jest.mock("pino", () => {
   const pino = () => loggerMock;
   pino.stdTimeFunctions = {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     isoTime: () => {},
   };
   return {

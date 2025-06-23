@@ -60,9 +60,7 @@ export interface DataConverter {
   secondsToTimeString: (seconds: number | undefined) => string | undefined;
 }
 
-export interface ServerListener {
-  (server: RoonServer): void;
-}
+export type ServerListener = (server: RoonServer) => void;
 
 export type QueueBotState = "enabled" | "disabled";
 

@@ -58,9 +58,7 @@ export class NgxSpatialNavigableService implements OnDestroy {
         this._focusedElement = this.getNextFocus(this._focusedElement ?? null, direction, scope);
       } else {
         this._focusedElement = this.getStarter();
-        if (this._focusedElement === undefined) {
-          this._focusedElement = this.getNextFocus(null, direction, scope);
-        }
+        this._focusedElement ??= this.getNextFocus(null, direction, scope);
       }
       this.focus();
     }

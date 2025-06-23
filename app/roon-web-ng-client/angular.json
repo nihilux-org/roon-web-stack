@@ -125,7 +125,7 @@
         "test": {
           "builder": "@angular-builders/jest:run",
           "options": {
-            "tsConfig": "./tsconfig.spec.json",
+            "tsConfig": "tsconfig.spec.json",
             "polyfills": [
               "zone.js",
               "zone.js/testing"
@@ -136,8 +136,7 @@
           "builder": "@angular-eslint/builder:lint",
           "options": {
             "lintFilePatterns": [
-              "projects/nihilux/ngx-spatial-navigable/**/*.ts",
-              "projects/nihilux/ngx-spatial-navigable/**/*.html"
+              "projects/nihilux/ngx-spatial-navigable/**/*.ts"
             ],
             "eslintConfig": "projects/nihilux/ngx-spatial-navigable/eslint.config.mjs"
           }

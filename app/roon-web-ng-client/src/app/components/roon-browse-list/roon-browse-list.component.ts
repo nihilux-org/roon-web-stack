@@ -1,4 +1,4 @@
-import { BehaviorSubject, Observable, Subject, Subscription } from "rxjs";
+import { BehaviorSubject, firstValueFrom, Observable, Subject, Subscription } from "rxjs";
 import { CollectionViewer, DataSource } from "@angular/cdk/collections";
 import { CdkFixedSizeVirtualScroll, CdkVirtualForOf, CdkVirtualScrollViewport } from "@angular/cdk/scrolling";
 import {
@@ -182,7 +182,7 @@ export class RoonBrowseListComponent implements OnChanges, AfterViewChecked {
           actionIndex: 0,
         });
       } else {
-        this._roonService.navigate(this.zoneId, this.hierarchy, item_key).subscribe(() => {});
+        void firstValueFrom(this._roonService.navigate(this.zoneId, this.hierarchy, item_key));
       }
     } else if (item_key) {
       const input = hasInput ? this._inputValues.get(`${item_key}_prompt_input`) : undefined;
@@ -205,7 +205,7 @@ export class RoonBrowseListComponent implements OnChanges, AfterViewChecked {
         title,
       });
     } else {
-      this._roonService.navigate(this.zoneId, this.hierarchy, item_key).subscribe(() => {});
+      void firstValueFrom(this._roonService.navigate(this.zoneId, this.hierarchy, item_key));
     }
   }
 

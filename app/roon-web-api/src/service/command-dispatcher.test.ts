@@ -70,7 +70,7 @@ describe("command-dispatcher.ts test suite", () => {
   it("command-dispatcher#dispatch should always dispatch an error and log it if the provided zone is not a known zone", async () => {
     zone_by_zone_id.mockImplementation(() => null);
     const notifications: CommandState[] = [];
-    const promise: Promise<void> = new Promise((resolve) => {
+    const promise = new Promise<void>((resolve) => {
       controlChannel.subscribe((n: CommandState) => {
         notifications.push(n);
         if (notifications.length === commands.length - 3) {
@@ -110,7 +110,7 @@ describe("command-dispatcher.ts test suite", () => {
       throw error;
     });
     const notifications: CommandState[] = [];
-    const promise: Promise<void> = new Promise((resolve) => {
+    const promise = new Promise<void>((resolve) => {
       controlChannel.subscribe((n: CommandState) => {
         notifications.push(n);
         if (notifications.length === commands.length - 3) {
@@ -157,7 +157,7 @@ describe("command-dispatcher.ts test suite", () => {
     controlExecutorMock.mockImplementation(() => Promise.resolve());
     const notifications: CommandState[] = [];
     const commandIds: string[] = [];
-    const promise: Promise<void> = new Promise((resolve) => {
+    const promise = new Promise<void>((resolve) => {
       controlChannel.subscribe((cn: CommandState) => {
         notifications.push(cn);
         if (notifications.length === controlCommands.length) {
@@ -184,7 +184,7 @@ describe("command-dispatcher.ts test suite", () => {
       .map((c: Command) => c as unknown as VolumeCommand);
     const notifications: CommandState[] = [];
     const commandIds: string[] = [];
-    const promise: Promise<void> = new Promise((resolve) => {
+    const promise = new Promise<void>((resolve) => {
       controlChannel.subscribe((cn: CommandState) => {
         notifications.push(cn);
         if (notifications.length === volumeCommands.length) {
@@ -211,7 +211,7 @@ describe("command-dispatcher.ts test suite", () => {
       .map((c: Command) => c as unknown as MuteCommand);
     const notifications: CommandState[] = [];
     const commandIds: string[] = [];
-    const promise: Promise<void> = new Promise((resolve) => {
+    const promise = new Promise<void>((resolve) => {
       controlChannel.subscribe((cn: CommandState) => {
         notifications.push(cn);
         if (notifications.length === muteCommands.length) {
@@ -238,7 +238,7 @@ describe("command-dispatcher.ts test suite", () => {
       .map((c: Command) => c as unknown as PlayFromHereCommand);
     const notifications: CommandState[] = [];
     const commandIds: string[] = [];
-    const promise: Promise<void> = new Promise((resolve) => {
+    const promise = new Promise<void>((resolve) => {
       controlChannel.subscribe((cn: CommandState) => {
         notifications.push(cn);
         if (notifications.length === playFromHereCommand.length) {
@@ -265,7 +265,7 @@ describe("command-dispatcher.ts test suite", () => {
       .map((c: Command) => c as unknown as TransferZoneCommand);
     const notifications: CommandState[] = [];
     const commandIds: string[] = [];
-    const promise: Promise<void> = new Promise((resolve) => {
+    const promise = new Promise<void>((resolve) => {
       controlChannel.subscribe((cn: CommandState) => {
         notifications.push(cn);
         if (notifications.length === transferZoneCommands.length) {
@@ -292,7 +292,7 @@ describe("command-dispatcher.ts test suite", () => {
       .map((c: Command) => c as unknown as VolumeGroupedZoneCommand);
     const notifications: CommandState[] = [];
     const commandIds: string[] = [];
-    const promise: Promise<void> = new Promise((resolve) => {
+    const promise = new Promise<void>((resolve) => {
       controlChannel.subscribe((cn: CommandState) => {
         notifications.push(cn);
         if (notifications.length === volumeGroupedZoneCommands.length) {
@@ -319,7 +319,7 @@ describe("command-dispatcher.ts test suite", () => {
       .map((c: Command) => c as unknown as MuteGroupedZoneCommand);
     const notifications: CommandState[] = [];
     const commandIds: string[] = [];
-    const promise: Promise<void> = new Promise((resolve) => {
+    const promise = new Promise<void>((resolve) => {
       controlChannel.subscribe((cn: CommandState) => {
         notifications.push(cn);
         if (notifications.length === muteGroupedZoneCommands.length) {
@@ -346,7 +346,7 @@ describe("command-dispatcher.ts test suite", () => {
       .map((c: Command) => c as unknown as GroupCommand);
     const notifications: CommandState[] = [];
     const commandIds: string[] = [];
-    const promise: Promise<void> = new Promise((resolve) => {
+    const promise = new Promise<void>((resolve) => {
       controlChannel.subscribe((cn: CommandState) => {
         notifications.push(cn);
         if (notifications.length === groupCommands.length) {
@@ -370,7 +370,7 @@ describe("command-dispatcher.ts test suite", () => {
       .map((c: Command) => c as unknown as SharedConfigCommand);
     const notifications: CommandState[] = [];
     const commandIds: string[] = [];
-    const promise: Promise<void> = new Promise((resolve) => {
+    const promise = new Promise<void>((resolve) => {
       controlChannel.subscribe((cn: CommandState) => {
         notifications.push(cn);
         if (notifications.length === sharedConfigCommands.length) {
@@ -411,7 +411,6 @@ describe("command-dispatcher.ts test suite", () => {
 
   it("command-dispatcher#dispatchInternal should call queue-bot-internal-command-executor for QueueBotCommand", async () => {
     const queueBotCommands: QueueBotCommand[] = internalCommands.filter(
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       (ic) => ic.type === InternalCommandType.STOP_NEXT || ic.type === InternalCommandType.STANDBY_NEXT
     );
     for (const queueBotCommand of queueBotCommands) {

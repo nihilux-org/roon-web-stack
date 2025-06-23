@@ -37,7 +37,7 @@ describe("volume-command-executor.ts test suite", () => {
   });
 
   it("executor should call RoonApiTransport#change_volume with the expected parameters", () => {
-    const expectedRoonChangeVolumeHows: { [key: string]: RoonChangeVolumeHow } = {
+    const expectedRoonChangeVolumeHows: Record<string, RoonChangeVolumeHow> = {
       ABSOLUTE: "absolute",
       RELATIVE: "relative",
       RELATIVE_STEP: "relative_step",
@@ -109,7 +109,7 @@ describe("volume-command-executor.ts test suite", () => {
   });
 
   it("executor should return a rejected Promise wrapping the error returned by RoonApiTransport#change_volume", () => {
-    const expectedRoonChangeVolumeHows: { [key: string]: RoonChangeVolumeHow } = {
+    const expectedRoonChangeVolumeHows: Record<string, RoonChangeVolumeHow> = {
       ABSOLUTE: "absolute",
       RELATIVE: "relative",
       RELATIVE_STEP: "relative_step",

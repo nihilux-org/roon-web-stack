@@ -14,13 +14,13 @@ export type ZoneDescription = Pick<Zone, "display_name" | "zone_id">;
 
 export type OutputDescription = Pick<Output, "display_name" | "zone_id" | "output_id">;
 
-export interface ZoneListener {
-  (core: RoonServer, response: RoonSubscriptionResponse, body: RoonApiTransportZones): void;
-}
+export type ZoneListener = (core: RoonServer, response: RoonSubscriptionResponse, body: RoonApiTransportZones) => void;
 
-export interface OutputListener {
-  (core: RoonServer, response: RoonSubscriptionResponse, body: RoonApiTransportOutputs): void;
-}
+export type OutputListener = (
+  core: RoonServer,
+  response: RoonSubscriptionResponse,
+  body: RoonApiTransportOutputs
+) => void;
 
 export const enum RoonState {
   LOST = "LOST",

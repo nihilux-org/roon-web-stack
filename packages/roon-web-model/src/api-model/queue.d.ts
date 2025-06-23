@@ -18,9 +18,7 @@ export interface QueueManagerFactory {
   build: (zone: Zone, eventPublisher: Subject<RoonSseMessage>, queueSize: number) => QueueManager;
 }
 
-export interface QueueListener {
-  (response: RoonSubscriptionResponse, body: RoonApiTransportQueue): void;
-}
+export type QueueListener = (response: RoonSubscriptionResponse, body: RoonApiTransportQueue) => void;
 
 export interface QueueTrack extends Omit<Track, "seek_position" | "seek_percentage"> {
   queue_item_id: number;

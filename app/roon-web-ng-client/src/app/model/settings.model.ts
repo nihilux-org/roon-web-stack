@@ -30,9 +30,7 @@ export const Themes: Theme[] = [
   },
 ];
 
-export type ClientBreakpoints = {
-  [key: string]: boolean;
-};
+export type ClientBreakpoints = Record<string, boolean>;
 
 export const SettingsDialogConfig: MatDialogConfig = {
   restoreFocus: false,
