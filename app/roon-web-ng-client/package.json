@@ -59,7 +59,7 @@
     "jsdom-testing-mocks": "1.13.1",
     "ng-mocks": "14.13.5",
     "ng-packagr": "20.0.1",
-    "prettier": "3.6.1",
+    "prettier": "3.6.2",
     "typescript": "5.8.3",
     "typescript-eslint": "8.35.0",
     "zone.js": "~0.15.1"

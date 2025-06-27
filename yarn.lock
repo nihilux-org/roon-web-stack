@@ -3491,7 +3491,7 @@ __metadata:
     node-roon-api-status: "github:roonlabs/node-roon-api-status"
     node-roon-api-transport: "github:roonlabs/node-roon-api-transport"
     nodemon-webpack-plugin: "npm:4.8.2"
-    prettier: "npm:3.6.1"
+    prettier: "npm:3.6.2"
     rimraf: "npm:6.0.1"
     rxjs: "npm:7.8.2"
     ts-jest: "npm:29.4.0"
@@ -3530,7 +3530,7 @@ __metadata:
     jest: "npm:30.0.3"
     jest-fetch-mock: "npm:3.0.3"
     jest-junit: "npm:16.0.0"
-    prettier: "npm:3.6.1"
+    prettier: "npm:3.6.2"
     rimraf: "npm:6.0.1"
     ts-jest: "npm:29.4.0"
     ts-loader: "npm:9.5.2"
@@ -3558,7 +3558,7 @@ __metadata:
     eslint-plugin-promise: "npm:7.2.1"
     eslint-plugin-simple-import-sort: "npm:12.1.1"
     eslint-plugin-unused-imports: "npm:4.1.4"
-    prettier: "npm:3.6.1"
+    prettier: "npm:3.6.2"
     tslib: "npm:2.8.1"
     typescript: "npm:5.8.3"
     typescript-eslint: "npm:8.35.0"
@@ -3581,7 +3581,7 @@ __metadata:
     eslint-plugin-simple-import-sort: "npm:12.1.1"
     eslint-plugin-unused-imports: "npm:4.1.4"
     globals: "npm:16.2.0"
-    prettier: "npm:3.6.1"
+    prettier: "npm:3.6.2"
     rxjs: "npm:7.8.2"
     tslib: "npm:2.8.1"
     typescript: "npm:5.8.3"
@@ -3636,7 +3636,7 @@ __metadata:
     ng-mocks: "npm:14.13.5"
     ng-packagr: "npm:20.0.1"
     ngx-device-detector: "npm:10.0.2"
-    prettier: "npm:3.6.1"
+    prettier: "npm:3.6.2"
     rxjs: "npm:~7.8.2"
     tslib: "npm:2.8.1"
     typescript: "npm:5.8.3"
@@ -12294,12 +12294,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:3.6.1":
-  version: 3.6.1
-  resolution: "prettier@npm:3.6.1"
+"prettier@npm:3.6.2":
+  version: 3.6.2
+  resolution: "prettier@npm:3.6.2"
   bin:
     prettier: bin/prettier.cjs
-  checksum: 10c0/cf54254b9ddf1a8dff12f84bf0089e6aef3eeb9d0ce9d0344e39549ddc4f5c290fc5060d7d5a597848b9617e53e05b33a4118e37cd560f9e132ecc19c211300a
+  checksum: 10c0/488cb2f2b99ec13da1e50074912870217c11edaddedeadc649b1244c749d15ba94e846423d062e2c4c9ae683e2d65f754de28889ba06e697ac4f988d44f45812
   languageName: node
   linkType: hard
 
