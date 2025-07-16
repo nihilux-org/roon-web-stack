@@ -1,3 +1,5 @@
+import { dirname } from "node:path";
+
 import eslint from "@eslint/js";
 import tsParser from "@typescript-eslint/parser";
 import { globalIgnores } from "eslint/config";
@@ -31,6 +33,7 @@ export default tsEslint.config(
       sourceType: "script",
       parserOptions: {
         project: "./tsconfig.json",
+        tsconfigRootDir: dirname("./"),
       },
     },
     rules: {
