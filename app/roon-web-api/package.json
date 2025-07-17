@@ -36,7 +36,7 @@
     "@eslint/js": "9.31.0",
     "@nihilux/roon-web-model": "workspace:*",
     "@types/jest": "30.0.0",
-    "@types/node": "24.0.13",
+    "@types/node": "24.0.14",
     "@typescript-eslint/eslint-plugin": "8.37.0",
     "@typescript-eslint/parser": "8.37.0",
     "eslint": "9.31.0",
@@ -60,7 +60,7 @@
     "tsconfig-paths-webpack-plugin": "4.2.0",
     "typescript": "5.8.3",
     "typescript-eslint": "8.37.0",
-    "webpack": "5.100.1",
+    "webpack": "5.100.2",
     "webpack-cli": "6.0.1",
     "webpack-node-externals": "3.0.0"
   }
