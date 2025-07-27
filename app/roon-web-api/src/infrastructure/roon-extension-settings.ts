@@ -8,7 +8,7 @@ import {
   SettingsValidator,
   SettingsValues,
   StringSetting,
-} from "@model";
+} from "@nihilux/roon-web-model";
 
 const settingsLayoutBuilder: SettingsLayoutBuilder<ExtensionSettings> = (values, has_error) => {
   const queueBotActivation: DropdownSetting = {

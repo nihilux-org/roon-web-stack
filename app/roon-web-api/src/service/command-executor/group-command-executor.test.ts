@@ -1,4 +1,4 @@
-import { CommandType, GroupCommand, OutputDescription, RoonApiTransport, RoonServer } from "@model";
+import { CommandType, GroupCommand, OutputDescription, RoonApiTransport, RoonServer } from "@nihilux/roon-web-model";
 import { executor } from "./group-command-executor";
 
 describe("group-command-executor.ts test suite", () => {

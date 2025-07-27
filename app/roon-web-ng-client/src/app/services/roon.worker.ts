@@ -1,7 +1,6 @@
 /// <reference lib="webworker" />
 
 import { defer, retry } from "rxjs";
-import { RoonWebClient, SharedConfigMessage } from "@model";
 import {
   ApiResultWorkerEvent,
   ApiStateWorkerEvent,
@@ -17,8 +16,9 @@ import {
   WorkerActionMessage,
   WorkerClientAction,
   ZoneStateWorkerEvent,
-} from "@model/client";
+} from "@model";
 import { roonWebClientFactory } from "@nihilux/roon-web-client";
+import { RoonWebClient, SharedConfigMessage } from "@nihilux/roon-web-model";
 
 let _roonClient: RoonWebClient;
 let _isRefreshing = false;

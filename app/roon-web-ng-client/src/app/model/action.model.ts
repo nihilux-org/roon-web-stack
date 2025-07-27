@@ -1,5 +1,5 @@
 import { MatDialogConfig } from "@angular/material/dialog";
-import { RoonApiBrowseHierarchy, RoonPath } from "@model";
+import { RoonApiBrowseHierarchy, RoonPath } from "@nihilux/roon-web-model";
 
 export enum ActionType {
   LOAD = "LOAD",

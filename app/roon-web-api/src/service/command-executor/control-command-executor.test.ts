@@ -6,7 +6,7 @@ import {
   RoonApiTransportControl,
   RoonServer,
   Zone,
-} from "@model";
+} from "@nihilux/roon-web-model";
 import { executor } from "./control-command-executor";
 
 describe("control-command.ts test suite", () => {

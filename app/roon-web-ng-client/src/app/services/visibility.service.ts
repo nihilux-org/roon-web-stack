@@ -1,6 +1,6 @@
 import { DOCUMENT } from "@angular/common";
 import { inject, Injectable, OnDestroy } from "@angular/core";
-import { VisibilityListener, VisibilityState } from "@model/client";
+import { VisibilityListener, VisibilityState } from "@model";
 
 interface VisibilityEvent {
   visibilityState: VisibilityState;

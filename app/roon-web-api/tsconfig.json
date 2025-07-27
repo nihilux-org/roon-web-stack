@@ -4,9 +4,6 @@
     "composite": true,
     "baseUrl": "./src",
     "paths": {
-      "@model": [
-        "../../../packages/roon-web-model/src/index.d.ts"
-      ],
       "@infrastructure": [
         "infrastructure/index.ts"
       ],
@@ -24,10 +21,5 @@
       ]
     },
     "outDir": "bin"
-  },
-  "references": [
-    {
-      "path": "../../packages/roon-web-model"
-    }
-  ]
+  }
 }

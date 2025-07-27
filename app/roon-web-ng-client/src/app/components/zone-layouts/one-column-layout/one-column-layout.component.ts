@@ -1,6 +1,6 @@
 import { NgTemplateOutlet } from "@angular/common";
 import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
-import { LayoutData } from "@model/client";
+import { LayoutData } from "@model";
 
 @Component({
   selector: "nr-one-column-layout",

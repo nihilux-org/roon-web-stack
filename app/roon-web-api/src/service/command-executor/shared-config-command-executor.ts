@@ -1,5 +1,5 @@
 import { roon } from "@infrastructure";
-import { CommandExecutor, RoonServer, SharedConfigCommand } from "@model";
+import { CommandExecutor, RoonServer, SharedConfigCommand } from "@nihilux/roon-web-model";
 
 export const executor: CommandExecutor<SharedConfigCommand, RoonServer> = (command) => {
   try {

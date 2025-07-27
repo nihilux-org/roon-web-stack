@@ -9,7 +9,7 @@ import {
   QueueItem,
   SettingsManager,
   SettingsUpdateListener,
-} from "@model";
+} from "@nihilux/roon-web-model";
 
 describe("queue-bot-manager.ts test suite", () => {
   let settingsManager: SettingsManager<ExtensionSettings>;

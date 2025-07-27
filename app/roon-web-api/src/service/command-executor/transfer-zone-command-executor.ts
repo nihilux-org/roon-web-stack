@@ -1,4 +1,4 @@
-import { CommandExecutor, FoundZone, TransferZoneCommand } from "@model";
+import { CommandExecutor, FoundZone, TransferZoneCommand } from "@nihilux/roon-web-model";
 
 export const executor: CommandExecutor<TransferZoneCommand, FoundZone> = (command, foundZone) => {
   const { zone, server } = foundZone;

@@ -6,7 +6,7 @@ import {
   RoonApiTransportQueue,
   RoonServer,
   Zone,
-} from "@model";
+} from "@nihilux/roon-web-model";
 import { executor } from "./play-from-here-command-executor";
 
 describe("play-command-executor test suite", () => {

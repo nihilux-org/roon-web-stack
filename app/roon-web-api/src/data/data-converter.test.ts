@@ -8,7 +8,7 @@ import {
   RoonState,
   Zone,
   ZoneNowPlaying,
-} from "@model";
+} from "@nihilux/roon-web-model";
 import { dataConverter } from "./data-converter";
 
 describe("data-converter test suite", () => {

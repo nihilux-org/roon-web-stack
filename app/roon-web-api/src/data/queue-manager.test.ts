@@ -19,7 +19,7 @@ import {
   RoonSseMessage,
   RoonSubscriptionResponse,
   Zone,
-} from "@model";
+} from "@nihilux/roon-web-model";
 import { queueManagerFactory } from "./queue-manager";
 
 describe("queue-manager.ts test suite", () => {

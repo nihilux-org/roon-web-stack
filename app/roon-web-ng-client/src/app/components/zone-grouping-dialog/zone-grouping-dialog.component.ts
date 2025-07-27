@@ -4,12 +4,12 @@ import { MatCheckbox } from "@angular/material/checkbox";
 import { MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle } from "@angular/material/dialog";
 import { MatDivider } from "@angular/material/divider";
 import { MatIcon } from "@angular/material/icon";
-import { CommandResult, CommandType, GroupCommand, OutputDescription } from "@model";
-import { CommandCallback } from "@model/client";
+import { CommandCallback } from "@model";
 import {
   NgxSpatialNavigableElementDirective,
   NgxSpatialNavigableStarterDirective,
 } from "@nihilux/ngx-spatial-navigable";
+import { CommandResult, CommandType, GroupCommand, OutputDescription } from "@nihilux/roon-web-model";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
 

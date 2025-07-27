@@ -9,7 +9,7 @@ import {
   RoonServiceRequired,
   SettingsValues,
   SettingsManager,
-} from "@model";
+} from "@nihilux/roon-web-model";
 import { TransientObject } from "./internals";
 import { RoonKit } from "./RoonKit";
 import { RoonExtensionSettings } from "./RoonExtensionSettings";

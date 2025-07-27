@@ -9,7 +9,7 @@ import {
   Command,
   RoonImageFormat,
   RoonImageScale,
-} from "@model";
+} from "@nihilux/roon-web-model";
 import { clientManager } from "@service";
 
 interface ClientIdParam {

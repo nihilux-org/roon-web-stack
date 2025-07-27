@@ -9,7 +9,7 @@ import {
   VolumeCommand,
   VolumeGroupedZoneCommand,
   VolumeStrategy,
-} from "@model";
+} from "@nihilux/roon-web-model";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
 

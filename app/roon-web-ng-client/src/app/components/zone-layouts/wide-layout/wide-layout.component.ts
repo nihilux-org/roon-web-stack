@@ -1,6 +1,6 @@
 import { NgTemplateOutlet } from "@angular/common";
 import { ChangeDetectionStrategy, Component, inject, Input, Signal } from "@angular/core";
-import { LayoutData } from "@model/client";
+import { LayoutData } from "@model";
 import { SettingsService } from "@services/settings.service";
 
 @Component({

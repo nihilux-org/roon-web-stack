@@ -15,7 +15,7 @@ import {
   LoadAction,
   SettingsDialogConfig,
   SettingsDialogConfigBigFonts,
-} from "@model/client";
+} from "@model";
 import { DialogService } from "@services/dialog.service";
 import { FullscreenService } from "@services/fullscreen.service";
 import { RoonService } from "@services/roon.service";

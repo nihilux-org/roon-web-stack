@@ -1,4 +1,4 @@
-import { Track } from "@model";
+import { Track } from "@nihilux/roon-web-model";
 
 export type TrackDisplay = Omit<Track, "length" | "seek_percentage" | "seek_position">;
 

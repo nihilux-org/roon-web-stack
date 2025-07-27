@@ -1,4 +1,11 @@
-import { CommandExecutor, FoundZone, Output, RoonChangeVolumeHow, VolumeCommand, VolumeStrategy } from "@model";
+import {
+  CommandExecutor,
+  FoundZone,
+  Output,
+  RoonChangeVolumeHow,
+  VolumeCommand,
+  VolumeStrategy,
+} from "@nihilux/roon-web-model";
 
 export const executor: CommandExecutor<VolumeCommand, FoundZone> = (command, foundZone) => {
   const { zone, server } = foundZone;

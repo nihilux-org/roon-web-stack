@@ -1,4 +1,4 @@
-import { CommandExecutor, FoundZone, PlayFromHereCommand } from "@model";
+import { CommandExecutor, FoundZone, PlayFromHereCommand } from "@nihilux/roon-web-model";
 
 export const executor: CommandExecutor<PlayFromHereCommand, FoundZone> = (command, foundZone) => {
   const { zone, server } = foundZone;

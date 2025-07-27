@@ -10,12 +10,12 @@ import {
 import { MatIcon } from "@angular/material/icon";
 import { CustomActionsManagerComponent } from "@components/custom-actions-manager/custom-actions-manager.component";
 import { RoonBrowseDialogComponent } from "@components/roon-browse-dialog/roon-browse-dialog.component";
-import { RoonApiBrowseHierarchy } from "@model";
-import { CustomActionsManagerDialogConfig, CustomActionsManagerDialogConfigBigFonts } from "@model/client";
+import { CustomActionsManagerDialogConfig, CustomActionsManagerDialogConfigBigFonts } from "@model";
 import {
   NgxSpatialNavigableContainerDirective,
   NgxSpatialNavigableStarterDirective,
 } from "@nihilux/ngx-spatial-navigable";
+import { RoonApiBrowseHierarchy } from "@nihilux/roon-web-model";
 import { DialogService } from "@services/dialog.service";
 import { SettingsService } from "@services/settings.service";
 

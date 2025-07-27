@@ -1,8 +1,8 @@
 import { MockProvider } from "ng-mocks";
 import { signal, WritableSignal } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { Command } from "@model";
-import { DisplayMode, ZoneCommands, ZoneCommandState } from "@model/client";
+import { DisplayMode, ZoneCommands, ZoneCommandState } from "@model";
+import { Command } from "@nihilux/roon-web-model";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
 import { ZoneCommandsComponent } from "./zone-commands.component";

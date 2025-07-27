@@ -16,7 +16,7 @@ import { MatRipple } from "@angular/material/core";
 import { MatIcon } from "@angular/material/icon";
 import { SettingsDialogComponent } from "@components/settings-dialog/settings-dialog.component";
 import { ZoneSelectorComponent } from "@components/zone-selector/zone-selector.component";
-import { LayoutData, SettingsDialogConfig, SettingsDialogConfigBigFonts } from "@model/client";
+import { LayoutData, SettingsDialogConfig, SettingsDialogConfigBigFonts } from "@model";
 import { NgxSpatialNavigableContainerDirective } from "@nihilux/ngx-spatial-navigable";
 import { DialogService } from "@services/dialog.service";
 import { IdleService } from "@services/idle.service";

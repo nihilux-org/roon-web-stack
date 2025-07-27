@@ -1,7 +1,7 @@
 import { MockProvider } from "ng-mocks";
 import { signal, WritableSignal } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { RoonApiBrowseHierarchy } from "@model";
+import { RoonApiBrowseHierarchy } from "@nihilux/roon-web-model";
 import { CustomActionsService } from "@services/custom-actions.service";
 import { DialogService } from "@services/dialog.service";
 import { SettingsService } from "@services/settings.service";

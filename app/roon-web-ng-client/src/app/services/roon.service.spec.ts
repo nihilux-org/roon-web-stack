@@ -2,6 +2,7 @@ import { roonWorkerMock } from "@mock/worker.utils.mock";
 
 import { signal, WritableSignal } from "@angular/core";
 import { TestBed } from "@angular/core/testing";
+import { ApiStateWorkerEvent } from "@model";
 import {
   ClientRoonApiBrowseLoadOptions,
   ClientRoonApiBrowseOptions,
@@ -11,8 +12,7 @@ import {
   RoonState,
   ZoneDescription,
   ZoneState,
-} from "@model";
-import { ApiStateWorkerEvent } from "@model/client";
+} from "@nihilux/roon-web-model";
 import { RoonService } from "./roon.service";
 
 describe("RoonServiceService", () => {

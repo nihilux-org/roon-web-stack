@@ -28,7 +28,7 @@ import {
   ZoneListener,
   ZoneManager,
   ZoneState,
-} from "@model";
+} from "@nihilux/roon-web-model";
 
 describe("zone-manager.ts test suite", () => {
   let zoneManager: ZoneManager;

@@ -1,4 +1,4 @@
-import { RawWorkerEvent, WorkerActionMessage } from "@model/client";
+import { RawWorkerEvent, WorkerActionMessage } from "@model";
 
 let onMessageListener: (m: MessageEvent<RawWorkerEvent>) => void;
 let receivedMessages: WorkerActionMessage[] = [];

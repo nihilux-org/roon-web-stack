@@ -1,6 +1,6 @@
 import { roonMock } from "./roon-extension.mock";
 
-import { ExtensionSettings, RoonExtension } from "@model";
+import { ExtensionSettings, RoonExtension } from "@nihilux/roon-web-model";
 import { settingsOptions } from "./roon-extension-settings";
 
 describe("roon-extension-settings test suite", () => {

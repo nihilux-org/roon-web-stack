@@ -9,7 +9,7 @@ import {
   VolumeCommand,
   VolumeStrategy,
   Zone,
-} from "@model";
+} from "@nihilux/roon-web-model";
 import { executor } from "./volume-command-executor";
 
 describe("volume-command-executor.ts test suite", () => {

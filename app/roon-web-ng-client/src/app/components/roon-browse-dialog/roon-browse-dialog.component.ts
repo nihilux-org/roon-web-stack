@@ -22,14 +22,14 @@ import { MatProgressSpinner } from "@angular/material/progress-spinner";
 import { AlphabeticalIndexComponent } from "@components/alphabetical-index/alphabetical-index.component";
 import { CustomActionsManagerComponent } from "@components/custom-actions-manager/custom-actions-manager.component";
 import { RoonBrowseListComponent } from "@components/roon-browse-list/roon-browse-list.component";
-import { RoonApiBrowseHierarchy, RoonApiBrowseLoadResponse, RoonPath } from "@model";
 import {
   CustomActionsManagerDialogConfig,
   CustomActionsManagerDialogConfigBigFonts,
   NavigationEvent,
   RecordedAction,
-} from "@model/client";
+} from "@model";
 import { NgxSpatialNavigableContainerDirective, NgxSpatialNavigableService } from "@nihilux/ngx-spatial-navigable";
+import { RoonApiBrowseHierarchy, RoonApiBrowseLoadResponse, RoonPath } from "@nihilux/roon-web-model";
 import { CustomActionsService } from "@services/custom-actions.service";
 import { DialogService } from "@services/dialog.service";
 import { RoonService } from "@services/roon.service";

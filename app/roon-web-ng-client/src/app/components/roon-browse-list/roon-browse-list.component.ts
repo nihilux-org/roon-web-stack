@@ -28,14 +28,14 @@ import { MatIcon } from "@angular/material/icon";
 import { MatInput } from "@angular/material/input";
 import { MatMenu, MatMenuContent, MatMenuItem, MatMenuTrigger } from "@angular/material/menu";
 import { RoonImageComponent } from "@components/roon-image/roon-image.component";
-import { Item, ItemHint, RoonApiBrowseHierarchy, RoonApiBrowseLoadResponse } from "@model";
-import { NavigationEvent, RecordedAction } from "@model/client";
+import { NavigationEvent, RecordedAction } from "@model";
 import {
   NgxSpatialNavigableContainerDirective,
   NgxSpatialNavigableElementDirective,
   NgxSpatialNavigableService,
   NgxSpatialNavigableStarterDirective,
 } from "@nihilux/ngx-spatial-navigable";
+import { Item, ItemHint, RoonApiBrowseHierarchy, RoonApiBrowseLoadResponse } from "@nihilux/roon-web-model";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
 

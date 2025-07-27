@@ -14,8 +14,8 @@ import {
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { MatMenuModule, MatMenuTrigger } from "@angular/material/menu";
-import { ApiState, ZoneDescription } from "@model";
 import { NgxSpatialNavigableService } from "@nihilux/ngx-spatial-navigable";
+import { ApiState, ZoneDescription } from "@nihilux/roon-web-model";
 import { IdleService } from "@services/idle.service";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";

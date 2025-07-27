@@ -4,24 +4,6 @@ import { Observable } from "rxjs";
 import { DOCUMENT } from "@angular/common";
 import { computed, inject, Injectable, Signal, signal, WritableSignal } from "@angular/core";
 import {
-  ApiState,
-  ClientRoonApiBrowseLoadOptions,
-  ClientRoonApiBrowseOptions,
-  ClientState,
-  Command,
-  CommandState,
-  FoundItemIndexResponse,
-  ItemIndexSearch,
-  QueueState,
-  RoonApiBrowseHierarchy,
-  RoonApiBrowseLoadResponse,
-  RoonApiBrowseResponse,
-  RoonPath,
-  RoonState,
-  SharedConfig,
-  ZoneState,
-} from "@model";
-import {
   ApiResultCallback,
   BrowseApiResult,
   BrowseWorkerApiRequest,
@@ -43,7 +25,25 @@ import {
   VersionWorkerApiRequest,
   VisibilityState,
   WorkerClientActionMessage,
-} from "@model/client";
+} from "@model";
+import {
+  ApiState,
+  ClientRoonApiBrowseLoadOptions,
+  ClientRoonApiBrowseOptions,
+  ClientState,
+  Command,
+  CommandState,
+  FoundItemIndexResponse,
+  ItemIndexSearch,
+  QueueState,
+  RoonApiBrowseHierarchy,
+  RoonApiBrowseLoadResponse,
+  RoonApiBrowseResponse,
+  RoonPath,
+  RoonState,
+  SharedConfig,
+  ZoneState,
+} from "@nihilux/roon-web-model";
 import { CustomActionsService } from "@services/custom-actions.service";
 import { SettingsService } from "@services/settings.service";
 import { VisibilityService } from "@services/visibility.service";

@@ -26,7 +26,7 @@ import {
   LibraryAction,
   RadiosAction,
   ToggleQueueAction,
-} from "@model/client";
+} from "@model";
 import { CustomActionsService } from "@services/custom-actions.service";
 
 @Injectable({

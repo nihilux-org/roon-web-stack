@@ -10,7 +10,7 @@ import {
   SaveSettingsStatus,
   SettingsValues,
   SettingsLayout,
-} from "@model";
+} from "@nihilux/roon-web-model";
 
 /**
  * Shared types and functions.

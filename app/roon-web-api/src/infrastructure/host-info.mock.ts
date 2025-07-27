@@ -1,4 +1,4 @@
-import { HostInfo } from "@model";
+import { HostInfo } from "@nihilux/roon-web-model";
 
 const hostInfo = {};
 

@@ -2,8 +2,17 @@
   "name": "@nihilux/roon-web-model",
   "version": "0.0.11",
   "private": true,
+  "main": "src/index.d.ts",
   "types": "src/index.d.ts",
   "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "src/index.d.ts",
+      "imports": "src/index.d.ts",
+      "default": "src/index.d.ts"
+    }
+  },
   "scripts": {
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"

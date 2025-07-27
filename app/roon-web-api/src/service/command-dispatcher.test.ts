@@ -33,7 +33,7 @@ import {
   VolumeGroupedZoneCommand,
   VolumeStrategy,
   Zone,
-} from "@model";
+} from "@nihilux/roon-web-model";
 import { commandDispatcher } from "./command-dispatcher";
 
 describe("command-dispatcher.ts test suite", () => {
