@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input, Signal } from "@angular/core";
-import { EMPTY_TRACK, TrackDisplay } from "@model/client";
+import { EMPTY_TRACK, TrackDisplay } from "@model";
 
 @Component({
   selector: "nr-zone-current-track",

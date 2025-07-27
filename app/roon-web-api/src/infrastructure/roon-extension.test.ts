@@ -22,7 +22,7 @@ import {
   SharedConfig,
   SharedConfigMessage,
   ZoneListener,
-} from "@model";
+} from "@nihilux/roon-web-model";
 
 describe("roon-extension.ts test suite", () => {
   let roon: Roon;

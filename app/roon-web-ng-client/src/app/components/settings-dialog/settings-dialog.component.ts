@@ -24,7 +24,7 @@ import {
   SettingsDialogConfigBigFonts,
   Theme,
   Themes,
-} from "@model/client";
+} from "@model";
 import {
   NgxSpatialNavigableContainerDirective,
   NgxSpatialNavigableElementDirective,

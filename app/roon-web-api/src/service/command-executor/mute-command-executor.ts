@@ -1,4 +1,4 @@
-import { CommandExecutor, FoundZone, MuteCommand, MuteType, RoonMuteHow } from "@model";
+import { CommandExecutor, FoundZone, MuteCommand, MuteType, RoonMuteHow } from "@nihilux/roon-web-model";
 
 export const executor: CommandExecutor<MuteCommand, FoundZone> = (command, foundZone) => {
   const { zone, server } = foundZone;

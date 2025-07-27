@@ -18,7 +18,7 @@ import {
   ZoneDescription,
   ZoneListener,
   ZoneManager,
-} from "@model";
+} from "@nihilux/roon-web-model";
 
 interface ZoneData {
   backup?: {

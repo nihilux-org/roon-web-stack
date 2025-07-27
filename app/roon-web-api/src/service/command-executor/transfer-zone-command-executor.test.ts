@@ -1,4 +1,11 @@
-import { CommandType, FoundZone, RoonApiTransport, RoonServer, TransferZoneCommand, Zone } from "@model";
+import {
+  CommandType,
+  FoundZone,
+  RoonApiTransport,
+  RoonServer,
+  TransferZoneCommand,
+  Zone,
+} from "@nihilux/roon-web-model";
 import { executor } from "./transfer-zone-command-executor";
 
 describe("transfer-zone-command-executor.ts test suite", () => {

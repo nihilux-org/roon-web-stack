@@ -5,7 +5,7 @@ import { MatIcon } from "@angular/material/icon";
 import { MatTab, MatTabContent, MatTabGroup } from "@angular/material/tabs";
 import { CustomActionEditorComponent } from "@components/custom-action-editor/custom-action-editor.component";
 import { SettingsDialogComponent } from "@components/settings-dialog/settings-dialog.component";
-import { CustomAction, SettingsDialogConfig, SettingsDialogConfigBigFonts } from "@model/client";
+import { CustomAction, SettingsDialogConfig, SettingsDialogConfigBigFonts } from "@model";
 import {
   NgxSpatialNavigableContainerDirective,
   NgxSpatialNavigableStarterDirective,

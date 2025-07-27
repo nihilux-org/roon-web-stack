@@ -6,12 +6,12 @@ import { MatIcon } from "@angular/material/icon";
 import { MatSlider, MatSliderThumb } from "@angular/material/slider";
 import { ZoneGroupingDialogComponent } from "@components/zone-grouping-dialog/zone-grouping-dialog.component";
 import { ZoneTransferDialogComponent } from "@components/zone-transfer-dialog/zone-transfer-dialog.component";
-import { Output } from "@model";
 import {
   NgxSpatialNavigableContainerDirective,
   NgxSpatialNavigableElementDirective,
   NgxSpatialNavigableStarterDirective,
 } from "@nihilux/ngx-spatial-navigable";
+import { Output } from "@nihilux/roon-web-model";
 import { DialogService } from "@services/dialog.service";
 import { SettingsService } from "@services/settings.service";
 import { VolumeService } from "@services/volume.service";

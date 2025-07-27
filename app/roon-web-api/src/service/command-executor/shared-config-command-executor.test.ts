@@ -1,6 +1,6 @@
 import { roonMock } from "../../infrastructure/roon-extension.mock";
 
-import { CommandType, RoonServer, SharedConfigCommand, SharedConfigUpdate } from "@model";
+import { CommandType, RoonServer, SharedConfigCommand, SharedConfigUpdate } from "@nihilux/roon-web-model";
 import { executor } from "./shared-config-command-executor";
 
 describe("shared-config-command-executor test suite", () => {

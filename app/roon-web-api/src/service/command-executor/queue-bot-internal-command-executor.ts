@@ -5,7 +5,7 @@ import {
   Output,
   QueueBotCommand,
   RoonApiTransport,
-} from "@model";
+} from "@nihilux/roon-web-model";
 import { awaitAll } from "./command-executor-utils";
 
 export const internalExecutor: InternalCommandExecutor<QueueBotCommand, FoundZone> = async (command, foundZone) => {

@@ -2,7 +2,7 @@ import { MockProvider } from "ng-mocks";
 import { signal, WritableSignal } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { Action, ChosenTheme, DefaultActions, DisplayMode } from "@model/client";
+import { Action, ChosenTheme, DefaultActions, DisplayMode } from "@model";
 import { DialogService } from "@services/dialog.service";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";

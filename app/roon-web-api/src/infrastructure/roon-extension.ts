@@ -18,7 +18,7 @@ import {
   SharedConfigMessage,
   SharedConfigUpdate,
   ZoneListener,
-} from "@model";
+} from "@nihilux/roon-web-model";
 import { Extension } from "@roon-kit";
 import { settingsOptions } from "./roon-extension-settings";
 

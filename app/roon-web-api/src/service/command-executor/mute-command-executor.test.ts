@@ -9,7 +9,7 @@ import {
   RoonMuteHow,
   RoonServer,
   Zone,
-} from "@model";
+} from "@nihilux/roon-web-model";
 import { executor } from "./mute-command-executor";
 
 describe("mute-command-executor.ts test suite", () => {

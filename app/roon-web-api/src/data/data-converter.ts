@@ -17,7 +17,7 @@ import {
   ZoneNowPlaying,
   ZoneSseMessage,
   ZoneState,
-} from "@model";
+} from "@nihilux/roon-web-model";
 
 const toRoonSseMessage = (data: Queue | Zone | ApiState | CommandState): RoonSseMessage => {
   if ("display_name" in data) {

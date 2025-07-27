@@ -24,7 +24,7 @@ import {
   SharedConfigListener,
   ZoneState,
   ZoneStateListener,
-} from "@model";
+} from "@nihilux/roon-web-model";
 
 interface ZoneStates {
   zone?: ZoneState;

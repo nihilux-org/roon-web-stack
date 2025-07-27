@@ -1,4 +1,12 @@
-import { FoundZone, InternalCommandType, Output, RoonApiTransport, RoonPlaybackState, RoonServer, Zone } from "@model";
+import {
+  FoundZone,
+  InternalCommandType,
+  Output,
+  RoonApiTransport,
+  RoonPlaybackState,
+  RoonServer,
+  Zone,
+} from "@nihilux/roon-web-model";
 import { internalExecutor } from "./queue-bot-internal-command-executor";
 
 describe("queue-bot-command-executor test suite", () => {

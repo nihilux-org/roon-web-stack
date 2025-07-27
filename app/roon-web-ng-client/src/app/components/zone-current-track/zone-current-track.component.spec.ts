@@ -1,6 +1,6 @@
 import { signal, WritableSignal } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { TrackDisplay } from "@model/client";
+import { TrackDisplay } from "@model";
 import { ZoneCurrentTrackComponent } from "./zone-current-track.component";
 
 describe("ZoneCurrentTrackComponent", () => {

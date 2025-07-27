@@ -1,6 +1,6 @@
 import * as os from "node:os";
 import process from "process";
-import { HostInfo } from "@model";
+import { HostInfo } from "@nihilux/roon-web-model";
 
 export const hostInfo: HostInfo = (() => {
   const { HOST = "localhost", PORT = "3000" } = process.env;

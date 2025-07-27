@@ -4,9 +4,9 @@ import { ChangeDetectionStrategy, Component, computed, inject, Input, Signal, Te
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { ZoneSelectorComponent } from "@components/zone-selector/zone-selector.component";
-import { Command, CommandType } from "@model";
-import { DisplayMode, ZoneCommands, ZoneCommandState } from "@model/client";
+import { DisplayMode, ZoneCommands, ZoneCommandState } from "@model";
 import { NgxSpatialNavigableStarterDirective } from "@nihilux/ngx-spatial-navigable";
+import { Command, CommandType } from "@nihilux/roon-web-model";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
 

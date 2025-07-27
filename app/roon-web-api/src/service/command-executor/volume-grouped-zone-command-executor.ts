@@ -1,4 +1,4 @@
-import { CommandExecutor, FoundZone, VolumeGroupedZoneCommand } from "@model";
+import { CommandExecutor, FoundZone, VolumeGroupedZoneCommand } from "@nihilux/roon-web-model";
 import { awaitAll } from "./command-executor-utils";
 
 export const executor: CommandExecutor<VolumeGroupedZoneCommand, FoundZone> = async (command, foundZone) => {

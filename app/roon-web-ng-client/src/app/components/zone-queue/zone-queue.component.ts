@@ -17,9 +17,9 @@ import {
 import { MatDividerModule } from "@angular/material/divider";
 import { MatMenu, MatMenuContent, MatMenuItem, MatMenuTrigger } from "@angular/material/menu";
 import { RoonImageComponent } from "@components/roon-image/roon-image.component";
-import { CommandType, QueueTrack } from "@model";
-import { TrackDisplay } from "@model/client";
+import { TrackDisplay } from "@model";
 import { NgxSpatialNavigableContainerDirective, NgxSpatialNavigableService } from "@nihilux/ngx-spatial-navigable";
+import { CommandType, QueueTrack } from "@nihilux/roon-web-model";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
 

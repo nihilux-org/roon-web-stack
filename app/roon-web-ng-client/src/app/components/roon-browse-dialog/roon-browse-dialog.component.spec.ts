@@ -3,7 +3,7 @@ import { Subject } from "rxjs";
 import { signal, WritableSignal } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { RoonApiBrowseLoadResponse, RoonPath } from "@model";
+import { RoonApiBrowseLoadResponse, RoonPath } from "@nihilux/roon-web-model";
 import { DialogService } from "@services/dialog.service";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";

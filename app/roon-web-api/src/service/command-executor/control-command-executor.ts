@@ -1,4 +1,10 @@
-import { CommandExecutor, CommandType, ControlCommand, FoundZone, RoonApiTransportControl } from "@model";
+import {
+  CommandExecutor,
+  CommandType,
+  ControlCommand,
+  FoundZone,
+  RoonApiTransportControl,
+} from "@nihilux/roon-web-model";
 
 export const executor: CommandExecutor<ControlCommand, FoundZone> = (command, foundZone) => {
   let control: RoonApiTransportControl;

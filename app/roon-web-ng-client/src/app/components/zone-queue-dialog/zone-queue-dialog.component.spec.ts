@@ -3,7 +3,7 @@ import { Subject } from "rxjs";
 import { Signal, signal, WritableSignal } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { TrackDisplay } from "@model/client";
+import { TrackDisplay } from "@model";
 import { SettingsService } from "@services/settings.service";
 import { ZoneQueueDialogComponent } from "./zone-queue-dialog.component";
 

@@ -1,8 +1,8 @@
 import { MockProvider } from "ng-mocks";
 import { computed, Signal, signal, WritableSignal } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { QueueState } from "@model";
-import { EMPTY_TRACK, TrackDisplay } from "@model/client";
+import { EMPTY_TRACK, TrackDisplay } from "@model";
+import { QueueState } from "@nihilux/roon-web-model";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
 import { ZoneQueueComponent } from "./zone-queue.component";

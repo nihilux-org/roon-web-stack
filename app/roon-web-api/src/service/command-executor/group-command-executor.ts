@@ -1,4 +1,4 @@
-import { CommandExecutor, GroupCommand, RoonServer } from "@model";
+import { CommandExecutor, GroupCommand, RoonServer } from "@nihilux/roon-web-model";
 
 export const executor: CommandExecutor<GroupCommand, RoonServer> = (command, server) => {
   if (command.data.mode === "group") {

@@ -7,7 +7,7 @@ import {
   QueueBotCommand,
   Roon,
   SettingsUpdateListener,
-} from "@model";
+} from "@nihilux/roon-web-model";
 import { commandDispatcher } from "@service";
 
 interface QueueBotSettings {

@@ -14,7 +14,7 @@ import {
   RoonPath,
   SharedConfig,
   ZoneState,
-} from "@model";
+} from "@nihilux/roon-web-model";
 
 export type WorkerMessageData =
   | WorkerClientStartAction

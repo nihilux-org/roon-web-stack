@@ -3,12 +3,12 @@ import { MatButton } from "@angular/material/button";
 import { MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle } from "@angular/material/dialog";
 import { MatDivider } from "@angular/material/divider";
 import { MatIcon } from "@angular/material/icon";
-import { CommandResult, CommandType, TransferZoneCommand, ZoneDescription } from "@model";
-import { CommandCallback } from "@model/client";
+import { CommandCallback } from "@model";
 import {
   NgxSpatialNavigableContainerDirective,
   NgxSpatialNavigableStarterDirective,
 } from "@nihilux/ngx-spatial-navigable";
+import { CommandResult, CommandType, TransferZoneCommand, ZoneDescription } from "@nihilux/roon-web-model";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
 

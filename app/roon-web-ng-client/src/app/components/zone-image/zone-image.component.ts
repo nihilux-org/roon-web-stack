@@ -1,7 +1,7 @@
 import { deepEqual } from "fast-equals";
 import { ChangeDetectionStrategy, Component, computed, Input, Signal } from "@angular/core";
 import { RoonImageComponent } from "@components/roon-image/roon-image.component";
-import { EMPTY_TRACK, TrackDisplay, TrackImage } from "@model/client";
+import { EMPTY_TRACK, TrackDisplay, TrackImage } from "@model";
 
 @Component({
   selector: "nr-zone-image",

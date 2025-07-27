@@ -1,7 +1,7 @@
 import { MockProvider } from "ng-mocks";
 import { Signal, signal, WritableSignal } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { Output } from "@model";
+import { Output } from "@nihilux/roon-web-model";
 import { DialogService } from "@services/dialog.service";
 import { SettingsService } from "@services/settings.service";
 import { VolumeService } from "@services/volume.service";

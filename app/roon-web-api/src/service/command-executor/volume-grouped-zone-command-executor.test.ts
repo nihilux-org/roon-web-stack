@@ -7,7 +7,7 @@ import {
   RoonServer,
   VolumeGroupedZoneCommand,
   Zone,
-} from "@model";
+} from "@nihilux/roon-web-model";
 import { executor } from "./volume-grouped-zone-command-executor";
 
 describe("volume-grouped-zone-command-executor.ts test suite", () => {

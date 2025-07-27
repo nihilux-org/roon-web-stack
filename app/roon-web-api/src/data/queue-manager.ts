@@ -13,7 +13,7 @@ import {
   RoonSseMessage,
   RoonSubscriptionResponse,
   Zone,
-} from "@model";
+} from "@nihilux/roon-web-model";
 
 const queueListenerFactory = (
   queueManager: InternalQueueManager,

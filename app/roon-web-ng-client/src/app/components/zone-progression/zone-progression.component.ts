@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input, Signal } from "@angular/core";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
-import { ZoneProgression } from "@model/client";
+import { ZoneProgression } from "@model";
 
 @Component({
   selector: "nr-zone-progression",

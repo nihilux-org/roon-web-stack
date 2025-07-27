@@ -14,7 +14,7 @@ import {
   InternalCommandExecutor,
   InternalCommandType,
   RoonServer,
-} from "@model";
+} from "@nihilux/roon-web-model";
 import { executor as controlExecutor } from "./command-executor/control-command-executor";
 import { executor as groupExecutor } from "./command-executor/group-command-executor";
 import { executor as muteExecutor } from "./command-executor/mute-command-executor";

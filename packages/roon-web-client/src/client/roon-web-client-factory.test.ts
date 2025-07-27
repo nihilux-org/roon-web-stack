@@ -28,7 +28,7 @@ import {
   SharedConfigListener,
   ZoneState,
   ZoneStateListener,
-} from "@model";
+} from "@nihilux/roon-web-model";
 import { roonWebClientFactory } from "./roon-web-client-factory";
 
 const API_URL = new URL("http://test.test:3000");

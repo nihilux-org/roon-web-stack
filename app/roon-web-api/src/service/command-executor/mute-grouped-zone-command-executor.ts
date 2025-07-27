@@ -1,4 +1,4 @@
-import { CommandExecutor, FoundZone, MuteGroupedZoneCommand, MuteType, RoonMuteHow } from "@model";
+import { CommandExecutor, FoundZone, MuteGroupedZoneCommand, MuteType, RoonMuteHow } from "@nihilux/roon-web-model";
 import { awaitAll } from "./command-executor-utils";
 
 export const executor: CommandExecutor<MuteGroupedZoneCommand, FoundZone> = async (command, foundZone) => {

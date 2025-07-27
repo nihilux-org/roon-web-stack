@@ -33,14 +33,11 @@
       "@services/*": [
         "./src/app/services/*"
       ],
-      "@model": [
-        "../../packages/roon-web-model/src/index.d.ts"
-      ],
       "@nihilux/ngx-spatial-navigable": [
         "./projects/nihilux/ngx-spatial-navigable/src/public-api.ts"
       ],
-      "@model/client": [
-        "./src/app/model"
+      "@model": [
+        "./src/app/model/index.ts"
       ]
     }
   },
@@ -50,13 +47,5 @@
     "strictInputAccessModifiers": true,
     "strictTemplates": true,
     "strictStandalone": true
-  },
-  "references": [
-    {
-      "path": "../../packages/roon-web-model"
-    },
-    {
-      "path": "../../packages/roon-web-client"
-    }
-  ]
+  }
 }

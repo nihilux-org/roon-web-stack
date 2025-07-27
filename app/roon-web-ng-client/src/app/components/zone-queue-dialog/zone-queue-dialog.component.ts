@@ -4,7 +4,7 @@ import { ChangeDetectionStrategy, Component, inject, OnDestroy, TemplateRef } fr
 import { MatButton } from "@angular/material/button";
 import { MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogRef } from "@angular/material/dialog";
 import { MatIcon } from "@angular/material/icon";
-import { LayoutContext } from "@model/client";
+import { LayoutContext } from "@model";
 import { SettingsService } from "@services/settings.service";
 
 @Component({

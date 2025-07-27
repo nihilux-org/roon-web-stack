@@ -9,9 +9,9 @@ import { ZoneImageComponent } from "@components/zone-image/zone-image.component"
 import { ZoneProgressionComponent } from "@components/zone-progression/zone-progression.component";
 import { ZoneQueueComponent } from "@components/zone-queue/zone-queue.component";
 import { ZoneVolumeComponent } from "@components/zone-volume/zone-volume.component";
-import { Output, Zone, ZoneState } from "@model";
-import { DisplayMode } from "@model/client";
+import { DisplayMode } from "@model";
 import { NgxSpatialNavigableService } from "@nihilux/ngx-spatial-navigable";
+import { Output, Zone, ZoneState } from "@nihilux/roon-web-model";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
 import { ZoneContainerComponent } from "./zone-container.component";

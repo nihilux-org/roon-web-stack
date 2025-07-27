@@ -1,6 +1,6 @@
 import { signal, WritableSignal } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { DEFAULT_ZONE_PROGRESSION, ZoneProgression } from "@model/client";
+import { DEFAULT_ZONE_PROGRESSION, ZoneProgression } from "@model";
 import { ZoneProgressionComponent } from "./zone-progression.component";
 
 describe("ZoneProgressionComponent", () => {

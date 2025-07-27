@@ -8,7 +8,7 @@ import {
   SettingsUpdateListener,
   SettingsValues,
   ValidatedSettingsValues,
-} from "@model";
+} from "@nihilux/roon-web-model";
 import { RoonKit } from "./RoonKit";
 
 export class RoonExtensionSettings<T extends SettingsValues> implements SettingsManager<T> {

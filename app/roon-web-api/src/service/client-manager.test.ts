@@ -18,7 +18,7 @@ import {
   RoonState,
   SharedConfigMessage,
   ZoneDescription,
-} from "@model";
+} from "@nihilux/roon-web-model";
 
 describe("client-manager.ts test suite", () => {
   let clientManager: ClientManager;
