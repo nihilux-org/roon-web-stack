@@ -1,4 +1,4 @@
-import { ApplicationConfig, inject, provideAppInitializer } from "@angular/core";
+import { ApplicationConfig, inject, provideAppInitializer, provideZonelessChangeDetection } from "@angular/core";
 import { MatIconRegistry } from "@angular/material/icon";
 import { provideAnimationsAsync } from "@angular/platform-browser/animations/async";
 import { RoonService } from "@services/roon.service";
@@ -20,5 +20,6 @@ export const nrConfig: ApplicationConfig = {
       return roonService.start();
     }),
     provideAnimationsAsync(),
+    provideZonelessChangeDetection(),
   ],
 };
