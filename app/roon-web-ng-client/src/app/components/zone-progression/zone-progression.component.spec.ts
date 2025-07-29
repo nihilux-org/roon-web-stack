@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, it } from "vitest";
 import { signal, WritableSignal } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { DEFAULT_ZONE_PROGRESSION, ZoneProgression } from "@model";
@@ -8,7 +9,7 @@ describe("ZoneProgressionComponent", () => {
   let fixture: ComponentFixture<ZoneProgressionComponent>;
   let $zoneProgression: WritableSignal<ZoneProgression>;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     $zoneProgression = signal(DEFAULT_ZONE_PROGRESSION);
     TestBed.configureTestingModule({
       imports: [ZoneProgressionComponent],
@@ -16,7 +17,7 @@ describe("ZoneProgressionComponent", () => {
     fixture = TestBed.createComponent(ZoneProgressionComponent);
     fixture.componentRef.setInput("$zoneProgression", $zoneProgression);
     component = fixture.componentInstance;
-    fixture.detectChanges();
+    await fixture.whenStable();
   });
 
   it("should create", () => {

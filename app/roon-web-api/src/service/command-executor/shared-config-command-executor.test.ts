@@ -4,7 +4,7 @@ import { CommandType, RoonServer, SharedConfigCommand, SharedConfigUpdate } from
 import { executor } from "./shared-config-command-executor";
 
 describe("shared-config-command-executor test suite", () => {
-  it("executor should call roon#saveSharedConfig", () => {
+  it("executor should call roon#saveSharedConfig", async () => {
     const sharedConfigUpdate: SharedConfigUpdate = {
       customActions: [],
     };
@@ -17,10 +17,10 @@ describe("shared-config-command-executor test suite", () => {
 
     const result = executor(command, {} as unknown as RoonServer);
 
-    void expect(result).resolves.toBeUndefined();
+    await expect(result).resolves.toBeUndefined();
     expect(roonMock.updateSharedConfig).toHaveBeenCalledWith(sharedConfigUpdate);
   });
-  it("executor should return a rejected Promise if any error occured during the call of roon#saveSharedConfig", () => {
+  it("executor should return a rejected Promise if any error occured during the call of roon#saveSharedConfig", async () => {
     const error = new Error("error");
     roonMock.updateSharedConfig.mockImplementation(() => {
       throw error;
@@ -35,7 +35,7 @@ describe("shared-config-command-executor test suite", () => {
     };
 
     const result = executor(command, {} as unknown as RoonServer);
-    void expect(result).rejects.toBe(error);
+    await expect(result).rejects.toBe(error);
     expect(roonMock.updateSharedConfig).toHaveBeenCalledWith(command.data.sharedConfigUpdate);
   });
 });

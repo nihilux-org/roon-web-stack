@@ -1,7 +1,7 @@
-const internalExecutor = jest.fn();
+const internalExecutor = vi.fn();
 
 export const queueBotInternalCommandExecutorMock = internalExecutor;
 
-jest.mock("./queue-bot-internal-command-executor", () => ({
+vi.mock("./queue-bot-internal-command-executor", () => ({
   internalExecutor,
 }));

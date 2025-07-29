@@ -1,7 +1,7 @@
-const executor = jest.fn();
+const executor = vi.fn();
 
 export const controlExecutorMock = executor;
 
-jest.mock("./control-command-executor", () => ({
+vi.mock("./control-command-executor", () => ({
   executor,
 }));

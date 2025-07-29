@@ -1,3 +1,4 @@
+import { Mock } from "vitest";
 import {
   CommandType,
   FoundZone,
@@ -10,11 +11,11 @@ import {
 import { executor } from "./play-from-here-command-executor";
 
 describe("play-command-executor test suite", () => {
-  let playFromHereApi: jest.Mock;
+  let playFromHereApi: Mock;
   let server: RoonServer;
   let foundZone: FoundZone;
   beforeEach(() => {
-    playFromHereApi = jest.fn().mockImplementation(() => Promise.resolve({} as unknown as RoonApiTransportQueue));
+    playFromHereApi = vi.fn().mockImplementation(() => Promise.resolve({} as unknown as RoonApiTransportQueue));
     const roonApiTransport: RoonApiTransport = {
       play_from_here: playFromHereApi,
     } as unknown as RoonApiTransport;
@@ -30,10 +31,10 @@ describe("play-command-executor test suite", () => {
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
   });
 
-  it("executor should call RoonApiTransoprt#play_from_here with expected parameters, the returned Promise should be voided", () => {
+  it("executor should call RoonApiTransoprt#play_from_here with expected parameters, the returned Promise should be voided", async () => {
     const command: PlayFromHereCommand = {
       type: CommandType.PLAY_FROM_HERE,
       data: {
@@ -42,11 +43,11 @@ describe("play-command-executor test suite", () => {
       },
     };
     const executorPromise = executor(command, foundZone);
-    void expect(executorPromise).resolves.toBeUndefined();
+    await expect(executorPromise).resolves.toBeUndefined();
     expect(playFromHereApi).toHaveBeenCalledWith(zone, queue_item_id);
   });
 
-  it("executor should return a rejected Promise wrapping any error returned by RoonApiTransoprt#play_from_here", () => {
+  it("executor should return a rejected Promise wrapping any error returned by RoonApiTransoprt#play_from_here", async () => {
     const error = new Error("error");
     playFromHereApi.mockImplementation(() => Promise.reject(error));
     const command: PlayFromHereCommand = {
@@ -57,7 +58,7 @@ describe("play-command-executor test suite", () => {
       },
     };
     const executorPromise = executor(command, foundZone);
-    void expect(executorPromise).rejects.toBe(error);
+    await expect(executorPromise).rejects.toBe(error);
     expect(playFromHereApi).toHaveBeenCalledWith(zone, queue_item_id);
   });
 });

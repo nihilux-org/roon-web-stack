@@ -1,8 +1,8 @@
-const convertZone = jest.fn();
-const secondsToTimeString = jest.fn();
-const convertQueue = jest.fn();
-const toRoonSseMessage = jest.fn();
-const buildApiState = jest.fn();
+const convertZone = vi.fn();
+const secondsToTimeString = vi.fn();
+const convertQueue = vi.fn();
+const toRoonSseMessage = vi.fn();
+const buildApiState = vi.fn();
 
 export const dataConverterMock = {
   buildApiState,
@@ -12,7 +12,7 @@ export const dataConverterMock = {
   toRoonSseMessage,
 };
 
-jest.mock("./data-converter", () => ({
+vi.mock("./data-converter", () => ({
   dataConverter: {
     buildApiState,
     convertQueue,

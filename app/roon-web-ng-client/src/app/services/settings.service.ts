@@ -1,6 +1,7 @@
 import { deepEqual } from "fast-equals";
 import { Subscription } from "rxjs";
 import { BreakpointObserver, Breakpoints } from "@angular/cdk/layout";
+import { DOCUMENT } from "@angular/common";
 import {
   computed,
   effect,
@@ -52,6 +53,7 @@ export class SettingsService implements OnDestroy {
   private static readonly ROON_CLIENT_ID = "nr.ROON_CLIENT_ID";
   private readonly _breakpointObserver: BreakpointObserver;
   private readonly _customActionsService: CustomActionsService;
+  private readonly _document: Document;
   private readonly _renderer: Renderer2;
   private readonly _$actions: WritableSignal<Action[]>;
   private readonly _$allActions: Signal<Action[]>;
@@ -74,6 +76,7 @@ export class SettingsService implements OnDestroy {
   constructor() {
     this._breakpointObserver = inject(BreakpointObserver);
     this._customActionsService = inject(CustomActionsService);
+    this._document = inject(DOCUMENT);
     this._$displayedZoneId = signal(localStorage.getItem(SettingsService.DISPLAYED_ZONE_ID_KEY) ?? "", {
       equal: deepEqual,
     });
@@ -168,13 +171,16 @@ export class SettingsService implements OnDestroy {
           isDarkTheme = false;
           break;
         default:
-          isDarkTheme = window.matchMedia("(prefers-color-scheme: dark)").matches;
+          isDarkTheme =
+            this._document.defaultView?.matchMedia instanceof Function
+              ? this._document.defaultView.matchMedia("(prefers-color-scheme: dark)").matches
+              : false;
           break;
       }
       if (isDarkTheme) {
-        this._renderer.removeClass(window.document.body, "light-theme");
+        this._renderer.removeClass(this._document.body, "light-theme");
       } else {
-        this._renderer.addClass(window.document.body, "light-theme");
+        this._renderer.addClass(this._document.body, "light-theme");
       }
     });
     this._breakPointSubscription = this._breakpointObserver

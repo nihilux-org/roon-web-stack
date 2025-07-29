@@ -4,6 +4,7 @@ import { dataConverterMock } from "./data-converter.mock";
 import { queueBotMock } from "./queue-bot-manager.mock";
 
 import { Subject } from "rxjs";
+import { Mock } from "vitest";
 import {
   Queue,
   QueueChange,
@@ -27,16 +28,16 @@ describe("queue-manager.ts test suite", () => {
   let RoonApiBrowse: RoonApiBrowse;
   let RoonApiImage: RoonApiImage;
   let queueListener: QueueListener;
-  let subscribe_queue: jest.Mock;
+  let subscribe_queue: Mock;
   let RoonApiTransport: RoonApiTransport;
   let server: RoonServer;
 
   beforeEach(() => {
     roonSubject = new Subject<RoonSseMessage>();
-    RoonApiBrowse = jest.mocked({}) as unknown as RoonApiBrowse;
-    RoonApiImage = jest.mocked({}) as unknown as RoonApiImage;
-    subscribe_queue = jest.fn();
-    RoonApiTransport = jest.mocked({
+    RoonApiBrowse = vi.mocked({}) as unknown as RoonApiBrowse;
+    RoonApiImage = vi.mocked({}) as unknown as RoonApiImage;
+    subscribe_queue = vi.fn();
+    RoonApiTransport = vi.mocked({
       subscribe_queue,
     }) as unknown as RoonApiTransport;
     server = {
@@ -75,8 +76,8 @@ describe("queue-manager.ts test suite", () => {
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
-    jest.clearAllMocks();
+    vi.resetAllMocks();
+    vi.clearAllMocks();
   });
 
   it("queueManagerFactory#build should return a new instance at each call", () => {
@@ -85,14 +86,14 @@ describe("queue-manager.ts test suite", () => {
     expect(queueManager).not.toBe(otherQueueManager);
   });
 
-  it("QueueManager#start should return a rejected Promise if the underlying roon API is in error", () => {
+  it("QueueManager#start should return a rejected Promise if the underlying roon API is in error", async () => {
     const error = new Error("error");
     subscribe_queue.mockImplementation(() => {
       throw error;
     });
     const queueManager = queueManagerFactory.build(ZONE, roonSubject, QUEUE_SIZE);
     const queueManagerPromise = queueManager.start();
-    void expect(queueManagerPromise).rejects.toEqual(error);
+    await expect(queueManagerPromise).rejects.toEqual(error);
     expect(retryMock.retryDecorator).toHaveBeenCalledTimes(1);
     expect(retryMock.retryDecorator).toHaveBeenCalledWith(expect.anything(), {
       delay: 3500,
@@ -101,7 +102,7 @@ describe("queue-manager.ts test suite", () => {
     });
   });
 
-  it("QueueManager#start should return a rejected Promise if the underlying roon API return an unknown event before 'Subscribed'", () => {
+  it("QueueManager#start should return a rejected Promise if the underlying roon API return an unknown event before 'Subscribed'", async () => {
     subscribe_queue.mockImplementation((z: Zone, queueSize: number, listener: QueueListener) => {
       queueListener = listener;
       queueListener("Unknown" as RoonSubscriptionResponse, {
@@ -110,7 +111,7 @@ describe("queue-manager.ts test suite", () => {
     });
     const queueManager = queueManagerFactory.build(ZONE, roonSubject, QUEUE_SIZE);
     const queueManagerPromise = queueManager.start();
-    void expect(queueManagerPromise).rejects.toEqual(new Error("core not ready yet..."));
+    await expect(queueManagerPromise).rejects.toEqual(new Error("core not ready yet..."));
     expect(retryMock.retryDecorator).toHaveBeenCalledTimes(1);
     expect(retryMock.retryDecorator).toHaveBeenCalledWith(expect.anything(), {
       delay: 3500,

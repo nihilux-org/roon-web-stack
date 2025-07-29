@@ -1,14 +1,16 @@
-const start = jest.fn();
-const client_stop = jest.fn();
-const onRoonState = jest.fn();
-const offRoonState = jest.fn();
-const onCommandState = jest.fn();
-const offCommandState = jest.fn();
-const onZoneState = jest.fn();
-const offZoneState = jest.fn();
-const onQueueState = jest.fn();
-const offQueueState = jest.fn();
-const command = jest.fn();
+import { vi } from "vitest";
+
+const start = vi.fn();
+const client_stop = vi.fn();
+const onRoonState = vi.fn();
+const offRoonState = vi.fn();
+const onCommandState = vi.fn();
+const offCommandState = vi.fn();
+const onZoneState = vi.fn();
+const offZoneState = vi.fn();
+const onQueueState = vi.fn();
+const offQueueState = vi.fn();
+const command = vi.fn();
 
 export const roonCqrsClientMock = {
   start,
@@ -24,12 +26,12 @@ export const roonCqrsClientMock = {
   command,
 };
 
-const build = jest.fn().mockImplementation(() => roonCqrsClientMock);
+const build = vi.fn().mockImplementation(() => roonCqrsClientMock);
 
 export const roonWebClientFactoryMock = {
   build,
 };
 
-jest.mock("@nihilux/roon-web-client", () => ({
+vi.mock("@nihilux/roon-web-client", () => ({
   roonWebClientFactory: roonWebClientFactoryMock,
 }));

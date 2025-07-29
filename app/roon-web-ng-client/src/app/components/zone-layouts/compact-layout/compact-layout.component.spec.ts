@@ -1,4 +1,5 @@
 import { MockProvider } from "ng-mocks";
+import { beforeEach, describe, expect, it } from "vitest";
 import { Component, Input, Signal, signal, ViewChild, WritableSignal } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { SettingsService } from "@services/settings.service";
@@ -58,7 +59,7 @@ describe("CompactLayoutComponent", () => {
   };
   let $layoutClass: WritableSignal<string>;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     $isSmallTablet = signal(false);
     settingsService = {
       isSmallTablet: () => $isSmallTablet,
@@ -70,7 +71,7 @@ describe("CompactLayoutComponent", () => {
     });
     fixture = TestBed.createComponent(TemplateProducerComponent);
     fixture.componentRef.setInput("$layoutClass", $layoutClass);
-    fixture.detectChanges();
+    await fixture.whenStable();
     component = fixture.componentInstance.compactLayout;
   });
 

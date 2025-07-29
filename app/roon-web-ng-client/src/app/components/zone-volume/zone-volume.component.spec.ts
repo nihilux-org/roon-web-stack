@@ -1,4 +1,5 @@
 import { MockProvider } from "ng-mocks";
+import { beforeEach, describe, expect, it, Mock, vi } from "vitest";
 import { signal, WritableSignal } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { DisplayMode } from "@model";
@@ -14,35 +15,35 @@ describe("ZoneVolumeComponent", () => {
   let $displayMode: WritableSignal<DisplayMode>;
   let $isSmallScreen: WritableSignal<boolean>;
   let settingsService: {
-    isSmallScreen: jest.Mock;
-    displayMode: jest.Mock;
+    isSmallScreen: Mock;
+    displayMode: Mock;
   };
   let $outputs: WritableSignal<Output[]>;
   let $isMuted: WritableSignal<boolean>;
   let volumeService: {
-    outputs: jest.Mock;
-    isMute: jest.Mock;
+    outputs: Mock;
+    isMute: Mock;
   };
   let dialogService: {
-    open: jest.Mock;
+    open: Mock;
   };
 
-  beforeEach(() => {
+  beforeEach(async () => {
     $outputs = signal([]);
     $displayMode = signal(DisplayMode.WIDE);
     $isSmallScreen = signal(false);
     settingsService = {
-      displayMode: jest.fn().mockImplementation(() => $displayMode),
-      isSmallScreen: jest.fn().mockImplementation(() => $isSmallScreen),
+      displayMode: vi.fn().mockImplementation(() => $displayMode),
+      isSmallScreen: vi.fn().mockImplementation(() => $isSmallScreen),
     };
     $isMuted = signal(false);
     $outputs = signal([]);
     volumeService = {
-      outputs: jest.fn().mockImplementation(() => $outputs),
-      isMute: jest.fn().mockImplementation(() => $isMuted),
+      outputs: vi.fn().mockImplementation(() => $outputs),
+      isMute: vi.fn().mockImplementation(() => $isMuted),
     };
     dialogService = {
-      open: jest.fn(),
+      open: vi.fn(),
     };
     TestBed.configureTestingModule({
       imports: [ZoneVolumeComponent],
@@ -54,7 +55,7 @@ describe("ZoneVolumeComponent", () => {
     });
     fixture = TestBed.createComponent(ZoneVolumeComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
+    await fixture.whenStable();
   });
 
   it("should create", () => {

@@ -1,10 +1,11 @@
+import { vi } from "vitest";
 import { RawWorkerEvent, WorkerActionMessage } from "@model";
 
 let onMessageListener: (m: MessageEvent<RawWorkerEvent>) => void;
 let receivedMessages: WorkerActionMessage[] = [];
 
 export const roonWorkerMock = {
-  postMessage: jest.fn().mockImplementation((m: WorkerActionMessage) => {
+  postMessage: vi.fn().mockImplementation((m: WorkerActionMessage) => {
     receivedMessages.push(m);
     if (m.event === "worker-client" && m.data.action === "start-client") {
       onMessageListener({
@@ -50,7 +51,8 @@ export const roonWorkerMock = {
 
 const buildRoonWorker = () => roonWorkerMock;
 
-export const mockRoonWorker = () =>
-  jest.mock("@services/worker.utils", () => ({
+export const mockRoonWorker = () => {
+  vi.mock("@services/worker.utils", () => ({
     buildRoonWorker,
   }));
+};

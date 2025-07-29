@@ -75,7 +75,7 @@ export class Extension<T extends SettingsValues> extends EventEmitter implements
     this._status = new RoonKit.RoonApiStatus(this._api);
 
     if (this._options.RoonApiSettings) {
-      this._settings = new RoonExtensionSettings(this, this._options.RoonApiSettings);
+      this._settings = new RoonExtensionSettings(this as RoonExtension<T>, this._options.RoonApiSettings);
     }
   }
 

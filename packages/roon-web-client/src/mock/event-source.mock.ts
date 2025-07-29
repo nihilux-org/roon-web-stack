@@ -2,6 +2,7 @@ export const eventSourceMocks: Map<string, EventSourceMock> = new Map<string, Ev
 
 export const resetEventSourceMocks: () => void = (): void => {
   eventSourceMocks.clear();
+  eventSourceMockConstructor.mockClear();
 };
 
 export class EventSourceMock {
@@ -14,13 +15,13 @@ export class EventSourceMock {
     this._state = 1;
   }
 
-  close = jest.fn().mockImplementation(() => {
+  close = vi.fn().mockImplementation(() => {
     this._state = 0;
     this.listeners.clear();
     return;
   });
 
-  addEventListener = jest.fn().mockImplementation((type: string, listener: EventListener): void => {
+  addEventListener = vi.fn().mockImplementation((type: string, listener: EventListener): void => {
     this.listeners.set(type, listener);
   });
 
@@ -55,7 +56,7 @@ export class EventSourceMock {
   }
 }
 
-export const eventSourceMockConstructor = jest.fn().mockImplementation((url: URL): EventSourceMock => {
+export const eventSourceMockConstructor = vi.fn().mockImplementation((url: URL): EventSourceMock => {
   const eventSourceMock = new EventSourceMock();
   eventSourceMocks.set(url.toString(), eventSourceMock);
   return eventSourceMock;

@@ -12,6 +12,7 @@ import { volumeCommandExecutorMock } from "./command-executor/volume-command-exe
 import { volumeGroupedZoneCommandExecutorMock } from "./command-executor/volume-grouped-zone-command-executor.mock";
 
 import { Subject } from "rxjs";
+import { Mock } from "vitest";
 import {
   Command,
   CommandResult,
@@ -38,13 +39,13 @@ import { commandDispatcher } from "./command-dispatcher";
 
 describe("command-dispatcher.ts test suite", () => {
   let nanoid_counter: number;
-  let zone_by_zone_id: jest.Mock;
+  let zone_by_zone_id: Mock;
   let server: RoonServer;
   let controlChannel: Subject<CommandState>;
   beforeEach(() => {
     nanoid_counter = 0;
     nanoidMock.mockImplementation(() => `${++nanoid_counter}`);
-    zone_by_zone_id = jest.fn().mockImplementation((z_id: string) => {
+    zone_by_zone_id = vi.fn().mockImplementation((z_id: string) => {
       if (z_id === zone_id) {
         return zone;
       } else {
@@ -63,8 +64,8 @@ describe("command-dispatcher.ts test suite", () => {
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
-    jest.clearAllMocks();
+    vi.resetAllMocks();
+    vi.clearAllMocks();
   });
 
   it("command-dispatcher#dispatch should always dispatch an error and log it if the provided zone is not a known zone", async () => {

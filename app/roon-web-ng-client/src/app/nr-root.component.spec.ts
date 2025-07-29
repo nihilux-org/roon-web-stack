@@ -1,4 +1,5 @@
 import { MockProvider } from "ng-mocks";
+import { beforeEach, describe, expect, it, Mock, vi } from "vitest";
 import { signal, WritableSignal } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { ApiState, RoonState } from "@nihilux/roon-web-model";
@@ -14,19 +15,19 @@ describe("NrRootComponent", () => {
   let $state: WritableSignal<ApiState>;
   let $isGrouping: WritableSignal<boolean>;
   let dialogService: {
-    close: jest.Mock;
+    close: Mock;
   };
   let roonService: {
-    roonState: jest.Mock;
-    isGrouping: jest.Mock;
+    roonState: Mock;
+    isGrouping: Mock;
   };
   let settingsService: {
-    displayedZonedId: jest.Mock;
+    displayedZonedId: Mock;
   };
 
   beforeEach(() => {
     dialogService = {
-      close: jest.fn(),
+      close: vi.fn(),
     };
     $state = signal({
       state: RoonState.STARTING,
@@ -35,12 +36,12 @@ describe("NrRootComponent", () => {
     });
     $isGrouping = signal(false);
     roonService = {
-      roonState: jest.fn().mockImplementation(() => $state),
-      isGrouping: jest.fn().mockImplementation(() => $isGrouping),
+      roonState: vi.fn().mockImplementation(() => $state),
+      isGrouping: vi.fn().mockImplementation(() => $isGrouping),
     };
     $displayedZoneId = signal(zone_id);
     settingsService = {
-      displayedZonedId: jest.fn().mockImplementation(() => $displayedZoneId),
+      displayedZonedId: vi.fn().mockImplementation(() => $displayedZoneId),
     };
     TestBed.configureTestingModule({
       imports: [NrRootComponent],

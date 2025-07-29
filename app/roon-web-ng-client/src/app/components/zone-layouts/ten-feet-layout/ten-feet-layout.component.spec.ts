@@ -1,4 +1,5 @@
 import { MockComponent, MockProvider } from "ng-mocks";
+import { beforeEach, describe, expect, it, Mock, vi } from "vitest";
 import { Component, Input, Signal, signal, ViewChild, WritableSignal } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { ZoneSelectorComponent } from "@components/zone-selector/zone-selector.component";
@@ -59,24 +60,24 @@ describe("TenFeetLayoutComponent", () => {
   let $isIdle: WritableSignal<boolean>;
   let $isBigFonts: WritableSignal<boolean>;
   let settingsService: {
-    isBigFonts: jest.Mock;
+    isBigFonts: Mock;
   };
   let idleService: {
-    isIdle: jest.Mock;
+    isIdle: Mock;
   };
-  let closeDialog: jest.Mock;
+  let closeDialog: Mock;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     $layoutClass = signal("layout-class");
     $isIdle = signal(false);
     $isBigFonts = signal(false);
     settingsService = {
-      isBigFonts: jest.fn().mockImplementation(() => $isBigFonts),
+      isBigFonts: vi.fn().mockImplementation(() => $isBigFonts),
     };
     idleService = {
-      isIdle: jest.fn().mockImplementation(() => $isIdle),
+      isIdle: vi.fn().mockImplementation(() => $isIdle),
     };
-    closeDialog = jest.fn();
+    closeDialog = vi.fn();
     TestBed.configureTestingModule({
       imports: [TenFeetLayoutComponent, TemplateProducerComponent],
       providers: [
@@ -96,7 +97,7 @@ describe("TenFeetLayoutComponent", () => {
     });
     fixture = TestBed.createComponent(TemplateProducerComponent);
     fixture.componentRef.setInput("$layoutClass", $layoutClass);
-    fixture.detectChanges();
+    await fixture.whenStable();
     component = fixture.componentInstance.tenFeetLayoutComponent;
   });
 

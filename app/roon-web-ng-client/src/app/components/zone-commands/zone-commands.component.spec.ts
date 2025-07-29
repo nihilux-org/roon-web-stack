@@ -1,4 +1,5 @@
 import { MockProvider } from "ng-mocks";
+import { beforeEach, describe, expect, it, Mock, vi } from "vitest";
 import { signal, WritableSignal } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { DisplayMode, ZoneCommands, ZoneCommandState } from "@model";
@@ -12,28 +13,28 @@ describe("ZoneCommandsComponent", () => {
   let fixture: ComponentFixture<ZoneCommandsComponent>;
   let commands: Command[];
   let roonService: {
-    command: jest.Mock;
+    command: Mock;
   };
   let $isSmallScreen: WritableSignal<boolean>;
   let $displayMode: WritableSignal<DisplayMode>;
   let $zoneCommands: WritableSignal<ZoneCommands>;
   let settingsService: {
-    isSmallScreen: jest.Mock;
-    displayMode: jest.Mock;
+    isSmallScreen: Mock;
+    displayMode: Mock;
   };
 
-  beforeEach(() => {
+  beforeEach(async () => {
     commands = [];
     roonService = {
-      command: jest.fn().mockImplementation((command: Command) => {
+      command: vi.fn().mockImplementation((command: Command) => {
         commands.push(command);
       }),
     };
     $isSmallScreen = signal(false);
     $displayMode = signal(DisplayMode.COMPACT);
     settingsService = {
-      isSmallScreen: jest.fn().mockImplementation(() => $isSmallScreen),
-      displayMode: jest.fn().mockImplementation(() => $displayMode),
+      isSmallScreen: vi.fn().mockImplementation(() => $isSmallScreen),
+      displayMode: vi.fn().mockImplementation(() => $displayMode),
     };
     $zoneCommands = signal(ZONE_COMMANDS);
     TestBed.configureTestingModule({
@@ -43,7 +44,7 @@ describe("ZoneCommandsComponent", () => {
     fixture = TestBed.createComponent(ZoneCommandsComponent);
     fixture.componentRef.setInput("$zoneCommands", $zoneCommands);
     component = fixture.componentInstance;
-    fixture.detectChanges();
+    await fixture.whenStable();
   });
 
   it("should create", () => {

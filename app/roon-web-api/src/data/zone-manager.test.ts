@@ -5,6 +5,7 @@ import { queueBotMock } from "./queue-bot-manager.mock";
 import { queueManagerFactoryMock } from "./queue-manager.mock";
 
 import { Subject } from "rxjs";
+import { Mock } from "vitest";
 import { logger } from "@infrastructure";
 import {
   ApiState,
@@ -46,20 +47,19 @@ describe("zone-manager.ts test suite", () => {
   let otherQueueManagerRoonSseMessage: Subject<RoonSseMessage> | undefined = undefined;
   let yetAnotherQueueManager: QueueManager;
   let yetAnotherQueueManagerRoonSseMessage: Subject<RoonSseMessage> | undefined = undefined;
-  let yetAnotherQueueManagerIsStarted: jest.Mock;
-  beforeEach(() => {
-    jest.isolateModules((): void => {
-      void import("./zone-manager")
-        .then((module) => {
-          zoneManager = module.zoneManager as unknown as ZoneManager;
-        })
-        .catch((err: unknown) => {
-          logger.error(err);
-        });
-    });
-    RoonApiBrowse = jest.mocked({}) as unknown as RoonApiBrowse;
-    RoonApiImage = jest.mocked({}) as unknown as RoonApiImage;
-    RoonApiTransport = jest.mocked({}) as unknown as RoonApiTransport;
+  let yetAnotherQueueManagerIsStarted: Mock;
+  beforeEach(async () => {
+    await vi
+      .importActual<{ zoneManager: ZoneManager }>("./zone-manager")
+      .then((module) => {
+        zoneManager = module.zoneManager as unknown as ZoneManager;
+      })
+      .catch((err: unknown) => {
+        logger.error(err);
+      });
+    RoonApiBrowse = vi.mocked({}) as unknown as RoonApiBrowse;
+    RoonApiImage = vi.mocked({}) as unknown as RoonApiImage;
+    RoonApiTransport = vi.mocked({}) as unknown as RoonApiTransport;
     server = {
       services: {
         RoonApiTransport,
@@ -118,37 +118,37 @@ describe("zone-manager.ts test suite", () => {
       }
     });
     queueManager = {
-      queue: jest.fn().mockImplementation(() => ({
+      queue: vi.fn().mockImplementation(() => ({
         event: "queue",
         data: {
           zone_id: ZONE.zone_id,
         } as Queue,
       })),
-      stop: jest.fn(),
-      start: jest.fn().mockImplementation(() => Promise.resolve()),
-      isStarted: jest.fn().mockImplementation(() => true),
+      stop: vi.fn(),
+      start: vi.fn().mockImplementation(() => Promise.resolve()),
+      isStarted: vi.fn().mockImplementation(() => true),
     } as unknown as QueueManager;
     otherQueueManager = {
-      queue: jest.fn().mockImplementation(() => ({
+      queue: vi.fn().mockImplementation(() => ({
         event: "queue",
         data: {
           zone_id: OTHER_ZONE.zone_id,
         } as Queue,
       })),
-      stop: jest.fn(),
-      start: jest.fn().mockImplementation(() => Promise.resolve()),
-      isStarted: jest.fn().mockImplementation(() => true),
+      stop: vi.fn(),
+      start: vi.fn().mockImplementation(() => Promise.resolve()),
+      isStarted: vi.fn().mockImplementation(() => true),
     } as unknown as QueueManager;
-    yetAnotherQueueManagerIsStarted = jest.fn().mockImplementation(() => true);
+    yetAnotherQueueManagerIsStarted = vi.fn().mockImplementation(() => true);
     yetAnotherQueueManager = {
-      queue: jest.fn().mockImplementation(() => ({
+      queue: vi.fn().mockImplementation(() => ({
         event: "queue",
         data: {
           zone_id: YET_ANOTHER_ZONE.zone_id,
         } as Queue,
       })),
-      stop: jest.fn(),
-      start: jest.fn().mockImplementation(() => Promise.resolve()),
+      stop: vi.fn(),
+      start: vi.fn().mockImplementation(() => Promise.resolve()),
       isStarted: yetAnotherQueueManagerIsStarted,
     } as unknown as QueueManager;
     queueManagerFactoryMock.build.mockImplementation(
@@ -169,9 +169,9 @@ describe("zone-manager.ts test suite", () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
-    jest.resetAllMocks();
-    jest.resetModules();
+    vi.clearAllMocks();
+    vi.resetAllMocks();
+    vi.resetModules();
   });
 
   it("zoneManager#start should register onServerPaired and onServerLost listeners and call roonExtension#startDiscovery", async () => {
@@ -195,7 +195,7 @@ describe("zone-manager.ts test suite", () => {
   it("zoneManager#start return a rejected Promise if zoneManager has already been started", async () => {
     await zoneManager.start();
     const otherPromise = zoneManager.start();
-    void expect(otherPromise).rejects.toEqual(new Error("zoneManager as already been started"));
+    await expect(otherPromise).rejects.toEqual(new Error("zoneManager as already been started"));
   });
 
   it("zoneManager#start should produce the following sequence of states: STARTING, SYNCING", async () => {
@@ -228,8 +228,9 @@ describe("zone-manager.ts test suite", () => {
     await new Promise<void>((resolve) => {
       zoneManager.events().subscribe((m) => {
         if (m.event === "state" && m.data.state === RoonState.SYNC) {
-          void expect(startPromise).resolves.toBeUndefined();
-          resolve();
+          void expect(startPromise)
+            .resolves.toBeUndefined()
+            .then(() => resolve());
         }
       });
       zoneListener(server, "Subscribed", {} as unknown as RoonApiTransportZones);
@@ -239,12 +240,12 @@ describe("zone-manager.ts test suite", () => {
   it("zoneManager#start should log error and continue if QueueManager#start is rejected", async () => {
     const error = new Error("error");
     otherQueueManager = {
-      queue: jest.fn().mockImplementation(() => {
+      queue: vi.fn().mockImplementation(() => {
         throw error;
       }),
-      stop: jest.fn(),
-      start: jest.fn().mockImplementation(() => Promise.reject(error)),
-      isStarted: jest.fn().mockImplementation(() => false),
+      stop: vi.fn(),
+      start: vi.fn().mockImplementation(() => Promise.reject(error)),
+      isStarted: vi.fn().mockImplementation(() => false),
     } as unknown as QueueManager;
     await zoneManager.start();
     zoneListener(server, "Subscribed", {
@@ -1636,15 +1637,15 @@ describe("zone-manager.ts test suite", () => {
     serverLostListener(server);
     const errorPromise = new Promise<void>((resolve) => {
       otherQueueManager = {
-        queue: jest.fn().mockImplementation(() => {
+        queue: vi.fn().mockImplementation(() => {
           throw error;
         }),
-        stop: jest.fn(),
-        start: jest.fn().mockImplementation(() => {
+        stop: vi.fn(),
+        start: vi.fn().mockImplementation(() => {
           resolve();
           return Promise.reject(error);
         }),
-        isStarted: jest.fn().mockImplementation(() => false),
+        isStarted: vi.fn().mockImplementation(() => false),
       } as unknown as QueueManager;
     });
     serverPairedListener(server);

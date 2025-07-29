@@ -1,10 +1,10 @@
-const register = jest.fn();
-const unregister = jest.fn();
-const get = jest.fn();
-const start = jest.fn();
-const stop = jest.fn();
-const browse = jest.fn();
-const load = jest.fn();
+const register = vi.fn();
+const unregister = vi.fn();
+const get = vi.fn();
+const start = vi.fn();
+const stop = vi.fn();
+const browse = vi.fn();
+const load = vi.fn();
 
 export const clientManagerMock = {
   register,
@@ -16,6 +16,6 @@ export const clientManagerMock = {
   load,
 };
 
-jest.mock("./client-manager", () => ({
+vi.mock("./client-manager", () => ({
   clientManager: clientManagerMock,
 }));

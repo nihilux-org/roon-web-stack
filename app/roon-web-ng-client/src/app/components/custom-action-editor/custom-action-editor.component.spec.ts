@@ -1,4 +1,5 @@
 import { MockProvider } from "ng-mocks";
+import { beforeEach, describe, expect, it, Mock, vi } from "vitest";
 import { signal, WritableSignal } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { RoonApiBrowseHierarchy } from "@nihilux/roon-web-model";
@@ -9,7 +10,7 @@ import { CustomActionEditorComponent } from "./custom-action-editor.component";
 
 describe("CustomActionEditorComponent", () => {
   let dialogService: {
-    open: jest.Mock;
+    open: Mock;
   };
   let $isBigFonts: WritableSignal<boolean>;
   let $label: WritableSignal<string>;
@@ -17,24 +18,24 @@ describe("CustomActionEditorComponent", () => {
   let $hierarchy: WritableSignal<RoonApiBrowseHierarchy | undefined>;
   let $path: WritableSignal<string[]>;
   let $actionIndex: WritableSignal<number | undefined>;
-  let saveLabel: jest.Mock;
-  let saveIcon: jest.Mock;
+  let saveLabel: Mock;
+  let saveIcon: Mock;
   let component: CustomActionEditorComponent;
   let fixture: ComponentFixture<CustomActionEditorComponent>;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     dialogService = {
-      open: jest.fn(),
+      open: vi.fn(),
     };
     $label = signal("label");
     $icon = signal("icon");
     $hierarchy = signal(undefined);
     $path = signal([]);
     $actionIndex = signal(undefined);
-    saveLabel = jest.fn().mockImplementation((label: string) => {
+    saveLabel = vi.fn().mockImplementation((label: string) => {
       $label.set(label);
     });
-    saveIcon = jest.fn().mockImplementation((icon: string) => {
+    saveIcon = vi.fn().mockImplementation((icon: string) => {
       $icon.set(icon);
     });
     $isBigFonts = signal(false);
@@ -58,7 +59,7 @@ describe("CustomActionEditorComponent", () => {
     });
     fixture = TestBed.createComponent(CustomActionEditorComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
+    await fixture.whenStable();
   });
 
   it("should create", () => {

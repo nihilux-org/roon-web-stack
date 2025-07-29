@@ -1,7 +1,7 @@
-const executor = jest.fn();
+const executor = vi.fn();
 
 export const muteGroupedZoneCommandExecutorMock = executor;
 
-jest.mock("./mute-grouped-zone-command-executor", () => ({
+vi.mock("./mute-grouped-zone-command-executor", () => ({
   executor,
 }));

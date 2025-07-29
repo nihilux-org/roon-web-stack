@@ -34,8 +34,7 @@
             "styles": [
               "src/styles.scss"
             ],
-            "scripts": [],
-            "webWorkerTsConfig": "tsconfig.worker.json"
+            "scripts": []
           },
           "configurations": {
             "production": {
@@ -81,12 +80,7 @@
           }
         },
         "test": {
-          "builder": "@angular-builders/jest:run",
-          "options": {
-            "webWorkerTsConfig": [
-              "tsconfig.worker.json"
-            ]
-          }
+          "builder": "@analogjs/vitest-angular:test"
         },
         "lint": {
           "builder": "@angular-eslint/builder:lint",
@@ -121,10 +115,9 @@
           "defaultConfiguration": "production"
         },
         "test": {
-          "builder": "@angular-builders/jest:run",
+          "builder": "@analogjs/vitest-angular:test",
           "options": {
-            "tsConfig": "tsconfig.spec.json",
-            "polyfills": []
+            "tsConfig": "projects/nihilux/ngx-spatial-navigable/tsconfig.spec.json"
           }
         },
         "lint": {

@@ -5,10 +5,11 @@
     "outDir": "./out-tsc/spec",
     "types": [
       "node",
-      "jest"
+      "vitest/globals"
     ]
   },
   "include": [
+    "src/setup-test.ts",
     "**/*.ts",
     "**/*.spec.ts",
     "**/*.mock.ts",

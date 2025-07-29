@@ -1,7 +1,7 @@
-const nanoid = jest.fn();
+const nanoid = vi.fn();
 
 export const nanoidMock = nanoid;
 
-jest.mock("nanoid", () => ({
+vi.mock("nanoid", () => ({
   nanoid,
 }));

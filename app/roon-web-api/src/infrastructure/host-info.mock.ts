@@ -4,6 +4,6 @@ const hostInfo = {};
 
 export const hostInfoMock: HostInfo = hostInfo as HostInfo;
 
-jest.mock("./host-info", () => ({
+vi.mock("./host-info", () => ({
   hostInfo: hostInfoMock,
 }));

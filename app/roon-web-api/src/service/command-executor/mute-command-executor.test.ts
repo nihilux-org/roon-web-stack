@@ -1,3 +1,4 @@
+import { Mock } from "vitest";
 import {
   CommandType,
   FoundZone,
@@ -13,11 +14,11 @@ import {
 import { executor } from "./mute-command-executor";
 
 describe("mute-command-executor.ts test suite", () => {
-  let muteApi: jest.Mock;
+  let muteApi: Mock;
   let server: RoonServer;
   let foundZone: FoundZone;
   beforeEach(() => {
-    muteApi = jest.fn().mockImplementation(() => Promise.resolve());
+    muteApi = vi.fn().mockImplementation(() => Promise.resolve());
     const roonApiTransport = {
       mute: muteApi,
     } as unknown as RoonApiTransport;
@@ -33,28 +34,30 @@ describe("mute-command-executor.ts test suite", () => {
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
   });
 
-  it("executor should call RoonApiTransoprt#mute with expected parameters", () => {
+  it("executor should call RoonApiTransoprt#mute with expected parameters", async () => {
     const muteTypes = [MuteType.MUTE, MuteType.TOGGLE, MuteType.UN_MUTE];
-    muteTypes
-      .map(
-        (type): MuteCommand => ({
-          type: CommandType.MUTE,
-          data: {
-            type,
-            zone_id,
-            output_id,
-          },
+    await Promise.all(
+      muteTypes
+        .map(
+          (type): MuteCommand => ({
+            type: CommandType.MUTE,
+            data: {
+              type,
+              zone_id,
+              output_id,
+            },
+          })
+        )
+        .map(async (command) => {
+          const expectedRoonMuteHow: RoonMuteHow = command.data.type === MuteType.UN_MUTE ? "unmute" : "mute";
+          const executorPromise = executor(command, foundZone);
+          await expect(executorPromise).resolves.toBeUndefined();
+          expect(muteApi).toHaveBeenCalledWith(output, expectedRoonMuteHow);
         })
-      )
-      .forEach((command) => {
-        const expectedRoonMuteHow: RoonMuteHow = command.data.type === MuteType.UN_MUTE ? "unmute" : "mute";
-        const executorPromise = executor(command, foundZone);
-        void expect(executorPromise).resolves.toBeUndefined();
-        expect(muteApi).toHaveBeenCalledWith(output, expectedRoonMuteHow);
-      });
+    );
   });
 
   it("executor should toggle mute state if called with MuteType.TOGGLE", () => {
@@ -85,70 +88,76 @@ describe("mute-command-executor.ts test suite", () => {
     expect(muteApi).toHaveBeenNthCalledWith(2, mutedOutput, "unmute");
   });
 
-  it("executor should do nothing when called with for an output which volume is fixed (without volume attribute)", () => {
+  it("executor should do nothing when called with for an output which volume is fixed (without volume attribute)", async () => {
     const muteTypes = [MuteType.MUTE, MuteType.TOGGLE, MuteType.UN_MUTE];
-    muteTypes
-      .map(
-        (type): MuteCommand => ({
-          type: CommandType.MUTE,
-          data: {
-            type,
-            zone_id,
-            output_id: other_output_id,
-          },
+    await Promise.all(
+      muteTypes
+        .map(
+          (type): MuteCommand => ({
+            type: CommandType.MUTE,
+            data: {
+              type,
+              zone_id,
+              output_id: other_output_id,
+            },
+          })
+        )
+        .map(async (command) => {
+          const executorPromise = executor(command, foundZone);
+          await expect(executorPromise).resolves.toBeUndefined();
+          expect(muteApi).toHaveBeenCalledTimes(0);
         })
-      )
-      .forEach((command) => {
-        const executorPromise = executor(command, foundZone);
-        void expect(executorPromise).resolves.toBeUndefined();
-        expect(muteApi).toHaveBeenCalledTimes(0);
-      });
+    );
   });
 
-  it("executor should return a rejected Promise when called with for an output which which is not one of the zone outputs", () => {
+  it("executor should return a rejected Promise when called with for an output which which is not one of the zone outputs", async () => {
     const muteTypes = [MuteType.MUTE, MuteType.TOGGLE, MuteType.UN_MUTE];
-    muteTypes
-      .map(
-        (type): MuteCommand => ({
-          type: CommandType.MUTE,
-          data: {
-            type,
-            zone_id,
-            output_id: "unknown_output_id",
-          },
+    await Promise.all(
+      muteTypes
+        .map(
+          (type): MuteCommand => ({
+            type: CommandType.MUTE,
+            data: {
+              type,
+              zone_id,
+              output_id: "unknown_output_id",
+            },
+          })
+        )
+        .map(async (command) => {
+          const error = new Error(
+            `'${command.data.output_id}' is not a valid 'output_id' for zone '${command.data.zone_id}'`
+          );
+          const executorPromise = executor(command, foundZone);
+          await expect(executorPromise).rejects.toEqual(error);
+          expect(muteApi).toHaveBeenCalledTimes(0);
         })
-      )
-      .forEach((command) => {
-        const error = new Error(
-          `'${command.data.output_id}' is not a valid 'output_id' for zone '${command.data.zone_id}'`
-        );
-        const executorPromise = executor(command, foundZone);
-        void expect(executorPromise).rejects.toEqual(error);
-        expect(muteApi).toHaveBeenCalledTimes(0);
-      });
+    );
   });
 
-  it("executor should return a rejected Promise wrapping the error returned by RoonApiTransport#mute", () => {
+  it("executor should return a rejected Promise wrapping the error returned by RoonApiTransport#mute", async () => {
     const error = new Error("roon error");
     muteApi.mockImplementation(() => Promise.reject(error));
     const muteTypes = [MuteType.MUTE, MuteType.TOGGLE, MuteType.UN_MUTE];
-    muteTypes
-      .map(
-        (type): MuteCommand => ({
-          type: CommandType.MUTE,
-          data: {
-            type,
-            zone_id,
-            output_id,
-          },
+    await Promise.all(
+      muteTypes
+        .map(
+          (type): MuteCommand => ({
+            type: CommandType.MUTE,
+            data: {
+              type,
+              zone_id,
+              output_id,
+            },
+          })
+        )
+        .map(async (command, index) => {
+          const executorPromise = executor(command, foundZone);
+          const expectedRoonMuteHow: RoonMuteHow = command.data.type === MuteType.UN_MUTE ? "unmute" : "mute";
+          await expect(executorPromise).rejects.toEqual(error);
+          expect(muteApi).toHaveBeenNthCalledWith(index + 1, output, expectedRoonMuteHow);
         })
-      )
-      .forEach((command, index) => {
-        const executorPromise = executor(command, foundZone);
-        const expectedRoonMuteHow: RoonMuteHow = command.data.type === MuteType.UN_MUTE ? "unmute" : "mute";
-        void expect(executorPromise).rejects.toEqual(error);
-        expect(muteApi).toHaveBeenNthCalledWith(index + 1, output, expectedRoonMuteHow);
-      });
+    );
   });
 });
 

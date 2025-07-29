@@ -1,7 +1,7 @@
-const executor = jest.fn();
+const executor = vi.fn();
 
 export const volumeGroupedZoneCommandExecutorMock = executor;
 
-jest.mock("./volume-grouped-zone-command-executor", () => ({
+vi.mock("./volume-grouped-zone-command-executor", () => ({
   executor,
 }));

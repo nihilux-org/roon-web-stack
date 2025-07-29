@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, it } from "vitest";
 import { Component, Input, Signal, signal, ViewChild, WritableSignal } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { CompactLayoutComponent } from "@components/zone-layouts/compact-layout/compact-layout.component";
@@ -53,11 +54,11 @@ describe("OneColumnLayoutComponent", () => {
   let fixture: ComponentFixture<TemplateProducerComponent>;
   let $layoutClass: WritableSignal<string>;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     $layoutClass = signal("layout-class");
     fixture = TestBed.createComponent(TemplateProducerComponent);
     fixture.componentRef.setInput("$layoutClass", $layoutClass);
-    fixture.detectChanges();
+    await fixture.whenStable();
     component = fixture.componentInstance.oneColumnLayout;
   });
 

@@ -1,4 +1,5 @@
 import { MockProvider } from "ng-mocks";
+import { beforeEach, describe, expect, it, Mock, vi } from "vitest";
 import { signal, WritableSignal } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
@@ -10,34 +11,34 @@ import { CustomActionsManagerComponent } from "./custom-actions-manager.componen
 
 describe("CustomActionManagerComponent", () => {
   let dialogService: {
-    open: jest.Mock;
-    close: jest.Mock;
+    open: Mock;
+    close: Mock;
   };
   let $customActions: WritableSignal<CustomAction[]>;
   let $isEditing: WritableSignal<boolean>;
   let $isValid: WritableSignal<boolean>;
-  let cancelEdition: jest.Mock;
-  let saveAction: jest.Mock;
-  let createAction: jest.Mock;
-  let editAction: jest.Mock;
-  let deleteAction: jest.Mock;
-  let command: jest.Mock;
+  let cancelEdition: Mock;
+  let saveAction: Mock;
+  let createAction: Mock;
+  let editAction: Mock;
+  let deleteAction: Mock;
+  let command: Mock;
   let component: CustomActionsManagerComponent;
   let fixture: ComponentFixture<CustomActionsManagerComponent>;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     $customActions = signal([]);
     $isEditing = signal(false);
     $isValid = signal(false);
-    cancelEdition = jest.fn();
-    saveAction = jest.fn();
-    createAction = jest.fn();
-    editAction = jest.fn();
-    deleteAction = jest.fn();
-    command = jest.fn();
+    cancelEdition = vi.fn();
+    saveAction = vi.fn();
+    createAction = vi.fn();
+    editAction = vi.fn();
+    deleteAction = vi.fn();
+    command = vi.fn();
     dialogService = {
-      close: jest.fn(),
-      open: jest.fn(),
+      close: vi.fn(),
+      open: vi.fn(),
     };
     TestBed.configureTestingModule({
       providers: [
@@ -63,7 +64,7 @@ describe("CustomActionManagerComponent", () => {
     });
     fixture = TestBed.createComponent(CustomActionsManagerComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
+    await fixture.whenStable();
   });
 
   it("should create", () => {

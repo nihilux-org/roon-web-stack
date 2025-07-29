@@ -1,4 +1,5 @@
 import { MockProvider } from "ng-mocks";
+import { beforeEach, describe, expect, it } from "vitest";
 import { signal, WritableSignal } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { ApiState, RoonState } from "@nihilux/roon-web-model";
@@ -27,7 +28,7 @@ describe("ZoneSelectorComponent", () => {
 
     fixture = TestBed.createComponent(ZoneSelectorComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
+    await fixture.whenStable();
   });
 
   it("should create", () => {

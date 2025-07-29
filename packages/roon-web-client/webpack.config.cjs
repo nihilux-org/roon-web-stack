@@ -1,6 +1,5 @@
 const path = require('path');
 const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
-const ESLintPlugin = require("eslint-webpack-plugin");
 
 const isProduction = process.env.NODE_ENV !== "development";
 
@@ -15,19 +14,6 @@ const config = {
     },
     module: true,
   },
-  plugins: [
-    new ESLintPlugin({
-      context: path.resolve(__dirname, "./src"),
-      emitError: true,
-      emitWarning: true,
-      failOnError: true,
-      failOnWarning: true,
-      extensions: ["ts", "json", "d.ts"],
-      fix: false,
-      cache: false,
-      configType: "flat",
-    }),
-  ],
   module: {
     rules: [
       {

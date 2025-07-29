@@ -1,7 +1,7 @@
-const executor = jest.fn();
+const executor = vi.fn();
 
 export const playFromHereCommandExecutorMock = executor;
 
-jest.mock("./play-from-here-command-executor", () => ({
+vi.mock("./play-from-here-command-executor", () => ({
   executor,
 }));

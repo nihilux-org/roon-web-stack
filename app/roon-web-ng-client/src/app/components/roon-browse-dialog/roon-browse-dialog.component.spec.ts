@@ -1,5 +1,6 @@
 import { MockProvider } from "ng-mocks";
 import { Subject } from "rxjs";
+import { beforeEach, describe, expect, it, Mock, vi } from "vitest";
 import { signal, WritableSignal } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
@@ -20,23 +21,23 @@ describe("RoonBrowseDialogComponent", () => {
     path,
   };
   let dialogService: {
-    open: jest.Mock;
-    close: jest.Mock;
+    open: Mock;
+    close: Mock;
   };
   let roonService: {
-    explore: jest.Mock;
-    library: jest.Mock;
-    navigate: jest.Mock;
-    previous: jest.Mock;
-    loadPath: jest.Mock;
+    explore: Mock;
+    library: Mock;
+    navigate: Mock;
+    previous: Mock;
+    loadPath: Mock;
   };
   let settingsService: {
-    displayedZoneId: jest.Mock;
-    isBigFonts: jest.Mock;
+    displayedZoneId: Mock;
+    isBigFonts: Mock;
   };
   let $zoneId: WritableSignal<string>;
   let $isBigFonts: WritableSignal<boolean>;
-  let afterClosedDialog: jest.Mock;
+  let afterClosedDialog: Mock;
   let afterClosedObservable: Subject<void>;
   let exploreObservable: Subject<RoonApiBrowseLoadResponse>;
   let libraryObservable: Subject<RoonApiBrowseLoadResponse>;
@@ -46,30 +47,30 @@ describe("RoonBrowseDialogComponent", () => {
   let component: RoonBrowseDialogComponent;
   let fixture: ComponentFixture<RoonBrowseDialogComponent>;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     afterClosedObservable = new Subject<void>();
-    afterClosedDialog = jest.fn().mockImplementation(() => afterClosedObservable);
+    afterClosedDialog = vi.fn().mockImplementation(() => afterClosedObservable);
     exploreObservable = new Subject<RoonApiBrowseLoadResponse>();
     libraryObservable = new Subject<RoonApiBrowseLoadResponse>();
     navigateObservable = new Subject<RoonApiBrowseLoadResponse>();
     previousObservable = new Subject<RoonApiBrowseLoadResponse>();
     loadPathObservable = new Subject<RoonApiBrowseLoadResponse>();
     dialogService = {
-      open: jest.fn(),
-      close: jest.fn(),
+      open: vi.fn(),
+      close: vi.fn(),
     };
     roonService = {
-      explore: jest.fn().mockImplementation(() => exploreObservable),
-      library: jest.fn().mockImplementation(() => libraryObservable),
-      navigate: jest.fn().mockImplementation(() => navigateObservable),
-      previous: jest.fn().mockImplementation(() => previousObservable),
-      loadPath: jest.fn().mockImplementation(() => loadPathObservable),
+      explore: vi.fn().mockImplementation(() => exploreObservable),
+      library: vi.fn().mockImplementation(() => libraryObservable),
+      navigate: vi.fn().mockImplementation(() => navigateObservable),
+      previous: vi.fn().mockImplementation(() => previousObservable),
+      loadPath: vi.fn().mockImplementation(() => loadPathObservable),
     };
     $zoneId = signal("zone_id");
     $isBigFonts = signal(false);
     settingsService = {
-      displayedZoneId: jest.fn().mockImplementation(() => $zoneId),
-      isBigFonts: jest.fn().mockImplementation(() => $isBigFonts),
+      displayedZoneId: vi.fn().mockImplementation(() => $zoneId),
+      isBigFonts: vi.fn().mockImplementation(() => $isBigFonts),
     };
     TestBed.configureTestingModule({
       providers: [
@@ -85,7 +86,7 @@ describe("RoonBrowseDialogComponent", () => {
     });
     fixture = TestBed.createComponent(RoonBrowseDialogComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
+    await fixture.whenStable();
   });
 
   it("should create", () => {

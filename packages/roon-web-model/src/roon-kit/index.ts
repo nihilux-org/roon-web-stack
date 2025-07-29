@@ -6,7 +6,7 @@
  */
 import { OutputDescription } from "../api-model";
 
-export type EmptyObject = Record<unknown, never>;
+export type EmptyObject = Record<string | number | symbol, never>;
 
 export interface RoonExtensionDescription {
   extension_id: string;
@@ -154,7 +154,10 @@ export type RoonImageScale = "fit" | "fill" | "stretch";
 export type RoonImageFormat = "image/jpeg" | "image/png";
 
 export interface RoonApiImage {
-  get_image(image_key: string, options: RoonApiImageResultOptions): Promise<{ content_type: string; image: Buffer }>;
+  get_image(
+    image_key: string,
+    options: RoonApiImageResultOptions
+  ): Promise<{ content_type: string; image: Uint8Array }>;
 }
 
 export interface Zone {
@@ -354,14 +357,14 @@ export interface RoonApiSettings<T extends SettingsValues> {
 export type SettingsLayoutBuilder<T extends SettingsValues> = (
   values: T,
   has_error: boolean,
-  roon_extension: RoonExtension
+  roon_extension: RoonExtension<T>
 ) => SettingsLayout<T>;
 
 export type SettingsUpdateListener<T extends SettingsValues> = (settings: T) => void;
 
 export type SettingsValidator<T extends SettingsValues> = (
   settings_to_save: Partial<T>,
-  roon_extension: RoonExtension
+  roon_extension: RoonExtension<T>
 ) => ValidatedSettingsValues<T>;
 
 export interface RoonApiSettingsOptions<T extends SettingsValues> {
@@ -491,9 +494,9 @@ export interface RoonExtension<T extends SettingsValues> {
     body: RoonApiTransportZones
   ): boolean;
   api(): RoonApi;
-  start_discovery(provided_services: ProvidedRoonServices[] = []): void;
-  set_status(message: string, is_error: boolean = false): void;
-  update_options(options: Partial<RoonExtensionOptions>): void;
+  start_discovery(provided_services?: ProvidedRoonServices[]): void;
+  set_status(message: string): void;
+  update_options(options: Partial<RoonExtensionOptions<T>>): void;
   get_core(): Promise<RoonServer>;
   settings(): SettingsManager<T> | undefined;
 }

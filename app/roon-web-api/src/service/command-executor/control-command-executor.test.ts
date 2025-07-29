@@ -1,3 +1,4 @@
+import { Mock } from "vitest";
 import {
   CommandType,
   ControlCommand,
@@ -9,12 +10,12 @@ import {
 } from "@nihilux/roon-web-model";
 import { executor } from "./control-command-executor";
 
-describe("control-command.ts test suite", () => {
-  let controlApi: jest.Mock;
+describe("control-command.d.ts test suite", () => {
+  let controlApi: Mock;
   let server: RoonServer;
   let foundZone: FoundZone;
   beforeEach(() => {
-    controlApi = jest.fn().mockImplementation(() => Promise.resolve());
+    controlApi = vi.fn().mockImplementation(() => Promise.resolve());
     const roonApiTransport = {
       control: controlApi,
     } as unknown as RoonApiTransport;
@@ -30,10 +31,10 @@ describe("control-command.ts test suite", () => {
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
   });
 
-  it("executor should call RoonApiTransport#control method with expected zone and expected action", () => {
+  it("executor should call RoonApiTransport#control method with expected zone and expected action", async () => {
     const expectedRoonControls: Record<string, RoonApiTransportControl> = {
       PLAY: "play",
       PAUSE: "pause",
@@ -57,21 +58,23 @@ describe("control-command.ts test suite", () => {
       CommandType.NEXT,
       CommandType.PREVIOUS,
     ];
-    controlCommandTypes
-      .map(
-        (type): ControlCommand => ({
-          type,
-          data: {
-            zone_id: zone.zone_id,
-          },
+    await Promise.all(
+      controlCommandTypes
+        .map(
+          (type): ControlCommand => ({
+            type,
+            data: {
+              zone_id: zone.zone_id,
+            },
+          })
+        )
+        .map(async (command) => {
+          const expectedRoonControl = expectedRoonControls[command.type];
+          const executorPromise = executor(command, foundZone);
+          await expect(executorPromise).resolves.toBeUndefined();
+          expect(controlApi).toHaveBeenCalledWith(zone, expectedRoonControl);
         })
-      )
-      .forEach((command) => {
-        const expectedRoonControl = expectedRoonControls[command.type];
-        const executorPromise = executor(command, foundZone);
-        void expect(executorPromise).resolves.toBeUndefined();
-        expect(controlApi).toHaveBeenCalledWith(zone, expectedRoonControl);
-      });
+    );
   });
 });
 
