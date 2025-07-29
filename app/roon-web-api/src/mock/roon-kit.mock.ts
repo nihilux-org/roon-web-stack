@@ -1,15 +1,15 @@
-const on = jest.fn();
-const off = jest.fn();
-const get_core = jest.fn();
-const set_status = jest.fn();
-const start_discovery = jest.fn();
-const save_config = jest.fn();
-const load_config = jest.fn();
+const on = vi.fn();
+const off = vi.fn();
+const get_core = vi.fn();
+const set_status = vi.fn();
+const start_discovery = vi.fn();
+const save_config = vi.fn();
+const load_config = vi.fn();
 const api = () => ({
   save_config,
   load_config,
 });
-const settings = jest.fn();
+const settings = vi.fn();
 export const extensionMock = {
   on,
   off,
@@ -20,11 +20,10 @@ export const extensionMock = {
   settings,
 };
 
-jest.mock(
-  "@roon-kit",
-  () =>
-    ({
-      ...jest.requireActual("@roon-kit"),
-      Extension: jest.fn().mockImplementation(() => extensionMock),
-    }) as unknown
-);
+vi.mock("@roon-kit", async () => {
+  const roonKitModule = await vi.importActual("@roon-kit");
+  return {
+    ...roonKitModule,
+    Extension: vi.fn(() => extensionMock),
+  };
+});

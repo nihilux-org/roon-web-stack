@@ -2,15 +2,15 @@
   "name": "@nihilux/roon-web-model",
   "version": "0.0.11",
   "private": true,
-  "main": "src/index.d.ts",
-  "types": "src/index.d.ts",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
   "license": "MIT",
   "type": "module",
   "exports": {
     ".": {
-      "types": "src/index.d.ts",
-      "imports": "src/index.d.ts",
-      "default": "src/index.d.ts"
+      "types": "./src/index.ts",
+      "default": "./src/index.ts",
+      "import": "./src/index.ts"
     }
   },
   "scripts": {
@@ -33,7 +33,6 @@
     "eslint-plugin-promise": "7.2.1",
     "eslint-plugin-simple-import-sort": "12.1.1",
     "eslint-plugin-unused-imports": "4.1.4",
-    "globals": "16.3.0",
     "prettier": "3.6.2",
     "typescript": "5.8.3",
     "typescript-eslint": "8.38.0"

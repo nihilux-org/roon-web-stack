@@ -1,4 +1,5 @@
 import { MockProvider } from "ng-mocks";
+import { beforeEach, describe, expect, it, Mock, vi } from "vitest";
 import { Signal, signal, WritableSignal } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { Output } from "@nihilux/roon-web-model";
@@ -14,37 +15,37 @@ describe("ZoneVolumeDialogComponent", () => {
   let $isGroup: Signal<boolean>;
   let $isGroupedZoneMute: Signal<boolean>;
   let dialogService: {
-    open: jest.Mock;
+    open: Mock;
   };
   let settingsService: {
-    isSmallScreen: jest.Mock;
+    isSmallScreen: Mock;
   };
   let volumeService: {
-    outputs: jest.Mock;
-    canGroup: jest.Mock;
-    isGrouped: jest.Mock;
-    isGroupedZoneMute: jest.Mock;
+    outputs: Mock;
+    canGroup: Mock;
+    isGrouped: Mock;
+    isGroupedZoneMute: Mock;
   };
   let component: ZoneVolumeDialogComponent;
   let fixture: ComponentFixture<ZoneVolumeDialogComponent>;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     $isSmallScreen = signal(false);
     $outputs = signal([]);
     $canGroup = signal(false);
     $isGroup = signal(false);
     $isGroupedZoneMute = signal(false);
     dialogService = {
-      open: jest.fn(),
+      open: vi.fn(),
     };
     settingsService = {
-      isSmallScreen: jest.fn().mockImplementation(() => $isSmallScreen),
+      isSmallScreen: vi.fn().mockImplementation(() => $isSmallScreen),
     };
     volumeService = {
-      outputs: jest.fn().mockImplementation(() => $outputs),
-      canGroup: jest.fn().mockImplementation(() => $canGroup),
-      isGrouped: jest.fn().mockImplementation(() => $isGroup),
-      isGroupedZoneMute: jest.fn().mockImplementation(() => $isGroupedZoneMute),
+      outputs: vi.fn().mockImplementation(() => $outputs),
+      canGroup: vi.fn().mockImplementation(() => $canGroup),
+      isGrouped: vi.fn().mockImplementation(() => $isGroup),
+      isGroupedZoneMute: vi.fn().mockImplementation(() => $isGroupedZoneMute),
     };
     TestBed.configureTestingModule({
       imports: [ZoneVolumeDialogComponent],
@@ -57,7 +58,7 @@ describe("ZoneVolumeDialogComponent", () => {
 
     fixture = TestBed.createComponent(ZoneVolumeDialogComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
+    await fixture.whenStable();
   });
 
   it("should create", () => {

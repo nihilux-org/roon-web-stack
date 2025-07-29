@@ -1,5 +1,6 @@
 import { roonWorkerMock } from "@mock/worker.utils.mock";
 
+import { beforeEach, describe, expect, it } from "vitest";
 import { signal, WritableSignal } from "@angular/core";
 import { TestBed } from "@angular/core/testing";
 import { ApiStateWorkerEvent } from "@model";
@@ -62,7 +63,7 @@ describe("RoonServiceService", () => {
         event: "worker-client",
         data: {
           action: "start-client",
-          url: "http://localhost/",
+          url: "http://localhost:3000/",
           isDesktop: true,
         },
       },

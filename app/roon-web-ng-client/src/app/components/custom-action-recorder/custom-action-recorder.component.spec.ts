@@ -1,5 +1,6 @@
 import { MockProvider } from "ng-mocks";
 import { Subject } from "rxjs";
+import { beforeEach, describe, expect, it, Mock, vi } from "vitest";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { MatDialogRef } from "@angular/material/dialog";
 import { DialogService } from "@services/dialog.service";
@@ -7,21 +8,21 @@ import { CustomActionRecorderComponent } from "./custom-action-recorder.componen
 
 describe("CustomActionRecorderComponent", () => {
   let dialogService: {
-    open: jest.Mock;
-    close: jest.Mock;
+    open: Mock;
+    close: Mock;
   };
-  let afterClosedDialog: jest.Mock;
+  let afterClosedDialog: Mock;
   let afterClosedDialogObservable: Subject<void>;
   let component: CustomActionRecorderComponent;
   let fixture: ComponentFixture<CustomActionRecorderComponent>;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     dialogService = {
-      open: jest.fn(),
-      close: jest.fn(),
+      open: vi.fn(),
+      close: vi.fn(),
     };
     afterClosedDialogObservable = new Subject<void>();
-    afterClosedDialog = jest.fn().mockImplementation(() => afterClosedDialogObservable);
+    afterClosedDialog = vi.fn().mockImplementation(() => afterClosedDialogObservable);
     TestBed.configureTestingModule({
       providers: [
         MockProvider(DialogService, dialogService as Partial<DialogService>),
@@ -33,7 +34,7 @@ describe("CustomActionRecorderComponent", () => {
     });
     fixture = TestBed.createComponent(CustomActionRecorderComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
+    await fixture.whenStable();
   });
 
   it("should create", () => {

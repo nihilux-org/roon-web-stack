@@ -1,4 +1,5 @@
 import { MockProvider } from "ng-mocks";
+import { beforeEach, describe, expect, it, Mock, vi } from "vitest";
 import { signal, WritableSignal } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { RoonApiBrowseHierarchy, RoonApiBrowseLoadResponse } from "@nihilux/roon-web-model";
@@ -8,16 +9,16 @@ import { RoonBrowseListComponent } from "./roon-browse-list.component";
 
 describe("RoonBrowseListComponent", () => {
   let roonService: {
-    load: jest.Mock;
-    navigate: jest.Mock;
+    load: Mock;
+    navigate: Mock;
   };
   let $isOneColumn: WritableSignal<boolean>;
   let $displayModeClass: WritableSignal<string>;
   let $isBigFonts: WritableSignal<boolean>;
   let settingsService: {
-    isOneColumn: jest.Mock;
-    displayModeClass: jest.Mock;
-    isBigFonts: jest.Mock;
+    isOneColumn: Mock;
+    displayModeClass: Mock;
+    isBigFonts: Mock;
   };
   let content: RoonApiBrowseLoadResponse;
   let zoneId: string;
@@ -26,18 +27,18 @@ describe("RoonBrowseListComponent", () => {
   let component: RoonBrowseListComponent;
   let fixture: ComponentFixture<RoonBrowseListComponent>;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     roonService = {
-      load: jest.fn(),
-      navigate: jest.fn(),
+      load: vi.fn(),
+      navigate: vi.fn(),
     };
     $isBigFonts = signal(false);
     $isOneColumn = signal(false);
     $displayModeClass = signal("wide");
     settingsService = {
-      isOneColumn: jest.fn().mockImplementation(() => $isOneColumn),
-      displayModeClass: jest.fn().mockImplementation(() => $displayModeClass),
-      isBigFonts: jest.fn().mockImplementation(() => $isBigFonts),
+      isOneColumn: vi.fn().mockImplementation(() => $isOneColumn),
+      displayModeClass: vi.fn().mockImplementation(() => $displayModeClass),
+      isBigFonts: vi.fn().mockImplementation(() => $isBigFonts),
     };
     content = {
       list: {
@@ -61,7 +62,7 @@ describe("RoonBrowseListComponent", () => {
     fixture.componentRef.setInput("scrollIndex", scrollIndex);
     fixture.componentRef.setInput("zoneId", zoneId);
     component = fixture.componentInstance;
-    fixture.detectChanges();
+    await fixture.whenStable();
   });
 
   it("should create", () => {

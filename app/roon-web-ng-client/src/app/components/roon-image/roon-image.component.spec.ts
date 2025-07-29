@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, it } from "vitest";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { RoonImageComponent } from "./roon-image.component";
 
@@ -15,7 +16,7 @@ describe("RoonImageComponent", () => {
     component.src = "src";
     component.width = 70;
     component.height = 70;
-    fixture.detectChanges();
+    await fixture.whenStable();
   });
 
   it("should create", () => {

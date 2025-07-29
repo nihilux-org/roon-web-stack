@@ -13,7 +13,7 @@ import { dataConverter } from "./data-converter";
 
 describe("data-converter test suite", () => {
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
   it("dataConverter#secondsToTimeString should return undefined on undefined", () => {
     const converted = dataConverter.secondsToTimeString(undefined);

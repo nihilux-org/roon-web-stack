@@ -17,13 +17,15 @@
     "url": "git+https://github.com/nihilux-org/roon-web-stack.git"
   },
   "scripts": {
-    "build": "yarn workspaces foreach -At run build",
-    "lint": "yarn workspaces foreach -At run lint",
-    "lint:fix": "yarn workspaces foreach -At run lint:fix",
-    "test": "yarn workspaces foreach -At run test",
-    "backend": "yarn workspace @nihilux/roon-web-api start",
-    "frontend": "yarn workspace @nihilux/roon-web-ng-client start",
-    "jest": "yarn workspaces foreach -At run jest"
+    "build": "yarn echo:title -- 'Building the stack' && yarn workspaces foreach -At run build",
+    "clean": "yarn echo:title -- 'Cleaning the stack' && yarn workspaces foreach -At run clean",
+    "lint": "yarn echo:title -- 'Linting the stack' && yarn workspaces foreach -At run lint",
+    "lint:fix": "yarn echo:title -- 'Linting and fixing the stack' && yarn workspaces foreach -At run lint:fix",
+    "test": "yarn echo:title -- 'Testing the stack' && yarn workspaces foreach -At run test",
+    "backend": "yarn echo:title -- 'Starting the backend' && yarn workspace @nihilux/roon-web-api start",
+    "frontend": "yarn echo:title -- 'Starting the frontend' && yarn workspace @nihilux/roon-web-ng-client start",
+    "ci": "yarn echo:title -- 'Ci for the stack' && yarn clean && yarn build && yarn lint && yarn test",
+    "echo:title": "echo \"\n≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠\n$1\n≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠\""
   },
   "packageManager": "yarn@4.9.2"
 }

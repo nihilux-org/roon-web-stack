@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, it } from "vitest";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { AlphabeticalIndexComponent } from "./alphabetical-index.component";
 
@@ -12,7 +13,7 @@ describe("AlphabeticalIndexComponent", () => {
 
     fixture = TestBed.createComponent(AlphabeticalIndexComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
+    await fixture.whenStable();
   });
 
   it("should create", () => {

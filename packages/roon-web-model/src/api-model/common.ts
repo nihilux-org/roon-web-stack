@@ -21,7 +21,6 @@ import {
   QueueSseMessage,
   QueueState,
   RoonState,
-  SharedConfig,
   ZoneDescription,
   ZoneListener,
   ZoneSseMessage,
@@ -80,7 +79,10 @@ export interface Roon {
   onOutputs: (listener: OutputListener) => void;
   offOutputs: (listener: OutputListener) => void;
   startExtension: () => void;
-  getImage: (image_key: string, options: RoonApiImageResultOptions) => Promise<{ content_type: string; image: Buffer }>;
+  getImage: (
+    image_key: string,
+    options: RoonApiImageResultOptions
+  ) => Promise<{ content_type: string; image: Uint8Array }>;
   browse: (options: RoonApiBrowseOptions | EmptyObject) => Promise<RoonApiBrowseResponse>;
   load: (options: RoonApiBrowseLoadOptions) => Promise<RoonApiBrowseLoadResponse>;
   updateSharedConfig: (shardConfigUpdate: SharedConfigUpdate) => void;

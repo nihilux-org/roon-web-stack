@@ -6,11 +6,12 @@
     "types": []
   },
   "files": [
-    "src/main.ts"
+    "./src/main.ts"
   ],
   "include": [
-    "src/**/*.d.ts",
-    "../../packages/roon-web-client/src/index.ts",
-    "../../packages/roon-web-model/src/index.ts"
+    "./src/**/*.d.ts"
+  ],
+  "exclude": [
+    "./src/setup-test.ts"
   ]
 }

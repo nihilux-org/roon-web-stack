@@ -1,7 +1,7 @@
-const debug = jest.fn();
-const info = jest.fn();
-const error = jest.fn();
-const warn = jest.fn();
+const debug = vi.fn();
+const info = vi.fn();
+const error = vi.fn();
+const warn = vi.fn();
 
 export const loggerMock = {
   debug,
@@ -10,7 +10,7 @@ export const loggerMock = {
   warn,
 };
 
-jest.mock("pino", () => {
+vi.mock("pino", () => {
   const pino = () => loggerMock;
   pino.stdTimeFunctions = {
     // eslint-disable-next-line @typescript-eslint/no-empty-function

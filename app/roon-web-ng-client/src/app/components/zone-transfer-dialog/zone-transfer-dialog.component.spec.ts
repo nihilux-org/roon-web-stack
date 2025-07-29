@@ -1,4 +1,5 @@
 import { MockProvider } from "ng-mocks";
+import { beforeEach, describe, expect, it, Mock, vi } from "vitest";
 import { signal, WritableSignal } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { MatDialogRef } from "@angular/material/dialog";
@@ -15,19 +16,19 @@ describe("ZoneTransferDialogComponent", () => {
   let commands: Command[];
   let commandCallbacks: CommandCallback[];
   let roonService: {
-    roonState: jest.Mock;
-    command: jest.Mock;
+    roonState: Mock;
+    command: Mock;
   };
   let settingsService: {
-    displayedZoneId: jest.Mock;
-    saveDisplayedZoneId: jest.Mock;
-    isSmallScreen: jest.Mock;
+    displayedZoneId: Mock;
+    saveDisplayedZoneId: Mock;
+    isSmallScreen: Mock;
   };
-  let closeDialog: jest.Mock;
+  let closeDialog: Mock;
   let component: ZoneTransferDialogComponent;
   let fixture: ComponentFixture<ZoneTransferDialogComponent>;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     $roonState = signal({
       state: RoonState.SYNC,
       zones: [],
@@ -38,20 +39,20 @@ describe("ZoneTransferDialogComponent", () => {
     commands = [];
     commandCallbacks = [];
     roonService = {
-      roonState: jest.fn().mockImplementation(() => $roonState),
-      command: jest.fn().mockImplementation((command: Command, callback: CommandCallback) => {
+      roonState: vi.fn().mockImplementation(() => $roonState),
+      command: vi.fn().mockImplementation((command: Command, callback: CommandCallback) => {
         commands.push(command);
         commandCallbacks.push(callback);
       }),
     };
     settingsService = {
-      displayedZoneId: jest.fn().mockImplementation(() => $displayedZoneId),
-      saveDisplayedZoneId: jest.fn().mockImplementation((zone_id: string) => {
+      displayedZoneId: vi.fn().mockImplementation(() => $displayedZoneId),
+      saveDisplayedZoneId: vi.fn().mockImplementation((zone_id: string) => {
         $displayedZoneId.set(zone_id);
       }),
-      isSmallScreen: jest.fn().mockImplementation(() => $isSmallScreen),
+      isSmallScreen: vi.fn().mockImplementation(() => $isSmallScreen),
     };
-    closeDialog = jest.fn();
+    closeDialog = vi.fn();
     TestBed.configureTestingModule({
       imports: [ZoneTransferDialogComponent],
       providers: [
@@ -64,7 +65,7 @@ describe("ZoneTransferDialogComponent", () => {
     });
     fixture = TestBed.createComponent(ZoneTransferDialogComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
+    await fixture.whenStable();
   });
 
   it("should create", () => {

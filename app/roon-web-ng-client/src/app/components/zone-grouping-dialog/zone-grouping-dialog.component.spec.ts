@@ -1,4 +1,5 @@
 import { MockProvider } from "ng-mocks";
+import { beforeEach, describe, expect, it, Mock, vi } from "vitest";
 import { signal, WritableSignal } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { MatDialogRef } from "@angular/material/dialog";
@@ -15,23 +16,23 @@ describe("ZoneGroupingDialogComponent", () => {
   let callbacks: CommandCallback[];
   let outputCallbacks: OutputCallback[];
   let roonService: {
-    roonState: jest.Mock;
-    zoneState: jest.Mock;
-    registerOutputCallback: jest.Mock;
-    command: jest.Mock;
+    roonState: Mock;
+    zoneState: Mock;
+    registerOutputCallback: Mock;
+    command: Mock;
   };
   let $displayedZoneId: WritableSignal<string>;
   let $isSmallScreen: WritableSignal<boolean>;
   let settingsService: {
-    displayedZoneId: jest.Mock;
-    saveDisplayedZoneId: jest.Mock;
-    isSmallScreen: jest.Mock;
+    displayedZoneId: Mock;
+    saveDisplayedZoneId: Mock;
+    isSmallScreen: Mock;
   };
-  let closeDialog: jest.Mock;
+  let closeDialog: Mock;
   let component: ZoneGroupingDialogComponent;
   let fixture: ComponentFixture<ZoneGroupingDialogComponent>;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     $roonState = signal({
       state: RoonState.SYNC,
       zones: [],
@@ -50,24 +51,24 @@ describe("ZoneGroupingDialogComponent", () => {
     callbacks = [];
     outputCallbacks = [];
     roonService = {
-      zoneState: jest.fn().mockImplementation(() => $zone),
-      command: jest.fn().mockImplementation((c: Command, callback: CommandCallback) => {
+      zoneState: vi.fn().mockImplementation(() => $zone),
+      command: vi.fn().mockImplementation((c: Command, callback: CommandCallback) => {
         commands.push(c);
         callbacks.push(callback);
       }),
-      registerOutputCallback: jest.fn().mockImplementation((oc: OutputCallback) => outputCallbacks.push(oc)),
-      roonState: jest.fn().mockImplementation(() => $roonState),
+      registerOutputCallback: vi.fn().mockImplementation((oc: OutputCallback) => outputCallbacks.push(oc)),
+      roonState: vi.fn().mockImplementation(() => $roonState),
     };
     $displayedZoneId = signal("zone_id");
     $isSmallScreen = signal(false);
     settingsService = {
-      displayedZoneId: jest.fn().mockImplementation(() => $displayedZoneId),
-      saveDisplayedZoneId: jest.fn().mockImplementation((zone_id: string) => {
+      displayedZoneId: vi.fn().mockImplementation(() => $displayedZoneId),
+      saveDisplayedZoneId: vi.fn().mockImplementation((zone_id: string) => {
         $displayedZoneId.set(zone_id);
       }),
-      isSmallScreen: jest.fn().mockImplementation(() => $isSmallScreen),
+      isSmallScreen: vi.fn().mockImplementation(() => $isSmallScreen),
     };
-    closeDialog = jest.fn();
+    closeDialog = vi.fn();
     TestBed.configureTestingModule({
       providers: [
         MockProvider(RoonService, roonService),
@@ -81,7 +82,7 @@ describe("ZoneGroupingDialogComponent", () => {
 
     fixture = TestBed.createComponent(ZoneGroupingDialogComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
+    await fixture.whenStable();
   });
 
   it("should create", () => {

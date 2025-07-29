@@ -1,7 +1,7 @@
-const executor = jest.fn();
+const executor = vi.fn();
 
 export const transferZoneCommandExecutorMock = executor;
 
-jest.mock("./transfer-zone-command-executor", () => ({
+vi.mock("./transfer-zone-command-executor", () => ({
   executor,
 }));

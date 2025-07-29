@@ -1,11 +1,11 @@
-const dispatch = jest.fn();
-const dispatchInternal = jest.fn();
+const dispatch = vi.fn();
+const dispatchInternal = vi.fn();
 
 export const commandDispatcherMock = {
   dispatch,
   dispatchInternal,
 };
 
-jest.mock("./command-dispatcher", () => ({
+vi.mock("./command-dispatcher", () => ({
   commandDispatcher: commandDispatcherMock,
 }));

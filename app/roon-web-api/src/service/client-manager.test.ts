@@ -25,19 +25,16 @@ describe("client-manager.ts test suite", () => {
   let roonSseMessages: RoonSseMessage[];
   let roonSseMessageSubject: Subject<RoonSseMessage>;
   let client_id_counter: number;
-  beforeEach(() => {
-    jest.isolateModules((): void => {
-      void import("./client-manager")
-        .then((module) => {
-          clientManager = module.clientManager;
-        })
-        .catch((err: unknown) => {
-          logger.error(err);
-        });
-    });
-    jest.useFakeTimers({
-      advanceTimers: false,
-    });
+  beforeEach(async () => {
+    await vi
+      .importActual<{ clientManager: ClientManager }>("./client-manager")
+      .then((module) => {
+        clientManager = module.clientManager;
+      })
+      .catch((err: unknown) => {
+        logger.error(err);
+      });
+    vi.useFakeTimers();
     client_id_counter = 0;
     nanoidMock.mockImplementation(() => `${++client_id_counter}`);
     roonSseMessageSubject = new Subject<RoonSseMessage>();
@@ -51,10 +48,10 @@ describe("client-manager.ts test suite", () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
-    jest.resetAllMocks();
-    jest.resetModules();
-    jest.useRealTimers();
+    vi.clearAllMocks();
+    vi.resetAllMocks();
+    vi.resetModules();
+    vi.useRealTimers();
   });
 
   it("clientManager#start should return the Promise returned by zoneManager#start", () => {
@@ -140,7 +137,7 @@ describe("client-manager.ts test suite", () => {
     await clientManager.start();
     const client_id = clientManager.register();
     const client = clientManager.get(client_id);
-    const closeSpy = jest.spyOn(client, "close");
+    const closeSpy = vi.spyOn(client, "close");
     clientManager.unregister(client_id);
     expect(closeSpy).toHaveBeenCalledTimes(1);
     expect(() => clientManager.get(client_id)).toThrow(new Error(`'${client_id}' is not a registered client_id`));
@@ -155,7 +152,7 @@ describe("client-manager.ts test suite", () => {
     await clientManager.start();
     const first_client_id = clientManager.register();
     const second_client_id = clientManager.register();
-    const unregisterSpy = jest.spyOn(clientManager, "unregister");
+    const unregisterSpy = vi.spyOn(clientManager, "unregister");
     clientManager.stop();
     expect(zoneManagerMock.stop).toHaveBeenCalledTimes(1);
     expect(unregisterSpy).toHaveBeenCalledTimes(2);
@@ -229,7 +226,7 @@ describe("client-manager.ts test suite", () => {
           },
         },
       ]);
-      jest.advanceTimersByTime(46000);
+      vi.advanceTimersByTime(46000);
       expect(roonSseMessages).toHaveLength(3);
       expect(roonSseMessages[2]).toEqual({
         event: "ping",
@@ -342,13 +339,13 @@ describe("client-manager.ts test suite", () => {
     const browseResponse: RoonApiBrowseResponse = {} as unknown as RoonApiBrowseResponse;
     roonMock.browse.mockImplementation(() => Promise.resolve(browseResponse));
     const result = client.browse(options);
-    void expect(result).resolves.toBe(browseResponse);
+    await expect(result).resolves.toBe(browseResponse);
     expect(roonMock.browse).toHaveBeenCalledWith(options);
     expect(options.multi_session_key).toEqual(client_id);
     const error = new Error("error");
     roonMock.browse.mockImplementation(() => Promise.reject(error));
     const errorResult = client.browse({} as unknown as RoonApiBrowseOptions);
-    void expect(errorResult).rejects.toBe(error);
+    await expect(errorResult).rejects.toBe(error);
     expect(roonMock.browse).toHaveBeenCalledWith(options);
   });
 
@@ -360,13 +357,13 @@ describe("client-manager.ts test suite", () => {
     const loadResponse: RoonApiBrowseLoadResponse = {} as unknown as RoonApiBrowseLoadResponse;
     roonMock.load.mockImplementation(() => Promise.resolve(loadResponse));
     const result = client.load(options);
-    void expect(result).resolves.toBe(loadResponse);
+    await expect(result).resolves.toBe(loadResponse);
     expect(roonMock.load).toHaveBeenCalledWith(options);
     expect(options.multi_session_key).toEqual(client_id);
     const error = new Error("error");
     roonMock.load.mockImplementation(() => Promise.reject(error));
     const errorResult = client.load({} as unknown as RoonApiBrowseLoadOptions);
-    void expect(errorResult).rejects.toBe(error);
+    await expect(errorResult).rejects.toBe(error);
     expect(roonMock.load).toHaveBeenCalledWith(options);
   });
 });

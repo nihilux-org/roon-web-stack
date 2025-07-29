@@ -1,7 +1,7 @@
-const executor = jest.fn();
+const executor = vi.fn();
 
 export const volumeCommandExecutorMock = executor;
 
-jest.mock("./volume-command-executor", () => ({
+vi.mock("./volume-command-executor", () => ({
   executor,
 }));

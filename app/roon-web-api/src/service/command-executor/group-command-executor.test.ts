@@ -1,13 +1,14 @@
+import { Mock } from "vitest";
 import { CommandType, GroupCommand, OutputDescription, RoonApiTransport, RoonServer } from "@nihilux/roon-web-model";
 import { executor } from "./group-command-executor";
 
 describe("group-command-executor.ts test suite", () => {
-  let groupOutputsApi: jest.Mock;
-  let ungroupOutputsApi: jest.Mock;
+  let groupOutputsApi: Mock;
+  let ungroupOutputsApi: Mock;
   let server: RoonServer;
   beforeEach(() => {
-    groupOutputsApi = jest.fn().mockImplementation(() => Promise.resolve());
-    ungroupOutputsApi = jest.fn().mockImplementation(() => Promise.resolve());
+    groupOutputsApi = vi.fn().mockImplementation(() => Promise.resolve());
+    ungroupOutputsApi = vi.fn().mockImplementation(() => Promise.resolve());
     const roonApiTransport: RoonApiTransport = {
       group_outputs: groupOutputsApi,
       ungroup_outputs: ungroupOutputsApi,
@@ -20,10 +21,10 @@ describe("group-command-executor.ts test suite", () => {
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
   });
 
-  it("executor should call RoonApiTransport#group_outputs with given OutputDescription[] if command mode is 'group'", () => {
+  it("executor should call RoonApiTransport#group_outputs with given OutputDescription[] if command mode is 'group'", async () => {
     const command: GroupCommand = {
       type: CommandType.GROUP,
       data: {
@@ -32,12 +33,12 @@ describe("group-command-executor.ts test suite", () => {
       },
     };
     const executorPromise = executor(command, server);
-    void expect(executorPromise).resolves.toBeUndefined();
+    await expect(executorPromise).resolves.toBeUndefined();
     expect(groupOutputsApi).toHaveBeenCalledTimes(1);
     expect(groupOutputsApi).toHaveBeenCalledWith(OUTPUTS);
   });
 
-  it("executor should call RoonApiTransport#ungroup_outputs with given OutputDescription[] if command mode is 'ungroup'", () => {
+  it("executor should call RoonApiTransport#ungroup_outputs with given OutputDescription[] if command mode is 'ungroup'", async () => {
     const command: GroupCommand = {
       type: CommandType.GROUP,
       data: {
@@ -46,12 +47,12 @@ describe("group-command-executor.ts test suite", () => {
       },
     };
     const executorPromise = executor(command, server);
-    void expect(executorPromise).resolves.toBeUndefined();
+    await expect(executorPromise).resolves.toBeUndefined();
     expect(ungroupOutputsApi).toHaveBeenCalledTimes(1);
     expect(ungroupOutputsApi).toHaveBeenCalledWith(OUTPUTS);
   });
 
-  it("executor should return a rejected Promise if any error occurred during RoonApiTransport#group_outputs call", () => {
+  it("executor should return a rejected Promise if any error occurred during RoonApiTransport#group_outputs call", async () => {
     const error = new Error("error!");
     groupOutputsApi.mockImplementation(() => Promise.reject(error));
     const command: GroupCommand = {
@@ -62,12 +63,12 @@ describe("group-command-executor.ts test suite", () => {
       },
     };
     const executorPromise = executor(command, server);
-    void expect(executorPromise).rejects.toEqual(error);
+    await expect(executorPromise).rejects.toEqual(error);
     expect(groupOutputsApi).toHaveBeenCalledTimes(1);
     expect(groupOutputsApi).toHaveBeenCalledWith(OUTPUTS);
   });
 
-  it("executor should return a rejected Promise if any error occurred during RoonApiTransport#ungroup_outputs call", () => {
+  it("executor should return a rejected Promise if any error occurred during RoonApiTransport#ungroup_outputs call", async () => {
     const error = new Error("error!");
     ungroupOutputsApi.mockImplementation(() => Promise.reject(error));
     const command: GroupCommand = {
@@ -78,7 +79,7 @@ describe("group-command-executor.ts test suite", () => {
       },
     };
     const executorPromise = executor(command, server);
-    void expect(executorPromise).rejects.toEqual(error);
+    await expect(executorPromise).rejects.toEqual(error);
     expect(ungroupOutputsApi).toHaveBeenCalledTimes(1);
     expect(ungroupOutputsApi).toHaveBeenCalledWith(OUTPUTS);
   });

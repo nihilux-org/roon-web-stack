@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, it } from "vitest";
 import { signal, WritableSignal } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { TrackDisplay } from "@model";
@@ -8,7 +9,7 @@ describe("ZoneImageComponent", () => {
   let fixture: ComponentFixture<ZoneImageComponent>;
   let $trackDisplay: WritableSignal<TrackDisplay>;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     $trackDisplay = signal({
       title: "track_title",
       image_key: "track_image_key",
@@ -25,7 +26,7 @@ describe("ZoneImageComponent", () => {
     fixture = TestBed.createComponent(ZoneImageComponent);
     fixture.componentRef.setInput("$trackDisplay", $trackDisplay);
     component = fixture.componentInstance;
-    fixture.detectChanges();
+    await fixture.whenStable();
   });
 
   it("should create", () => {

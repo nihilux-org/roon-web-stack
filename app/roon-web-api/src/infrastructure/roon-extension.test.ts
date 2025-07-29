@@ -27,26 +27,25 @@ import {
 describe("roon-extension.ts test suite", () => {
   let roon: Roon;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     hostInfoMock.host = "host";
     hostInfoMock.hostname = "hostname";
     hostInfoMock.port = 42;
     hostInfoMock.ipV4 = "42.42.42.42";
-    jest.isolateModules((): void => {
-      import("./roon-extension")
-        .then((module) => {
-          roon = module.roon;
-        })
-        .catch((err: unknown) => {
-          logger.error(err);
-        });
-    });
+    await vi
+      .importActual<{ roon: Roon }>("./roon-extension")
+      .then((module) => {
+        roon = module.roon;
+      })
+      .catch((err: unknown) => {
+        logger.error(err);
+      });
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
-    jest.resetAllMocks();
-    jest.resetModules();
+    vi.clearAllMocks();
+    vi.resetAllMocks();
+    vi.resetModules();
   });
 
   it("roon#onServerPaired should delegate to the underlying RoonExtension#on('core_paired')", () => {
@@ -218,7 +217,7 @@ describe("roon-extension.ts test suite", () => {
 
     roon.startExtension();
 
-    expect(extensionMock.start_discovery).toHaveBeenCalled();
+    expect(extensionMock.start_discovery).toHaveBeenCalledTimes(1);
     expect(started).toBe(true);
 
     started = false;
@@ -294,7 +293,7 @@ describe("roon-extension.ts test suite", () => {
       content_type: "image/jpeg",
       image: Buffer.from("buffer"),
     };
-    const get_image = jest.fn().mockImplementation(() => Promise.resolve(imageResponse));
+    const get_image = vi.fn().mockImplementation(() => Promise.resolve(imageResponse));
     const roonApiImage: RoonApiImage = {
       get_image,
     };
@@ -317,7 +316,7 @@ describe("roon-extension.ts test suite", () => {
     const error = new Error("InvalidRequest");
     get_image.mockImplementation(() => Promise.reject(error));
     const rejectedPromise = roon.getImage(image_key, options);
-    void expect(rejectedPromise).rejects.toBe(error);
+    await expect(rejectedPromise).rejects.toBe(error);
   });
 
   it("roon#browse should return the same Promise as the one returned by RoonApiBrowse#browse wrapped in RoonExtension", async () => {
@@ -331,7 +330,7 @@ describe("roon-extension.ts test suite", () => {
       },
       action: "action",
     };
-    const browse = jest.fn().mockImplementation(() => Promise.resolve(browseResponse));
+    const browse = vi.fn().mockImplementation(() => Promise.resolve(browseResponse));
     const server: RoonServer = {
       services: {
         RoonApiBrowse: {
@@ -350,7 +349,7 @@ describe("roon-extension.ts test suite", () => {
     const error = new Error("error");
     browse.mockImplementation(() => Promise.reject(error));
     const rejectedPromise = roon.browse(options);
-    void expect(rejectedPromise).rejects.toBe(error);
+    await expect(rejectedPromise).rejects.toBe(error);
   });
 
   it("roon#load should return the same Promise as the one returned by RoonApiBrowse#load wrapped in RoonExtension", async () => {
@@ -365,7 +364,7 @@ describe("roon-extension.ts test suite", () => {
       },
       offset: 42,
     };
-    const load = jest.fn().mockImplementation(() => Promise.resolve(loadResponse));
+    const load = vi.fn().mockImplementation(() => Promise.resolve(loadResponse));
     const server: RoonServer = {
       services: {
         RoonApiBrowse: {
@@ -384,7 +383,7 @@ describe("roon-extension.ts test suite", () => {
     const error = new Error("error");
     load.mockImplementation(() => Promise.reject(error));
     const rejectedPromise = roon.load(options);
-    void expect(rejectedPromise).rejects.toBe(error);
+    await expect(rejectedPromise).rejects.toBe(error);
   });
 
   it("roon#sharedConfigEvents should throw an Error if called before server pairing", () => {

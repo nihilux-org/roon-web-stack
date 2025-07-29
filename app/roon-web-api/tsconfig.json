@@ -20,6 +20,7 @@
         "roon-kit/index.ts"
       ]
     },
+    "types": ["vitest/globals"],
     "outDir": "bin"
   }
 }

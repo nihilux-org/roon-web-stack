@@ -1,11 +1,11 @@
-const start = jest.fn().mockImplementation();
-const watchQueue = jest.fn().mockImplementation();
+const start = vi.fn();
+const watchQueue = vi.fn();
 
 export const queueBotMock = {
   start,
   watchQueue,
 };
 
-jest.mock("./queue-bot-manager", () => ({
+vi.mock("./queue-bot-manager", () => ({
   queueBot: queueBotMock,
 }));

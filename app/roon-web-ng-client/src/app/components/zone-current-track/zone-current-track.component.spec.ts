@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, it } from "vitest";
 import { signal, WritableSignal } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { TrackDisplay } from "@model";
@@ -9,7 +10,7 @@ describe("ZoneCurrentTrackComponent", () => {
   let $isOneColumn: WritableSignal<boolean>;
   let $trackDisplay: WritableSignal<TrackDisplay>;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     $isOneColumn = signal(false);
     $trackDisplay = signal({
       title: "track_title",
@@ -28,7 +29,7 @@ describe("ZoneCurrentTrackComponent", () => {
     fixture.componentRef.setInput("$isOneColumn", $isOneColumn);
     fixture.componentRef.setInput("$trackDisplay", $trackDisplay);
     component = fixture.componentInstance;
-    fixture.detectChanges();
+    await fixture.whenStable();
   });
 
   it("should create", () => {

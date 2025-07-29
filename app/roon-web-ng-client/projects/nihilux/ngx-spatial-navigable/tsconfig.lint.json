@@ -2,9 +2,7 @@
   "extends": "./tsconfig.lib.json",
   "compilerOptions": {
     "outDir": "./out-tsc/spec",
-    "types": [
-      "jest"
-    ]
+    "types": ["vitest/globals"]
   },
   "include": [
     "src/**/*.ts"

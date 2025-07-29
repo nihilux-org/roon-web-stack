@@ -23,7 +23,5 @@ jobs:
       # build
       - name: Install
         run: yarn install --immutable
-      - name: Build
-        run: yarn build
-      - name: Test
-        run: yarn test
+      - name: Ci
+        run: yarn ci

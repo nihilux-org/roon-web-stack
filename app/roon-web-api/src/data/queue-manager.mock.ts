@@ -1,10 +1,10 @@
-const build = jest.fn().mockImplementation();
+const build = vi.fn();
 
 export const queueManagerFactoryMock = {
   build,
 };
 
-jest.mock("./queue-manager.ts", () => ({
+vi.mock("./queue-manager.ts", () => ({
   queueManagerFactory: {
     build,
   },

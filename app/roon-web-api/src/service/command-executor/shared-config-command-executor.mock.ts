@@ -1,7 +1,7 @@
-const executor = jest.fn();
+const executor = vi.fn();
 
 export const sharedConfigCommandExecutor = executor;
 
-jest.mock("./shared-config-command-executor", () => ({
+vi.mock("./shared-config-command-executor", () => ({
   executor,
 }));

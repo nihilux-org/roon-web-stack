@@ -1,4 +1,5 @@
 import { MockComponent, MockProvider, ngMocks } from "ng-mocks";
+import { beforeEach, describe, expect, it, Mock, vi } from "vitest";
 import { signal, WritableSignal } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { BrowserAnimationsModule, NoopAnimationsModule } from "@angular/platform-browser/animations";
@@ -26,23 +27,23 @@ describe("ZoneContainerComponent", () => {
   let $displayModeClass: WritableSignal<string>;
   let $ismSmallTablet: WritableSignal<boolean>;
   let settingsService: {
-    displayedZoneId: jest.Mock;
-    displayMode: jest.Mock;
-    displayQueueTrack: jest.Mock;
-    isOneColumn: jest.Mock;
-    displayModeClass: jest.Mock;
-    isSmallTablet: jest.Mock;
+    displayedZoneId: Mock;
+    displayMode: Mock;
+    displayQueueTrack: Mock;
+    isOneColumn: Mock;
+    displayModeClass: Mock;
+    isSmallTablet: Mock;
   };
   let $zoneState: WritableSignal<ZoneState>;
   let roonService: {
-    zoneState: jest.Mock;
+    zoneState: Mock;
   };
   let spatialNavigationService: {
-    resetSpatialNavigation: jest.Mock;
+    resetSpatialNavigation: Mock;
   };
   ngMocks.globalReplace(BrowserAnimationsModule, NoopAnimationsModule);
 
-  beforeEach(() => {
+  beforeEach(async () => {
     $displayedZoneId = signal("zone_id");
     $displayMode = signal(DisplayMode.WIDE);
     $displayQueueTrack = signal(true);
@@ -50,19 +51,19 @@ describe("ZoneContainerComponent", () => {
     $displayModeClass = signal("wide");
     $ismSmallTablet = signal(false);
     settingsService = {
-      displayedZoneId: jest.fn().mockImplementation(() => $displayedZoneId),
-      displayMode: jest.fn().mockImplementation(() => $displayMode),
-      displayQueueTrack: jest.fn().mockImplementation(() => $displayQueueTrack),
-      isOneColumn: jest.fn().mockImplementation(() => $isOneColumn),
-      displayModeClass: jest.fn().mockImplementation(() => $displayModeClass),
-      isSmallTablet: jest.fn().mockImplementation(() => $ismSmallTablet),
+      displayedZoneId: vi.fn().mockImplementation(() => $displayedZoneId),
+      displayMode: vi.fn().mockImplementation(() => $displayMode),
+      displayQueueTrack: vi.fn().mockImplementation(() => $displayQueueTrack),
+      isOneColumn: vi.fn().mockImplementation(() => $isOneColumn),
+      displayModeClass: vi.fn().mockImplementation(() => $displayModeClass),
+      isSmallTablet: vi.fn().mockImplementation(() => $ismSmallTablet),
     };
     $zoneState = signal(ZONE_STATE);
     roonService = {
-      zoneState: jest.fn().mockImplementation(() => $zoneState),
+      zoneState: vi.fn().mockImplementation(() => $zoneState),
     };
     spatialNavigationService = {
-      resetSpatialNavigation: jest.fn(),
+      resetSpatialNavigation: vi.fn(),
     };
     TestBed.configureTestingModule({
       providers: [
@@ -97,7 +98,7 @@ describe("ZoneContainerComponent", () => {
     });
     fixture = TestBed.createComponent(ZoneContainerComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
+    await fixture.whenStable();
   });
 
   it("should create", () => {

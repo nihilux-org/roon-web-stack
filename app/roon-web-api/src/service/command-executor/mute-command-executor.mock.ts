@@ -1,7 +1,7 @@
-const executor = jest.fn();
+const executor = vi.fn();
 
 export const muteCommandExecutorMock = executor;
 
-jest.mock("./mute-command-executor", () => ({
+vi.mock("./mute-command-executor", () => ({
   executor,
 }));

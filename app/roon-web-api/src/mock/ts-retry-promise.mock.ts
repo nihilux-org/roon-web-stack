@@ -1,7 +1,7 @@
-const retryDecorator = jest.fn();
+const retryDecorator = vi.fn();
 
 export const retryMock = {
   retryDecorator,
 };
 
-jest.mock("ts-retry-promise", () => retryMock);
+vi.mock("ts-retry-promise", () => retryMock);

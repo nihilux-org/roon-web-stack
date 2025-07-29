@@ -1,3 +1,4 @@
+import { Mock } from "vitest";
 import {
   CommandType,
   FoundZone,
@@ -11,11 +12,11 @@ import {
 import { executor } from "./volume-grouped-zone-command-executor";
 
 describe("volume-grouped-zone-command-executor.ts test suite", () => {
-  let volumeApi: jest.Mock;
+  let volumeApi: Mock;
   let server: RoonServer;
   let foundZone: FoundZone;
   beforeEach(() => {
-    volumeApi = jest.fn().mockImplementation(() => Promise.resolve());
+    volumeApi = vi.fn().mockImplementation(() => Promise.resolve());
     const roonApiTransport = {
       change_volume: volumeApi,
     } as unknown as RoonApiTransport;
@@ -31,10 +32,10 @@ describe("volume-grouped-zone-command-executor.ts test suite", () => {
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
   });
 
-  it("executor should call RoonApiTransport#change_volume with the expected parameters", () => {
+  it("executor should call RoonApiTransport#change_volume with the expected parameters", async () => {
     const command: VolumeGroupedZoneCommand = {
       type: CommandType.VOLUME_GROUPED_ZONE,
       data: {
@@ -43,20 +44,20 @@ describe("volume-grouped-zone-command-executor.ts test suite", () => {
       },
     };
     const executorPromise = executor(command, foundZone);
-    void expect(executorPromise).resolves.toBeUndefined();
+    await expect(executorPromise).resolves.toBeUndefined();
     expect(volumeApi).toHaveBeenCalledTimes(2);
     expect(volumeApi).toHaveBeenNthCalledWith(1, output, "relative", 1);
     expect(volumeApi).toHaveBeenNthCalledWith(2, other_output, "relative", other_output.volume?.step);
 
     command.data.decrement = true;
     const decrementExecutorPromise = executor(command, foundZone);
-    void expect(decrementExecutorPromise).resolves.toBeUndefined();
+    await expect(decrementExecutorPromise).resolves.toBeUndefined();
     expect(volumeApi).toHaveBeenCalledTimes(4);
     expect(volumeApi).toHaveBeenNthCalledWith(3, output, "relative", -1);
     expect(volumeApi).toHaveBeenNthCalledWith(4, other_output, "relative", -1 * (other_output.volume?.step ?? 1));
   });
 
-  it("executor should wrap any error returned by RoonApiTransport#change_volume in  rejected Promise", () => {
+  it("executor should wrap any error returned by RoonApiTransport#change_volume in  rejected Promise", async () => {
     const error = new Error("error");
     volumeApi.mockImplementation((o: Output) => {
       if (o.output_id === output_id) {
@@ -73,7 +74,7 @@ describe("volume-grouped-zone-command-executor.ts test suite", () => {
       },
     };
     const executorPromise = executor(command, foundZone);
-    void expect(executorPromise).rejects.toEqual(error);
+    await expect(executorPromise).rejects.toEqual(error);
   });
 });
 

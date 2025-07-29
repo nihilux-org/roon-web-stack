@@ -1,8 +1,8 @@
-const zones = jest.fn();
-const events = jest.fn();
-const start = jest.fn();
-const stop = jest.fn();
-const isStarted = jest.fn();
+const zones = vi.fn();
+const events = vi.fn();
+const start = vi.fn();
+const stop = vi.fn();
+const isStarted = vi.fn();
 
 export const zoneManagerMock = {
   isStarted,
@@ -12,6 +12,6 @@ export const zoneManagerMock = {
   zones,
 };
 
-jest.mock("./zone-manager", () => ({
+vi.mock("./zone-manager", () => ({
   zoneManager: zoneManagerMock,
 }));

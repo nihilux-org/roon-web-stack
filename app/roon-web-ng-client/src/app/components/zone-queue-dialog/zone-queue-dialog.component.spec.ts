@@ -1,5 +1,6 @@
 import { MockProvider } from "ng-mocks";
 import { Subject } from "rxjs";
+import { beforeEach, describe, expect, it, Mock, vi } from "vitest";
 import { Signal, signal, WritableSignal } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
@@ -15,15 +16,15 @@ describe("ZoneQueueDialogComponent", () => {
     $trackDisplay: Signal<TrackDisplay>;
   };
   let settingsService: {
-    saveDisplayQueueTrack: jest.Mock;
-    displayModeClass: jest.Mock;
+    saveDisplayQueueTrack: Mock;
+    displayModeClass: Mock;
   };
   let beforeClosedDialogObservable: Subject<void>;
-  let closeDialog: jest.Mock;
+  let closeDialog: Mock;
   let component: ZoneQueueDialogComponent;
   let fixture: ComponentFixture<ZoneQueueDialogComponent>;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     $trackDisplay = signal({
       title: "track_title",
       image_key: "track_image_key",
@@ -39,11 +40,11 @@ describe("ZoneQueueDialogComponent", () => {
     savedDisplayedQueueTrack = [];
     $displayModeClass = signal("wide");
     settingsService = {
-      saveDisplayQueueTrack: jest.fn().mockImplementation((saved: boolean) => savedDisplayedQueueTrack.push(saved)),
-      displayModeClass: jest.fn().mockImplementation(() => $displayModeClass),
+      saveDisplayQueueTrack: vi.fn().mockImplementation((saved: boolean) => savedDisplayedQueueTrack.push(saved)),
+      displayModeClass: vi.fn().mockImplementation(() => $displayModeClass),
     };
     beforeClosedDialogObservable = new Subject<void>();
-    closeDialog = jest.fn();
+    closeDialog = vi.fn();
     TestBed.configureTestingModule({
       imports: [ZoneQueueDialogComponent],
       providers: [
@@ -58,7 +59,7 @@ describe("ZoneQueueDialogComponent", () => {
 
     fixture = TestBed.createComponent(ZoneQueueDialogComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
+    await fixture.whenStable();
   });
 
   it("should create", () => {

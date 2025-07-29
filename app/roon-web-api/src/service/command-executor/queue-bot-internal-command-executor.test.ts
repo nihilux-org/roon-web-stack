@@ -1,3 +1,4 @@
+import { Mock } from "vitest";
 import {
   FoundZone,
   InternalCommandType,
@@ -10,13 +11,13 @@ import {
 import { internalExecutor } from "./queue-bot-internal-command-executor";
 
 describe("queue-bot-command-executor test suite", () => {
-  let control: jest.Mock;
-  let standby: jest.Mock;
+  let control: Mock;
+  let standby: Mock;
   let server: RoonServer;
   let foundZone: FoundZone;
   beforeEach(() => {
-    control = jest.fn(() => Promise.resolve());
-    standby = jest.fn(() => Promise.resolve());
+    control = vi.fn(() => Promise.resolve());
+    standby = vi.fn(() => Promise.resolve());
     const roonApiTransport: RoonApiTransport = {
       control,
       standby,
@@ -54,7 +55,7 @@ describe("queue-bot-command-executor test suite", () => {
   it(
     "internalExecutor should call RoonApiTransport#control with 'stop' and return a failed promise without calling others" +
       "RoonApiTransport#control for StopNextCommand if given is playing and the 'stop' call failed",
-    () => {
+    async () => {
       const error = new Error("error");
       control.mockImplementationOnce(() => Promise.reject(error));
       const command = {
@@ -64,7 +65,7 @@ describe("queue-bot-command-executor test suite", () => {
         },
       };
       const executorPromise = internalExecutor(command, foundZone);
-      void expect(executorPromise).rejects.toBe(error);
+      await expect(executorPromise).rejects.toBe(error);
       expect(control).toHaveBeenCalledTimes(1);
       expect(control).toHaveBeenNthCalledWith(1, zone, "stop");
       expect(standby).not.toHaveBeenCalled();
@@ -170,7 +171,7 @@ describe("queue-bot-command-executor test suite", () => {
   it(
     "internalExecutor should call RoonApiTransport#control with 'stop' and return a failed promise without calling others" +
       "RoonApiTransport#control nor RoonApiTransport#standby for StandbyNextCommand if given is playing and the 'stop' call failed",
-    () => {
+    async () => {
       const error = new Error("error");
       control.mockImplementationOnce(() => Promise.reject(error));
       const command = {
@@ -180,7 +181,7 @@ describe("queue-bot-command-executor test suite", () => {
         },
       };
       const executorPromise = internalExecutor(command, foundZone);
-      void expect(executorPromise).rejects.toBe(error);
+      await expect(executorPromise).rejects.toBe(error);
       expect(control).toHaveBeenCalledTimes(1);
       expect(control).toHaveBeenNthCalledWith(1, zone, "stop");
       expect(standby).not.toHaveBeenCalled();

@@ -1,4 +1,5 @@
 import { MockProvider } from "ng-mocks";
+import { beforeEach, describe, expect, it, Mock, vi } from "vitest";
 import { computed, Signal, signal, WritableSignal } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { EMPTY_TRACK, TrackDisplay } from "@model";
@@ -13,16 +14,16 @@ describe("ZoneQueueComponent", () => {
   let $trackDisplay: WritableSignal<TrackDisplay>;
   let $displayQueueTrack: WritableSignal<boolean>;
   let roonService: {
-    queueState: jest.Mock;
+    queueState: Mock;
   };
   let settingsService: {
-    displayedZoneId: jest.Mock;
-    displayQueueTrack: jest.Mock;
+    displayedZoneId: Mock;
+    displayQueueTrack: Mock;
   };
   let component: ZoneQueueComponent;
   let fixture: ComponentFixture<ZoneQueueComponent>;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     $zoneId = signal("zone_id");
     $queue = signal({
       zone_id: "zone_id",
@@ -31,7 +32,7 @@ describe("ZoneQueueComponent", () => {
     $trackDisplay = signal(EMPTY_TRACK);
     $displayQueueTrack = signal(true);
     roonService = {
-      queueState: jest.fn().mockImplementation(($zoneId: Signal<string>) => {
+      queueState: vi.fn().mockImplementation(($zoneId: Signal<string>) => {
         return computed(() => {
           const qs = $queue();
           return {
@@ -42,8 +43,8 @@ describe("ZoneQueueComponent", () => {
       }),
     };
     settingsService = {
-      displayedZoneId: jest.fn().mockImplementation(() => $zoneId),
-      displayQueueTrack: jest.fn().mockImplementation(() => $displayQueueTrack),
+      displayedZoneId: vi.fn().mockImplementation(() => $zoneId),
+      displayQueueTrack: vi.fn().mockImplementation(() => $displayQueueTrack),
     };
     TestBed.configureTestingModule({
       imports: [ZoneQueueComponent],
@@ -52,7 +53,7 @@ describe("ZoneQueueComponent", () => {
     fixture = TestBed.createComponent(ZoneQueueComponent);
     fixture.componentRef.setInput("$trackDisplay", $trackDisplay);
     component = fixture.componentInstance;
-    fixture.detectChanges();
+    await fixture.whenStable();
   });
 
   it("should create", () => {

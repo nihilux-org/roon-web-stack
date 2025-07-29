@@ -1,7 +1,7 @@
-const executor = jest.fn();
+const executor = vi.fn();
 
 export const groupCommandExecutorMock = executor;
 
-jest.mock("./group-command-executor", () => ({
+vi.mock("./group-command-executor", () => ({
   executor,
 }));

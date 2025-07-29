@@ -15,18 +15,17 @@ describe("queue-bot-manager.ts test suite", () => {
   let settingsManager: SettingsManager<ExtensionSettings>;
   let settingsListener: SettingsUpdateListener<ExtensionSettings>;
   let queueBot: QueueBot;
-  beforeEach(() => {
-    jest.isolateModules((): void => {
-      void import("./queue-bot-manager")
-        .then((module) => {
-          queueBot = module.queueBot;
-        })
-        .catch((err: unknown) => {
-          logger.error(err);
-        });
-    });
+  beforeEach(async () => {
+    await vi
+      .importActual<{ queueBot: QueueBot }>("./queue-bot-manager")
+      .then((module) => {
+        queueBot = module.queueBot;
+      })
+      .catch((err: unknown) => {
+        logger.error(err);
+      });
     settingsManager = {
-      onSettings: jest.fn().mockImplementation((listener: SettingsUpdateListener<ExtensionSettings>) => {
+      onSettings: vi.fn().mockImplementation((listener: SettingsUpdateListener<ExtensionSettings>) => {
         settingsListener = listener;
       }),
     } as unknown as SettingsManager<ExtensionSettings>;
@@ -34,9 +33,9 @@ describe("queue-bot-manager.ts test suite", () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
-    jest.resetAllMocks();
-    jest.resetModules();
+    vi.clearAllMocks();
+    vi.resetAllMocks();
+    vi.resetModules();
   });
 
   it("queueBot should listen on settings and act accordingly", () => {

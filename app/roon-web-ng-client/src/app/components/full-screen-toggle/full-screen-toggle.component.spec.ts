@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, it } from "vitest";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { FullScreenToggleComponent } from "./full-screen-toggle.component";
 
@@ -12,7 +13,7 @@ describe("FullScreenToggleComponent", () => {
 
     fixture = TestBed.createComponent(FullScreenToggleComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
+    await fixture.whenStable();
   });
 
   it("should create", () => {

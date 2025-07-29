@@ -1,17 +1,17 @@
-const onServerPaired = jest.fn();
-const onServerLost = jest.fn();
-const server = jest.fn();
-const onZones = jest.fn();
-const offZones = jest.fn();
-const onOutputs = jest.fn();
-const offOutputs = jest.fn();
-const startExtension = jest.fn();
-const getImage = jest.fn();
-const browse = jest.fn();
-const load = jest.fn();
-const updateSharedConfig = jest.fn();
-const sharedConfigEvents = jest.fn();
-const settings = jest.fn();
+const onServerPaired = vi.fn();
+const onServerLost = vi.fn();
+const server = vi.fn();
+const onZones = vi.fn();
+const offZones = vi.fn();
+const onOutputs = vi.fn();
+const offOutputs = vi.fn();
+const startExtension = vi.fn();
+const getImage = vi.fn();
+const browse = vi.fn();
+const load = vi.fn();
+const updateSharedConfig = vi.fn();
+const sharedConfigEvents = vi.fn();
+const settings = vi.fn();
 
 export const roonMock = {
   onServerPaired,
@@ -30,6 +30,6 @@ export const roonMock = {
   settings,
 };
 
-jest.mock("./roon-extension", () => ({
+vi.mock("./roon-extension", () => ({
   roon: roonMock,
 }));
