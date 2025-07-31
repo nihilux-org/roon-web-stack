@@ -3706,7 +3706,7 @@ __metadata:
     eslint-plugin-unused-imports: "npm:4.1.4"
     fast-equals: "npm:5.2.2"
     jsdom: "npm:26.1.0"
-    jsdom-testing-mocks: "npm:1.15.0"
+    jsdom-testing-mocks: "npm:1.15.2"
     nanoid: "npm:3.3.11"
     ng-mocks: "npm:14.13.5"
     ng-packagr: "npm:20.1.0"
@@ -10933,14 +10933,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsdom-testing-mocks@npm:1.15.0":
-  version: 1.15.0
-  resolution: "jsdom-testing-mocks@npm:1.15.0"
+"jsdom-testing-mocks@npm:1.15.2":
+  version: 1.15.2
+  resolution: "jsdom-testing-mocks@npm:1.15.2"
   dependencies:
     bezier-easing: "npm:^2.1.0"
     css-mediaquery: "npm:^0.1.2"
     puppeteer: "npm:^24.15.0"
-  checksum: 10c0/9fada5e38a0e89f780b9aa0e5f59710b9d982caa22d345ec2f244e30b15428889521b25f22045af0535c13c85c5776449d3a8cbba04dd9182881350dfd2e0910
+  checksum: 10c0/e327e455ebf6c726ed3e0d4e4363a02315c5e4e97966c6475602307a29e2af68e43ca34c90c41423bebcb276999dfa2982c6a2cc72f33bbac7e79926c1558c12
   languageName: node
   linkType: hard
 

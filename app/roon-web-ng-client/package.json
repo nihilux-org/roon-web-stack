@@ -56,7 +56,7 @@
     "eslint-plugin-simple-import-sort": "12.1.1",
     "eslint-plugin-unused-imports": "4.1.4",
     "jsdom": "26.1.0",
-    "jsdom-testing-mocks": "1.15.0",
+    "jsdom-testing-mocks": "1.15.2",
     "ng-mocks": "14.13.5",
     "ng-packagr": "20.1.0",
     "prettier": "3.6.2",
