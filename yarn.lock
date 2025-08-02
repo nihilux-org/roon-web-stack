@@ -157,12 +157,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@analogjs/platform@npm:1.19.2":
-  version: 1.19.2
-  resolution: "@analogjs/platform@npm:1.19.2"
+"@analogjs/platform@npm:1.19.3":
+  version: 1.19.3
+  resolution: "@analogjs/platform@npm:1.19.3"
   dependencies:
-    "@analogjs/vite-plugin-angular": "npm:^1.19.2"
-    "@analogjs/vite-plugin-nitro": "npm:^1.19.2"
+    "@analogjs/vite-plugin-angular": "npm:^1.19.3"
+    "@analogjs/vite-plugin-nitro": "npm:^1.19.3"
     nitropack: "npm:^2.11.0"
     vitefu: "npm:^1.0.0"
   peerDependencies:
@@ -185,13 +185,13 @@ __metadata:
       optional: true
     shiki:
       optional: true
-  checksum: 10c0/f2489af946b79e3cc5a8de67f85c37b0f7dcb86901071d29ae3ded7c60816c6cfb1556fc609f7aeaae8f9ad28cb370b6e797304372a877fd86f78fc1408d0aac
+  checksum: 10c0/b7f67be971d7a5b082dff261650571414ad8c20a02239e629aa9ffb24ebf523218a3e19bb92fccd82796f4d5791101ed358d42a77ee3665ae13e6edc9145c413
   languageName: node
   linkType: hard
 
-"@analogjs/vite-plugin-angular@npm:1.19.2, @analogjs/vite-plugin-angular@npm:^1.19.2":
-  version: 1.19.2
-  resolution: "@analogjs/vite-plugin-angular@npm:1.19.2"
+"@analogjs/vite-plugin-angular@npm:1.19.3, @analogjs/vite-plugin-angular@npm:^1.19.3":
+  version: 1.19.3
+  resolution: "@analogjs/vite-plugin-angular@npm:1.19.3"
   dependencies:
     ts-morph: "npm:^21.0.0"
     vfile: "npm:^6.0.3"
@@ -203,31 +203,31 @@ __metadata:
       optional: true
     "@angular/build":
       optional: true
-  checksum: 10c0/b1972edc41cd553e14638e52c4b7159c8fe47934e5a219b4d7c279e5f762fb6e4280a7de2818a49592f98c0c5c78d50262d9d3b2de70c661cf9da8cdc6093cfe
+  checksum: 10c0/41a14336c5f229fe08a33b39d45fe4ee5c37fbccdd1e0b3c32b8c1043184a3d3094c0589f546328d6484e15d91e787c8cbb1f53c79b1a4fe3ff7c60b9c029777
   languageName: node
   linkType: hard
 
-"@analogjs/vite-plugin-nitro@npm:^1.19.2":
-  version: 1.19.2
-  resolution: "@analogjs/vite-plugin-nitro@npm:1.19.2"
+"@analogjs/vite-plugin-nitro@npm:^1.19.3":
+  version: 1.19.3
+  resolution: "@analogjs/vite-plugin-nitro@npm:1.19.3"
   dependencies:
     defu: "npm:^6.1.4"
     esbuild: "npm:^0.25.0"
     nitropack: "npm:^2.11.0"
     radix3: "npm:^1.1.1"
     xmlbuilder2: "npm:^3.0.2"
-  checksum: 10c0/546cdc24d1838daed1a6b149ef63635b4ba1f60a1469f740174670f1d565f40a57c8003b5b2d383725f0288af44b50aa6cc277a44c6759d9839b1337618a9f06
+  checksum: 10c0/2c0743ff6ffb880a42d872bdf398de3047ca1b263010faaa9e682757fb0d8d69fb4e5d62e29f00ab5acca7284c2966f603c14f48f3d8ea7f842c0d688c0093bd
   languageName: node
   linkType: hard
 
-"@analogjs/vitest-angular@npm:1.19.2":
-  version: 1.19.2
-  resolution: "@analogjs/vitest-angular@npm:1.19.2"
+"@analogjs/vitest-angular@npm:1.19.3":
+  version: 1.19.3
+  resolution: "@analogjs/vitest-angular@npm:1.19.3"
   peerDependencies:
     "@analogjs/vite-plugin-angular": "*"
     "@angular-devkit/architect": ">=0.1500.0 < 0.2100.0"
     vitest: ^1.3.1 || ^2.0.0 || ^3.0.0
-  checksum: 10c0/519d9384af673ece2a21852fd8bed5d33b0af4201b01234860ccf668e311a59da31e74267d505736bb0e2cc64508cb7308f5a871fd8325382a4bd0067ec0a364
+  checksum: 10c0/4d36bfc25cff978990efed22076110c998c682033e277eb40c1a1f39e42742722d81bb01460a58c6ce3fa53928851f568a3eb23137f8aefd9c51593d650bf361
   languageName: node
   linkType: hard
 
@@ -3711,9 +3711,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@nihilux/roon-web-ng-client@workspace:app/roon-web-ng-client"
   dependencies:
-    "@analogjs/platform": "npm:1.19.2"
-    "@analogjs/vite-plugin-angular": "npm:1.19.2"
-    "@analogjs/vitest-angular": "npm:1.19.2"
+    "@analogjs/platform": "npm:1.19.3"
+    "@analogjs/vite-plugin-angular": "npm:1.19.3"
+    "@analogjs/vitest-angular": "npm:1.19.3"
     "@angular-devkit/build-angular": "npm:20.1.4"
     "@angular-eslint/builder": "npm:20.1.1"
     "@angular-eslint/eslint-plugin": "npm:20.1.1"
@@ -3748,7 +3748,7 @@ __metadata:
     eslint-plugin-unused-imports: "npm:4.1.4"
     fast-equals: "npm:5.2.2"
     jsdom: "npm:26.1.0"
-    jsdom-testing-mocks: "npm:1.15.0"
+    jsdom-testing-mocks: "npm:1.15.2"
     nanoid: "npm:3.3.11"
     ng-mocks: "npm:14.13.5"
     ng-packagr: "npm:20.1.0"
@@ -10975,14 +10975,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsdom-testing-mocks@npm:1.15.0":
-  version: 1.15.0
-  resolution: "jsdom-testing-mocks@npm:1.15.0"
+"jsdom-testing-mocks@npm:1.15.2":
+  version: 1.15.2
+  resolution: "jsdom-testing-mocks@npm:1.15.2"
   dependencies:
     bezier-easing: "npm:^2.1.0"
     css-mediaquery: "npm:^0.1.2"
     puppeteer: "npm:^24.15.0"
-  checksum: 10c0/9fada5e38a0e89f780b9aa0e5f59710b9d982caa22d345ec2f244e30b15428889521b25f22045af0535c13c85c5776449d3a8cbba04dd9182881350dfd2e0910
+  checksum: 10c0/e327e455ebf6c726ed3e0d4e4363a02315c5e4e97966c6475602307a29e2af68e43ca34c90c41423bebcb276999dfa2982c6a2cc72f33bbac7e79926c1558c12
   languageName: node
   linkType: hard
 
