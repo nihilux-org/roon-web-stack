@@ -45,7 +45,7 @@ describe("queue-bot-command-executor test suite", () => {
       };
       await internalExecutor(command, foundZone);
       expect(control).toHaveBeenCalledTimes(3);
-      expect(control).toHaveBeenNthCalledWith(1, zone, "stop");
+      expect(control).toHaveBeenNthCalledWith(1, zone, "pause");
       expect(control).toHaveBeenNthCalledWith(2, zone, "next");
       expect(control).toHaveBeenNthCalledWith(3, zone, "stop");
       expect(standby).not.toHaveBeenCalled();
@@ -67,7 +67,7 @@ describe("queue-bot-command-executor test suite", () => {
       const executorPromise = internalExecutor(command, foundZone);
       await expect(executorPromise).rejects.toBe(error);
       expect(control).toHaveBeenCalledTimes(1);
-      expect(control).toHaveBeenNthCalledWith(1, zone, "stop");
+      expect(control).toHaveBeenNthCalledWith(1, zone, "pause");
       expect(standby).not.toHaveBeenCalled();
     }
   );
@@ -90,7 +90,7 @@ describe("queue-bot-command-executor test suite", () => {
         expect(e).toBe(error);
       }
       expect(control).toHaveBeenCalledTimes(2);
-      expect(control).toHaveBeenNthCalledWith(1, zone, "stop");
+      expect(control).toHaveBeenNthCalledWith(1, zone, "pause");
       expect(control).toHaveBeenNthCalledWith(2, zone, "next");
       expect(standby).not.toHaveBeenCalled();
     }
@@ -117,14 +117,14 @@ describe("queue-bot-command-executor test suite", () => {
         expect(e).toBe(error);
       }
       expect(control).toHaveBeenCalledTimes(3);
-      expect(control).toHaveBeenNthCalledWith(1, zone, "stop");
+      expect(control).toHaveBeenNthCalledWith(1, zone, "pause");
       expect(control).toHaveBeenNthCalledWith(2, zone, "next");
       expect(control).toHaveBeenNthCalledWith(3, zone, "stop");
       expect(standby).not.toHaveBeenCalled();
     }
   );
 
-  it("internalExecutor should do nothing for StopNextCommand if given is not playing", async () => {
+  it("internalExecutor should skip QueueBot track for StopNextCommand if given zone is not playing", async () => {
     const ignoredStates: RoonPlaybackState[] = ["paused", "loading", "stopped"];
     for (const state of ignoredStates) {
       try {
@@ -137,7 +137,8 @@ describe("queue-bot-command-executor test suite", () => {
           },
         };
         await internalExecutor(command, foundZone);
-        expect(control).not.toHaveBeenCalled();
+        expect(control).toHaveBeenNthCalledWith(1, zone, "next");
+        expect(control).toHaveBeenNthCalledWith(2, zone, "stop");
         expect(standby).not.toHaveBeenCalled();
       } finally {
         zone.state = "playing";
@@ -158,7 +159,7 @@ describe("queue-bot-command-executor test suite", () => {
       };
       await internalExecutor(command, foundZone);
       expect(control).toHaveBeenCalledTimes(3);
-      expect(control).toHaveBeenNthCalledWith(1, zone, "stop");
+      expect(control).toHaveBeenNthCalledWith(1, zone, "pause");
       expect(control).toHaveBeenNthCalledWith(2, zone, "next");
       expect(control).toHaveBeenNthCalledWith(3, zone, "stop");
       expect(standby).toHaveBeenCalledTimes(3);
@@ -183,7 +184,7 @@ describe("queue-bot-command-executor test suite", () => {
       const executorPromise = internalExecutor(command, foundZone);
       await expect(executorPromise).rejects.toBe(error);
       expect(control).toHaveBeenCalledTimes(1);
-      expect(control).toHaveBeenNthCalledWith(1, zone, "stop");
+      expect(control).toHaveBeenNthCalledWith(1, zone, "pause");
       expect(standby).not.toHaveBeenCalled();
     }
   );
@@ -207,7 +208,7 @@ describe("queue-bot-command-executor test suite", () => {
         expect(e).toBe(error);
       }
       expect(control).toHaveBeenCalledTimes(2);
-      expect(control).toHaveBeenNthCalledWith(1, zone, "stop");
+      expect(control).toHaveBeenNthCalledWith(1, zone, "pause");
       expect(control).toHaveBeenNthCalledWith(2, zone, "next");
       expect(standby).not.toHaveBeenCalled();
     }
@@ -235,14 +236,14 @@ describe("queue-bot-command-executor test suite", () => {
         expect(e).toBe(error);
       }
       expect(control).toHaveBeenCalledTimes(3);
-      expect(control).toHaveBeenNthCalledWith(1, zone, "stop");
+      expect(control).toHaveBeenNthCalledWith(1, zone, "pause");
       expect(control).toHaveBeenNthCalledWith(2, zone, "next");
       expect(control).toHaveBeenNthCalledWith(3, zone, "stop");
       expect(standby).not.toHaveBeenCalled();
     }
   );
 
-  it("internalExecutor should only call RoonApiTransport#standby for StandbyNextCommand if given is not playing", async () => {
+  it("internalExecutor should only call skip QueueBot track and call RoonApiTransport#standby for StandbyNextCommand if given is not playing", async () => {
     const ignoredStates: RoonPlaybackState[] = ["paused", "loading", "stopped"];
     for (const state of ignoredStates) {
       try {
@@ -255,12 +256,16 @@ describe("queue-bot-command-executor test suite", () => {
           },
         };
         await internalExecutor(command, foundZone);
-        expect(control).not.toHaveBeenCalled();
+        expect(control).toHaveBeenCalledTimes(2);
+        expect(control).toHaveBeenNthCalledWith(1, zone, "next");
+        expect(control).toHaveBeenNthCalledWith(2, zone, "stop");
         expect(standby).toHaveBeenNthCalledWith(1, output, { control_key: "1" });
         expect(standby).toHaveBeenNthCalledWith(2, output, { control_key: "2" });
         expect(standby).toHaveBeenNthCalledWith(3, other_output, { control_key: "1" });
       } finally {
         zone.state = "playing";
+        control.mockClear();
+        standby.mockClear();
       }
     }
   });

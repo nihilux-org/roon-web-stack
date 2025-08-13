@@ -23,3 +23,9 @@ export const awaitAll: <T>(promises: Promise<T>[]) => Promise<T[]> = async <T>(p
     throw new Error(result.errors.map((e) => e.message).join("\n"));
   }
 };
+
+export const awaitFor: (timeInMillis: number) => Promise<void> = (timeInMillis: number) => {
+  return new Promise((resolve) => {
+    setTimeout(resolve, timeInMillis);
+  });
+};
