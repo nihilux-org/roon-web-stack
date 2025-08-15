@@ -49,7 +49,7 @@
     "vite-tsconfig-paths": "5.1.4",
     "vitest": "3.2.4",
     "vitest-fetch-mock": "0.4.5",
-    "webpack": "5.101.1",
+    "webpack": "5.101.2",
     "webpack-cli": "6.0.1"
   }
 }
