@@ -169,12 +169,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@analogjs/platform@npm:1.19.4":
-  version: 1.19.4
-  resolution: "@analogjs/platform@npm:1.19.4"
+"@analogjs/platform@npm:1.20.0":
+  version: 1.20.0
+  resolution: "@analogjs/platform@npm:1.20.0"
   dependencies:
-    "@analogjs/vite-plugin-angular": "npm:^1.19.4"
-    "@analogjs/vite-plugin-nitro": "npm:^1.19.4"
+    "@analogjs/vite-plugin-angular": "npm:^1.20.0"
+    "@analogjs/vite-plugin-nitro": "npm:^1.20.0"
     nitropack: "npm:^2.11.0"
     vitefu: "npm:^1.0.0"
   peerDependencies:
@@ -189,6 +189,12 @@ __metadata:
     shiki: ^1.6.1
     vite: ^5.0.0 || ^6.0.0 || ^7.0.0
   peerDependenciesMeta:
+    "@nx/angular":
+      optional: true
+    "@nx/devkit":
+      optional: true
+    "@nx/vite":
+      optional: true
     marked-highlight:
       optional: true
     marked-shiki:
@@ -197,13 +203,13 @@ __metadata:
       optional: true
     shiki:
       optional: true
-  checksum: 10c0/e2bf5dbeed53438434497baa4a0fcbe076b555979eca1337975520ab533532e6cce88f16c72323047f2d9a5df99d017ab487d806fc4c7d2103661df057bb0cd5
+  checksum: 10c0/282a2e895131f97ffbb8b2c293f7453865eedc96ceb21407e582050b82882cfefd27a5485a80829a7aa6ee09b19ec6829d0fc0c517bb1101414de2c45250b8e2
   languageName: node
   linkType: hard
 
-"@analogjs/vite-plugin-angular@npm:1.19.4, @analogjs/vite-plugin-angular@npm:^1.19.4":
-  version: 1.19.4
-  resolution: "@analogjs/vite-plugin-angular@npm:1.19.4"
+"@analogjs/vite-plugin-angular@npm:1.20.0, @analogjs/vite-plugin-angular@npm:^1.20.0":
+  version: 1.20.0
+  resolution: "@analogjs/vite-plugin-angular@npm:1.20.0"
   dependencies:
     ts-morph: "npm:^21.0.0"
     vfile: "npm:^6.0.3"
@@ -215,31 +221,31 @@ __metadata:
       optional: true
     "@angular/build":
       optional: true
-  checksum: 10c0/57d5e5488199fe0727f94681ff1dd4ac6f9dcc90b3cd1552f86d34ce2193d9d33a587329b61c16e58b573fb6d66db4da4e7f159b4a36b3d2f47706da4b9cfa0c
+  checksum: 10c0/f35eead2d6d760ee25e93f821b2f87e537782f3734b81a1fc92a814c988b14907cb89b904886ff3e0f96a7f3603b55aaca26663e35f99d91ce2ee5886988855b
   languageName: node
   linkType: hard
 
-"@analogjs/vite-plugin-nitro@npm:^1.19.4":
-  version: 1.19.4
-  resolution: "@analogjs/vite-plugin-nitro@npm:1.19.4"
+"@analogjs/vite-plugin-nitro@npm:^1.20.0":
+  version: 1.20.0
+  resolution: "@analogjs/vite-plugin-nitro@npm:1.20.0"
   dependencies:
     defu: "npm:^6.1.4"
     esbuild: "npm:^0.25.0"
     nitropack: "npm:^2.11.0"
     radix3: "npm:^1.1.1"
     xmlbuilder2: "npm:^3.0.2"
-  checksum: 10c0/287cdfd1b4ffbf76cd40455bceeb4152baed0eb15435f3aaa232d7fcf99937e2bd07452b9f1a87b8f0938fcc4f11e5bad4ca230338cc689a454372129d452729
+  checksum: 10c0/8640a9198eb34c1e3f7d795659482e38f824e6cf9a77610b750ae7b0eae8afd877917ff9a3173b17c37b4732257e9c61a0f8250e9fecc3486ee070dafc25ab86
   languageName: node
   linkType: hard
 
-"@analogjs/vitest-angular@npm:1.19.4":
-  version: 1.19.4
-  resolution: "@analogjs/vitest-angular@npm:1.19.4"
+"@analogjs/vitest-angular@npm:1.20.0":
+  version: 1.20.0
+  resolution: "@analogjs/vitest-angular@npm:1.20.0"
   peerDependencies:
     "@analogjs/vite-plugin-angular": "*"
     "@angular-devkit/architect": ">=0.1500.0 < 0.2100.0"
     vitest: ^1.3.1 || ^2.0.0 || ^3.0.0
-  checksum: 10c0/a0e4161738764543b4e153f65511b388e52f09b26a9940ae717386fe3cdb6a07aa39feb7e28d168e3a228f64f8cf9aa1fa3d0e0841a175943c690d1d8dabf169
+  checksum: 10c0/eef506462b826b60e92f39c1c782e102e2c979f43829fa38e30bfdc240674e51301b04793e590b9471efa0e9c38e32e52f8bd65b8d25ac5093b82fa1df61894d
   languageName: node
   linkType: hard
 
@@ -3988,9 +3994,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@nihilux/roon-web-ng-client@workspace:app/roon-web-ng-client"
   dependencies:
-    "@analogjs/platform": "npm:1.19.4"
-    "@analogjs/vite-plugin-angular": "npm:1.19.4"
-    "@analogjs/vitest-angular": "npm:1.19.4"
+    "@analogjs/platform": "npm:1.20.0"
+    "@analogjs/vite-plugin-angular": "npm:1.20.0"
+    "@analogjs/vitest-angular": "npm:1.20.0"
     "@angular-devkit/build-angular": "npm:20.2.0"
     "@angular-eslint/builder": "npm:20.1.1"
     "@angular-eslint/eslint-plugin": "npm:20.1.1"
