@@ -169,12 +169,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@analogjs/platform@npm:1.19.4":
-  version: 1.19.4
-  resolution: "@analogjs/platform@npm:1.19.4"
+"@analogjs/platform@npm:1.20.0":
+  version: 1.20.0
+  resolution: "@analogjs/platform@npm:1.20.0"
   dependencies:
-    "@analogjs/vite-plugin-angular": "npm:^1.19.4"
-    "@analogjs/vite-plugin-nitro": "npm:^1.19.4"
+    "@analogjs/vite-plugin-angular": "npm:^1.20.0"
+    "@analogjs/vite-plugin-nitro": "npm:^1.20.0"
     nitropack: "npm:^2.11.0"
     vitefu: "npm:^1.0.0"
   peerDependencies:
@@ -189,6 +189,12 @@ __metadata:
     shiki: ^1.6.1
     vite: ^5.0.0 || ^6.0.0 || ^7.0.0
   peerDependenciesMeta:
+    "@nx/angular":
+      optional: true
+    "@nx/devkit":
+      optional: true
+    "@nx/vite":
+      optional: true
     marked-highlight:
       optional: true
     marked-shiki:
@@ -197,13 +203,13 @@ __metadata:
       optional: true
     shiki:
       optional: true
-  checksum: 10c0/e2bf5dbeed53438434497baa4a0fcbe076b555979eca1337975520ab533532e6cce88f16c72323047f2d9a5df99d017ab487d806fc4c7d2103661df057bb0cd5
+  checksum: 10c0/282a2e895131f97ffbb8b2c293f7453865eedc96ceb21407e582050b82882cfefd27a5485a80829a7aa6ee09b19ec6829d0fc0c517bb1101414de2c45250b8e2
   languageName: node
   linkType: hard
 
-"@analogjs/vite-plugin-angular@npm:1.19.4, @analogjs/vite-plugin-angular@npm:^1.19.4":
-  version: 1.19.4
-  resolution: "@analogjs/vite-plugin-angular@npm:1.19.4"
+"@analogjs/vite-plugin-angular@npm:1.20.0, @analogjs/vite-plugin-angular@npm:^1.20.0":
+  version: 1.20.0
+  resolution: "@analogjs/vite-plugin-angular@npm:1.20.0"
   dependencies:
     ts-morph: "npm:^21.0.0"
     vfile: "npm:^6.0.3"
@@ -215,31 +221,31 @@ __metadata:
       optional: true
     "@angular/build":
       optional: true
-  checksum: 10c0/57d5e5488199fe0727f94681ff1dd4ac6f9dcc90b3cd1552f86d34ce2193d9d33a587329b61c16e58b573fb6d66db4da4e7f159b4a36b3d2f47706da4b9cfa0c
+  checksum: 10c0/f35eead2d6d760ee25e93f821b2f87e537782f3734b81a1fc92a814c988b14907cb89b904886ff3e0f96a7f3603b55aaca26663e35f99d91ce2ee5886988855b
   languageName: node
   linkType: hard
 
-"@analogjs/vite-plugin-nitro@npm:^1.19.4":
-  version: 1.19.4
-  resolution: "@analogjs/vite-plugin-nitro@npm:1.19.4"
+"@analogjs/vite-plugin-nitro@npm:^1.20.0":
+  version: 1.20.0
+  resolution: "@analogjs/vite-plugin-nitro@npm:1.20.0"
   dependencies:
     defu: "npm:^6.1.4"
     esbuild: "npm:^0.25.0"
     nitropack: "npm:^2.11.0"
     radix3: "npm:^1.1.1"
     xmlbuilder2: "npm:^3.0.2"
-  checksum: 10c0/287cdfd1b4ffbf76cd40455bceeb4152baed0eb15435f3aaa232d7fcf99937e2bd07452b9f1a87b8f0938fcc4f11e5bad4ca230338cc689a454372129d452729
+  checksum: 10c0/8640a9198eb34c1e3f7d795659482e38f824e6cf9a77610b750ae7b0eae8afd877917ff9a3173b17c37b4732257e9c61a0f8250e9fecc3486ee070dafc25ab86
   languageName: node
   linkType: hard
 
-"@analogjs/vitest-angular@npm:1.19.4":
-  version: 1.19.4
-  resolution: "@analogjs/vitest-angular@npm:1.19.4"
+"@analogjs/vitest-angular@npm:1.20.0":
+  version: 1.20.0
+  resolution: "@analogjs/vitest-angular@npm:1.20.0"
   peerDependencies:
     "@analogjs/vite-plugin-angular": "*"
     "@angular-devkit/architect": ">=0.1500.0 < 0.2100.0"
     vitest: ^1.3.1 || ^2.0.0 || ^3.0.0
-  checksum: 10c0/a0e4161738764543b4e153f65511b388e52f09b26a9940ae717386fe3cdb6a07aa39feb7e28d168e3a228f64f8cf9aa1fa3d0e0841a175943c690d1d8dabf169
+  checksum: 10c0/eef506462b826b60e92f39c1c782e102e2c979f43829fa38e30bfdc240674e51301b04793e590b9471efa0e9c38e32e52f8bd65b8d25ac5093b82fa1df61894d
   languageName: node
   linkType: hard
 
@@ -465,10 +471,30 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@angular-eslint/builder@npm:20.2.0":
+  version: 20.2.0
+  resolution: "@angular-eslint/builder@npm:20.2.0"
+  dependencies:
+    "@angular-devkit/architect": "npm:>= 0.2000.0 < 0.2100.0"
+    "@angular-devkit/core": "npm:>= 20.0.0 < 21.0.0"
+  peerDependencies:
+    eslint: ^8.57.0 || ^9.0.0
+    typescript: "*"
+  checksum: 10c0/19d94e209986d674a1d509fdee977ad93c20a5a662522e2833e0de989ead11ded94746288054c7ccebeacf4533dcd2b7e5643c58386d960399496e5ae1b7550f
+  languageName: node
+  linkType: hard
+
 "@angular-eslint/bundled-angular-compiler@npm:20.1.1":
   version: 20.1.1
   resolution: "@angular-eslint/bundled-angular-compiler@npm:20.1.1"
   checksum: 10c0/a62c2264b8d159c8787d081705b1362f592ae5d7025d6feaf9a7bc845a16d770f598772644bb22f122efd833068958c1c00239982428ad200fc5ef4fe17011eb
+  languageName: node
+  linkType: hard
+
+"@angular-eslint/bundled-angular-compiler@npm:20.2.0":
+  version: 20.2.0
+  resolution: "@angular-eslint/bundled-angular-compiler@npm:20.2.0"
+  checksum: 10c0/7990cf3ec27fea3f0f4e8b0ac7ef03e0d5d933503f786cf63085e9feeda469d7a0cdba07cc2f3111aed2bfd0cf3b601548746debf7b2a3dbaab3fbd96102790a
   languageName: node
   linkType: hard
 
@@ -490,6 +516,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@angular-eslint/eslint-plugin-template@npm:20.2.0":
+  version: 20.2.0
+  resolution: "@angular-eslint/eslint-plugin-template@npm:20.2.0"
+  dependencies:
+    "@angular-eslint/bundled-angular-compiler": "npm:20.2.0"
+    "@angular-eslint/utils": "npm:20.2.0"
+    aria-query: "npm:5.3.2"
+    axobject-query: "npm:4.1.0"
+  peerDependencies:
+    "@angular-eslint/template-parser": 20.2.0
+    "@typescript-eslint/types": ^7.11.0 || ^8.0.0
+    "@typescript-eslint/utils": ^7.11.0 || ^8.0.0
+    eslint: ^8.57.0 || ^9.0.0
+    typescript: "*"
+  checksum: 10c0/bbd22cd9f22db346cce53df264b9c1733abaff2fa3c9132e7917f63dc44b4c408ef94b672017f95bc97cf7f3c8a5e781a6ed66c81058ddeece62b6dfb904dff0
+  languageName: node
+  linkType: hard
+
 "@angular-eslint/eslint-plugin@npm:20.1.1":
   version: 20.1.1
   resolution: "@angular-eslint/eslint-plugin@npm:20.1.1"
@@ -502,6 +546,21 @@ __metadata:
     eslint: ^8.57.0 || ^9.0.0
     typescript: "*"
   checksum: 10c0/ff3d195765c2fdc0b9af9c61d119e029237208043951d6369a50e9e5e3b4e0da2ba2d892cda703dfb659c92ec6289ba8cc686977ec4a6c0dcebb03419701b821
+  languageName: node
+  linkType: hard
+
+"@angular-eslint/eslint-plugin@npm:20.2.0":
+  version: 20.2.0
+  resolution: "@angular-eslint/eslint-plugin@npm:20.2.0"
+  dependencies:
+    "@angular-eslint/bundled-angular-compiler": "npm:20.2.0"
+    "@angular-eslint/utils": "npm:20.2.0"
+    ts-api-utils: "npm:^2.1.0"
+  peerDependencies:
+    "@typescript-eslint/utils": ^7.11.0 || ^8.0.0
+    eslint: ^8.57.0 || ^9.0.0
+    typescript: "*"
+  checksum: 10c0/76b42bce8bfd8a44823ef14517f8c335b897854cbe2b5ce511e9aab03f137a39e3a6620425857db7bc479ed2d1caba257a31821abd5205b6495ff718b8f43a65
   languageName: node
   linkType: hard
 
@@ -520,6 +579,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@angular-eslint/schematics@npm:20.2.0":
+  version: 20.2.0
+  resolution: "@angular-eslint/schematics@npm:20.2.0"
+  dependencies:
+    "@angular-devkit/core": "npm:>= 20.0.0 < 21.0.0"
+    "@angular-devkit/schematics": "npm:>= 20.0.0 < 21.0.0"
+    "@angular-eslint/eslint-plugin": "npm:20.2.0"
+    "@angular-eslint/eslint-plugin-template": "npm:20.2.0"
+    ignore: "npm:7.0.5"
+    semver: "npm:7.7.2"
+    strip-json-comments: "npm:3.1.1"
+  checksum: 10c0/c0b2884cc1c85b107003da532466232d495d01a9560990a8d308c30cbe235bcca09a4e935fbacd178375262c711098f138d57dc1923a47257081f2bc1fe5abf8
+  languageName: node
+  linkType: hard
+
 "@angular-eslint/template-parser@npm:20.1.1":
   version: 20.1.1
   resolution: "@angular-eslint/template-parser@npm:20.1.1"
@@ -533,6 +607,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@angular-eslint/template-parser@npm:20.2.0":
+  version: 20.2.0
+  resolution: "@angular-eslint/template-parser@npm:20.2.0"
+  dependencies:
+    "@angular-eslint/bundled-angular-compiler": "npm:20.2.0"
+    eslint-scope: "npm:^8.0.2"
+  peerDependencies:
+    eslint: ^8.57.0 || ^9.0.0
+    typescript: "*"
+  checksum: 10c0/315d6d0456febff1696ab4fcb092e6ab6b25e026f3c723c50bac85b9d77e7109984f5b1b9f7f12b5282f247431a4226b038d702f0e5a8f4eda28f5d3a776069a
+  languageName: node
+  linkType: hard
+
 "@angular-eslint/utils@npm:20.1.1":
   version: 20.1.1
   resolution: "@angular-eslint/utils@npm:20.1.1"
@@ -543,6 +630,19 @@ __metadata:
     eslint: ^8.57.0 || ^9.0.0
     typescript: "*"
   checksum: 10c0/85c65c70330bae9355854a4982dfb85f41c620be06b77ecf7cca760febc3d884ea17026cfdbdcafeb4b520f0fa7f9ceb2888b5e59a8ef60fe45c49d28b7edca8
+  languageName: node
+  linkType: hard
+
+"@angular-eslint/utils@npm:20.2.0":
+  version: 20.2.0
+  resolution: "@angular-eslint/utils@npm:20.2.0"
+  dependencies:
+    "@angular-eslint/bundled-angular-compiler": "npm:20.2.0"
+  peerDependencies:
+    "@typescript-eslint/utils": ^7.11.0 || ^8.0.0
+    eslint: ^8.57.0 || ^9.0.0
+    typescript: "*"
+  checksum: 10c0/9b74562332f564cbc59bd8409782410f354dee101df8ec3e1d288e2b09ec09aa9b7c02965cea9a42b0d5492ed4fbfa5f906754e3e7ff678811f03c792998f098
   languageName: node
   linkType: hard
 
@@ -3988,9 +4088,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@nihilux/roon-web-ng-client@workspace:app/roon-web-ng-client"
   dependencies:
-    "@analogjs/platform": "npm:1.19.4"
-    "@analogjs/vite-plugin-angular": "npm:1.19.4"
-    "@analogjs/vitest-angular": "npm:1.19.4"
+    "@analogjs/platform": "npm:1.20.0"
+    "@analogjs/vite-plugin-angular": "npm:1.20.0"
+    "@analogjs/vitest-angular": "npm:1.20.0"
     "@angular-devkit/build-angular": "npm:20.2.0"
     "@angular-eslint/builder": "npm:20.1.1"
     "@angular-eslint/eslint-plugin": "npm:20.1.1"
@@ -4014,7 +4114,7 @@ __metadata:
     "@types/node": "npm:24.3.0"
     "@typescript-eslint/parser": "npm:8.40.0"
     "@vitest/coverage-v8": "npm:3.2.4"
-    angular-eslint: "npm:20.1.1"
+    angular-eslint: "npm:20.2.0"
     eslint: "npm:9.33.0"
     eslint-config-prettier: "npm:10.1.8"
     eslint-import-resolver-typescript: "npm:4.4.4"
@@ -6447,24 +6547,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"angular-eslint@npm:20.1.1":
-  version: 20.1.1
-  resolution: "angular-eslint@npm:20.1.1"
+"angular-eslint@npm:20.2.0":
+  version: 20.2.0
+  resolution: "angular-eslint@npm:20.2.0"
   dependencies:
     "@angular-devkit/core": "npm:>= 20.0.0 < 21.0.0"
     "@angular-devkit/schematics": "npm:>= 20.0.0 < 21.0.0"
-    "@angular-eslint/builder": "npm:20.1.1"
-    "@angular-eslint/eslint-plugin": "npm:20.1.1"
-    "@angular-eslint/eslint-plugin-template": "npm:20.1.1"
-    "@angular-eslint/schematics": "npm:20.1.1"
-    "@angular-eslint/template-parser": "npm:20.1.1"
+    "@angular-eslint/builder": "npm:20.2.0"
+    "@angular-eslint/eslint-plugin": "npm:20.2.0"
+    "@angular-eslint/eslint-plugin-template": "npm:20.2.0"
+    "@angular-eslint/schematics": "npm:20.2.0"
+    "@angular-eslint/template-parser": "npm:20.2.0"
     "@typescript-eslint/types": "npm:^8.0.0"
     "@typescript-eslint/utils": "npm:^8.0.0"
   peerDependencies:
     eslint: ^8.57.0 || ^9.0.0
     typescript: "*"
     typescript-eslint: ^8.0.0
-  checksum: 10c0/155a5f43d5d83f53e8705bcfd22da5e79b6f11fc45369dc471cad619c80f2517c0a9f68123a107fb3aab42845345c7a87c8c3178c81308077ddf13f8cdfce4f1
+  checksum: 10c0/8a6afb7bfd68217ca7c6fb9ae6ce1acc12bff7c47456a0305095f31061ec3c47e64d1319ad5081146969acec7ee387bbbe6b80c7593fbd67fa4948b9746a1531
   languageName: node
   linkType: hard
 
