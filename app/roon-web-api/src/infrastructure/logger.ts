@@ -1,7 +1,7 @@
-import { LoggerOptions, pino } from "pino";
+import { Level, LoggerOptions, pino, stdTimeFunctions } from "pino";
 import * as process from "process";
 
-export const buildLoggerOptions: (minLevel?: pino.Level) => LoggerOptions | undefined = (minLevel?: pino.Level) => {
+export const buildLoggerOptions: (minLevel?: Level) => LoggerOptions | undefined = (minLevel?: Level) => {
   const level = process.env.LOG_LEVEL ?? "info";
   let shouldConfigureLogger = true;
   if (minLevel) {
@@ -27,7 +27,7 @@ export const buildLoggerOptions: (minLevel?: pino.Level) => LoggerOptions | unde
         bindings: (bindings) => ({ hostname: bindings.hostname as string }),
         level: (label) => ({ level: label.toUpperCase() }),
       },
-      timestamp: pino.stdTimeFunctions.isoTime,
+      timestamp: stdTimeFunctions.isoTime,
     };
   }
 };

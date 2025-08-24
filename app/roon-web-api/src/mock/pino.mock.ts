@@ -12,11 +12,12 @@ export const loggerMock = {
 
 vi.mock("pino", () => {
   const pino = () => loggerMock;
-  pino.stdTimeFunctions = {
+  const stdTimeFunctions = {
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     isoTime: () => {},
   };
   return {
     pino,
+    stdTimeFunctions,
   };
 });
