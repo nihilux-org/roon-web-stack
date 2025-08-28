@@ -47,5 +47,10 @@
     "strictInputAccessModifiers": true,
     "strictTemplates": true,
     "strictStandalone": true
-  }
+  },
+  "references": [
+    {
+      "path": "../../packages/roon-web-client/tsconfig.json"
+    }
+  ]
 }

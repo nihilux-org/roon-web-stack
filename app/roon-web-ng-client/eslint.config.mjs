@@ -1,4 +1,5 @@
 // @ts-check
+import { dirname } from "@angular/compiler-cli";
 import tsParser from "@typescript-eslint/parser";
 import angular from "angular-eslint";
 import tsEslint from "typescript-eslint";
@@ -17,6 +18,8 @@ export default tsEslint.config(
       sourceType: "script",
       parserOptions: {
         project: "tsconfig.lint.json",
+        // eslint-disable-next-line no-undef
+        tsconfigRootDir: dirname(new URL(import.meta.url).pathname),
       },
     },
     rules: {
