@@ -1,5 +1,3 @@
-import { dirname } from "node:path";
-
 import eslint from "@eslint/js";
 import tsParser from "@typescript-eslint/parser";
 import { globalIgnores } from "eslint/config";
@@ -8,6 +6,7 @@ import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended"
 import promisePlugin from "eslint-plugin-promise";
 import simpleImportSort from "eslint-plugin-simple-import-sort";
 import unUsedImports from "eslint-plugin-unused-imports";
+import { dirname } from "path";
 import tsEslint from "typescript-eslint";
 
 export default tsEslint.config(
@@ -33,7 +32,8 @@ export default tsEslint.config(
       sourceType: "script",
       parserOptions: {
         project: "./tsconfig.json",
-        tsconfigRootDir: dirname("./"),
+        // eslint-disable-next-line no-undef
+        tsconfigRootDir: dirname(new URL(import.meta.url).pathname),
       },
     },
     rules: {
