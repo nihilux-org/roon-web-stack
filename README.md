@@ -83,6 +83,18 @@ You should be welcome by the application.
 On first launch, you'll be asked to choose a `zone` to display.  
 Choose one, and voilà:
 
+### Random by Genre
+
+The Actions bar includes a `Random` button that lets you pick a random album from one or more genres.
+
+- Open `Random`, tap a genre to include it (tap again to clear). Select multiple genres to union their albums.
+- The backend uses a strict, deterministic path: `Genres -> <included genre> -> Albums`, then picks a random album from that list. When multiple genres are selected, results are effectively joined across the chosen genres.
+- The selection avoids starting radio and disables `auto_radio` before playing.
+- If strict selection fails (no albums), a small notice dialog appears with the reason.
+
+Notes on grouped genres
+- On some Roon cores, certain genres (e.g., `Latin`) are grouped under parent containers (e.g., `International`). Resolution is generic: the app scans top‑level genres and, if needed, searches under each container for a matching child.
+
 <img style="max-width: 800px;" alt="Selecting a zone at first app launch" src="./doc/images/selecting-zone-at-first-launch.gif">
 
 After this first boot, the app will display the last displayed `zone`.

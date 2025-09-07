@@ -10,27 +10,20 @@ export const executor: CommandExecutor<PlayRandomAlbumCommand, FoundZone> = asyn
   // Reset browse state for a clean navigation
   await server.services.RoonApiBrowse.browse({ hierarchy, pop_all: true, set_display_offset: true });
 
-  const { included_genres, excluded_genres } = command.data;
+  const { included_genres } = command.data;
   let albumItem: SourcedItem | undefined;
 
   // Try honoring filters first
   if (included_genres && included_genres.length > 0) {
     const shuffled = shuffleArray(included_genres.slice());
-    const excludedParents = new Set((excluded_genres ?? []).map((s) => s.trim().toLowerCase()));
     for (const g of shuffled) {
       logger.debug("random: trying included genre '%s' (strict genres mode)", g);
-      albumItem = await pickRandomAlbumFromGenre(server, zone.zone_id, g, excludedParents);
+      albumItem = await pickRandomAlbumFromGenre(server, zone.zone_id, g);
       if (!albumItem) logger.debug("random: no album found for included genre '%s'", g);
       if (albumItem) break;
     }
     if (!albumItem) {
       throw new Error("No albums found for the selected genres");
-    }
-  } else if (excluded_genres && excluded_genres.length > 0) {
-    // Try several times to find a non-excluded genre with albums
-    for (let i = 0; i < 15 && !albumItem; i++) {
-      const g = await selectGenre(server, undefined, excluded_genres);
-      if (g) albumItem = await pickRandomAlbumFromGenre(server, zone.zone_id, g, new Set((excluded_genres ?? []).map((s) => s.trim().toLowerCase())));
     }
   }
 
@@ -142,8 +135,7 @@ async function selectGenre(
 
 async function findGenreItemKey(
   server: FoundZone["server"],
-  genreTitle: string,
-  excludedParents?: Set<string>
+  genreTitle: string
 ): Promise<string | undefined> {
   const wanted = genreTitle.trim().toLowerCase();
   // Reset genres browse state to avoid stale sessions
@@ -175,8 +167,6 @@ async function findGenreItemKey(
     const first = await server.services.RoonApiBrowse.load({ hierarchy: "genres", level: root.list?.level, offset: 0, count: 200 });
     for (const top of first.items) {
       if (!top.item_key) continue;
-      const topTitle = (top.title ?? "").trim().toLowerCase();
-      if (excludedParents && excludedParents.has(topTitle)) continue;
       const b = await server.services.RoonApiBrowse.browse({ hierarchy: "genres", item_key: top.item_key });
       const l = await server.services.RoonApiBrowse.load({ hierarchy: "genres", level: b.list?.level });
       const child = l.items.find((it) => (it.title ?? "").trim().toLowerCase().includes(wanted));
@@ -194,10 +184,9 @@ async function findGenreItemKey(
 async function pickRandomAlbumFromGenre(
   server: FoundZone["server"],
   zone_id: string | undefined,
-  genreTitle: string,
-  excludedParents?: Set<string>
+  genreTitle: string
 ): Promise<SourcedItem | undefined> {
-  const item_key = await findGenreItemKey(server, genreTitle, excludedParents);
+  const item_key = await findGenreItemKey(server, genreTitle);
   if (!item_key) return undefined;
   // open the genre
   const genreBrowse = await server.services.RoonApiBrowse.browse({ hierarchy: "genres", item_key, zone_or_output_id: zone_id });
@@ -223,19 +212,7 @@ async function pickRandomAlbumFromGenre(
     const b = await server.services.RoonApiBrowse.browse({ hierarchy: "genres", item_key: albumsChild.item_key, zone_or_output_id: zone_id });
     const l = await server.services.RoonApiBrowse.load({ hierarchy: "genres", level: b.list?.level });
     logger.debug("random: genre '%s' -> Albums list.hint=%s, count=%s", genreTitle, String(l.list?.hint ?? 'undefined'), String(l.list?.count ?? '?'));
-    let directItems = l.items ?? [];
-
-    // If excludes contain parent genres (e.g., 'international'), subtract albums found under those parents for this genre
-    if (excludedParents && excludedParents.size > 0 && directItems.length > 0) {
-      const toExcludeTitles = new Set<string>();
-      for (const parentLc of Array.from(excludedParents.values())) {
-        const titles = await listAlbumsUnderParentGenre(server, parentLc, genreTitle.toLowerCase());
-        titles.forEach((t) => toExcludeTitles.add(t));
-      }
-      if (toExcludeTitles.size > 0) {
-        directItems = directItems.filter((it) => !toExcludeTitles.has((it.title ?? '').trim().toLowerCase()))
-      }
-    }
+    const directItems = l.items ?? [];
     if (directItems.length > 0) {
       const idx = Math.floor(Math.random() * directItems.length);
       logger.debug(
@@ -593,30 +570,6 @@ function shuffleArray<T>(arr: T[]): T[] {
   return arr;
 }
 
-async function listAlbumsUnderParentGenre(
-  server: FoundZone["server"],
-  parentTitleLc: string,
-  childContainsLc: string
-): Promise<Set<string>> {
-  const titles = new Set<string>();
-  try {
-    const root = await server.services.RoonApiBrowse.browse({ hierarchy: "genres" });
-    const first = await server.services.RoonApiBrowse.load({ hierarchy: "genres", level: root.list?.level, offset: 0, count: 200 });
-    const parent = first.items.find((it) => (it.title ?? "").trim().toLowerCase() === parentTitleLc);
-    if (!parent?.item_key) return titles;
-    const b = await server.services.RoonApiBrowse.browse({ hierarchy: "genres", item_key: parent.item_key });
-    const l = await server.services.RoonApiBrowse.load({ hierarchy: "genres", level: b.list?.level });
-    const child = l.items.find((it) => (it.title ?? "").trim().toLowerCase().includes(childContainsLc) && it.item_key);
-    if (!child?.item_key) return titles;
-    const cb = await server.services.RoonApiBrowse.browse({ hierarchy: "genres", item_key: child.item_key });
-    const cl = await server.services.RoonApiBrowse.load({ hierarchy: "genres", level: cb.list?.level });
-    for (const it of cl.items ?? []) {
-      const t = (it.title ?? '').trim().toLowerCase();
-      if (t) titles.add(t);
-    }
-  } catch {}
-  return titles;
-}
 
 async function reselectAlbumByTitle(
   server: FoundZone["server"],

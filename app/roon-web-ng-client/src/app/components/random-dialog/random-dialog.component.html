@@ -8,7 +8,7 @@
         class="genre"
         *ngFor="let g of $genres()"
         mat-button
-        [color]="stateFor(g) === 'include' ? 'primary' : stateFor(g) === 'exclude' ? 'warn' : undefined"
+        [color]="stateFor(g) === 'include' ? 'primary' : undefined"
         (click)="toggle(g)"
         [attr.aria-pressed]="stateFor(g) !== 'none'"
       >

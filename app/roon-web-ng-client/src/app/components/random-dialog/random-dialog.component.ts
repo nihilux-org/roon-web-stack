@@ -7,7 +7,7 @@ import { CommandType, RoonApiBrowseLoadResponse } from "@nihilux/roon-web-model"
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
 
-type GenreState = "none" | "include" | "exclude";
+type GenreState = "none" | "include";
 
 @Component({
   selector: "nr-random-dialog",
@@ -37,10 +37,9 @@ export class RandomDialogComponent {
     const raw = localStorage.getItem("nr.RANDOM_FILTERS");
     if (raw) {
       try {
-        const parsed = JSON.parse(raw) as { include?: string[]; exclude?: string[] };
+        const parsed = JSON.parse(raw) as { include?: string[] };
         const map = new Map<string, GenreState>();
         parsed.include?.forEach((g) => map.set(g, "include"));
-        parsed.exclude?.forEach((g) => map.set(g, "exclude"));
         this.$states.set(map);
       } catch {
         // ignore
@@ -79,25 +78,20 @@ export class RandomDialogComponent {
   toggle(genre: string) {
     const map = new Map(this.$states());
     const cur = map.get(genre) ?? "none";
-    const next: GenreState = cur === "none" ? "include" : cur === "include" ? "exclude" : "none";
-    if (next === "none") {
-      map.delete(genre);
-    } else {
-      map.set(genre, next);
-    }
+    const next: GenreState = cur === "none" ? "include" : "none";
+    if (next === "none") map.delete(genre); else map.set(genre, next);
     this.$states.set(map);
     this.saveStates();
   }
 
   playNow() {
-    const { include, exclude } = this.computeFilters();
+    const { include } = this.computeFilters();
     const zone_id = this.$zoneId();
     this._roon.command({
       type: CommandType.PLAY_RANDOM_ALBUM,
       data: {
         zone_id,
         included_genres: include.length ? include : undefined,
-        excluded_genres: exclude.length ? exclude : undefined,
       },
     });
     this._dialogRef.close();
@@ -110,16 +104,12 @@ export class RandomDialogComponent {
 
   private computeFilters() {
     const include: string[] = [];
-    const exclude: string[] = [];
-    this.$states().forEach((v, k) => {
-      if (v === "include") include.push(k);
-      else if (v === "exclude") exclude.push(k);
-    });
-    return { include, exclude };
+    this.$states().forEach((v, k) => { if (v === "include") include.push(k); });
+    return { include };
   }
 
   private saveStates() {
-    const { include, exclude } = this.computeFilters();
-    localStorage.setItem("nr.RANDOM_FILTERS", JSON.stringify({ include, exclude }));
+    const { include } = this.computeFilters();
+    localStorage.setItem("nr.RANDOM_FILTERS", JSON.stringify({ include }));
   }
 }
