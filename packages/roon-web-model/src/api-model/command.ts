@@ -35,6 +35,8 @@ export const enum CommandType {
   PLAY_FROM_HERE = "PLAY_FROM_HERE",
   TRANSFER_ZONE = "TRANSFER_ZONE",
   SHARED_CONFIG = "SHARED_CONFIG",
+  // random actions
+  PLAY_RANDOM_ALBUM = "PLAY_RANDOM_ALBUM",
 }
 
 export const enum InternalCommandType {
@@ -148,6 +150,15 @@ export interface TransferZoneCommand {
   };
 }
 
+export interface PlayRandomAlbumCommand {
+  type: CommandType.PLAY_RANDOM_ALBUM;
+  data: {
+    zone_id: string;
+    included_genres?: string[];
+    excluded_genres?: string[];
+  };
+}
+
 export interface GroupCommand {
   type: CommandType.GROUP;
   data: {
@@ -190,7 +201,8 @@ export type Command =
   | PlayFromHereCommand
   | TransferZoneCommand
   | GroupCommand
-  | SharedConfigCommand;
+  | SharedConfigCommand
+  | PlayRandomAlbumCommand;
 
 export type ControlCommand =
   | PlayCommand

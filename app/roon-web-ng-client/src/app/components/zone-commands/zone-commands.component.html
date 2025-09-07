@@ -65,6 +65,14 @@
         <mat-icon fontIcon="skip_next" />
       </button>
     }
+    <button
+      mat-icon-button
+      aria-label="Random album"
+      (click)="onCommandClick('randomAlbum')"
+      id="random-album"
+    >
+      <mat-icon fontIcon="shuffle" />
+    </button>
   </div>
   @if (zoneVolume !== undefined) {
     <nr-zone-selector class="zones" [withoutLabel]="$isSmallScreen()" idSuffix="in-zone" />

@@ -59,6 +59,9 @@ export class ZoneCommandsComponent {
       case "nextTrack":
         commandType = CommandType.NEXT;
         break;
+      case "randomAlbum":
+        commandType = CommandType.PLAY_RANDOM_ALBUM;
+        break;
       default:
         commandType = undefined;
         break;

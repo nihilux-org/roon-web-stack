@@ -5,6 +5,7 @@ export enum ActionType {
   LOAD = "LOAD",
   QUEUE = "QUEUE",
   CUSTOM = "CUSTOM",
+  RANDOM = "RANDOM",
 }
 
 export interface ActionButton {
@@ -42,7 +43,13 @@ export interface RecordedAction {
   actionIndex: number;
 }
 
-export type Action = LoadAction | QueueAction | CustomAction;
+export type Action = LoadAction | QueueAction | CustomAction | RandomAction;
+
+export interface RandomAction {
+  button: ActionButton;
+  id: string;
+  type: ActionType.RANDOM;
+}
 
 export interface LoadAction {
   button: ActionButton;
@@ -170,6 +177,15 @@ export const ToggleQueueAction: QueueAction = {
   type: ActionType.QUEUE,
 };
 
+export const RandomActionButton: RandomAction = {
+  button: {
+    label: "Random",
+    icon: "shuffle",
+  },
+  id: "random-action",
+  type: ActionType.RANDOM,
+};
+
 export const DefaultActions: Action[] = [
   AlbumsAction,
   ArtistsAction,
@@ -180,6 +196,7 @@ export const DefaultActions: Action[] = [
   PlaylistsAction,
   RadiosAction,
   ToggleQueueAction,
+  RandomActionButton,
 ];
 
 export const CustomActionsManagerDialogConfig: MatDialogConfig = {

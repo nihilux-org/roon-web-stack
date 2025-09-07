@@ -1,0 +1,22 @@
+.random-dialog {
+  h2 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 8px;
+  }
+  .genres {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 8px;
+    padding: 8px 0 16px;
+  }
+  .loading {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: rgba(0,0,0,.6);
+  }
+  .spacer { flex: 1 1 auto; }
+}
+

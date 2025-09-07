@@ -45,6 +45,8 @@ import {
   ZoneState,
 } from "@nihilux/roon-web-model";
 import { CustomActionsService } from "@services/custom-actions.service";
+import { DialogService } from "@services/dialog.service";
+import { InfoDialogComponent } from "@components/info-dialog/info-dialog.component";
 import { SettingsService } from "@services/settings.service";
 import { VisibilityService } from "@services/visibility.service";
 import { buildRoonWorker } from "@services/worker.utils";
@@ -59,6 +61,7 @@ export class RoonService {
   private readonly _deviceDetectorService: DeviceDetectorService;
   private readonly _customActionsService: CustomActionsService;
   private readonly _settingsService: SettingsService;
+  private readonly _dialogService: DialogService;
   private readonly _visibilityService: VisibilityService;
   private readonly _$roonState: WritableSignal<ApiState>;
   private readonly _$isGrouping: WritableSignal<boolean>;
@@ -89,6 +92,7 @@ export class RoonService {
     this._window = document.defaultView;
     this._deviceDetectorService = inject(DeviceDetectorService);
     this._customActionsService = inject(CustomActionsService);
+    this._dialogService = inject(DialogService);
     this._settingsService = inject(SettingsService);
     this._visibilityService = inject(VisibilityService);
     this._$roonState = signal(
@@ -515,6 +519,16 @@ export class RoonService {
     if (commandCallback) {
       this._commandCallbacks.delete(notification.command_id);
       commandCallback(notification);
+    }
+    if (notification.state === "REJECTED") {
+      const msg = notification.cause ?? "Action failed";
+      this._dialogService.open(InfoDialogComponent, {
+        autoFocus: false,
+        data: {
+          title: "Action failed",
+          message: msg,
+        },
+      });
     }
   }
 

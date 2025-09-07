@@ -1,0 +1,11 @@
+<mat-dialog-content class="info-dialog">
+  <div class="header">
+    <mat-icon fontIcon="info" />
+    <h3>{{ data.title || 'Notice' }}</h3>
+  </div>
+  <p>{{ data.message }}</p>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">OK</button>
+</mat-dialog-actions>
+

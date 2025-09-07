@@ -25,6 +25,7 @@ import {
   DisplayMode,
   DisplayModesData,
   LibraryAction,
+  RandomActionButton,
   RadiosAction,
   ToggleQueueAction,
 } from "@model";
@@ -310,7 +311,7 @@ export class SettingsService implements OnDestroy {
       }
       return actions;
     } else {
-      return [ToggleQueueAction, BrowseAction, LibraryAction, RadiosAction];
+      return [ToggleQueueAction, BrowseAction, LibraryAction, RadiosAction, RandomActionButton];
     }
   }
 

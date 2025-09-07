@@ -6,7 +6,8 @@
     "schematicCollections": [
       "@angular-eslint/schematics"
     ],
-    "packageManager": "yarn"
+    "packageManager": "yarn",
+    "analytics": false
   },
   "projects": {
     "@nihilux/roon-web-ng-client": {

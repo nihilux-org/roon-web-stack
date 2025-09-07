@@ -12,7 +12,7 @@ const config = {
     path: path.resolve(__dirname, "bin"),
     filename: "app.js",
   },
-  plugins: [ new NodemonPlugin() ],
+  plugins: [],
   module: {
     rules: [
       {
@@ -39,6 +39,8 @@ module.exports = () => {
   } else {
     config.mode = "development";
     config.devtool = "inline-source-map"
+    // Only run nodemon when developing locally with watch
+    config.plugins.push(new NodemonPlugin());
   }
   return config;
 };

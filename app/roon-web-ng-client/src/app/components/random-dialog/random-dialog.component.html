@@ -1,0 +1,29 @@
+<div class="random-dialog">
+  <h2>
+    <mat-icon fontIcon="shuffle" /> Random Album Filters
+  </h2>
+  <mat-dialog-content>
+    <div class="genres" *ngIf="$genres().length > 0; else loading">
+      <button
+        class="genre"
+        *ngFor="let g of $genres()"
+        mat-button
+        [color]="stateFor(g) === 'include' ? 'primary' : stateFor(g) === 'exclude' ? 'warn' : undefined"
+        (click)="toggle(g)"
+        [attr.aria-pressed]="stateFor(g) !== 'none'"
+      >
+        {{ g }}
+      </button>
+    </div>
+    <ng-template #loading>
+      <div class="loading">
+        <mat-icon fontIcon="hourglass_empty" /> Loading genres...
+      </div>
+    </ng-template>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button (click)="clearAll()">Clear</button>
+    <span class="spacer"></span>
+    <button mat-raised-button color="primary" (click)="playNow()">Play Random Now</button>
+  </mat-dialog-actions>
+</div>

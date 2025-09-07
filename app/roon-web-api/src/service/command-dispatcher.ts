@@ -20,6 +20,7 @@ import { executor as groupExecutor } from "./command-executor/group-command-exec
 import { executor as muteExecutor } from "./command-executor/mute-command-executor";
 import { executor as muteGroupedZoneExecutor } from "./command-executor/mute-grouped-zone-command-executor";
 import { executor as playFromHereExecutor } from "./command-executor/play-from-here-command-executor";
+import { executor as playRandomAlbumExecutor } from "./command-executor/play-random-album-command-executor";
 import { internalExecutor as queueBotCommandExecutor } from "./command-executor/queue-bot-internal-command-executor";
 import { executor as sharedConfigExecutor } from "./command-executor/shared-config-command-executor";
 import { executor as transferZoneExecutor } from "./command-executor/transfer-zone-command-executor";
@@ -54,6 +55,9 @@ const dispatch = (command: Command, controlChannel: Subject<CommandState>): stri
       break;
     case CommandType.TRANSFER_ZONE:
       executeCommand(command_id, command, findZone(command.data.zone_id), transferZoneExecutor, controlChannel);
+      break;
+    case CommandType.PLAY_RANDOM_ALBUM:
+      executeCommand(command_id, command, findZone(command.data.zone_id), playRandomAlbumExecutor, controlChannel);
       break;
     case CommandType.GROUP:
       executeCommand(command_id, command, roon.server(), groupExecutor, controlChannel);

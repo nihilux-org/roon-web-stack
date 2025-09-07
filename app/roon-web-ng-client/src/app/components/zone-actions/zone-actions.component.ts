@@ -6,20 +6,12 @@ import { FullScreenToggleComponent } from "@components/full-screen-toggle/full-s
 import { RoonBrowseDialogComponent } from "@components/roon-browse-dialog/roon-browse-dialog.component";
 import { SettingsDialogComponent } from "@components/settings-dialog/settings-dialog.component";
 import { ZoneQueueDialogComponent } from "@components/zone-queue-dialog/zone-queue-dialog.component";
-import {
-  Action,
-  ActionType,
-  CustomAction,
-  DisplayMode,
-  LayoutContext,
-  LoadAction,
-  SettingsDialogConfig,
-  SettingsDialogConfigBigFonts,
-} from "@model";
+import { Action, ActionType, CustomAction, DisplayMode, LayoutContext, LoadAction, SettingsDialogConfig, SettingsDialogConfigBigFonts } from "@model";
 import { DialogService } from "@services/dialog.service";
 import { FullscreenService } from "@services/fullscreen.service";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
+import { RandomDialogComponent } from "@components/random-dialog/random-dialog.component";
 
 @Component({
   selector: "nr-zone-actions",
@@ -66,6 +58,9 @@ export class ZoneActionsComponent {
         break;
       case ActionType.QUEUE:
         this.toggleDisplayQueueTrack();
+        break;
+      case ActionType.RANDOM:
+        this.openRandomDialog();
         break;
       case ActionType.CUSTOM:
         this.executeCustomAction(action);
@@ -153,5 +148,15 @@ export class ZoneActionsComponent {
         }
       });
     }
+  }
+
+  private openRandomDialog() {
+    this._dialogService.open(RandomDialogComponent, {
+      autoFocus: "button.genre:first-of-type",
+      height: "90svh",
+      maxHeight: "90svh",
+      width: "90svw",
+      maxWidth: "90svw",
+    });
   }
 }
