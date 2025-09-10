@@ -11,12 +11,39 @@
     gap: 8px;
     padding: 8px 0 16px;
   }
+  .genre.included {
+    color: var(--mat-sys-primary);
+    font-weight: 600;
+    text-decoration: underline;
+  }
+  .genre.excluded {
+    color: var(--mat-sys-error);
+    text-decoration: line-through;
+    font-weight: 500;
+  }
+  .genre.disabled {
+    opacity: 0.5;
+    text-decoration: none;
+  }
   .loading {
     display: flex;
     align-items: center;
     gap: 8px;
     color: rgba(0,0,0,.6);
   }
+  .sort-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0 8px;
+    .counts-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: .9rem;
+      opacity: .75;
+      .faded { opacity: .6; }
+    }
+  }
   .spacer { flex: 1 1 auto; }
 }
-

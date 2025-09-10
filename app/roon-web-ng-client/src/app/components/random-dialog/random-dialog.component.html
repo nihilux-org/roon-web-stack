@@ -3,16 +3,43 @@
     <mat-icon fontIcon="shuffle" /> Random Album Filters
   </h2>
   <mat-dialog-content>
+    <div class="sort-toggle">
+      <button mat-stroked-button color="primary" (click)="setSortAlpha()" [disabled]="$sortMode() === 'alpha'">
+        <mat-icon fontIcon="sort_by_alpha" /> A→Z
+      </button>
+      <button mat-stroked-button color="primary" (click)="setSortCount()" [disabled]="$sortMode() === 'count'">
+        <mat-icon fontIcon="stacked_bar_chart" /> Most albums
+      </button>
+      <div class="counts-status">
+        <ng-container *ngIf="$countsLoading(); else countsStatus">
+          <mat-icon fontIcon="hourglass_empty" /> Loading counts…
+        </ng-container>
+        <ng-template #countsStatus>
+          <ng-container *ngIf="$countsError(); else countsOk">
+            <mat-icon fontIcon="error_outline" /> Counts unavailable
+            <button mat-button (click)="retryCounts()">Retry</button>
+          </ng-container>
+          <ng-template #countsOk>
+            <span class="faded" *ngIf="$counts().size > 0">Counts loaded</span>
+          </ng-template>
+        </ng-template>
+      </div>
+      <span class="spacer"></span>
+    </div>
     <div class="genres" *ngIf="$genres().length > 0; else loading">
       <button
         class="genre"
-        *ngFor="let g of $genres()"
+        *ngFor="let g of $sortedGenres()"
         mat-button
-        [color]="stateFor(g) === 'include' ? 'primary' : undefined"
+        [class.included]="stateFor(g) === 'include'"
+        [class.excluded]="stateFor(g) === 'exclude'"
+        [disabled]="isDisabled(g)"
+        [class.disabled]="isDisabled(g)"
         (click)="toggle(g)"
         [attr.aria-pressed]="stateFor(g) !== 'none'"
       >
         {{ g }}
+        <ng-container *ngIf="countFor(g) as c"> ({{ c }}) </ng-container>
       </button>
     </div>
     <ng-template #loading>

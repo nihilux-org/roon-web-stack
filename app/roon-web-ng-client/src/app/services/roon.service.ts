@@ -34,6 +34,7 @@ import {
   Command,
   CommandState,
   FoundItemIndexResponse,
+  GenreAlbumCount,
   ItemIndexSearch,
   QueueState,
   RoonApiBrowseHierarchy,
@@ -77,6 +78,7 @@ export class RoonService {
   private readonly _apiBrowseCallbacks: Map<number, ApiResultCallback<RoonApiBrowseResponse>>;
   private readonly _apiLoadCallbacks: Map<number, ApiResultCallback<RoonApiBrowseLoadResponse>>;
   private readonly _apiFoundItemIndexCallbacks: Map<number, ApiResultCallback<FoundItemIndexResponse>>;
+  private readonly _apiGenreCountsCallbacks: Map<number, ApiResultCallback<GenreAlbumCount[]>>;
   private _workerApiRequestId: number;
   private _isStarted: boolean;
   private _outputCallback?: OutputCallback;
@@ -119,6 +121,7 @@ export class RoonService {
     this._apiBrowseCallbacks = new Map<number, ApiResultCallback<RoonApiBrowseResponse>>();
     this._apiLoadCallbacks = new Map<number, ApiResultCallback<RoonApiBrowseLoadResponse>>();
     this._apiFoundItemIndexCallbacks = new Map<number, ApiResultCallback<FoundItemIndexResponse>>();
+    this._apiGenreCountsCallbacks = new Map<number, ApiResultCallback<GenreAlbumCount[]>>();
     this._workerApiRequestId = 0;
     this._version = "unknown";
   }
@@ -362,6 +365,33 @@ export class RoonService {
     });
   };
 
+  genreCounts: () => Promise<GenreAlbumCount[]> = () => {
+    const worker = this.ensureStarted();
+    const id = this.nextWorkerApiRequestId();
+    const apiRequest = { id, type: "genre-counts" as const, data: undefined };
+
+    const workerPromise = new Promise<GenreAlbumCount[]>((resolve, reject) => {
+      const apiResultCallback: ApiResultCallback<GenreAlbumCount[]> = {
+        next: (data) => resolve(data),
+        error: (error) => reject(error),
+      };
+      this._apiGenreCountsCallbacks.set(id, apiResultCallback);
+      worker.postMessage({ event: "worker-api", data: apiRequest });
+    });
+
+    const clientId = this._settingsService.roonClientId();
+    const fetchPromise: Promise<GenreAlbumCount[]> | undefined = clientId
+      ? fetch(`/api/${clientId}/genre-counts`, { method: "GET" })
+          .then((r) => {
+            if (!r.ok) throw new Error(`status ${r.status}`);
+            return r.json() as Promise<GenreAlbumCount[]>;
+          })
+          .catch(() => Promise.reject("fallback-failed"))
+      : undefined;
+
+    return fetchPromise ? Promise.race([workerPromise, fetchPromise]) : workerPromise;
+  };
+
   findItemIndex: (itemIndexSearch: ItemIndexSearch) => Promise<FoundItemIndexResponse> = (
     itemIndexSearch: ItemIndexSearch
   ) => {
@@ -575,6 +605,9 @@ export class RoonService {
       case "found-item-index":
         this.onNumberApiResult(apiResultEvent);
         break;
+      case "genre-counts":
+        this.onGenreCountsApiResult(apiResultEvent as any);
+        break;
     }
   }
 
@@ -623,6 +656,18 @@ export class RoonService {
         callback.error(apiResult.error);
       }
       this._apiFoundItemIndexCallbacks.delete(apiResult.id);
+    }
+  }
+
+  private onGenreCountsApiResult(apiResult: { id: number; data?: GenreAlbumCount[]; error?: unknown }) {
+    const callback = this._apiGenreCountsCallbacks.get(apiResult.id);
+    if (callback) {
+      if (apiResult.data) {
+        callback.next(apiResult.data);
+      } else if (apiResult.error && callback.error) {
+        callback.error(apiResult.error);
+      }
+      this._apiGenreCountsCallbacks.delete(apiResult.id);
     }
   }
 

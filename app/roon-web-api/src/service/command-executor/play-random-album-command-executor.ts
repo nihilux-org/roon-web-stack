@@ -10,17 +10,27 @@ export const executor: CommandExecutor<PlayRandomAlbumCommand, FoundZone> = asyn
   // Reset browse state for a clean navigation
   await server.services.RoonApiBrowse.browse({ hierarchy, pop_all: true, set_display_offset: true });
 
-  const { included_genres } = command.data;
+  const { included_genres, excluded_genres } = command.data;
   let albumItem: SourcedItem | undefined;
+  const excludedKeys = await collectExcludedItemKeys(server, zone.zone_id, excluded_genres ?? []);
 
-  // Try honoring filters first
+  // Try honoring filters first (assume top-level genres; no deep traversal)
   if (included_genres && included_genres.length > 0) {
-    const shuffled = shuffleArray(included_genres.slice());
-    for (const g of shuffled) {
-      logger.debug("random: trying included genre '%s' (strict genres mode)", g);
-      albumItem = await pickRandomAlbumFromGenre(server, zone.zone_id, g);
-      if (!albumItem) logger.debug("random: no album found for included genre '%s'", g);
-      if (albumItem) break;
+    albumItem = await pickRandomAlbumFromGenresUnion(server, zone.zone_id, included_genres, excludedKeys);
+    if (!albumItem) {
+      // Fallback (generic, no Focus): try per-genre traversal under Genres hierarchy
+      const shuffled = shuffleArray(included_genres.slice());
+      for (const g of shuffled) {
+        const viaGenre = await pickRandomAlbumFromGenreExcluding(server, zone.zone_id, g, excludedKeys);
+        if (viaGenre) { albumItem = viaGenre; break; }
+      }
+      // Last resort: try Albums -> Focus path per-genre (may not be available on all cores)
+      if (!albumItem) {
+        for (const g of shuffled) {
+          const viaFocus = await pickRandomAlbumUsingFocus(server, zone.zone_id!, g);
+          if (viaFocus) { albumItem = viaFocus; break; }
+        }
+      }
     }
     if (!albumItem) {
       throw new Error("No albums found for the selected genres");
@@ -34,11 +44,15 @@ export const executor: CommandExecutor<PlayRandomAlbumCommand, FoundZone> = asyn
     if (!count || count <= 0) {
       throw new Error("No albums found to select from");
     }
-    const randomIndex = Math.floor(Math.random() * count);
-    const loadRandom = await server.services.RoonApiBrowse.load({ hierarchy: "albums", offset: randomIndex, count: 1 });
-    const item = loadRandom.items?.[0];
-    if (item) {
-      albumItem = { item, hierarchy: "albums" };
+    // rejection sampling to avoid excluded items
+    for (let attempt = 0; attempt < 60; attempt++) {
+      const randomIndex = Math.floor(Math.random() * count);
+      const loadRandom = await server.services.RoonApiBrowse.load({ hierarchy: "albums", offset: randomIndex, count: 1 });
+      const item = loadRandom.items?.[0];
+      if (item && (!item.item_key || !excludedKeys.has(item.item_key))) {
+        albumItem = { item, hierarchy: "albums" };
+        break;
+      }
     }
   }
 
@@ -98,6 +112,119 @@ export const executor: CommandExecutor<PlayRandomAlbumCommand, FoundZone> = asyn
   logger.debug("random: triggering action '%s'", preferred.title ?? preferred.item_key);
   await server.services.RoonApiBrowse.browse({ hierarchy: albumItem.hierarchy, item_key: preferred.item_key, zone_or_output_id: zone.zone_id });
 };
+
+/**
+ * Pick a random album from the union of Albums under the selected top-level genres.
+ * Assumptions per UI: genres provided are top-level; do not traverse nested trees.
+ */
+async function pickRandomAlbumFromGenresUnion(
+  server: FoundZone["server"],
+  zone_id: string | undefined,
+  genreTitles: string[],
+  excludedKeys: Set<string>
+): Promise<SourcedItem | undefined> {
+  const toKey = (s: string) => s.trim().toLowerCase();
+
+  // Build a map of top-level genre title -> item_key
+  const genresRoot = await server.services.RoonApiBrowse.browse({ hierarchy: "genres" });
+  const level = genresRoot.list?.level;
+  const total = genresRoot.list?.count ?? 0;
+  if (!level || !total || total <= 0) return undefined;
+
+  const titleToKey = new Map<string, string>();
+  const pageSize = 100;
+  for (let offset = 0; offset < total; offset += pageSize) {
+    const page = await server.services.RoonApiBrowse.load({ hierarchy: "genres", level, offset, count: pageSize });
+    for (const it of page.items) {
+      if (it.item_key && it.title) titleToKey.set(toKey(it.title), it.item_key);
+    }
+  }
+
+  type AlbumListRef = { title: string; albumsLevel: number; count: number; entryKey: string };
+  const lists: AlbumListRef[] = [];
+
+  // For each selected genre, find a list of albums (direct "Albums" or fallback via BFS) and capture its list level/count
+  for (const g of genreTitles) {
+    const key = titleToKey.get(toKey(g));
+    if (!key) continue;
+    const gb = await server.services.RoonApiBrowse.browse({ hierarchy: "genres", item_key: key, zone_or_output_id: zone_id });
+    const gl = await server.services.RoonApiBrowse.load({ hierarchy: "genres", level: gb.list?.level });
+    const lc = (s?: string) => (s ? s.toLowerCase() : "");
+    let albumsChild = gl.items.find((it) => lc(it.title) === "albums" && it.item_key);
+    if (!albumsChild) albumsChild = gl.items.find((it) => lc(it.title).includes("albums") && it.item_key);
+    if (albumsChild?.item_key) {
+      const ab = await server.services.RoonApiBrowse.browse({ hierarchy: "genres", item_key: albumsChild.item_key, zone_or_output_id: zone_id });
+      const al = await server.services.RoonApiBrowse.load({ hierarchy: "genres", level: ab.list?.level });
+      const count = al.list?.count ?? 0;
+      if (al.list?.level !== undefined && count > 0) {
+        lists.push({ title: g, albumsLevel: al.list.level!, count, entryKey: albumsChild.item_key });
+      }
+      continue;
+    }
+
+    // Fallback: BFS to find a non-action list that likely contains albums
+    type Node = { key: string; depth: number; title?: string };
+    const queue: Node[] = [];
+    const visited = new Set<string>();
+    for (const child of gl.items) {
+      if (child.item_key) queue.push({ key: child.item_key, depth: 1, title: child.title });
+    }
+    const looksAlbum = (t?: string) => !!t && (lc(t).includes("album") || lc(t).includes("recording") || lc(t).includes("release") || lc(t).includes("library"));
+    while (queue.length > 0) {
+      const { key: nodeKey, depth } = queue.shift()!;
+      if (visited.has(nodeKey) || depth > 6) continue;
+      visited.add(nodeKey);
+      const b = await server.services.RoonApiBrowse.browse({ hierarchy: "genres", item_key: nodeKey, zone_or_output_id: zone_id });
+      const l = await server.services.RoonApiBrowse.load({ hierarchy: "genres", level: b.list?.level });
+      if (l.list.hint !== "action_list") {
+        const c = l.list?.count ?? 0;
+        if (l.list?.level !== undefined && c > 0) {
+          lists.push({ title: g, albumsLevel: l.list.level!, count: c, entryKey: nodeKey });
+          break;
+        }
+      }
+      // expand
+      const prioritized: typeof l.items = [] as any;
+      const others: typeof l.items = [] as any;
+      for (const it of l.items) {
+        if (!it.item_key) continue;
+        if (looksAlbum(it.title)) prioritized.push(it); else others.push(it);
+      }
+      for (const it of [...prioritized, ...others]) queue.push({ key: it.item_key!, depth: depth + 1, title: it.title });
+    }
+  }
+
+  const grandTotal = lists.reduce((acc, l) => acc + l.count, 0);
+  if (grandTotal <= 0) {
+    logger.debug("random: union path found no album lists for genres=%s", JSON.stringify(genreTitles));
+    return undefined;
+  }
+
+  // Weighted random choice across union of albums in all selected genres
+  let r = Math.floor(Math.random() * grandTotal);
+  for (const l of lists) {
+    if (r < l.count) {
+      const pageOffset = Math.floor(r / 100) * 100;
+      // Ensure we are at the correct list by browsing to its entryKey before loading
+      const nb = await server.services.RoonApiBrowse.browse({ hierarchy: "genres", item_key: l.entryKey, zone_or_output_id: zone_id });
+      const base = await server.services.RoonApiBrowse.load({ hierarchy: "genres", level: nb.list?.level });
+      const page = await server.services.RoonApiBrowse.load({ hierarchy: "genres", level: base.list.level, offset: pageOffset, count: 100 });
+      const item = page.items[r - pageOffset];
+      if (item && (!item.item_key || !excludedKeys.has(item.item_key))) return { item, hierarchy: "genres" };
+      // rejection: pick again within same list
+      for (let tries = 0; tries < 30; tries++) {
+        const idx = Math.floor(Math.random() * l.count);
+        const po = Math.floor(idx / 100) * 100;
+        const pg = po === pageOffset ? page : await server.services.RoonApiBrowse.load({ hierarchy: "genres", level: base.list.level, offset: po, count: 100 });
+        const cand = pg.items[idx - po];
+        if (cand && (!cand.item_key || !excludedKeys.has(cand.item_key))) return { item: cand, hierarchy: "genres" };
+      }
+      return undefined;
+    }
+    r -= l.count;
+  }
+  return undefined;
+}
 
 async function selectGenre(
   server: FoundZone["server"],
@@ -275,6 +402,69 @@ async function pickRandomAlbumFromGenre(
   }
   logger.debug("random: genre '%s' no album list found after BFS", genreTitle);
   return undefined;
+}
+
+async function pickRandomAlbumFromGenreExcluding(
+  server: FoundZone["server"],
+  zone_id: string | undefined,
+  genreTitle: string,
+  excludedKeys: Set<string>
+): Promise<SourcedItem | undefined> {
+  const res = await pickRandomAlbumFromGenre(server, zone_id, genreTitle);
+  if (!res) return undefined;
+  if (!res.item.item_key || !excludedKeys.has(res.item.item_key)) return res;
+  // rejection: attempt a few more picks from the same genre
+  const item_key = await findGenreItemKey(server, genreTitle);
+  if (!item_key) return undefined;
+  const b = await server.services.RoonApiBrowse.browse({ hierarchy: "genres", item_key, zone_or_output_id: zone_id });
+  const l = await server.services.RoonApiBrowse.load({ hierarchy: "genres", level: b.list?.level });
+  for (let tries = 0; tries < 40; tries++) {
+    const item = await pickRandomFromLoadedList(server, l);
+    if (item && (!item.item_key || !excludedKeys.has(item.item_key))) return { item, hierarchy: "genres" };
+  }
+  return undefined;
+}
+
+async function collectExcludedItemKeys(
+  server: FoundZone["server"],
+  zone_id: string | undefined,
+  excludedGenres: string[]
+): Promise<Set<string>> {
+  const set = new Set<string>();
+  if (!excludedGenres || excludedGenres.length === 0) return set;
+  for (const g of excludedGenres) {
+    const item_key = await findGenreItemKey(server, g);
+    if (!item_key) continue;
+    const gb = await server.services.RoonApiBrowse.browse({ hierarchy: "genres", item_key, zone_or_output_id: zone_id });
+    const gl = await server.services.RoonApiBrowse.load({ hierarchy: "genres", level: gb.list?.level });
+    // Prefer Albums list if present
+    const lc = (s?: string) => (s ? s.toLowerCase() : "");
+    let albumsChild = gl.items.find((it) => lc(it.title) === "albums" && it.item_key) || gl.items.find((it) => lc(it.title)?.includes("albums") && it.item_key);
+    let targetLevel: number | undefined;
+    if (albumsChild?.item_key) {
+      const ab = await server.services.RoonApiBrowse.browse({ hierarchy: "genres", item_key: albumsChild.item_key, zone_or_output_id: zone_id });
+      const al = await server.services.RoonApiBrowse.load({ hierarchy: "genres", level: ab.list?.level });
+      targetLevel = al.list?.level;
+    } else {
+      targetLevel = gl.list?.level;
+    }
+    if (targetLevel === undefined) continue;
+    // iterate pages
+    let offset = 0;
+    const pageSize = 100;
+    // try to get count
+    let page = await server.services.RoonApiBrowse.load({ hierarchy: "genres", level: targetLevel, offset, count: pageSize });
+    const total = page.list?.count ?? page.items.length;
+    const addItems = (items: Item[]) => items.forEach((it) => it.item_key && set.add(it.item_key));
+    addItems(page.items ?? []);
+    for (offset = pageSize; offset < total; offset += pageSize) {
+      page = await server.services.RoonApiBrowse.load({ hierarchy: "genres", level: targetLevel, offset, count: pageSize });
+      addItems(page.items ?? []);
+      if (set.size > 5000) break;
+    }
+    if (set.size > 5000) break;
+  }
+  return set;
 }
 
 async function pickRandomFromLoadedList(

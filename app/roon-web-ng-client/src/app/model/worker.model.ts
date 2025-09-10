@@ -12,6 +12,7 @@ import {
   RoonApiBrowseLoadResponse,
   RoonApiBrowseResponse,
   RoonPath,
+  GenreAlbumCount,
   SharedConfig,
   ZoneState,
 } from "@nihilux/roon-web-model";
@@ -95,6 +96,10 @@ export interface FindItemIndexWorkerApiRequest extends WorkerApiRequest<{ itemIn
   type: "find-item-index";
 }
 
+export interface GenreCountsWorkerApiRequest extends WorkerApiRequest<void> {
+  type: "genre-counts";
+}
+
 export type RawWorkerApiRequest =
   | BrowseWorkerApiRequest
   | LoadWorkerApiRequest
@@ -103,7 +108,8 @@ export type RawWorkerApiRequest =
   | LoadPathWorkerApiRequest
   | PreviousWorkerApiRequest
   | NavigateWorkerApiRequest
-  | FindItemIndexWorkerApiRequest;
+  | FindItemIndexWorkerApiRequest
+  | GenreCountsWorkerApiRequest;
 
 export interface WorkerApiRequestMessage extends WorkerMessage<RawWorkerApiRequest> {
   event: "worker-api";
@@ -174,18 +180,23 @@ export interface FoundItemIndexApiResult extends ApiResult<FoundItemIndexRespons
   type: "found-item-index";
 }
 
+export interface GenreCountsApiResult extends ApiResult<GenreAlbumCount[]> {
+  type: "genre-counts";
+}
+
 export type RawApiResult =
   | BrowseApiResult
   | LoadApiResult
   | CommandApiResult
   | VersionApiResult
-  | FoundItemIndexApiResult;
+  | FoundItemIndexApiResult
+  | GenreCountsApiResult;
 
 export interface ApiResultWorkerEvent extends WorkerEvent<RawApiResult> {
   event: "apiResult";
 }
 
-export interface ApiResultCallback<U extends RoonApiBrowseResponse | RoonApiBrowseLoadResponse | string | number> {
+export interface ApiResultCallback<U> {
   next: (u: U) => void;
   error?: (error: unknown) => void;
 }

@@ -31,6 +31,7 @@ export interface RoonWebClient {
   load: (options: ClientRoonApiBrowseLoadOptions) => Promise<RoonApiBrowseLoadResponse>;
   loadPath: (zone_id: string, path: RoonPath) => Promise<RoonApiBrowseLoadResponse>;
   findItemIndex: (itemIndexSearch: ItemIndexSearch) => Promise<FoundItemIndexResponse>;
+  getGenreCounts: () => Promise<GenreAlbumCount[]>;
   version: () => string;
 }
 
@@ -70,4 +71,9 @@ export interface ItemIndexSearch {
 
 export interface FoundItemIndexResponse extends RoonApiBrowseLoadResponse {
   itemIndex: number;
+}
+
+export interface GenreAlbumCount {
+  title: string;
+  count: number;
 }

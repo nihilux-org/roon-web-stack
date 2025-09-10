@@ -85,15 +85,19 @@ Choose one, and voilà:
 
 ### Random by Genre
 
-The Actions bar includes a `Random` button that lets you pick a random album from one or more genres.
+The Actions bar includes a `Random` button that lets you pick a random album with include/exclude filters and live genre counts.
 
-- Open `Random`, tap a genre to include it (tap again to clear). Select multiple genres to union their albums.
-- The backend uses a strict, deterministic path: `Genres -> <included genre> -> Albums`, then picks a random album from that list. When multiple genres are selected, results are effectively joined across the chosen genres.
-- The selection avoids starting radio and disables `auto_radio` before playing.
-- If strict selection fails (no albums), a small notice dialog appears with the reason.
+- Tri‑state selection: tap once to `Include`, twice to `Exclude`, third time to clear. You can select multiple includes and/or excludes.
+- Zero‑count genres are disabled to avoid useless selections. A→Z and `Most albums` sorting is available; your sort preference persists.
+- Backend logic:
+  - Builds a union of albums across all included genres, then subtracts albums from excluded genres, and picks randomly. Albums tagged into multiple included genres remain eligible (union, not unique per genre).
+  - If no includes are set, all albums are eligible except those in any excluded genre.
+  - Exclusions are enforced even when albums appear in multiple lists.
+  - Playback avoids radio actions and disables `auto_radio` before playing.
+- Genre counts: derived from the `Genres` screen subtitles (e.g., `NN Artists, MM Albums`). Counts are cached in the API for 1 day; tune with `GENRE_COUNT_TTL_MS`.
 
-Notes on grouped genres
-- On some Roon cores, certain genres (e.g., `Latin`) are grouped under parent containers (e.g., `International`). Resolution is generic: the app scans top‑level genres and, if needed, searches under each container for a matching child.
+Notes on grouped/nested genres
+- Some cores put genres under containers (e.g., `International`). Resolution is generic: the app browses top‑level `Genres` and, when needed, searches children with a short BFS to locate the Albums list.
 
 <img style="max-width: 800px;" alt="Selecting a zone at first app launch" src="./doc/images/selecting-zone-at-first-launch.gif">
 
@@ -167,6 +171,12 @@ If you want to build locally the `docker` image, you'll have to manually copy th
 yarn build
 cp -r ./app/roon-web-ng-client/dist/roon-web-ng-client/browser ./app/roon-web-api/bin/web
 docker build -t nihiluxorg/roon-web-stack:latest -f app/roon-web-api/Dockerfile .
+```
+On Apple Silicon but targeting an x86_64 Synology, build an `amd64` image and load it locally with `buildx`:
+```bash
+docker buildx create --use 2>/dev/null || true
+docker buildx build --platform linux/amd64 -t nihiluxorg/roon-web-stack:amd64 -f app/roon-web-api/Dockerfile --load .
+docker save -o roon-web-stack-amd64.tar nihiluxorg/roon-web-stack:amd64
 ```
 Then you can use the `docker` command already mentioned to launch your freshly built image.
 

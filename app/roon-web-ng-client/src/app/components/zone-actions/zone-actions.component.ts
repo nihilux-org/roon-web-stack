@@ -90,6 +90,16 @@ export class ZoneActionsComponent {
     this._dialogService.open(RoonBrowseDialogComponent, config);
   }
 
+  private openRandomDialog() {
+    this._dialogService.open(RandomDialogComponent, {
+      autoFocus: "button.genre:first-of-type",
+      height: "90svh",
+      maxHeight: "90svh",
+      width: "90svw",
+      maxWidth: "90svw",
+    });
+  }
+
   openSettingsDialog() {
     const config = this._settingsService.isBigFonts()() ? SettingsDialogConfigBigFonts : SettingsDialogConfig;
     this._dialogService.open(SettingsDialogComponent, {
@@ -150,13 +160,4 @@ export class ZoneActionsComponent {
     }
   }
 
-  private openRandomDialog() {
-    this._dialogService.open(RandomDialogComponent, {
-      autoFocus: "button.genre:first-of-type",
-      height: "90svh",
-      maxHeight: "90svh",
-      width: "90svw",
-      maxWidth: "90svw",
-    });
-  }
 }

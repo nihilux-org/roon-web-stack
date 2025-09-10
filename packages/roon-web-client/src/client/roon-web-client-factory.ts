@@ -20,6 +20,7 @@ import {
   RoonStateListener,
   RoonWebClient,
   RoonWebClientFactory,
+  GenreAlbumCount,
   SharedConfig,
   SharedConfigListener,
   ZoneState,
@@ -376,6 +377,25 @@ class InternalRoonWebClient implements RoonWebClient {
       list: itemIndexSearch.list,
       offset: 0,
     };
+  };
+
+  getGenreCounts: () => Promise<GenreAlbumCount[]> = async () => {
+    const doFetch = async () => {
+      const clientPath = this.ensureStared();
+      const url = new URL(`${clientPath}/genre-counts`, this._apiHost);
+      const req = new Request(url, { method: "GET", mode: "cors" });
+      return fetch(req);
+    };
+    let res = await doFetch();
+    if (res.status === 403) {
+      this._mustRefresh = true;
+      await this.refresh();
+      res = await doFetch();
+    }
+    if (!res.ok) {
+      throw new Error(`genre-counts failed with status ${res.status}`);
+    }
+    return (await res.json()) as GenreAlbumCount[];
   };
 
   private _findItemIndex: (

@@ -335,6 +335,26 @@ const onApiRequest = (apiRequest: RawWorkerApiRequest): void => {
           postApiResult(message);
         });
       break;
+    case "genre-counts":
+      void _roonClient
+        .getGenreCounts()
+        .then((data) => {
+          const message = {
+            type: "genre-counts" as const,
+            id,
+            data,
+          };
+          postApiResult(message);
+        })
+        .catch((error: unknown) => {
+          const message = {
+            type: "genre-counts" as const,
+            id,
+            error,
+          };
+          postApiResult(message as any);
+        });
+      break;
   }
 };
 
