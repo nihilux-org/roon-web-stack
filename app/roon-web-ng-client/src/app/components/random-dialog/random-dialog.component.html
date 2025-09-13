@@ -26,6 +26,11 @@
       </div>
       <span class="spacer"></span>
     </div>
+    <div class="legend" aria-hidden="true">
+      <span class="chip included">Include</span>
+      <span class="chip excluded">Exclude</span>
+      <span class="chip disabled">0 albums</span>
+    </div>
     <div class="genres" *ngIf="$genres().length > 0; else loading">
       <button
         class="genre"

@@ -16,7 +16,8 @@ export const executor: CommandExecutor<PlayRandomAlbumCommand, FoundZone> = asyn
 
   // Try honoring filters first (assume top-level genres; no deep traversal)
   if (included_genres && included_genres.length > 0) {
-    albumItem = await pickRandomAlbumFromGenresUnion(server, zone.zone_id, included_genres, excludedKeys);
+    // Unique-union: deduplicate across included genres before picking
+    albumItem = await pickRandomAlbumFromUniqueUnion(server, zone.zone_id, included_genres, excludedKeys);
     if (!albumItem) {
       // Fallback (generic, no Focus): try per-genre traversal under Genres hierarchy
       const shuffled = shuffleArray(included_genres.slice());
@@ -512,6 +513,67 @@ async function pickRandomFromLoadedListGeneric(
     count: 100,
   });
   return page.items[randomIndex - pageOffset];
+}
+
+async function pickRandomAlbumFromUniqueUnion(
+  server: FoundZone["server"],
+  zone_id: string | undefined,
+  includes: string[],
+  excludedKeys: Set<string>
+): Promise<SourcedItem | undefined> {
+  // Build a de-duplicated set of album item_keys across included genres, then pick uniformly
+  const toKey = (s: string) => s.trim().toLowerCase();
+  // Resolve top-level map of genre titles -> item_key
+  const genresRoot = await server.services.RoonApiBrowse.browse({ hierarchy: "genres" });
+  const level = genresRoot.list?.level;
+  const total = genresRoot.list?.count ?? 0;
+  if (level === undefined || total <= 0) return undefined;
+  const titleToKey = new Map<string, string>();
+  const pageSize = 100;
+  for (let offset = 0; offset < total; offset += pageSize) {
+    const page = await server.services.RoonApiBrowse.load({ hierarchy: "genres", level, offset, count: pageSize });
+    for (const it of page.items) if (it.item_key && it.title) titleToKey.set(toKey(it.title), it.item_key);
+  }
+
+  const libTokens = ["in library", "library", "my library", "bibliothèque", "bibliotheque", "bibliotheek", "collection"];
+  const lc = (s?: string) => (s ? s.toLowerCase() : "");
+  const hasLibToken = (t?: string) => !!t && libTokens.some((w) => lc(t).includes(w));
+
+  const keys = new Set<string>();
+  for (const g of includes) {
+    const gk = titleToKey.get(toKey(g));
+    if (!gk) continue;
+    const gb = await server.services.RoonApiBrowse.browse({ hierarchy: "genres", item_key: gk, zone_or_output_id: zone_id });
+    const gl = await server.services.RoonApiBrowse.load({ hierarchy: "genres", level: gb.list?.level });
+    let target = gl.items.find((i) => i.item_key && hasLibToken(i.title));
+    if (!target) target = gl.items.find((i) => i.item_key && (lc(i.title) === "albums" || lc(i.title)?.includes("albums")));
+    // Determine a level to load from; if no explicit child, use current level
+    let targetLevel = gl.list?.level;
+    if (target?.item_key) {
+      const tb = await server.services.RoonApiBrowse.browse({ hierarchy: "genres", item_key: target.item_key, zone_or_output_id: zone_id });
+      const tl = await server.services.RoonApiBrowse.load({ hierarchy: "genres", level: tb.list?.level });
+      targetLevel = tl.list?.level;
+    }
+    if (targetLevel === undefined) continue;
+    // Iterate pages to collect album keys
+    let offset = 0;
+    const first = await server.services.RoonApiBrowse.load({ hierarchy: "genres", level: targetLevel, offset, count: pageSize });
+    const totalItems = first.list?.count ?? first.items.length;
+    const add = (items: Item[]) => items.forEach((it) => { if (it.item_key && !excludedKeys.has(it.item_key)) keys.add(it.item_key); });
+    add(first.items ?? []);
+    for (offset = pageSize; offset < totalItems; offset += pageSize) {
+      const page = await server.services.RoonApiBrowse.load({ hierarchy: "genres", level: targetLevel, offset, count: pageSize });
+      add(page.items ?? []);
+      if (keys.size > 20000) break;
+    }
+    if (keys.size > 20000) break;
+  }
+  if (keys.size === 0) return undefined;
+  // Uniform pick from the set
+  const idx = Math.floor(Math.random() * keys.size);
+  const arr = Array.from(keys);
+  const pickedKey = arr[idx];
+  return { item: { item_key: pickedKey } as Item, hierarchy: "genres" };
 }
 
 async function pickRandomAlbumViaSearch(
