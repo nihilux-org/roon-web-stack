@@ -63,5 +63,20 @@
     .chip.excluded { background: var(--mat-sys-error-container, #ffdad4); color: var(--mat-sys-on-error-container, #410002); }
     .chip.disabled { background: rgba(128,128,128,.2); color: rgba(128,128,128,.9); }
   }
+  .presets {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0 8px;
+    .preset-list {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 4px 8px;
+      align-items: center;
+      .label { opacity: .75; margin-right: 4px; }
+      .preset { border-radius: 999px; }
+      .preset-delete { opacity: .7; }
+    }
+  }
   .spacer { flex: 1 1 auto; }
 }

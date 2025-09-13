@@ -31,6 +31,22 @@
       <span class="chip excluded">Exclude</span>
       <span class="chip disabled">0 albums</span>
     </div>
+    <div class="presets">
+      <button mat-stroked-button color="primary" (click)="savePresetPrompt()">
+        <mat-icon fontIcon="save" /> Save preset
+      </button>
+      <div class="preset-list" *ngIf="$presets().length > 0">
+        <span class="label">Presets:</span>
+        @for (p of $presets(); let i = $index; track p.name) {
+          <button mat-button class="preset" (click)="applyPreset(i)" [attr.aria-label]="'Apply preset ' + p.name">
+            <mat-icon fontIcon="play_circle" /> {{ p.name }}
+          </button>
+          <button mat-icon-button class="preset-delete" (click)="deletePreset(i)" [attr.aria-label]="'Delete preset ' + p.name">
+            <mat-icon fontIcon="delete" />
+          </button>
+        }
+      </div>
+    </div>
     <div class="genres" *ngIf="$genres().length > 0; else loading">
       <button
         class="genre"

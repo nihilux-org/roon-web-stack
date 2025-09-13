@@ -88,6 +88,7 @@ Choose one, and voilà:
 The Actions bar includes a `Random` button that lets you pick a random album with include/exclude filters and live genre counts.
 
 - Tri‑state selection: tap once to `Include`, twice to `Exclude`, third time to clear. You can select multiple includes and/or excludes.
+- Presets: save your current include/exclude selection as a named preset, recall it with one click, or delete it. Presets are stored locally in the browser.
 - Zero‑count genres are disabled to avoid useless selections. A→Z and `Most albums` sorting is available; your sort preference persists.
 - Backend logic:
   - Builds a union of albums across all included genres, then subtracts albums from excluded genres, and picks randomly. Albums tagged into multiple included genres remain eligible (union, not unique per genre).

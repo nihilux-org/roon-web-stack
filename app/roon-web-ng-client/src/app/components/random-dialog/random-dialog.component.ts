@@ -9,6 +9,7 @@ import { SettingsService } from "@services/settings.service";
 
 type GenreState = "none" | "include" | "exclude";
 type SortMode = "alpha" | "count";
+type RandomPreset = { name: string; include: string[]; exclude: string[] };
 
 @Component({
   selector: "nr-random-dialog",
@@ -30,6 +31,7 @@ export class RandomDialogComponent {
   readonly $countsError: WritableSignal<boolean>;
   readonly $sortMode: WritableSignal<SortMode>;
   readonly $sortedGenres: Signal<string[]>;
+  readonly $presets: WritableSignal<RandomPreset[]>;
 
   constructor() {
     this.$zoneId = this._settings.displayedZoneId();
@@ -51,6 +53,7 @@ export class RandomDialogComponent {
     });
     this.loadSavedStates();
     this.loadSavedSortMode();
+    this.$presets = signal(this.loadPresetsFromLocalStorage());
     this.loadGenres();
     this.loadCounts();
   }
@@ -209,5 +212,60 @@ export class RandomDialogComponent {
     if (raw === "alpha" || raw === "count") {
       this.$sortMode.set(raw);
     }
+  }
+
+  // Presets
+  savePresetPrompt() {
+    const { include, exclude } = this.computeFilters();
+    if (include.length === 0 && exclude.length === 0) return;
+    // eslint-disable-next-line no-alert
+    const name = (window.prompt("Preset name", "New preset") ?? "").trim();
+    if (!name) return;
+    const next = [...this.$presets()];
+    const idx = next.findIndex((p) => p.name.toLowerCase() === name.toLowerCase());
+    const preset: RandomPreset = { name, include: [...include].sort(), exclude: [...exclude].sort() };
+    if (idx >= 0) next[idx] = preset; else next.push(preset);
+    this.$presets.set(next);
+    this.savePresetsToLocalStorage();
+  }
+
+  applyPreset(idx: number) {
+    const p = this.$presets()[idx];
+    if (!p) return;
+    const map = new Map<string, GenreState>();
+    // Only mark genres that exist in the loaded list
+    const setIfExists = (arr: string[], state: GenreState) => {
+      for (const g of arr) {
+        if (this.$genres().includes(g)) map.set(g, state);
+      }
+    };
+    setIfExists(p.include, "include");
+    setIfExists(p.exclude, "exclude");
+    this.$states.set(map);
+    this.saveStates();
+  }
+
+  deletePreset(idx: number) {
+    const next = [...this.$presets()];
+    if (idx >= 0 && idx < next.length) {
+      next.splice(idx, 1);
+      this.$presets.set(next);
+      this.savePresetsToLocalStorage();
+    }
+  }
+
+  private loadPresetsFromLocalStorage(): RandomPreset[] {
+    try {
+      const raw = localStorage.getItem("nr.RANDOM_PRESETS");
+      if (!raw) return [];
+      const arr = JSON.parse(raw) as RandomPreset[];
+      return Array.isArray(arr) ? arr : [];
+    } catch {
+      return [];
+    }
+  }
+
+  private savePresetsToLocalStorage() {
+    localStorage.setItem("nr.RANDOM_PRESETS", JSON.stringify(this.$presets()));
   }
 }
