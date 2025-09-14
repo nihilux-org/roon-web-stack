@@ -198,7 +198,10 @@ export default fastifyPlugin(async (app) => {
 });
 
 // Simple in-memory cache for genre counts
-type GenreAlbumCount = { title: string; count: number };
+interface GenreAlbumCount {
+  title: string;
+  count: number;
+}
 let _genreCountsCache: { at: number; data: GenreAlbumCount[] } | undefined;
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 const GENRE_COUNT_TTL_MS = Number(process.env.GENRE_COUNT_TTL_MS ?? ONE_DAY_MS);
@@ -218,7 +221,12 @@ async function computeTopLevelGenreCounts(): Promise<GenreAlbumCount[]> {
   const session = "genre-counts";
   // Compute counts via Genres subtitles and direct genre browse (no Focus)
   // Reset and browse top-level genres to avoid stale session state
-  await server.services.RoonApiBrowse.browse({ hierarchy: "genres", pop_all: true, set_display_offset: true, multi_session_key: session });
+  await server.services.RoonApiBrowse.browse({
+    hierarchy: "genres",
+    pop_all: true,
+    set_display_offset: true,
+    multi_session_key: session,
+  });
   const root = await server.services.RoonApiBrowse.browse({ hierarchy: "genres", multi_session_key: session });
   const level = root.list?.level;
   const total = root.list?.count ?? 0;
@@ -230,7 +238,13 @@ async function computeTopLevelGenreCounts(): Promise<GenreAlbumCount[]> {
   const subtitleCountByTitle = new Map<string, number>();
   const pageSize = 100;
   for (let offset = 0; offset < total; offset += pageSize) {
-    const page = await server.services.RoonApiBrowse.load({ hierarchy: "genres", level, offset, count: pageSize, multi_session_key: session });
+    const page = await server.services.RoonApiBrowse.load({
+      hierarchy: "genres",
+      level,
+      offset,
+      count: pageSize,
+      multi_session_key: session,
+    });
     for (const it of page.items) {
       if (it.item_key && it.title) {
         items.push({ title: it.title, item_key: it.item_key });
@@ -270,8 +284,16 @@ async function computeTopLevelGenreCounts(): Promise<GenreAlbumCount[]> {
         continue;
       }
       try {
-        const gb = await server.services.RoonApiBrowse.browse({ hierarchy: "genres", item_key: it.item_key, multi_session_key: session });
-        const gl = await server.services.RoonApiBrowse.load({ hierarchy: "genres", level: gb.list?.level, multi_session_key: session });
+        const gb = await server.services.RoonApiBrowse.browse({
+          hierarchy: "genres",
+          item_key: it.item_key,
+          multi_session_key: session,
+        });
+        const gl = await server.services.RoonApiBrowse.load({
+          hierarchy: "genres",
+          level: gb.list?.level,
+          multi_session_key: session,
+        });
         // Prefer an "In Library"/"Library" albums child if present
         const libTokens = [
           "in library",
@@ -283,48 +305,82 @@ async function computeTopLevelGenreCounts(): Promise<GenreAlbumCount[]> {
           "collection",
         ];
         const hasLibToken = (t?: string) => !!t && libTokens.some((w) => lc(t).includes(w));
-        let libChild = gl.items.find((i) => i.item_key && hasLibToken(i.title));
+        const libChild = gl.items.find((i) => i.item_key && hasLibToken(i.title));
         if (libChild?.item_key) {
-          const lb = await server.services.RoonApiBrowse.browse({ hierarchy: "genres", item_key: libChild.item_key, multi_session_key: session });
-          const ll = await server.services.RoonApiBrowse.load({ hierarchy: "genres", level: lb.list?.level, multi_session_key: session });
+          const lb = await server.services.RoonApiBrowse.browse({
+            hierarchy: "genres",
+            item_key: libChild.item_key,
+            multi_session_key: session,
+          });
+          const ll = await server.services.RoonApiBrowse.load({
+            hierarchy: "genres",
+            level: lb.list?.level,
+            multi_session_key: session,
+          });
           out[my] = { title: it.title, count: ll.list?.count ?? 0 };
           continue;
         }
         // Fast path: explicit Albums child (may include non-library on some cores)
-        let albumsChild = gl.items.find((i) => lc(i.title) === "albums" && i.item_key) || gl.items.find((i) => lc(i.title)?.includes("albums") && i.item_key);
+        const albumsChild =
+          gl.items.find((i) => lc(i.title) === "albums" && i.item_key) ||
+          gl.items.find((i) => lc(i.title)?.includes("albums") && i.item_key);
         if (albumsChild?.item_key) {
-          const ab = await server.services.RoonApiBrowse.browse({ hierarchy: "genres", item_key: albumsChild.item_key, multi_session_key: session });
-          const al = await server.services.RoonApiBrowse.load({ hierarchy: "genres", level: ab.list?.level, multi_session_key: session });
+          const ab = await server.services.RoonApiBrowse.browse({
+            hierarchy: "genres",
+            item_key: albumsChild.item_key,
+            multi_session_key: session,
+          });
+          const al = await server.services.RoonApiBrowse.load({
+            hierarchy: "genres",
+            level: ab.list?.level,
+            multi_session_key: session,
+          });
           out[my] = { title: it.title, count: al.list?.count ?? 0 };
           continue;
         }
 
         // Fallback: breadth-first search up to depth 4 for a non-action list that likely contains albums/recordings
-        type Node = { key: string; depth: number; title?: string };
-        const queue: Node[] = [];
+        interface BfsNode {
+          key: string;
+          depth: number;
+          title?: string;
+        }
+        const queue: BfsNode[] = [];
         const visited = new Set<string>();
         for (const child of gl.items) {
-          if (child.item_key && !isAvoid(child.title)) queue.push({ key: child.item_key, depth: 1, title: child.title });
+          if (child.item_key && !isAvoid(child.title))
+            queue.push({ key: child.item_key, depth: 1, title: child.title });
         }
         let foundCount = 0;
         while (queue.length > 0) {
           const { key, depth, title } = queue.shift()!;
           if (visited.has(key) || depth > 4) continue;
           visited.add(key);
-          const b = await server.services.RoonApiBrowse.browse({ hierarchy: "genres", item_key: key, multi_session_key: session });
-          const l = await server.services.RoonApiBrowse.load({ hierarchy: "genres", level: b.list?.level, multi_session_key: session });
+          const b = await server.services.RoonApiBrowse.browse({
+            hierarchy: "genres",
+            item_key: key,
+            multi_session_key: session,
+          });
+          const l = await server.services.RoonApiBrowse.load({
+            hierarchy: "genres",
+            level: b.list?.level,
+            multi_session_key: session,
+          });
           if (l.list.hint !== "action_list") {
             // likely a list of albums/recordings; take its count
             foundCount = l.list?.count ?? 0;
             break;
           }
           // continue BFS; prioritize nodes that look like album lists
-          const looksAlbum = (t?: string) => !!t && (hasLibToken(t) || lc(t).includes("album") || lc(t).includes("recording") || lc(t).includes("release"));
+          const looksAlbum = (t?: string) =>
+            !!t &&
+            (hasLibToken(t) || lc(t).includes("album") || lc(t).includes("recording") || lc(t).includes("release"));
           const prioritized: typeof l.items = [] as any;
           const others: typeof l.items = [] as any;
           for (const ch of l.items) {
             if (!ch.item_key || isAvoid(ch.title)) continue;
-            if (looksAlbum(ch.title)) prioritized.push(ch); else others.push(ch);
+            if (looksAlbum(ch.title)) prioritized.push(ch);
+            else others.push(ch);
           }
           const next = [...prioritized, ...others];
           for (const n of next) {
@@ -341,7 +397,7 @@ async function computeTopLevelGenreCounts(): Promise<GenreAlbumCount[]> {
   for (let i = 0; i < concurrency; i++) workers.push(worker());
   await Promise.all(workers);
   // Sort by count desc, then title asc
-  out.sort((a, b) => (b.count - a.count) || a.title.localeCompare(b.title));
+  out.sort((a, b) => b.count - a.count || a.title.localeCompare(b.title));
   return out;
 }
 

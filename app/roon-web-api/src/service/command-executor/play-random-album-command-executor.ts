@@ -1,7 +1,16 @@
-import { CommandExecutor, FoundZone, Item, PlayRandomAlbumCommand, RoonApiBrowseLoadResponse } from "@nihilux/roon-web-model";
 import { logger } from "@infrastructure";
+import {
+  CommandExecutor,
+  FoundZone,
+  Item,
+  PlayRandomAlbumCommand,
+  RoonApiBrowseLoadResponse,
+} from "@nihilux/roon-web-model";
 
-type SourcedItem = { item: Item; hierarchy: "albums" | "genres" };
+interface SourcedItem {
+  item: Item;
+  hierarchy: "albums" | "genres";
+}
 
 export const executor: CommandExecutor<PlayRandomAlbumCommand, FoundZone> = async (command, foundZone) => {
   const { server, zone } = foundZone;
@@ -23,13 +32,19 @@ export const executor: CommandExecutor<PlayRandomAlbumCommand, FoundZone> = asyn
       const shuffled = shuffleArray(included_genres.slice());
       for (const g of shuffled) {
         const viaGenre = await pickRandomAlbumFromGenreExcluding(server, zone.zone_id, g, excludedKeys);
-        if (viaGenre) { albumItem = viaGenre; break; }
+        if (viaGenre) {
+          albumItem = viaGenre;
+          break;
+        }
       }
       // Last resort: try Albums -> Focus path per-genre (may not be available on all cores)
       if (!albumItem) {
         for (const g of shuffled) {
-          const viaFocus = await pickRandomAlbumUsingFocus(server, zone.zone_id!, g);
-          if (viaFocus) { albumItem = viaFocus; break; }
+          const viaFocus = await pickRandomAlbumUsingFocus(server, zone.zone_id, g);
+          if (viaFocus) {
+            albumItem = viaFocus;
+            break;
+          }
         }
       }
     }
@@ -48,7 +63,11 @@ export const executor: CommandExecutor<PlayRandomAlbumCommand, FoundZone> = asyn
     // rejection sampling to avoid excluded items
     for (let attempt = 0; attempt < 60; attempt++) {
       const randomIndex = Math.floor(Math.random() * count);
-      const loadRandom = await server.services.RoonApiBrowse.load({ hierarchy: "albums", offset: randomIndex, count: 1 });
+      const loadRandom = await server.services.RoonApiBrowse.load({
+        hierarchy: "albums",
+        offset: randomIndex,
+        count: 1,
+      });
       const item = loadRandom.items?.[0];
       if (item && (!item.item_key || !excludedKeys.has(item.item_key))) {
         albumItem = { item, hierarchy: "albums" };
@@ -57,7 +76,7 @@ export const executor: CommandExecutor<PlayRandomAlbumCommand, FoundZone> = asyn
     }
   }
 
-  if (!albumItem || !albumItem.item.item_key) {
+  if (!albumItem?.item.item_key) {
     throw new Error("Random album item not found or has no item_key");
   }
 
@@ -67,10 +86,13 @@ export const executor: CommandExecutor<PlayRandomAlbumCommand, FoundZone> = asyn
   try {
     const albumBrowseResponse = await server.services.RoonApiBrowse.browse({
       hierarchy: albumItem.hierarchy,
-      item_key: albumItem.item.item_key!,
+      item_key: albumItem.item.item_key,
       zone_or_output_id: zone.zone_id,
     });
-    actionsLoad = await server.services.RoonApiBrowse.load({ hierarchy: albumItem.hierarchy, level: albumBrowseResponse.list?.level });
+    actionsLoad = await server.services.RoonApiBrowse.load({
+      hierarchy: albumItem.hierarchy,
+      level: albumBrowseResponse.list?.level,
+    });
   } catch (e) {
     // Fallback: refresh path Genres -> <genre> -> Albums and locate by title
     logger.debug("random: album item_key invalid, retrying via title match");
@@ -80,15 +102,24 @@ export const executor: CommandExecutor<PlayRandomAlbumCommand, FoundZone> = asyn
       item_key: refreshed.item_key!,
       zone_or_output_id: zone.zone_id,
     });
-    actionsLoad = await server.services.RoonApiBrowse.load({ hierarchy: albumItem.hierarchy, level: albumBrowseResponse.list?.level });
+    actionsLoad = await server.services.RoonApiBrowse.load({
+      hierarchy: albumItem.hierarchy,
+      level: albumBrowseResponse.list?.level,
+    });
   }
 
   // If actions are nested, navigate to reach the action_list
   if (actionsLoad.list.hint !== "action_list") {
     const maybeNested = actionsLoad.items.find((i) => i.hint === "action_list" && i.item_key);
     if (maybeNested?.item_key) {
-      const nested = await server.services.RoonApiBrowse.browse({ hierarchy: albumItem.hierarchy, item_key: maybeNested.item_key });
-      actionsLoad = await server.services.RoonApiBrowse.load({ hierarchy: albumItem.hierarchy, level: nested.list?.level });
+      const nested = await server.services.RoonApiBrowse.browse({
+        hierarchy: albumItem.hierarchy,
+        item_key: maybeNested.item_key,
+      });
+      actionsLoad = await server.services.RoonApiBrowse.load({
+        hierarchy: albumItem.hierarchy,
+        level: nested.list?.level,
+      });
     }
   }
 
@@ -111,7 +142,11 @@ export const executor: CommandExecutor<PlayRandomAlbumCommand, FoundZone> = asyn
   } catch {}
   // Trigger the action on the target zone
   logger.debug("random: triggering action '%s'", preferred.title ?? preferred.item_key);
-  await server.services.RoonApiBrowse.browse({ hierarchy: albumItem.hierarchy, item_key: preferred.item_key, zone_or_output_id: zone.zone_id });
+  await server.services.RoonApiBrowse.browse({
+    hierarchy: albumItem.hierarchy,
+    item_key: preferred.item_key,
+    zone_or_output_id: zone.zone_id,
+  });
 };
 
 /**
@@ -141,46 +176,72 @@ async function pickRandomAlbumFromGenresUnion(
     }
   }
 
-  type AlbumListRef = { title: string; albumsLevel: number; count: number; entryKey: string };
+  interface AlbumListRef {
+    title: string;
+    albumsLevel: number;
+    count: number;
+    entryKey: string;
+  }
   const lists: AlbumListRef[] = [];
 
   // For each selected genre, find a list of albums (direct "Albums" or fallback via BFS) and capture its list level/count
   for (const g of genreTitles) {
     const key = titleToKey.get(toKey(g));
     if (!key) continue;
-    const gb = await server.services.RoonApiBrowse.browse({ hierarchy: "genres", item_key: key, zone_or_output_id: zone_id });
+    const gb = await server.services.RoonApiBrowse.browse({
+      hierarchy: "genres",
+      item_key: key,
+      zone_or_output_id: zone_id,
+    });
     const gl = await server.services.RoonApiBrowse.load({ hierarchy: "genres", level: gb.list?.level });
     const lc = (s?: string) => (s ? s.toLowerCase() : "");
     let albumsChild = gl.items.find((it) => lc(it.title) === "albums" && it.item_key);
     if (!albumsChild) albumsChild = gl.items.find((it) => lc(it.title).includes("albums") && it.item_key);
     if (albumsChild?.item_key) {
-      const ab = await server.services.RoonApiBrowse.browse({ hierarchy: "genres", item_key: albumsChild.item_key, zone_or_output_id: zone_id });
+      const ab = await server.services.RoonApiBrowse.browse({
+        hierarchy: "genres",
+        item_key: albumsChild.item_key,
+        zone_or_output_id: zone_id,
+      });
       const al = await server.services.RoonApiBrowse.load({ hierarchy: "genres", level: ab.list?.level });
       const count = al.list?.count ?? 0;
       if (al.list?.level !== undefined && count > 0) {
-        lists.push({ title: g, albumsLevel: al.list.level!, count, entryKey: albumsChild.item_key });
+        lists.push({ title: g, albumsLevel: al.list.level, count, entryKey: albumsChild.item_key });
       }
       continue;
     }
 
     // Fallback: BFS to find a non-action list that likely contains albums
-    type Node = { key: string; depth: number; title?: string };
+    interface Node {
+      key: string;
+      depth: number;
+      title?: string;
+    }
     const queue: Node[] = [];
     const visited = new Set<string>();
     for (const child of gl.items) {
       if (child.item_key) queue.push({ key: child.item_key, depth: 1, title: child.title });
     }
-    const looksAlbum = (t?: string) => !!t && (lc(t).includes("album") || lc(t).includes("recording") || lc(t).includes("release") || lc(t).includes("library"));
+    const looksAlbum = (t?: string) =>
+      !!t &&
+      (lc(t).includes("album") ||
+        lc(t).includes("recording") ||
+        lc(t).includes("release") ||
+        lc(t).includes("library"));
     while (queue.length > 0) {
       const { key: nodeKey, depth } = queue.shift()!;
       if (visited.has(nodeKey) || depth > 6) continue;
       visited.add(nodeKey);
-      const b = await server.services.RoonApiBrowse.browse({ hierarchy: "genres", item_key: nodeKey, zone_or_output_id: zone_id });
+      const b = await server.services.RoonApiBrowse.browse({
+        hierarchy: "genres",
+        item_key: nodeKey,
+        zone_or_output_id: zone_id,
+      });
       const l = await server.services.RoonApiBrowse.load({ hierarchy: "genres", level: b.list?.level });
       if (l.list.hint !== "action_list") {
         const c = l.list?.count ?? 0;
         if (l.list?.level !== undefined && c > 0) {
-          lists.push({ title: g, albumsLevel: l.list.level!, count: c, entryKey: nodeKey });
+          lists.push({ title: g, albumsLevel: l.list.level, count: c, entryKey: nodeKey });
           break;
         }
       }
@@ -189,9 +250,11 @@ async function pickRandomAlbumFromGenresUnion(
       const others: typeof l.items = [] as any;
       for (const it of l.items) {
         if (!it.item_key) continue;
-        if (looksAlbum(it.title)) prioritized.push(it); else others.push(it);
+        if (looksAlbum(it.title)) prioritized.push(it);
+        else others.push(it);
       }
-      for (const it of [...prioritized, ...others]) queue.push({ key: it.item_key!, depth: depth + 1, title: it.title });
+      for (const it of [...prioritized, ...others])
+        queue.push({ key: it.item_key!, depth: depth + 1, title: it.title });
     }
   }
 
@@ -207,16 +270,33 @@ async function pickRandomAlbumFromGenresUnion(
     if (r < l.count) {
       const pageOffset = Math.floor(r / 100) * 100;
       // Ensure we are at the correct list by browsing to its entryKey before loading
-      const nb = await server.services.RoonApiBrowse.browse({ hierarchy: "genres", item_key: l.entryKey, zone_or_output_id: zone_id });
+      const nb = await server.services.RoonApiBrowse.browse({
+        hierarchy: "genres",
+        item_key: l.entryKey,
+        zone_or_output_id: zone_id,
+      });
       const base = await server.services.RoonApiBrowse.load({ hierarchy: "genres", level: nb.list?.level });
-      const page = await server.services.RoonApiBrowse.load({ hierarchy: "genres", level: base.list.level, offset: pageOffset, count: 100 });
+      const page = await server.services.RoonApiBrowse.load({
+        hierarchy: "genres",
+        level: base.list.level,
+        offset: pageOffset,
+        count: 100,
+      });
       const item = page.items[r - pageOffset];
       if (item && (!item.item_key || !excludedKeys.has(item.item_key))) return { item, hierarchy: "genres" };
       // rejection: pick again within same list
       for (let tries = 0; tries < 30; tries++) {
         const idx = Math.floor(Math.random() * l.count);
         const po = Math.floor(idx / 100) * 100;
-        const pg = po === pageOffset ? page : await server.services.RoonApiBrowse.load({ hierarchy: "genres", level: base.list.level, offset: po, count: 100 });
+        const pg =
+          po === pageOffset
+            ? page
+            : await server.services.RoonApiBrowse.load({
+                hierarchy: "genres",
+                level: base.list.level,
+                offset: po,
+                count: 100,
+              });
         const cand = pg.items[idx - po];
         if (cand && (!cand.item_key || !excludedKeys.has(cand.item_key))) return { item: cand, hierarchy: "genres" };
       }
@@ -261,10 +341,7 @@ async function selectGenre(
   return undefined;
 }
 
-async function findGenreItemKey(
-  server: FoundZone["server"],
-  genreTitle: string
-): Promise<string | undefined> {
+async function findGenreItemKey(server: FoundZone["server"], genreTitle: string): Promise<string | undefined> {
   const wanted = genreTitle.trim().toLowerCase();
   // Reset genres browse state to avoid stale sessions
   await server.services.RoonApiBrowse.browse({ hierarchy: "genres", pop_all: true, set_display_offset: true });
@@ -292,7 +369,12 @@ async function findGenreItemKey(
   // Generic grouped-genres fallback: shallow BFS under each top-level genre container
   try {
     const root = await server.services.RoonApiBrowse.browse({ hierarchy: "genres" });
-    const first = await server.services.RoonApiBrowse.load({ hierarchy: "genres", level: root.list?.level, offset: 0, count: 200 });
+    const first = await server.services.RoonApiBrowse.load({
+      hierarchy: "genres",
+      level: root.list?.level,
+      offset: 0,
+      count: 200,
+    });
     for (const top of first.items) {
       if (!top.item_key) continue;
       const b = await server.services.RoonApiBrowse.browse({ hierarchy: "genres", item_key: top.item_key });
@@ -317,7 +399,11 @@ async function pickRandomAlbumFromGenre(
   const item_key = await findGenreItemKey(server, genreTitle);
   if (!item_key) return undefined;
   // open the genre
-  const genreBrowse = await server.services.RoonApiBrowse.browse({ hierarchy: "genres", item_key, zone_or_output_id: zone_id });
+  const genreBrowse = await server.services.RoonApiBrowse.browse({
+    hierarchy: "genres",
+    item_key,
+    zone_or_output_id: zone_id,
+  });
   const firstLoad = await server.services.RoonApiBrowse.load({ hierarchy: "genres", level: genreBrowse.list?.level });
 
   // Fast-path: if there is an explicit "Albums" entry under the genre, use it directly
@@ -337,9 +423,18 @@ async function pickRandomAlbumFromGenre(
     }
   }
   if (albumsChild?.item_key) {
-    const b = await server.services.RoonApiBrowse.browse({ hierarchy: "genres", item_key: albumsChild.item_key, zone_or_output_id: zone_id });
+    const b = await server.services.RoonApiBrowse.browse({
+      hierarchy: "genres",
+      item_key: albumsChild.item_key,
+      zone_or_output_id: zone_id,
+    });
     const l = await server.services.RoonApiBrowse.load({ hierarchy: "genres", level: b.list?.level });
-    logger.debug("random: genre '%s' -> Albums list.hint=%s, count=%s", genreTitle, String(l.list?.hint ?? 'undefined'), String(l.list?.count ?? '?'));
+    logger.debug(
+      "random: genre '%s' -> Albums list.hint=%s, count=%s",
+      genreTitle,
+      String(l.list?.hint ?? "undefined"),
+      String(l.list?.count ?? "?")
+    );
     const directItems = l.items ?? [];
     if (directItems.length > 0) {
       const idx = Math.floor(Math.random() * directItems.length);
@@ -357,13 +452,28 @@ async function pickRandomAlbumFromGenre(
   }
 
   // Breadth-first search up to depth 4 to find a list of albums/items
-  type Node = { key: string; depth: number; title?: string };
+  interface Node {
+    key: string;
+    depth: number;
+    title?: string;
+  }
   const queue: Node[] = [];
   const visited = new Set<string>();
   const lower = (s?: string) => (s ? s.toLowerCase() : "");
   const g = lower(genreTitle);
 
-  const avoid = ["composer", "composers", "composition", "compositions", "artist", "artists", "performer", "performers", "works", "work"];
+  const avoid = [
+    "composer",
+    "composers",
+    "composition",
+    "compositions",
+    "artist",
+    "artists",
+    "performer",
+    "performers",
+    "works",
+    "work",
+  ];
   const isAvoid = (t?: string) => !!t && avoid.some((w) => lower(t).includes(w));
 
   // Seed queue with candidates from first level
@@ -436,14 +546,24 @@ async function collectExcludedItemKeys(
   for (const g of excludedGenres) {
     const item_key = await findGenreItemKey(server, g);
     if (!item_key) continue;
-    const gb = await server.services.RoonApiBrowse.browse({ hierarchy: "genres", item_key, zone_or_output_id: zone_id });
+    const gb = await server.services.RoonApiBrowse.browse({
+      hierarchy: "genres",
+      item_key,
+      zone_or_output_id: zone_id,
+    });
     const gl = await server.services.RoonApiBrowse.load({ hierarchy: "genres", level: gb.list?.level });
     // Prefer Albums list if present
     const lc = (s?: string) => (s ? s.toLowerCase() : "");
-    let albumsChild = gl.items.find((it) => lc(it.title) === "albums" && it.item_key) || gl.items.find((it) => lc(it.title)?.includes("albums") && it.item_key);
+    const albumsChild =
+      gl.items.find((it) => lc(it.title) === "albums" && it.item_key) ||
+      gl.items.find((it) => lc(it.title)?.includes("albums") && it.item_key);
     let targetLevel: number | undefined;
     if (albumsChild?.item_key) {
-      const ab = await server.services.RoonApiBrowse.browse({ hierarchy: "genres", item_key: albumsChild.item_key, zone_or_output_id: zone_id });
+      const ab = await server.services.RoonApiBrowse.browse({
+        hierarchy: "genres",
+        item_key: albumsChild.item_key,
+        zone_or_output_id: zone_id,
+      });
       const al = await server.services.RoonApiBrowse.load({ hierarchy: "genres", level: ab.list?.level });
       targetLevel = al.list?.level;
     } else {
@@ -454,12 +574,22 @@ async function collectExcludedItemKeys(
     let offset = 0;
     const pageSize = 100;
     // try to get count
-    let page = await server.services.RoonApiBrowse.load({ hierarchy: "genres", level: targetLevel, offset, count: pageSize });
+    let page = await server.services.RoonApiBrowse.load({
+      hierarchy: "genres",
+      level: targetLevel,
+      offset,
+      count: pageSize,
+    });
     const total = page.list?.count ?? page.items.length;
     const addItems = (items: Item[]) => items.forEach((it) => it.item_key && set.add(it.item_key));
     addItems(page.items ?? []);
     for (offset = pageSize; offset < total; offset += pageSize) {
-      page = await server.services.RoonApiBrowse.load({ hierarchy: "genres", level: targetLevel, offset, count: pageSize });
+      page = await server.services.RoonApiBrowse.load({
+        hierarchy: "genres",
+        level: targetLevel,
+        offset,
+        count: pageSize,
+      });
       addItems(page.items ?? []);
       if (set.size > 5000) break;
     }
@@ -535,7 +665,15 @@ async function pickRandomAlbumFromUniqueUnion(
     for (const it of page.items) if (it.item_key && it.title) titleToKey.set(toKey(it.title), it.item_key);
   }
 
-  const libTokens = ["in library", "library", "my library", "bibliothèque", "bibliotheque", "bibliotheek", "collection"];
+  const libTokens = [
+    "in library",
+    "library",
+    "my library",
+    "bibliothèque",
+    "bibliotheque",
+    "bibliotheek",
+    "collection",
+  ];
   const lc = (s?: string) => (s ? s.toLowerCase() : "");
   const hasLibToken = (t?: string) => !!t && libTokens.some((w) => lc(t).includes(w));
 
@@ -543,26 +681,48 @@ async function pickRandomAlbumFromUniqueUnion(
   for (const g of includes) {
     const gk = titleToKey.get(toKey(g));
     if (!gk) continue;
-    const gb = await server.services.RoonApiBrowse.browse({ hierarchy: "genres", item_key: gk, zone_or_output_id: zone_id });
+    const gb = await server.services.RoonApiBrowse.browse({
+      hierarchy: "genres",
+      item_key: gk,
+      zone_or_output_id: zone_id,
+    });
     const gl = await server.services.RoonApiBrowse.load({ hierarchy: "genres", level: gb.list?.level });
     let target = gl.items.find((i) => i.item_key && hasLibToken(i.title));
-    if (!target) target = gl.items.find((i) => i.item_key && (lc(i.title) === "albums" || lc(i.title)?.includes("albums")));
+    if (!target)
+      target = gl.items.find((i) => i.item_key && (lc(i.title) === "albums" || lc(i.title)?.includes("albums")));
     // Determine a level to load from; if no explicit child, use current level
     let targetLevel = gl.list?.level;
     if (target?.item_key) {
-      const tb = await server.services.RoonApiBrowse.browse({ hierarchy: "genres", item_key: target.item_key, zone_or_output_id: zone_id });
+      const tb = await server.services.RoonApiBrowse.browse({
+        hierarchy: "genres",
+        item_key: target.item_key,
+        zone_or_output_id: zone_id,
+      });
       const tl = await server.services.RoonApiBrowse.load({ hierarchy: "genres", level: tb.list?.level });
       targetLevel = tl.list?.level;
     }
     if (targetLevel === undefined) continue;
     // Iterate pages to collect album keys
     let offset = 0;
-    const first = await server.services.RoonApiBrowse.load({ hierarchy: "genres", level: targetLevel, offset, count: pageSize });
+    const first = await server.services.RoonApiBrowse.load({
+      hierarchy: "genres",
+      level: targetLevel,
+      offset,
+      count: pageSize,
+    });
     const totalItems = first.list?.count ?? first.items.length;
-    const add = (items: Item[]) => items.forEach((it) => { if (it.item_key && !excludedKeys.has(it.item_key)) keys.add(it.item_key); });
+    const add = (items: Item[]) =>
+      items.forEach((it) => {
+        if (it.item_key && !excludedKeys.has(it.item_key)) keys.add(it.item_key);
+      });
     add(first.items ?? []);
     for (offset = pageSize; offset < totalItems; offset += pageSize) {
-      const page = await server.services.RoonApiBrowse.load({ hierarchy: "genres", level: targetLevel, offset, count: pageSize });
+      const page = await server.services.RoonApiBrowse.load({
+        hierarchy: "genres",
+        level: targetLevel,
+        offset,
+        count: pageSize,
+      });
       add(page.items ?? []);
       if (keys.size > 20000) break;
     }
@@ -584,21 +744,34 @@ async function pickRandomAlbumViaSearch(
   logger.debug("random: using Search fallback for '%s'", query);
   const lower = (s?: string) => (s ? s.toLowerCase() : "");
   await server.services.RoonApiBrowse.browse({ hierarchy: "search", pop_all: true, set_display_offset: true });
-  const b0 = await server.services.RoonApiBrowse.browse({ hierarchy: "browse", input: query, zone_or_output_id: zone_id });
-  let l0 = await server.services.RoonApiBrowse.load({ hierarchy: "browse", level: b0.list?.level });
+  const b0 = await server.services.RoonApiBrowse.browse({
+    hierarchy: "browse",
+    input: query,
+    zone_or_output_id: zone_id,
+  });
+  const l0 = await server.services.RoonApiBrowse.load({ hierarchy: "browse", level: b0.list?.level });
   // BFS through search results to find an album list
-  type Node = { key: string; depth: number; title?: string };
+  interface Node {
+    key: string;
+    depth: number;
+    title?: string;
+  }
   const queue: Node[] = [];
   const visited = new Set<string>();
   for (const it of l0.items) {
     if (it.item_key) queue.push({ key: it.item_key, depth: 1, title: it.title });
   }
-  const isAlbumsToken = (t?: string) => !!t && (lower(t).includes("album") || lower(t).includes("recording") || lower(t).includes("release"));
+  const isAlbumsToken = (t?: string) =>
+    !!t && (lower(t).includes("album") || lower(t).includes("recording") || lower(t).includes("release"));
   while (queue.length > 0) {
     const { key, depth, title } = queue.shift()!;
     if (visited.has(key) || depth > 6) continue;
     visited.add(key);
-    const b = await server.services.RoonApiBrowse.browse({ hierarchy: "browse", item_key: key, zone_or_output_id: zone_id });
+    const b = await server.services.RoonApiBrowse.browse({
+      hierarchy: "browse",
+      item_key: key,
+      zone_or_output_id: zone_id,
+    });
     const l = await server.services.RoonApiBrowse.load({ hierarchy: "browse", level: b.list?.level });
     if (l.list.hint !== "action_list") {
       if (isAlbumsToken(title)) {
@@ -630,19 +803,20 @@ async function pickRandomAlbumUsingFocus(
   // reset albums
   await server.services.RoonApiBrowse.browse({ hierarchy: "albums", pop_all: true, set_display_offset: true });
   const albumsBrowse = await server.services.RoonApiBrowse.browse({ hierarchy: "albums", zone_or_output_id: zone_id });
-  let albumsLoad = await server.services.RoonApiBrowse.load({ hierarchy: "albums", level: albumsBrowse.list?.level });
+  const albumsLoad = await server.services.RoonApiBrowse.load({ hierarchy: "albums", level: albumsBrowse.list?.level });
   logTitles("albums/root", albumsLoad);
 
   // Find and open Focus
-  const focusLoad = (await openActionByTokens(server, "albums", albumsLoad, ["focus"], zone_id))
-    ?? (await openActionByTokens(server, "albums", albumsLoad, ["filter"], zone_id))
-    ?? (await openActionByTokens(server, "albums", albumsLoad, ["filters"], zone_id))
-    ?? (await openActionByTokens(server, "albums", albumsLoad, ["browser filters"], zone_id))
-    ?? (await openActionByTokens(server, "albums", albumsLoad, ["fokus"], zone_id)) // common localized variants
-    ?? (await openActionByTokens(server, "albums", albumsLoad, ["filteren"], zone_id))
-    ?? (await openActionByTokens(server, "albums", albumsLoad, ["filtre"], zone_id))
-    ?? (await openActionByTokens(server, "albums", albumsLoad, ["filtro"], zone_id))
-    ?? (await openActionByTokens(server, "albums", albumsLoad, ["gen"], zone_id));
+  const focusLoad =
+    (await openActionByTokens(server, "albums", albumsLoad, ["focus"], zone_id)) ??
+    (await openActionByTokens(server, "albums", albumsLoad, ["filter"], zone_id)) ??
+    (await openActionByTokens(server, "albums", albumsLoad, ["filters"], zone_id)) ??
+    (await openActionByTokens(server, "albums", albumsLoad, ["browser filters"], zone_id)) ??
+    (await openActionByTokens(server, "albums", albumsLoad, ["fokus"], zone_id)) ?? // common localized variants
+    (await openActionByTokens(server, "albums", albumsLoad, ["filteren"], zone_id)) ??
+    (await openActionByTokens(server, "albums", albumsLoad, ["filtre"], zone_id)) ??
+    (await openActionByTokens(server, "albums", albumsLoad, ["filtro"], zone_id)) ??
+    (await openActionByTokens(server, "albums", albumsLoad, ["gen"], zone_id));
   if (!focusLoad) {
     logger.debug("random: Focus not found under Albums");
     logTitles("albums/candidates-for-focus", albumsLoad);
@@ -650,17 +824,18 @@ async function pickRandomAlbumUsingFocus(
   }
 
   // Open Genres inside Focus
-  const genresLoad = (await openActionByTokens(server, "albums", focusLoad, ["genre"], zone_id))
-    ?? (await openActionByTokens(server, "albums", focusLoad, ["genres"], zone_id))
-    ?? (await openActionByTokens(server, "albums", focusLoad, ["stijl"], zone_id))
-    ?? (await openActionByTokens(server, "albums", focusLoad, ["stijl", "genres"], zone_id))
-    ?? (await openActionByTokens(server, "albums", focusLoad, ["genre", "focus"], zone_id))
-    ?? (await openActionByTokens(server, "albums", focusLoad, ["category"], zone_id))
-    ?? (await openActionByTokens(server, "albums", focusLoad, ["categories"], zone_id))
-    ?? (await openActionByTokens(server, "albums", focusLoad, ["style"], zone_id))
-    ?? (await openActionByTokens(server, "albums", focusLoad, ["styles"], zone_id))
-    ?? (await openActionByTokens(server, "albums", focusLoad, ["tag"], zone_id))
-    ?? (await openActionByTokens(server, "albums", focusLoad, ["tags"], zone_id));
+  const genresLoad =
+    (await openActionByTokens(server, "albums", focusLoad, ["genre"], zone_id)) ??
+    (await openActionByTokens(server, "albums", focusLoad, ["genres"], zone_id)) ??
+    (await openActionByTokens(server, "albums", focusLoad, ["stijl"], zone_id)) ??
+    (await openActionByTokens(server, "albums", focusLoad, ["stijl", "genres"], zone_id)) ??
+    (await openActionByTokens(server, "albums", focusLoad, ["genre", "focus"], zone_id)) ??
+    (await openActionByTokens(server, "albums", focusLoad, ["category"], zone_id)) ??
+    (await openActionByTokens(server, "albums", focusLoad, ["categories"], zone_id)) ??
+    (await openActionByTokens(server, "albums", focusLoad, ["style"], zone_id)) ??
+    (await openActionByTokens(server, "albums", focusLoad, ["styles"], zone_id)) ??
+    (await openActionByTokens(server, "albums", focusLoad, ["tag"], zone_id)) ??
+    (await openActionByTokens(server, "albums", focusLoad, ["tags"], zone_id));
   if (!genresLoad) {
     logger.debug("random: Genres not found inside Focus");
     logTitles("albums/focus-items", focusLoad);
@@ -676,18 +851,25 @@ async function pickRandomAlbumUsingFocus(
   }
 
   // Look for Apply and trigger it
-  const applied = (await triggerActionByTokens(server, "albums", selected, ["apply"], zone_id))
-    || (await triggerActionByTokens(server, "albums", selected, ["done"], zone_id))
-    || (await triggerActionByTokens(server, "albums", selected, ["ok"], zone_id))
-    || (await triggerActionByTokens(server, "albums", selected, ["apply", "focus"], zone_id));
+  const applied =
+    (await triggerActionByTokens(server, "albums", selected, ["apply"], zone_id)) ||
+    (await triggerActionByTokens(server, "albums", selected, ["done"], zone_id)) ||
+    (await triggerActionByTokens(server, "albums", selected, ["ok"], zone_id)) ||
+    (await triggerActionByTokens(server, "albums", selected, ["apply", "focus"], zone_id));
   if (!applied) {
     logger.debug("random: Apply not found after selecting genre '%s'", genreTitle);
     return undefined;
   }
 
   // We should be back to a filtered albums list now
-  const afterApplyBrowse = await server.services.RoonApiBrowse.browse({ hierarchy: "albums", zone_or_output_id: zone_id });
-  let afterApplyLoad = await server.services.RoonApiBrowse.load({ hierarchy: "albums", level: afterApplyBrowse.list?.level });
+  const afterApplyBrowse = await server.services.RoonApiBrowse.browse({
+    hierarchy: "albums",
+    zone_or_output_id: zone_id,
+  });
+  let afterApplyLoad = await server.services.RoonApiBrowse.load({
+    hierarchy: "albums",
+    level: afterApplyBrowse.list?.level,
+  });
   logTitles("albums/after-apply", afterApplyLoad);
   if (afterApplyLoad.list.hint === "action_list") {
     // find action that leads to items
@@ -702,7 +884,12 @@ async function pickRandomAlbumUsingFocus(
   if (!total || total <= 0) return undefined;
   const randomIndex = Math.floor(Math.random() * total);
   const pageOffset = Math.floor(randomIndex / 100) * 100;
-  const page = await server.services.RoonApiBrowse.load({ hierarchy: "albums", level: afterApplyLoad.list.level, offset: pageOffset, count: 100 });
+  const page = await server.services.RoonApiBrowse.load({
+    hierarchy: "albums",
+    level: afterApplyLoad.list.level,
+    offset: pageOffset,
+    count: 100,
+  });
   return { item: page.items[randomIndex - pageOffset], hierarchy: "albums" };
 }
 
@@ -714,7 +901,11 @@ async function openActionByTokens(
   zone_id?: string
 ): Promise<RoonApiBrowseLoadResponse | undefined> {
   const lower = (s?: string) => (s ? s.toLowerCase() : "");
-  type Node = { key: string; depth: number; title?: string };
+  interface Node {
+    key: string;
+    depth: number;
+    title?: string;
+  }
   const queue: Node[] = [];
   const visited = new Set<string>();
   for (const it of startLoad.items) {
@@ -747,7 +938,11 @@ async function selectItemByExactTitle(
   zone_id?: string
 ): Promise<RoonApiBrowseLoadResponse | undefined> {
   const wanted = title.trim().toLowerCase();
-  type Node = { key: string; depth: number; title?: string };
+  interface Node {
+    key: string;
+    depth: number;
+    title?: string;
+  }
   const queue: Node[] = [];
   const visited = new Set<string>();
   for (const it of startLoad.items) {
@@ -779,7 +974,11 @@ async function triggerActionByTokens(
   zone_id?: string
 ): Promise<boolean> {
   const lower = (s?: string) => (s ? s.toLowerCase() : "");
-  type Node = { key: string; depth: number; title?: string };
+  interface Node {
+    key: string;
+    depth: number;
+    title?: string;
+  }
   const queue: Node[] = [];
   const visited = new Set<string>();
   for (const it of startLoad.items) {
@@ -822,28 +1021,39 @@ function shuffleArray<T>(arr: T[]): T[] {
   return arr;
 }
 
-
 async function reselectAlbumByTitle(
   server: FoundZone["server"],
   zone_id: string,
   selected: SourcedItem
 ): Promise<{ item_key?: string }> {
-  const titleLc = (selected.item.title ?? '').trim().toLowerCase();
+  const titleLc = (selected.item.title ?? "").trim().toLowerCase();
   // reopen genre -> albums
-  const genreBrowse = await server.services.RoonApiBrowse.browse({ hierarchy: "genres", pop_all: true, set_display_offset: true });
+  await server.services.RoonApiBrowse.browse({
+    hierarchy: "genres",
+    pop_all: true,
+    set_display_offset: true,
+  });
   const root = await server.services.RoonApiBrowse.browse({ hierarchy: "genres" });
   const level = root.list?.level;
   const genres = await server.services.RoonApiBrowse.load({ hierarchy: "genres", level });
   // Try to find the genre node containing the current album list title via contains match on the previously used genre title is not tracked here; best effort: scan for Albums child and find title
   for (const g of genres.items) {
     if (!g.item_key) continue;
-    const gb = await server.services.RoonApiBrowse.browse({ hierarchy: "genres", item_key: g.item_key, zone_or_output_id: zone_id });
+    const gb = await server.services.RoonApiBrowse.browse({
+      hierarchy: "genres",
+      item_key: g.item_key,
+      zone_or_output_id: zone_id,
+    });
     const gl = await server.services.RoonApiBrowse.load({ hierarchy: "genres", level: gb.list?.level });
-    const albumsChild = gl.items.find((it) => (it.title ?? '').toLowerCase().includes('albums') && it.item_key);
+    const albumsChild = gl.items.find((it) => (it.title ?? "").toLowerCase().includes("albums") && it.item_key);
     if (!albumsChild?.item_key) continue;
-    const ab = await server.services.RoonApiBrowse.browse({ hierarchy: "genres", item_key: albumsChild.item_key, zone_or_output_id: zone_id });
+    const ab = await server.services.RoonApiBrowse.browse({
+      hierarchy: "genres",
+      item_key: albumsChild.item_key,
+      zone_or_output_id: zone_id,
+    });
     const al = await server.services.RoonApiBrowse.load({ hierarchy: "genres", level: ab.list?.level });
-    const match = al.items.find((it) => (it.title ?? '').trim().toLowerCase() === titleLc);
+    const match = al.items.find((it) => (it.title ?? "").trim().toLowerCase() === titleLc);
     if (match?.item_key) return { item_key: match.item_key };
   }
   return { item_key: selected.item.item_key };
