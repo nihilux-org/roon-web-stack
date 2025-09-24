@@ -3645,7 +3645,7 @@ __metadata:
     eslint-plugin-promise: "npm:7.2.1"
     eslint-plugin-simple-import-sort: "npm:12.1.1"
     eslint-plugin-unused-imports: "npm:4.2.0"
-    fast-equals: "npm:5.2.2"
+    fast-equals: "npm:5.3.0"
     jsdom: "npm:27.0.0"
     jsdom-testing-mocks: "npm:1.16.0"
     nanoid: "npm:3.3.11"
@@ -8428,10 +8428,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-equals@npm:5.2.2":
-  version: 5.2.2
-  resolution: "fast-equals@npm:5.2.2"
-  checksum: 10c0/2bfeac6317a8959a00e2134749323557e5df6dea3af24e4457297733eace8ce4313fcbca2cf4532f3a6792607461e80442cd8d3af148d5c2e4e98ad996d6e5b5
+"fast-equals@npm:5.3.0":
+  version: 5.3.0
+  resolution: "fast-equals@npm:5.3.0"
+  checksum: 10c0/11876b841195c9206cd7804b7399a540f99c5e91c4e7238a0832a231643c79fab35ac1901ae1851063a698b660ca103cc56cd0b58a364a53c832ad193e20a980
   languageName: node
   linkType: hard
 
