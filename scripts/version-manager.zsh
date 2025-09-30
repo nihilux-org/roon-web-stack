@@ -32,7 +32,7 @@ packages_json=(
 )
 
 infrastructure_file="${root_directory}"/app/roon-web-api/src/infrastructure/roon-extension.ts
-infrastructure_version=$(cat $infrastructure_file | grep -e "export const extension_version")
+infrastructure_version=$(cat < "${infrastructure_file}" | grep -e "export const extension_version")
 infrastructure_version=${infrastructure_version#*\"}
 infrastructure_version=${infrastructure_version%\"*}
 
@@ -45,6 +45,23 @@ done
 
 printf "%s%-55s%s\n" "${fg_bold[green]}" "current version in api infrastructure:" "${reset_color}";
 printf "%s%-55s%s\n" "${fg[blue]}" "${infrastructure_version}" "${reset_color}"
+
+printf "%s%-55s%s\n" "${fg_bold[green]}" "checking the git branch of the repository:" "${reset_color}";
+branch=$(git branch --show-current)
+if [[ $branch = "main" ]]; then
+  printf "%s%-55s%s\n" "${fg[blue]}" "on main branch, moving on" "${reset_color}"
+else
+  printf "%s%-55s%s\n" "${fg[red]}" "not on main branch, stopping now" "${reset_color}"
+  exit 0;
+fi
+
+printf "%s%-55s%s\n" "${fg_bold[green]}" "checking the git state of the repository:" "${reset_color}";
+if [[ -z "$(git status --porcelain)" ]]; then
+  printf "%s%-55s%s\n" "${fg[blue]}" "git state is clean, moving on" "${reset_color}"
+else
+  printf "%s%-55s%s\n" "${fg[red]}" "there are changes in the git repo, stopping now" "${reset_color}"
+  exit 0;
+fi
 
 if (( $#flag_beta && $#flag_release )); then
   printf "%s%-55s%s\n" "${fg[red]}" "both beta and release flags, this is invalid" "${reset_color}"
@@ -71,6 +88,11 @@ elif (( $#flag_beta )); then
     done
     sed -i.bak 's/const extension_version = ".*"/const extension_version = "'"${new_version}"'-beta-1"/' "$infrastructure_file" && rm -f "$infrastructure_file".bak
   fi
+  printf "%s%-55s%s\n" "${fg_bold[green]}" "creating the chore branch, commiting and pushing:" "${reset_color}"
+  git checkout -b "chore/bump-beta-version"
+  git add -A
+  git commit -m "chore: bump beta version"
+  git push -u origin "chore/bump-beta-version"
 elif (( $#flag_release )); then
   printf "%s%-55s%s\n" "${fg_bold[green]}" "preparing a new release version:" "${reset_color}"
   if [[ $infrastructure_version = *"-beta-"* ]]; then
@@ -87,4 +109,9 @@ elif (( $#flag_release )); then
     done
     sed -i.bak 's/const extension_version = ".*"/const extension_version = "'"${new_version}"'"/' "$infrastructure_file" && rm -f "$infrastructure_file".bak
   fi
+  printf "%s%-55s%s\n" "${fg_bold[green]}" "creating the chore branch, commiting and pushing:" "${reset_color}"
+  git checkout -b "chore/new-release-version"
+  git add -A
+  git commit -m "chore: new release version"
+  git push -u origin "chore/new-release-version"
 fi
