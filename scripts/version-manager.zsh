@@ -88,11 +88,12 @@ elif (( $#flag_beta )); then
     done
     sed -i.bak 's/const extension_version = ".*"/const extension_version = "'"${new_version}"'-beta-1"/' "$infrastructure_file" && rm -f "$infrastructure_file".bak
   fi
-  printf "%s%-55s%s\n" "${fg_bold[green]}" "creating the chore branch, commiting and pushing:" "${reset_color}"
+  printf "%s%-55s%s\n" "${fg_bold[green]}" "creating the chore branch, commiting, pushing, creating the PR:" "${reset_color}"
   git checkout -b "chore/bump-beta-version"
   git add -A
   git commit -m "chore: bump beta version"
   git push -u origin "chore/bump-beta-version"
+  gh pr create -t "chore: bump beta version" -b ""
 elif (( $#flag_release )); then
   printf "%s%-55s%s\n" "${fg_bold[green]}" "preparing a new release version:" "${reset_color}"
   if [[ $infrastructure_version = *"-beta-"* ]]; then
@@ -109,9 +110,10 @@ elif (( $#flag_release )); then
     done
     sed -i.bak 's/const extension_version = ".*"/const extension_version = "'"${new_version}"'"/' "$infrastructure_file" && rm -f "$infrastructure_file".bak
   fi
-  printf "%s%-55s%s\n" "${fg_bold[green]}" "creating the chore branch, commiting and pushing:" "${reset_color}"
+  printf "%s%-55s%s\n" "${fg_bold[green]}" "creating the chore branch, commiting, pushing, creating the PR:" "${reset_color}"
   git checkout -b "chore/new-release-version"
   git add -A
   git commit -m "chore: new release version"
   git push -u origin "chore/new-release-version"
+  gh pr create -t "chore: new release version" -b ""
 fi
