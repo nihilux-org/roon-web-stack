@@ -169,12 +169,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@analogjs/platform@npm:1.21.1":
-  version: 1.21.1
-  resolution: "@analogjs/platform@npm:1.21.1"
+"@analogjs/platform@npm:1.21.2":
+  version: 1.21.2
+  resolution: "@analogjs/platform@npm:1.21.2"
   dependencies:
-    "@analogjs/vite-plugin-angular": "npm:^1.21.1"
-    "@analogjs/vite-plugin-nitro": "npm:^1.21.1"
+    "@analogjs/vite-plugin-angular": "npm:^1.21.2"
+    "@analogjs/vite-plugin-nitro": "npm:^1.21.2"
     nitropack: "npm:^2.11.0"
     vitefu: "npm:^1.0.0"
   peerDependencies:
@@ -203,13 +203,13 @@ __metadata:
       optional: true
     shiki:
       optional: true
-  checksum: 10c0/a0e01613fd3e7d79e74377fac704cbc34324e48ce6d79ac69ca726adc612b79ce0aac9c6697fd0fb39ea31da310cb277ab03a8c641724c64a2d5f56d85414866
+  checksum: 10c0/a1f73e65e4d2fb84b6c6e2a3f660870f6cbeba6c827bd0d0ecc853b44ed5c34cbfc85115c19562f66522b58c8cce4441d44d6930e97ee107789b65f869a48b7d
   languageName: node
   linkType: hard
 
-"@analogjs/vite-plugin-angular@npm:1.21.1, @analogjs/vite-plugin-angular@npm:^1.21.1":
-  version: 1.21.1
-  resolution: "@analogjs/vite-plugin-angular@npm:1.21.1"
+"@analogjs/vite-plugin-angular@npm:1.21.2, @analogjs/vite-plugin-angular@npm:^1.21.2":
+  version: 1.21.2
+  resolution: "@analogjs/vite-plugin-angular@npm:1.21.2"
   dependencies:
     ts-morph: "npm:^21.0.0"
     vfile: "npm:^6.0.3"
@@ -221,31 +221,31 @@ __metadata:
       optional: true
     "@angular/build":
       optional: true
-  checksum: 10c0/61f3ab78eb2b3813adae61e50c50197632a4fb46495e0bde592f8bb3976d45351c502a3743d567aad59413cf1773121ca1196dc4f0dde7b92f520e28a3d3e1e4
+  checksum: 10c0/c2a89daf44dbcf4bf2512eb40df82609bcb39b765b53014b117d9a96c09b9895359cc9534005487749431946b49a9e065083c1aa13e49062631aba5d0cee5417
   languageName: node
   linkType: hard
 
-"@analogjs/vite-plugin-nitro@npm:^1.21.1":
-  version: 1.21.1
-  resolution: "@analogjs/vite-plugin-nitro@npm:1.21.1"
+"@analogjs/vite-plugin-nitro@npm:^1.21.2":
+  version: 1.21.2
+  resolution: "@analogjs/vite-plugin-nitro@npm:1.21.2"
   dependencies:
     defu: "npm:^6.1.4"
     esbuild: "npm:^0.25.0"
     nitropack: "npm:^2.11.0"
     radix3: "npm:^1.1.1"
     xmlbuilder2: "npm:^3.0.2"
-  checksum: 10c0/ab38b2eea7cc479b530b2bbd0229c05e886838f027b58fcceab6c311873eaaa0e99e741716009d7d8d7c9c85dbb26de448fc67b25714b140ce9bc20b467c7d36
+  checksum: 10c0/c7fd112e94a7ed15b3941d1008b2f3aef811aaed9f624f9c662da93be4598f9771264c4dc3eeee4d4abbcb9aebcc8bf44a724871be90db05cc239c6595e3b755
   languageName: node
   linkType: hard
 
-"@analogjs/vitest-angular@npm:1.21.1":
-  version: 1.21.1
-  resolution: "@analogjs/vitest-angular@npm:1.21.1"
+"@analogjs/vitest-angular@npm:1.21.2":
+  version: 1.21.2
+  resolution: "@analogjs/vitest-angular@npm:1.21.2"
   peerDependencies:
     "@analogjs/vite-plugin-angular": "*"
     "@angular-devkit/architect": ">=0.1500.0 < 0.2100.0"
     vitest: ^1.3.1 || ^2.0.0 || ^3.0.0
-  checksum: 10c0/c4aa50cdeba70c8737e2e6f67b4a33ad5296a1543c0f6e9853a477aa8e9e296c1e5e78fef59fa0c4676c809dc4ce56b02e14576f01056ad67c0240eeea342ce8
+  checksum: 10c0/a9b6152a678c219ab44912436a14281f5e238d5144fb9fe330bee7dd0609592f662b97b22cf75b7c9e0453a767ca5bec5d7bba6584274b4789da25a3a7cc7225
   languageName: node
   linkType: hard
 
@@ -3641,9 +3641,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@nihilux/roon-web-ng-client@workspace:app/roon-web-ng-client"
   dependencies:
-    "@analogjs/platform": "npm:1.21.1"
-    "@analogjs/vite-plugin-angular": "npm:1.21.1"
-    "@analogjs/vitest-angular": "npm:1.21.1"
+    "@analogjs/platform": "npm:1.21.2"
+    "@analogjs/vite-plugin-angular": "npm:1.21.2"
+    "@analogjs/vitest-angular": "npm:1.21.2"
     "@angular-devkit/build-angular": "npm:20.3.4"
     "@angular-eslint/builder": "npm:20.3.0"
     "@angular-eslint/eslint-plugin": "npm:20.3.0"
