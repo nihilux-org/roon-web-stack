@@ -3519,7 +3519,7 @@ __metadata:
     "@fastify/static": "npm:8.2.0"
     "@gquittet/graceful-server": "npm:4.0.9"
     "@nihilux/roon-web-model": "workspace:*"
-    "@types/node": "npm:24.7.0"
+    "@types/node": "npm:24.7.1"
     "@typescript-eslint/eslint-plugin": "npm:8.46.0"
     "@typescript-eslint/parser": "npm:8.46.0"
     "@vitest/coverage-v8": "npm:3.2.4"
@@ -3566,7 +3566,7 @@ __metadata:
   dependencies:
     "@eslint/js": "npm:9.37.0"
     "@nihilux/roon-web-model": "workspace:*"
-    "@types/node": "npm:24.7.0"
+    "@types/node": "npm:24.7.1"
     "@typescript-eslint/eslint-plugin": "npm:8.46.0"
     "@typescript-eslint/parser": "npm:8.46.0"
     "@vitest/coverage-v8": "npm:3.2.4"
@@ -3666,7 +3666,7 @@ __metadata:
     "@eslint/js": "npm:9.37.0"
     "@nihilux/roon-web-client": "workspace:*"
     "@nihilux/roon-web-model": "workspace:*"
-    "@types/node": "npm:24.7.0"
+    "@types/node": "npm:24.7.1"
     "@typescript-eslint/parser": "npm:8.46.0"
     "@vitest/coverage-v8": "npm:3.2.4"
     angular-eslint: "npm:20.3.0"
@@ -4705,12 +4705,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:24.7.0":
-  version: 24.7.0
-  resolution: "@types/node@npm:24.7.0"
+"@types/node@npm:24.7.1":
+  version: 24.7.1
+  resolution: "@types/node@npm:24.7.1"
   dependencies:
     undici-types: "npm:~7.14.0"
-  checksum: 10c0/f036c78062cb3a0d5c6586bf2dac347ed3f4af121cef4ab92c85c44e32be1c50aab5ba96955842b7f8165f0e0f1c8066d1813ae259372df6c0fa9fadb1116a3e
+  checksum: 10c0/2525f2aa865d78b1c75faaf8c6bf2af51c930962d8078306620d9a76eafcbbea035142cf2cdc2fcf1b4010cd3958a1c6c59b67aba1ac205dc1e5f895ef6af673
   languageName: node
   linkType: hard
 
