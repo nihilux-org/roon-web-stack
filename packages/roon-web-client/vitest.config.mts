@@ -5,7 +5,7 @@ import tsconfigPaths from "vite-tsconfig-paths";
 export default defineConfig(({ mode }) => ({
   plugins: [tsconfigPaths()],
   test: {
-    environment: "jsdom",
+    environment: "happy-dom",
     globals: true,
     coverage: {
       provider: "v8",

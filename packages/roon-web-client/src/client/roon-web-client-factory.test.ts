@@ -1747,7 +1747,7 @@ describe("roon-web-client-factory.ts test suite", () => {
     });
     const firstRestart = client.restart();
     const secondRestart = client.restart();
-    await expect(firstRestart).rejects.toEqual(new DOMException("The operation was aborted", "ABORT_ERROR"));
+    await expect(firstRestart).rejects.toEqual(new DOMException("The operation was aborted.", "AbortError"));
     await expect(secondRestart).resolves.toBeUndefined();
   });
 
