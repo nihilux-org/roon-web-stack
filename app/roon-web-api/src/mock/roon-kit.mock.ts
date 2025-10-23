@@ -24,6 +24,16 @@ vi.mock("@roon-kit", async () => {
   const roonKitModule = await vi.importActual("@roon-kit");
   return {
     ...roonKitModule,
-    Extension: vi.fn(() => extensionMock),
+    Extension: vi.fn(
+      class {
+        on = on;
+        off = off;
+        set_status = set_status;
+        get_core = get_core;
+        start_discovery = start_discovery;
+        api = api;
+        settings = settings;
+      }
+    ),
   };
 });
