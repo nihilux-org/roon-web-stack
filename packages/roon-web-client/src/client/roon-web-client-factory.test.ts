@@ -1,4 +1,4 @@
-import { EventSourceMock, eventSourceMockConstructor, eventSourceMocks, resetEventSourceMocks } from "@mock";
+import { EventSourceMock, eventSourceMocks, resetEventSourceMocks } from "@mock";
 
 import { afterAll, expect } from "vitest";
 import createFetchMock, { ResponseLike } from "vitest-fetch-mock";
@@ -161,8 +161,6 @@ describe("roon-web-client-factory.ts test suite", () => {
       expect(registerRequest.headers.get("Accept")).toEqual("application/json");
       expect(eventSourceMocks.size).toEqual(1);
       expect(eventSourceMocks.has(EVENTS_URL.toString())).toBe(true);
-      expect(eventSourceMockConstructor).toHaveBeenCalledTimes(1);
-      expect(eventSourceMockConstructor).toHaveBeenCalledWith(EVENTS_URL);
       const eventSourceMock: EventSourceMock | undefined = eventSourceMocks.get(EVENTS_URL.toString());
       expect(eventSourceMock?.onerror).not.toBeUndefined();
       expect(eventSourceMock?.getEventListener("state")).not.toBeUndefined();
@@ -191,8 +189,6 @@ describe("roon-web-client-factory.ts test suite", () => {
     expect(eventSourceMocks.size).toEqual(1);
     const eventsUrl = new URL(other_client_path + "/events", API_URL);
     expect(eventSourceMocks.has(eventsUrl.toString())).toBe(true);
-    expect(eventSourceMockConstructor).toHaveBeenCalledTimes(1);
-    expect(eventSourceMockConstructor).toHaveBeenCalledWith(eventsUrl);
     expect(publishedClientStates).toHaveLength(1);
     expect(publishedClientStates).toEqual([
       {

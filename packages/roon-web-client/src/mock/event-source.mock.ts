@@ -2,7 +2,6 @@ export const eventSourceMocks: Map<string, EventSourceMock> = new Map<string, Ev
 
 export const resetEventSourceMocks: () => void = (): void => {
   eventSourceMocks.clear();
-  eventSourceMockConstructor.mockClear();
 };
 
 export class EventSourceMock {
@@ -10,9 +9,10 @@ export class EventSourceMock {
   private _state: number;
   private _onerror?: () => void;
 
-  constructor() {
+  constructor(url: URL) {
     this.listeners = new Map<string, EventListener>();
     this._state = 1;
+    eventSourceMocks.set(url.toString(), this);
   }
 
   close = vi.fn().mockImplementation(() => {
@@ -56,13 +56,7 @@ export class EventSourceMock {
   }
 }
 
-export const eventSourceMockConstructor = vi.fn().mockImplementation((url: URL): EventSourceMock => {
-  const eventSourceMock = new EventSourceMock();
-  eventSourceMocks.set(url.toString(), eventSourceMock);
-  return eventSourceMock;
-});
-
 Object.defineProperty(global, "EventSource", {
   writable: true,
-  value: eventSourceMockConstructor,
+  value: EventSourceMock,
 });

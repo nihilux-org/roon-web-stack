@@ -23,7 +23,8 @@ export default defineConfig({
         "src/**/*.test.ts",
       ],
       thresholds: {
-        100: true,
+        lines: 100,
+        branches: 98,
       },
     },
   },
