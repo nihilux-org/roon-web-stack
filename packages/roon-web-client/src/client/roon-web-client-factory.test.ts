@@ -177,6 +177,33 @@ describe("roon-web-client-factory.ts test suite", () => {
     }
   );
 
+  it("RoonWebClient#start should should do nothing if called on a not closed client", async () => {
+    fetchMock.once(mockVersionGet).once(mockRegisterPost);
+    const client = roonWebClientFactory.build(API_URL);
+    client.onClientState(clientStateListener);
+    await client.start();
+    expect(fetchMock.mock.calls).toHaveLength(2);
+    fetchMock.once(mockVersionGet).once(mockRegisterPost);
+    expect(eventSourceMocks.size).toEqual(1);
+    expect(publishedClientStates).toHaveLength(1);
+    expect(publishedClientStates).toEqual([
+      {
+        status: "started",
+        roonClientId: "client_id",
+      },
+    ]);
+    await client.start();
+    expect(fetchMock.mock.calls).toHaveLength(2);
+    expect(eventSourceMocks.size).toEqual(1);
+    expect(publishedClientStates).toHaveLength(1);
+    expect(publishedClientStates).toEqual([
+      {
+        status: "started",
+        roonClientId: "client_id",
+      },
+    ]);
+  });
+
   it("RoonWebClient#start should use provided roonClientId, if present, during call to '/api/register'", async () => {
     fetchMock.once(mockVersionGet).once(mockRegisterPost);
     const client = roonWebClientFactory.build(API_URL);

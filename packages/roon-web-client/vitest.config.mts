@@ -20,7 +20,7 @@ export default defineConfig(({ mode }) => ({
       ],
       thresholds: {
         lines: 100,
-        branches: 90,
+        branches: 98,
       },
     },
   },
