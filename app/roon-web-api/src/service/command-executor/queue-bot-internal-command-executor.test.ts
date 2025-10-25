@@ -53,6 +53,29 @@ describe("queue-bot-command-executor test suite", () => {
   );
 
   it(
+    "internalExecutor should call RoonApiTransport#control with 'stop' then not call RoonApiTransport#control with 'next' " +
+      "then call RoonApiTransport#control with 'stop' and return for StopNextCommand if given is playing and next is not allowed",
+    async () => {
+      try {
+        zone.is_next_allowed = false;
+        const command = {
+          type: InternalCommandType.STOP_NEXT,
+          data: {
+            zone_id,
+          },
+        };
+        await internalExecutor(command, foundZone);
+        expect(control).toHaveBeenCalledTimes(2);
+        expect(control).toHaveBeenNthCalledWith(1, zone, "pause");
+        expect(control).toHaveBeenNthCalledWith(2, zone, "stop");
+        expect(standby).not.toHaveBeenCalled();
+      } finally {
+        zone.is_next_allowed = true;
+      }
+    }
+  );
+
+  it(
     "internalExecutor should call RoonApiTransport#control with 'stop' and return a failed promise without calling others" +
       "RoonApiTransport#control for StopNextCommand if given is playing and the 'stop' call failed",
     async () => {
