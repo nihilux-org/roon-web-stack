@@ -37,7 +37,7 @@
     "@types/node": "24.10.0",
     "@typescript-eslint/eslint-plugin": "8.46.3",
     "@typescript-eslint/parser": "8.46.3",
-    "@vitest/coverage-v8": "4.0.7",
+    "@vitest/coverage-v8": "4.0.8",
     "eslint": "9.39.1",
     "eslint-config-prettier": "10.1.8",
     "eslint-import-resolver-typescript": "4.4.4",
@@ -55,7 +55,7 @@
     "typescript": "5.9.3",
     "typescript-eslint": "8.46.3",
     "vite-tsconfig-paths": "5.1.4",
-    "vitest": "4.0.7",
+    "vitest": "4.0.8",
     "webpack": "5.102.1",
     "webpack-cli": "6.0.1",
     "webpack-node-externals": "3.0.0"
