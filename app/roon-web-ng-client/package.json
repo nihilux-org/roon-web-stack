@@ -44,7 +44,7 @@
     "@eslint/js": "9.39.1",
     "@nihilux/roon-web-model": "workspace:*",
     "@types/node": "24.10.0",
-    "@typescript-eslint/parser": "8.46.3",
+    "@typescript-eslint/parser": "8.46.4",
     "@vitest/coverage-v8": "4.0.8",
     "angular-eslint": "20.6.0",
     "eslint": "9.39.1",
@@ -61,7 +61,7 @@
     "ng-packagr": "20.3.0",
     "prettier": "3.6.2",
     "typescript": "5.9.3",
-    "typescript-eslint": "8.46.3",
+    "typescript-eslint": "8.46.4",
     "vite-tsconfig-paths": "5.1.4",
     "vitest": "4.0.8"
   }
