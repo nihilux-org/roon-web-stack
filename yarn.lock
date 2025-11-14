@@ -649,9 +649,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@angular/cdk@npm:20.2.12":
-  version: 20.2.12
-  resolution: "@angular/cdk@npm:20.2.12"
+"@angular/cdk@npm:20.2.13":
+  version: 20.2.13
+  resolution: "@angular/cdk@npm:20.2.13"
   dependencies:
     parse5: "npm:^8.0.0"
     tslib: "npm:^2.3.0"
@@ -659,7 +659,7 @@ __metadata:
     "@angular/common": ^20.0.0 || ^21.0.0
     "@angular/core": ^20.0.0 || ^21.0.0
     rxjs: ^6.5.3 || ^7.4.0
-  checksum: 10c0/9d4e4d54bdd2787feb76c64335bea51dcb6508497654cf0a0a7cc07d758642139485d686c2133527441ca87fc0041d4064ab0e09dc555b252bc997855cf35415
+  checksum: 10c0/bec4c117d6e344ffbc7273df36b9ac661ac86ad4f9bab9b7a071322f80b00092826be83a18603d93f50cb1e5bcfbfdbda57a61e74c694355ad6c74b43cab615b
   languageName: node
   linkType: hard
 
@@ -769,19 +769,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@angular/material@npm:20.2.12":
-  version: 20.2.12
-  resolution: "@angular/material@npm:20.2.12"
+"@angular/material@npm:20.2.13":
+  version: 20.2.13
+  resolution: "@angular/material@npm:20.2.13"
   dependencies:
     tslib: "npm:^2.3.0"
   peerDependencies:
-    "@angular/cdk": 20.2.12
+    "@angular/cdk": 20.2.13
     "@angular/common": ^20.0.0 || ^21.0.0
     "@angular/core": ^20.0.0 || ^21.0.0
     "@angular/forms": ^20.0.0 || ^21.0.0
     "@angular/platform-browser": ^20.0.0 || ^21.0.0
     rxjs: ^6.5.3 || ^7.4.0
-  checksum: 10c0/7d0dfdee30b689fd889cbc55da00af1ed9a3660ede80364d9f9bcc0c90dbcde8d720aa9651e076445d3c54c80e82e5ec3f66304ecc9fa33999969b11e4cf32a8
+  checksum: 10c0/0169507c7a82fcd6e849e036dba5786c36f805f508395555d1a9f611fc5c8cff061f626cfc6db4a3d2159b5394fc82d56c386c901931385dd0ebe45a0b5d06fc
   languageName: node
   linkType: hard
 
@@ -3671,14 +3671,14 @@ __metadata:
     "@angular-eslint/schematics": "npm:20.6.0"
     "@angular-eslint/template-parser": "npm:20.6.0"
     "@angular/animations": "npm:20.3.11"
-    "@angular/cdk": "npm:20.2.12"
+    "@angular/cdk": "npm:20.2.13"
     "@angular/cli": "npm:20.3.10"
     "@angular/common": "npm:20.3.11"
     "@angular/compiler": "npm:20.3.11"
     "@angular/compiler-cli": "npm:20.3.11"
     "@angular/core": "npm:20.3.11"
     "@angular/forms": "npm:20.3.11"
-    "@angular/material": "npm:20.2.12"
+    "@angular/material": "npm:20.2.13"
     "@angular/platform-browser": "npm:20.3.11"
     "@angular/platform-browser-dynamic": "npm:20.3.11"
     "@eslint/js": "npm:9.39.1"
@@ -3701,7 +3701,7 @@ __metadata:
     jsdom-testing-mocks: "npm:1.16.0"
     nanoid: "npm:3.3.11"
     ng-mocks: "npm:14.14.0"
-    ng-packagr: "npm:20.3.1"
+    ng-packagr: "npm:20.3.2"
     ngx-device-detector: "npm:10.1.0"
     prettier: "npm:3.6.2"
     rxjs: "npm:~7.8.2"
@@ -11537,9 +11537,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ng-packagr@npm:20.3.1":
-  version: 20.3.1
-  resolution: "ng-packagr@npm:20.3.1"
+"ng-packagr@npm:20.3.2":
+  version: 20.3.2
+  resolution: "ng-packagr@npm:20.3.2"
   dependencies:
     "@ampproject/remapping": "npm:^2.3.0"
     "@rollup/plugin-json": "npm:^6.1.0"
@@ -11576,7 +11576,7 @@ __metadata:
       optional: true
   bin:
     ng-packagr: src/cli/main.js
-  checksum: 10c0/2360419db4b64671b06f929fe3acb6d2863e50211dc0147923a97556ca2b3db27b62960fa7153cdaf335f77657e6f58fb857746fd3ecca6ee03065a19753e9e4
+  checksum: 10c0/1bfc63fa91e281ff95e5e13b3bce2ac8588a83be28649184717c5b559186de45885f94f0264027fbfa1d4a8b0ac33b17099a392ee60b22dad146b7a9e00f55fe
   languageName: node
   linkType: hard
 
