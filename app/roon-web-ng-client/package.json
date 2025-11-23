@@ -29,15 +29,12 @@
     "tslib": "2.8.1"
   },
   "devDependencies": {
-    "@analogjs/platform": "2.1.0",
-    "@analogjs/vite-plugin-angular": "2.1.0",
-    "@analogjs/vitest-angular": "2.1.0",
-    "@angular-devkit/build-angular": "21.0.0",
     "@angular-eslint/builder": "20.6.0",
     "@angular-eslint/eslint-plugin": "20.6.0",
     "@angular-eslint/eslint-plugin-template": "20.6.0",
     "@angular-eslint/schematics": "20.6.0",
     "@angular-eslint/template-parser": "20.6.0",
+    "@angular/build": "21.0.0",
     "@angular/cdk": "21.0.0",
     "@angular/cli": "21.0.0",
     "@angular/compiler-cli": "21.0.0",

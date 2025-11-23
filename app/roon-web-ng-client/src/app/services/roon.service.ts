@@ -2,7 +2,7 @@ import { deepEqual } from "fast-equals";
 import { DeviceDetectorService } from "ngx-device-detector";
 import { Observable } from "rxjs";
 import { DOCUMENT } from "@angular/common";
-import { computed, inject, Injectable, Signal, signal, WritableSignal } from "@angular/core";
+import { computed, inject, Injectable, OnDestroy, Signal, signal, WritableSignal } from "@angular/core";
 import {
   ApiResultCallback,
   BrowseApiResult,
@@ -21,6 +21,7 @@ import {
   RawApiResult,
   RawWorkerApiRequest,
   RawWorkerEvent,
+  RoonWorker,
   VersionApiResult,
   VersionWorkerApiRequest,
   VisibilityState,
@@ -45,14 +46,14 @@ import {
   ZoneState,
 } from "@nihilux/roon-web-model";
 import { CustomActionsService } from "@services/custom-actions.service";
+import { ROON_WORKER } from "@services/roon.worker.provider";
 import { SettingsService } from "@services/settings.service";
 import { VisibilityService } from "@services/visibility.service";
-import { buildRoonWorker } from "@services/worker.utils";
 
 @Injectable({
   providedIn: "root",
 })
-export class RoonService {
+export class RoonService implements OnDestroy {
   private static readonly THIS_IS_A_BUG_ERROR_MSG = "this is a bug!";
 
   private readonly _window: Window;
@@ -60,6 +61,7 @@ export class RoonService {
   private readonly _customActionsService: CustomActionsService;
   private readonly _settingsService: SettingsService;
   private readonly _visibilityService: VisibilityService;
+  private readonly _worker: RoonWorker;
   private readonly _$roonState: WritableSignal<ApiState>;
   private readonly _$isGrouping: WritableSignal<boolean>;
   private readonly _commandCallbacks: Map<string, CommandCallback>;
@@ -77,7 +79,6 @@ export class RoonService {
   private _workerApiRequestId: number;
   private _isStarted: boolean;
   private _outputCallback?: OutputCallback;
-  private _worker?: Worker;
   private _version: string;
   private _startResolve?: () => void;
 
@@ -91,6 +92,7 @@ export class RoonService {
     this._customActionsService = inject(CustomActionsService);
     this._settingsService = inject(SettingsService);
     this._visibilityService = inject(VisibilityService);
+    this._worker = inject(ROON_WORKER);
     this._$roonState = signal(
       {
         state: RoonState.STARTING,
@@ -119,11 +121,14 @@ export class RoonService {
     this._version = "unknown";
   }
 
+  ngOnDestroy(): void {
+    this._worker.terminate();
+  }
+
   start: () => Promise<void> = async () => {
     const startPromise = new Promise<void>((resolve) => {
       this._startResolve = resolve;
     });
-    this._worker = buildRoonWorker();
     this._worker.onmessage = (m: MessageEvent<RawWorkerEvent>) => {
       this.dispatchWorkerEvent(m);
     };

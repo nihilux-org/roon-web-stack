@@ -25,7 +25,7 @@ describe("NrRootComponent", () => {
     displayedZonedId: Mock;
   };
 
-  beforeEach(() => {
+  beforeEach(async () => {
     dialogService = {
       close: vi.fn(),
     };
@@ -51,6 +51,7 @@ describe("NrRootComponent", () => {
         MockProvider(SettingsService, settingsService as Partial<SettingsService>),
       ],
     });
+    await TestBed.compileComponents();
     fixture = TestBed.createComponent(NrRootComponent);
     component = fixture.componentInstance;
   });

@@ -56,6 +56,7 @@ describe("RoonBrowseListComponent", () => {
       providers: [MockProvider(RoonService, roonService), MockProvider(SettingsService, settingsService)],
       imports: [RoonBrowseListComponent],
     });
+    await TestBed.compileComponents();
     fixture = TestBed.createComponent(RoonBrowseListComponent);
     fixture.componentRef.setInput("content", content);
     fixture.componentRef.setInput("hierarchy", hierarchy);

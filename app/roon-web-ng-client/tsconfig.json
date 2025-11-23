@@ -27,8 +27,8 @@
       "@components/*": [
         "./src/app/components/*"
       ],
-      "@mock/*": [
-        "./src/mock/*"
+      "@mock": [
+        "./src/mock/index.ts"
       ],
       "@services/*": [
         "./src/app/services/*"
