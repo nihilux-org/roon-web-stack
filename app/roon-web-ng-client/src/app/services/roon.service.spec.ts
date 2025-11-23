@@ -1,4 +1,4 @@
-import { roonWorkerMock } from "@mock/worker.utils.mock";
+import { roonWorkerMock } from "@mock";
 
 import { beforeEach, describe, expect, it } from "vitest";
 import { signal, WritableSignal } from "@angular/core";

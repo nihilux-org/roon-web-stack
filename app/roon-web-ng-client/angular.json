@@ -21,7 +21,7 @@
       "prefix": "nr",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:application",
+          "builder": "@angular/build:application",
           "options": {
             "outputPath": "dist/roon-web-ng-client",
             "index": "src/index.html",
@@ -61,7 +61,7 @@
           "defaultConfiguration": "production"
         },
         "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
+          "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
               "buildTarget": "@nihilux/roon-web-ng-client:build:production"
@@ -74,13 +74,18 @@
           "defaultConfiguration": "development"
         },
         "extract-i18n": {
-          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "builder": "@angular/build:extract-i18n",
           "options": {
             "buildTarget": "@nihilux/roon-web-ng-client:build"
           }
         },
         "test": {
-          "builder": "@analogjs/vitest-angular:test"
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "setupFiles": ["src/test-setup.ts"],
+            "providersFile": "src/test-providers.ts",
+            "coverage": true
+          }
         },
         "lint": {
           "builder": "@angular-eslint/builder:lint",
@@ -100,7 +105,7 @@
       "prefix": "ngx",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "builder": "@angular/build:ng-packagr",
           "options": {
             "project": "projects/nihilux/ngx-spatial-navigable/ng-package.json"
           },
@@ -115,9 +120,10 @@
           "defaultConfiguration": "production"
         },
         "test": {
-          "builder": "@analogjs/vitest-angular:test",
+          "builder": "@angular/build:unit-test",
           "options": {
-            "tsConfig": "projects/nihilux/ngx-spatial-navigable/tsconfig.spec.json"
+            "setupFiles": ["projects/nihilux/ngx-spatial-navigable/src/test-setup.ts"],
+            "coverage": true
           }
         },
         "lint": {

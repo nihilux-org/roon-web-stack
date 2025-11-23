@@ -16,6 +16,8 @@ import {
   ZoneState,
 } from "@nihilux/roon-web-model";
 
+export type RoonWorker = Worker;
+
 export type WorkerMessageData =
   | WorkerClientStartAction
   | WorkerClientRefreshAction

@@ -47,12 +47,5 @@ export const roonWorkerMock = {
       data: event,
     } as MessageEvent<RawWorkerEvent>);
   },
-};
-
-const buildRoonWorker = () => roonWorkerMock;
-
-export const mockRoonWorker = () => {
-  vi.mock("@services/worker.utils", () => ({
-    buildRoonWorker,
-  }));
+  terminate: vi.fn(),
 };
