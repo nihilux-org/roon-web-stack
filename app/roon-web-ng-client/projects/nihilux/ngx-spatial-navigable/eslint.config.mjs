@@ -17,6 +17,24 @@ export default tsEslint.config([...rootConfig], {
       tsconfigRootDir: dirname(new URL(import.meta.url).pathname),
     },
   },
+  rules: {
+    "@angular-eslint/directive-selector": [
+      "error",
+      {
+        type: "attribute",
+        style: "camelCase",
+        prefix: "ngx",
+      },
+    ],
+    "@angular-eslint/component-selector": [
+      "error",
+      {
+        type: "element",
+        style: "kebab-case",
+        prefix: "ngx",
+      },
+    ],
+  },
   settings: {
     "import/parsers": {
       "@typescript-eslint/parser": [".ts"],

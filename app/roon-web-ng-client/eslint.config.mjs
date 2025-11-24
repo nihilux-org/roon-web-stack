@@ -28,6 +28,7 @@ export default tsEslint.config(
         {
           type: "attribute",
           style: "camelCase",
+          prefix: "nr",
         },
       ],
       "@angular-eslint/component-selector": [
@@ -35,6 +36,7 @@ export default tsEslint.config(
         {
           type: "element",
           style: "kebab-case",
+          prefix: "nr",
         },
       ],
     },
