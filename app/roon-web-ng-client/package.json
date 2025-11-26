@@ -42,7 +42,7 @@
     "@nihilux/roon-web-model": "workspace:*",
     "@types/node": "24.10.1",
     "@typescript-eslint/parser": "8.48.0",
-    "@vitest/coverage-v8": "4.0.13",
+    "@vitest/coverage-v8": "4.0.14",
     "angular-eslint": "21.0.1",
     "eslint": "9.39.1",
     "eslint-config-prettier": "10.1.8",
@@ -60,6 +60,6 @@
     "typescript": "5.9.3",
     "typescript-eslint": "8.48.0",
     "vite-tsconfig-paths": "5.1.4",
-    "vitest": "4.0.13"
+    "vitest": "4.0.14"
   }
 }
