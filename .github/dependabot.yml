@@ -13,11 +13,12 @@ updates:
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
     groups:
       angular:
         patterns:
          - "@angular*"
+         - "angular-eslint"
          - "ng-packagr"
       production-dependencies:
         dependency-type: "production"
@@ -27,6 +28,7 @@ updates:
         dependency-type: "development"
         exclude-patterns:
         - "@angular*"
+        - "angular-eslint"
         - "ng-packagr"
     ignore:
       - dependency-name: "nanoid"
