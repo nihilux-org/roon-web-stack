@@ -83,13 +83,21 @@ export interface LoadPathWorkerApiRequest extends WorkerApiRequest<{ zone_id: st
   type: "load-path";
 }
 
-export interface PreviousWorkerApiRequest
-  extends WorkerApiRequest<{ zone_id: string; hierarchy: RoonApiBrowseHierarchy; levels: number; offset: number }> {
+export interface PreviousWorkerApiRequest extends WorkerApiRequest<{
+  zone_id: string;
+  hierarchy: RoonApiBrowseHierarchy;
+  levels: number;
+  offset: number;
+}> {
   type: "previous";
 }
 
-export interface NavigateWorkerApiRequest
-  extends WorkerApiRequest<{ zone_id: string; hierarchy: RoonApiBrowseHierarchy; item_key?: string; input?: string }> {
+export interface NavigateWorkerApiRequest extends WorkerApiRequest<{
+  zone_id: string;
+  hierarchy: RoonApiBrowseHierarchy;
+  item_key?: string;
+  input?: string;
+}> {
   type: "navigate";
 }
 
