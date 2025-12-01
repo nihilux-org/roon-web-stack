@@ -2389,7 +2389,7 @@ __metadata:
     node-roon-api-status: "github:roonlabs/node-roon-api-status"
     node-roon-api-transport: "github:roonlabs/node-roon-api-transport"
     nodemon-webpack-plugin: "npm:4.8.2"
-    prettier: "npm:3.6.2"
+    prettier: "npm:3.7.3"
     rimraf: "npm:6.1.2"
     rxjs: "npm:7.8.2"
     ts-loader: "npm:9.5.4"
@@ -2425,8 +2425,8 @@ __metadata:
     eslint-plugin-promise: "npm:7.2.1"
     eslint-plugin-simple-import-sort: "npm:12.1.1"
     eslint-plugin-unused-imports: "npm:4.3.0"
-    happy-dom: "npm:20.0.10"
-    prettier: "npm:3.6.2"
+    happy-dom: "npm:20.0.11"
+    prettier: "npm:3.7.3"
     rimraf: "npm:6.1.2"
     ts-loader: "npm:9.5.4"
     tsconfig-paths-webpack-plugin: "npm:4.2.0"
@@ -2456,7 +2456,7 @@ __metadata:
     eslint-plugin-promise: "npm:7.2.1"
     eslint-plugin-simple-import-sort: "npm:12.1.1"
     eslint-plugin-unused-imports: "npm:4.3.0"
-    prettier: "npm:3.6.2"
+    prettier: "npm:3.7.3"
     tslib: "npm:2.8.1"
     typescript: "npm:5.9.3"
     typescript-eslint: "npm:8.48.0"
@@ -2478,7 +2478,7 @@ __metadata:
     eslint-plugin-promise: "npm:7.2.1"
     eslint-plugin-simple-import-sort: "npm:12.1.1"
     eslint-plugin-unused-imports: "npm:4.3.0"
-    prettier: "npm:3.6.2"
+    prettier: "npm:3.7.3"
     rxjs: "npm:7.8.2"
     tslib: "npm:2.8.1"
     typescript: "npm:5.9.3"
@@ -2523,12 +2523,12 @@ __metadata:
     eslint-plugin-simple-import-sort: "npm:12.1.1"
     eslint-plugin-unused-imports: "npm:4.3.0"
     fast-equals: "npm:5.3.3"
-    happy-dom: "npm:20.0.10"
+    happy-dom: "npm:20.0.11"
     nanoid: "npm:3.3.11"
     ng-mocks: "npm:14.14.0"
     ng-packagr: "npm:21.0.0"
     ngx-device-detector: "npm:10.1.0"
-    prettier: "npm:3.6.2"
+    prettier: "npm:3.7.3"
     rxjs: "npm:~7.8.2"
     tslib: "npm:2.8.1"
     typescript: "npm:5.9.3"
@@ -6563,14 +6563,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"happy-dom@npm:20.0.10":
-  version: 20.0.10
-  resolution: "happy-dom@npm:20.0.10"
+"happy-dom@npm:20.0.11":
+  version: 20.0.11
+  resolution: "happy-dom@npm:20.0.11"
   dependencies:
     "@types/node": "npm:^20.0.0"
     "@types/whatwg-mimetype": "npm:^3.0.2"
     whatwg-mimetype: "npm:^3.0.0"
-  checksum: 10c0/3e05425f3db943885b1d2235d968c8aab08bd32cb0d21bc1c8006db604445f5f6c1364d19b3763395fd748193dc00efd40695e6711ab15e3b9578791c5ce4207
+  checksum: 10c0/818c44630fdb73258d12932646ab966190953820e5d8d032bc6ef51d00d6400097a91d28e212483216898c87d645e1728ae577951256ad989f75da6f9c1f8792
   languageName: node
   linkType: hard
 
@@ -8901,12 +8901,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:3.6.2":
-  version: 3.6.2
-  resolution: "prettier@npm:3.6.2"
+"prettier@npm:3.7.3":
+  version: 3.7.3
+  resolution: "prettier@npm:3.7.3"
   bin:
     prettier: bin/prettier.cjs
-  checksum: 10c0/488cb2f2b99ec13da1e50074912870217c11edaddedeadc649b1244c749d15ba94e846423d062e2c4c9ae683e2d65f754de28889ba06e697ac4f988d44f45812
+  checksum: 10c0/ee86bb06121c74dadc54f30b6f99aff6288966d9b842ce501d6991e20d20c6ce2d45028651b3b0955ca6e5fa89c1bee1e72b6f810243a93cef8bc69737972ef7
   languageName: node
   linkType: hard
 
