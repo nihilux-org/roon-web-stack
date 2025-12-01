@@ -52,8 +52,7 @@ script_source=$(readlink -f "${0%/*}")
 cd "${script_source}/.." || exit;
 
 printf "%s%-55s%s\n" "${fg_bold[green]}" "building the js bundles:" "${reset_color}";
-yarn;
-yarn build;
+yarn cd;
 printf "%s%-55s%s" "${fg_bold[green]}" "js bundles built: " "${reset_color}";
 printf "%s\n" "📦 => ✅ ";
 

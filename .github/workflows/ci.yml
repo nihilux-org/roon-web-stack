@@ -20,8 +20,6 @@ jobs:
         with:
           node-version-file: package.json
           cache: yarn
-      # build
-      - name: Install
-        run: yarn install --immutable
+      # install:immutable,clean,build,lint,test
       - name: Ci
         run: yarn ci

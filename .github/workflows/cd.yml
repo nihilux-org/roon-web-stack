@@ -30,10 +30,9 @@ jobs:
         with:
           node-version-file: package.json
           cache: yarn
-      - name: Install
-        run: yarn install --immutable
       - name: Build
-        run: yarn build
+        # install:immutable,clean,build
+        run: yarn cd
       - name: Copy web app
         run: cp -r app/roon-web-ng-client/dist/roon-web-ng-client/browser app/roon-web-api/bin/web
       - name: Docker meta
