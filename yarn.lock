@@ -2535,12 +2535,12 @@ __metadata:
     eslint-plugin-promise: "npm:7.2.1"
     eslint-plugin-simple-import-sort: "npm:12.1.1"
     eslint-plugin-unused-imports: "npm:4.3.0"
-    fast-equals: "npm:5.3.3"
+    fast-equals: "npm:5.4.0"
     happy-dom: "npm:20.0.11"
     nanoid: "npm:3.3.11"
     ng-mocks: "npm:14.14.0"
     ng-packagr: "npm:21.0.0"
-    ngx-device-detector: "npm:10.1.0"
+    ngx-device-detector: "npm:11.0.0"
     prettier: "npm:3.7.4"
     rxjs: "npm:~7.8.2"
     tslib: "npm:2.8.1"
@@ -6148,10 +6148,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-equals@npm:5.3.3":
-  version: 5.3.3
-  resolution: "fast-equals@npm:5.3.3"
-  checksum: 10c0/a186cbfe4d9171911af9c6bb02d059e28bc177f66527790bf95d35a08f6f070033caea5755d2bbf2ce7af56374c1d4d854ee8184f9e906e3e01b54dbd09c414c
+"fast-equals@npm:5.4.0":
+  version: 5.4.0
+  resolution: "fast-equals@npm:5.4.0"
+  checksum: 10c0/4fdce3a8f814e78af7296ca4ebe82f4765074a6dfe557ee98c18f5d2958c3de59025fbff7556d65f250165ccef424d37f9952ee159400f8ebe5f2edb704ec80e
   languageName: node
   linkType: hard
 
@@ -8185,15 +8185,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ngx-device-detector@npm:10.1.0":
-  version: 10.1.0
-  resolution: "ngx-device-detector@npm:10.1.0"
+"ngx-device-detector@npm:11.0.0":
+  version: 11.0.0
+  resolution: "ngx-device-detector@npm:11.0.0"
   dependencies:
-    tslib: "npm:^2.6.3"
+    tslib: "npm:^2.8.1"
   peerDependencies:
-    "@angular/common": ^20.0.0
-    "@angular/core": ^20.0.0
-  checksum: 10c0/33a6f5bf5052a9391c04a1248e58fa2dd014780a012590b4ecd3ccd59b74f5e35ad69223559ced0f14d174fd6c610a3f334cef25ea42935ec70c58fea0f51f6d
+    "@angular/common": ^21.0.0
+    "@angular/core": ^21.0.0
+  checksum: 10c0/86cbdfc966033a5c94e89673f42e9331f7d4f9e259f2b2738e3bbf86e2df420fda89c3532438ebca79d1367000a129d38dd57caa289bbcd7edca7e9229843f29
   languageName: node
   linkType: hard
 
@@ -10538,7 +10538,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:2.8.1, tslib@npm:^2.0.0, tslib@npm:^2.1.0, tslib@npm:^2.3.0, tslib@npm:^2.4.0, tslib@npm:^2.6.3":
+"tslib@npm:2.8.1, tslib@npm:^2.0.0, tslib@npm:^2.1.0, tslib@npm:^2.3.0, tslib@npm:^2.4.0, tslib@npm:^2.8.1":
   version: 2.8.1
   resolution: "tslib@npm:2.8.1"
   checksum: 10c0/9c4759110a19c53f992d9aae23aac5ced636e99887b51b9e61def52611732872ff7668757d4e4c61f19691e36f4da981cd9485e869b4a7408d689f6bf1f14e62
