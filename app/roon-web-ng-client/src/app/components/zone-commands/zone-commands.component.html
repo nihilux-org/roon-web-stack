@@ -54,6 +54,18 @@
         <mat-icon fontIcon="pause" />
       </button>
     }
+    @if ($zoneCommands().stop === "ACTIVE") {
+      <button
+        mat-mini-fab
+        color="primary"
+        aria-label="Stop"
+        (click)="onCommandClick('stop')"
+        ngxSnStarter
+        id="stop"
+      >
+        <mat-icon fontIcon="stop" />
+      </button>
+    }
     @if ($zoneCommands().nextTrack !== "ABSENT") {
       <button
         mat-icon-button

@@ -12,6 +12,7 @@ const load = vi.fn();
 const updateSharedConfig = vi.fn();
 const sharedConfigEvents = vi.fn();
 const settings = vi.fn();
+const audioInputSessionManager = vi.fn();
 
 export const roonMock = {
   onServerPaired,
@@ -28,6 +29,7 @@ export const roonMock = {
   updateSharedConfig,
   sharedConfigEvents,
   settings,
+  audioInputSessionManager,
 };
 
 vi.mock("./roon-extension", () => ({

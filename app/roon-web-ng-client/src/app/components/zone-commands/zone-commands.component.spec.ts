@@ -59,4 +59,5 @@ const ZONE_COMMANDS: ZoneCommands = {
   pause: ZoneCommandState.ABSENT,
   play: ZoneCommandState.ABSENT,
   nextTrack: ZoneCommandState.ABSENT,
+  stop: ZoneCommandState.ABSENT,
 };

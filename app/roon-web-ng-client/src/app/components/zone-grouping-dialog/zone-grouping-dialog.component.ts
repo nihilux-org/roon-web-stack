@@ -68,7 +68,8 @@ export class ZoneGroupingDialogComponent {
         .filter(
           (output_id) =>
             output_id !== this.mainOutput.output_id &&
-            zoneState.outputs.findIndex((o) => o.output_id === output_id) === -1
+            zoneState.outputs.findIndex((o) => o.output_id === output_id) === -1 &&
+            outputs.findIndex((o) => o.output_id === output_id) !== -1
         )
         .map((output_id) => {
           const output = outputs.find((o) => o.output_id === output_id);

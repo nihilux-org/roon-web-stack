@@ -6,7 +6,8 @@ import {
   RoonApiTransportControl,
 } from "@nihilux/roon-web-model";
 
-export const executor: CommandExecutor<ControlCommand, FoundZone> = (command, foundZone) => {
+export const executor: CommandExecutor<ControlCommand, FoundZone> = async (command, foundZone) => {
+  const { server, zone } = foundZone;
   let control: RoonApiTransportControl;
   switch (command.type) {
     case CommandType.PLAY:
@@ -28,6 +29,5 @@ export const executor: CommandExecutor<ControlCommand, FoundZone> = (command, fo
       control = "previous";
       break;
   }
-  const { server, zone } = foundZone;
   return server.services.RoonApiTransport.control(zone, control);
 };

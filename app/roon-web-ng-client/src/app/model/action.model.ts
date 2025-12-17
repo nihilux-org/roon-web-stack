@@ -5,6 +5,7 @@ export enum ActionType {
   LOAD = "LOAD",
   QUEUE = "QUEUE",
   CUSTOM = "CUSTOM",
+  AUDIO_INPUT = "AUDIO_INPUT",
 }
 
 export interface ActionButton {
@@ -42,7 +43,14 @@ export interface RecordedAction {
   actionIndex: number;
 }
 
-export type Action = LoadAction | QueueAction | CustomAction;
+export interface AudioInputAction {
+  id: string;
+  type: ActionType.AUDIO_INPUT;
+  button: ActionButton;
+  audioInputType: "start" | "update";
+}
+
+export type Action = LoadAction | QueueAction | CustomAction | AudioInputAction;
 
 export interface LoadAction {
   button: ActionButton;
@@ -170,6 +178,16 @@ export const ToggleQueueAction: QueueAction = {
   type: ActionType.QUEUE,
 };
 
+export const StartAudioInputAction: AudioInputAction = {
+  id: "start-audio-input",
+  type: ActionType.AUDIO_INPUT,
+  button: {
+    label: "AudioInput",
+    icon: "media_bluetooth_on",
+  },
+  audioInputType: "start",
+};
+
 export const DefaultActions: Action[] = [
   AlbumsAction,
   ArtistsAction,
@@ -180,6 +198,7 @@ export const DefaultActions: Action[] = [
   PlaylistsAction,
   RadiosAction,
   ToggleQueueAction,
+  StartAudioInputAction,
 ];
 
 export const CustomActionsManagerDialogConfig: MatDialogConfig = {

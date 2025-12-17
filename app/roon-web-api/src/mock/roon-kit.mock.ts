@@ -1,3 +1,5 @@
+import { vi } from "vitest";
+
 const on = vi.fn();
 const off = vi.fn();
 const get_core = vi.fn();
@@ -10,6 +12,7 @@ const api = () => ({
   load_config,
 });
 const settings = vi.fn();
+const audioInputSessionManager = vi.fn();
 export const extensionMock = {
   on,
   off,
@@ -18,6 +21,7 @@ export const extensionMock = {
   start_discovery,
   api,
   settings,
+  audioInputSessionManager,
 };
 
 vi.mock("@roon-kit", async () => {
@@ -33,6 +37,7 @@ vi.mock("@roon-kit", async () => {
         start_discovery = start_discovery;
         api = api;
         settings = settings;
+        audioInputSessionManager = audioInputSessionManager;
       }
     ),
   };

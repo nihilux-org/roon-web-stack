@@ -59,6 +59,9 @@ export class ZoneCommandsComponent {
       case "nextTrack":
         commandType = CommandType.NEXT;
         break;
+      case "stop":
+        commandType = CommandType.STOP_AUDIO_INPUT;
+        break;
       default:
         commandType = undefined;
         break;

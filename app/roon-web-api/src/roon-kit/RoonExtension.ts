@@ -8,21 +8,23 @@ import {
   RoonExtensionOptions,
   RoonServiceRequired,
   SettingsValues,
-  SettingsManager,
+  SettingsManager, AudioInputSessionManager,
 } from "@nihilux/roon-web-model";
 import { TransientObject } from "./internals";
 import { RoonKit } from "./RoonKit";
 import { RoonExtensionSettings } from "./RoonExtensionSettings";
+import { RoonAudioInputSessionManager } from "./RoonAudioInputSessionManager";
 
 /**
  * Wrapper around the Roon API that simplifies initializing services and subscribing to zones.
  */
 export class Extension<T extends SettingsValues> extends EventEmitter implements RoonExtension<T> {
-  private _options: RoonExtensionOptions<T>;
   private readonly _api: RoonApi;
+  private readonly _audioInputSessionManager?: AudioInputSessionManager;
   private readonly _status: RoonApiStatus;
-  private readonly _settings?: RoonExtensionSettings<T>;
+  private _options: RoonExtensionOptions<T>;
   private _core?: TransientObject<RoonServer>;
+  private _settings?: RoonExtensionSettings<T>;
 
   /**
    * Creates a new `RoonExtension` instance.
@@ -77,6 +79,9 @@ export class Extension<T extends SettingsValues> extends EventEmitter implements
     if (this._options.RoonApiSettings) {
       this._settings = new RoonExtensionSettings(this as RoonExtension<T>, this._options.RoonApiSettings);
     }
+    if (this._options.RoonApiAudioInput === "required") {
+      this._audioInputSessionManager = new RoonAudioInputSessionManager(this);
+    }
   }
 
   /**
@@ -123,6 +128,12 @@ export class Extension<T extends SettingsValues> extends EventEmitter implements
     this.requireService(
       this._options.RoonApiTransport,
       RoonKit.RoonApiTransport,
+      required_services,
+      optional_services
+    );
+    this.requireService(
+      this._options.RoonApiAudioInput,
+      RoonKit.RoonApiAudioInput,
       required_services,
       optional_services
     );
@@ -188,6 +199,10 @@ export class Extension<T extends SettingsValues> extends EventEmitter implements
 
   public settings(): SettingsManager<T> | undefined {
     return this._settings;
+  }
+
+  public audioInputSessionManager(): AudioInputSessionManager | undefined {
+    return this._audioInputSessionManager;
   }
 
   private ensureStarted(): TransientObject<RoonServer> {

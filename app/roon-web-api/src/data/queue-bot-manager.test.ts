@@ -247,6 +247,10 @@ const QUEUE_BOT_ENABLED_EXTENSION_SETTINGS: ExtensionSettings = {
   nr_queue_bot_artist_name: QUEUE_BOT_ARTIST_NAME,
   nr_queue_bot_pause_track_name: QUEUE_BOT_STOP_TRACK_NAME,
   nr_queue_bot_standby_track_name: QUEUE_BOT_STANDBY_TRACK_NAME,
+  nr_audio_input_state: "disabled",
+  nr_audio_input_stream_url: "",
+  nr_audio_input_default_zone: "",
+  nr_audio_input_zones: [],
 };
 
 const zone_id = "zone_id";

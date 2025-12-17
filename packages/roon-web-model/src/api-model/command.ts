@@ -1,6 +1,6 @@
 import { Subject } from "rxjs";
-import { RoonServer, Zone } from "../roon-kit";
-import { SharedConfigUpdate, SseMessage } from "./common";
+import { RoonAudioInputTrackInfo, RoonServer, Zone } from "../roon-kit";
+import { Roon, SharedConfigUpdate, SseMessage } from "./common";
 import { OutputDescription } from "./zone";
 
 export const enum CommandResult {
@@ -35,6 +35,10 @@ export const enum CommandType {
   PLAY_FROM_HERE = "PLAY_FROM_HERE",
   TRANSFER_ZONE = "TRANSFER_ZONE",
   SHARED_CONFIG = "SHARED_CONFIG",
+  // audio input
+  START_AUDIO_INPUT = "START_AUDIO_INPUT",
+  STOP_AUDIO_INPUT = "STOP_AUDIO_INPUT",
+  UPDATE_AUDIO_INPUT_INFO = "UPDATE_AUDIO_INPUT_INFO",
 }
 
 export const enum InternalCommandType {
@@ -177,6 +181,28 @@ export interface StandbyNextCommand {
   };
 }
 
+export interface StartAudioInputCommand {
+  type: CommandType.START_AUDIO_INPUT;
+  data: {
+    zone_id: string;
+  };
+}
+
+export interface UpdateAudioInputInfoCommand {
+  type: CommandType.UPDATE_AUDIO_INPUT_INFO;
+  data: {
+    zone_id: string;
+    info: RoonAudioInputTrackInfo;
+  };
+}
+
+export interface StopAudioInputCommand {
+  type: CommandType.STOP_AUDIO_INPUT;
+  data: {
+    zone_id: string;
+  };
+}
+
 export type QueueBotCommand = StandbyNextCommand | StopNextCommand;
 
 export type InternalCommand = QueueBotCommand;
@@ -190,7 +216,8 @@ export type Command =
   | PlayFromHereCommand
   | TransferZoneCommand
   | GroupCommand
-  | SharedConfigCommand;
+  | SharedConfigCommand
+  | AudioInputCommand;
 
 export type ControlCommand =
   | PlayCommand
@@ -199,6 +226,8 @@ export type ControlCommand =
   | StopCommand
   | NextCommand
   | PreviousCommand;
+
+export type AudioInputCommand = StartAudioInputCommand | UpdateAudioInputInfoCommand | StopAudioInputCommand;
 
 export interface CommandDispatcher {
   dispatch: (command: Command, notificationChannel: Subject<CommandState>) => string;
@@ -210,7 +239,7 @@ export interface FoundZone {
   zone: Zone;
 }
 
-export type ExecutionContext = FoundZone | RoonServer;
+export type ExecutionContext = FoundZone | RoonServer | Roon;
 
 export type CommandExecutor<T extends Command, U extends ExecutionContext> = (
   command: T,

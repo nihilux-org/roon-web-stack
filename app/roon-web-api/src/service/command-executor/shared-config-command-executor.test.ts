@@ -1,6 +1,6 @@
 import { roonMock } from "../../infrastructure/roon-extension.mock";
 
-import { CommandType, RoonServer, SharedConfigCommand, SharedConfigUpdate } from "@nihilux/roon-web-model";
+import { CommandType, SharedConfigCommand, SharedConfigUpdate } from "@nihilux/roon-web-model";
 import { executor } from "./shared-config-command-executor";
 
 describe("shared-config-command-executor test suite", () => {
@@ -15,7 +15,7 @@ describe("shared-config-command-executor test suite", () => {
       },
     };
 
-    const result = executor(command, {} as unknown as RoonServer);
+    const result = executor(command, roonMock);
 
     await expect(result).resolves.toBeUndefined();
     expect(roonMock.updateSharedConfig).toHaveBeenCalledWith(sharedConfigUpdate);
@@ -34,7 +34,7 @@ describe("shared-config-command-executor test suite", () => {
       },
     };
 
-    const result = executor(command, {} as unknown as RoonServer);
+    const result = executor(command, roonMock);
     await expect(result).rejects.toBe(error);
     expect(roonMock.updateSharedConfig).toHaveBeenCalledWith(command.data.sharedConfigUpdate);
   });
