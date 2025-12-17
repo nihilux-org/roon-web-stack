@@ -3,6 +3,7 @@ import { hostInfoMock } from "./host-info.mock";
 
 import { extension_version, logger } from "@infrastructure";
 import {
+  AudioInputSessionManager,
   CustomAction,
   ExtensionSettings,
   OutputListener,
@@ -26,6 +27,8 @@ import {
 
 describe("roon-extension.ts test suite", () => {
   let roon: Roon;
+  let settings: ExtensionSettings;
+  let settingsManagerMock: SettingsManager<ExtensionSettings>;
 
   beforeEach(async () => {
     hostInfoMock.host = "host";
@@ -40,6 +43,28 @@ describe("roon-extension.ts test suite", () => {
       .catch((err: unknown) => {
         logger.error(err);
       });
+    settings = {
+      nr_audio_input_state: "disabled",
+      nr_audio_input_zones: [
+        {
+          zone_id: "existing_zone_id",
+          zone_name: "existing_zone_name",
+        },
+      ],
+      nr_audio_input_default_zone: "existing_zone_id",
+      nr_audio_input_stream_url: "",
+      nr_queue_bot_state: "disabled",
+      nr_queue_bot_standby_track_name: "",
+      nr_queue_bot_artist_name: "",
+      nr_queue_bot_pause_track_name: "",
+    };
+    settingsManagerMock = {
+      settings: vi.fn().mockImplementation(() => settings),
+      updateSettings: vi.fn(),
+      offSettings: vi.fn(),
+      onSettings: vi.fn(),
+    };
+    extensionMock.settings.mockImplementation(() => settingsManagerMock);
   });
 
   afterEach(() => {
@@ -495,10 +520,180 @@ describe("roon-extension.ts test suite", () => {
   });
 
   it("roon#settings should delegate to RoonExtension#settings", () => {
-    const settingsManagerMock = {} as SettingsManager<ExtensionSettings>;
-    extensionMock.settings.mockImplementation(() => settingsManagerMock);
     const settingsManager = roon.settings();
     expect(settingsManager).toBe(settingsManagerMock);
     expect(extensionMock.settings).toHaveBeenCalledTimes(1);
   });
+
+  it("roon#audioInputSessionManager should delegate to RoonExtension#audioInputSessionManager", () => {
+    const audioInputSessionManagerMock = {} as AudioInputSessionManager;
+    extensionMock.audioInputSessionManager.mockImplementation(() => audioInputSessionManagerMock);
+    const audioInputSessionManager = roon.audioInputSessionManager();
+    expect(audioInputSessionManager).toBe(audioInputSessionManagerMock);
+    expect(extensionMock.audioInputSessionManager).toHaveBeenCalledTimes(1);
+  });
+
+  it("roon should register a listener with roon#onServerPaired that register a zoneListener and unregister this listener onServerLost", () => {
+    let zonesRegisteredListener: ZoneListener | null = null;
+    let corePairedRegisteredListener: ServerListener | null = null;
+    let coreLostRegisteredListener: ServerListener | null = null;
+    extensionMock.on.mockImplementation((eventName: string, listener: ZoneListener | ServerListener) => {
+      if (eventName === "subscribe_zones") {
+        zonesRegisteredListener = listener;
+      } else if (eventName === "core_paired") {
+        corePairedRegisteredListener = listener as ServerListener;
+      } else if (eventName === "core_unpaired") {
+        coreLostRegisteredListener = listener as ServerListener;
+      }
+    });
+    extensionMock.off.mockImplementation((eventName: string, listener: ZoneListener) => {
+      if (eventName === "subscribe_zones" && listener === zonesRegisteredListener) {
+        zonesRegisteredListener = null;
+      }
+    });
+    roon.startExtension();
+    expect(corePairedRegisteredListener).not.toBeNull();
+    expect(coreLostRegisteredListener).not.toBeNull();
+    corePairedRegisteredListener!({} as RoonServer);
+    expect(zonesRegisteredListener).not.toBeNull();
+    coreLostRegisteredListener!({} as RoonServer);
+    expect(zonesRegisteredListener).toBeNull();
+  });
+
+  test.each([
+    [
+      "Subscribed",
+      {
+        zones: [
+          {
+            zone_id: "first_new_zone_id",
+            display_name: "first_new_zone_name",
+          },
+          {
+            zone_id: "second_new_zone_id",
+            display_name: "second_new_zone_name",
+          },
+        ],
+      },
+      {
+        nr_audio_input_default_zone: "",
+        nr_audio_input_zones: [
+          {
+            zone_id: "first_new_zone_id",
+            zone_name: "first_new_zone_name",
+          },
+          {
+            zone_id: "second_new_zone_id",
+            zone_name: "second_new_zone_name",
+          },
+        ],
+      },
+    ],
+    [
+      "Subscribed",
+      {},
+      {
+        nr_audio_input_default_zone: "",
+        nr_audio_input_zones: [],
+      },
+    ],
+    [
+      "Changed",
+      {
+        zones_added: [
+          {
+            zone_id: "first_new_zone_id",
+            display_name: "first_new_zone_name",
+          },
+          {
+            zone_id: "second_new_zone_id",
+            display_name: "second_new_zone_name",
+          },
+        ],
+      },
+      {
+        nr_audio_input_default_zone: "existing_zone_id",
+        nr_audio_input_zones: [
+          {
+            zone_id: "existing_zone_id",
+            zone_name: "existing_zone_name",
+          },
+          {
+            zone_id: "first_new_zone_id",
+            zone_name: "first_new_zone_name",
+          },
+          {
+            zone_id: "second_new_zone_id",
+            zone_name: "second_new_zone_name",
+          },
+        ],
+      },
+    ],
+    [
+      "Changed",
+      {
+        zones_removed: ["existing_zone_id"],
+      },
+      {
+        nr_audio_input_default_zone: "",
+        nr_audio_input_zones: [],
+      },
+    ],
+    [
+      "Changed",
+      {
+        zones_changed: [
+          {
+            zone_id: "existing_zone_id",
+            display_name: "new_existing_zone_name",
+          },
+        ],
+      },
+      {
+        nr_audio_input_default_zone: "existing_zone_id",
+        nr_audio_input_zones: [
+          {
+            zone_id: "existing_zone_id",
+            zone_name: "new_existing_zone_name",
+          },
+        ],
+      },
+    ],
+    [
+      "Unsubscribed",
+      {},
+      {
+        nr_audio_input_default_zone: "",
+        nr_audio_input_zones: [],
+      },
+    ],
+  ])(
+    "zoneListener registered to update zone in settings should propagate zone events",
+    (response: string, eventBody: object, expectedUpdatedSettings: object) => {
+      let zonesRegisteredListener: ZoneListener | null = null;
+      let corePairedRegisteredListener: ServerListener | null = null;
+      extensionMock.on.mockImplementation((eventName: string, listener: ZoneListener | ServerListener) => {
+        if (eventName === "subscribe_zones") {
+          zonesRegisteredListener = listener;
+        } else if (eventName === "core_paired") {
+          corePairedRegisteredListener = listener as ServerListener;
+        }
+      });
+      roon.startExtension();
+      expect(corePairedRegisteredListener).not.toBeNull();
+      corePairedRegisteredListener!({} as RoonServer);
+      expect(zonesRegisteredListener).not.toBeNull();
+      zonesRegisteredListener!(
+        {} as RoonServer,
+        response as RoonSubscriptionResponse,
+        eventBody as RoonApiTransportZones
+      );
+      expect(settingsManagerMock.settings).toHaveBeenCalledTimes(1);
+      expect(settingsManagerMock.updateSettings).toHaveBeenCalledTimes(1);
+      expect(settingsManagerMock.updateSettings).toHaveBeenCalledWith({
+        ...settings,
+        ...expectedUpdatedSettings,
+      });
+    }
+  );
 });

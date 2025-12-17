@@ -9,7 +9,7 @@ import {
   RoonServer,
   SaveSettingsStatus,
   SettingsValues,
-  SettingsLayout,
+  SettingsLayout, RoonApiAudioInput, RoonApiAudioInputSession,
 } from "@nihilux/roon-web-model";
 
 /**
@@ -65,6 +65,11 @@ export class RoonKit {
   }) => RoonApiSettings<T> = require("node-roon-api-settings");
 
   /**
+   * [[RoonApiAudioInput]] service imported from 'node-roon-api-audioinput' package.
+   */
+  public static readonly RoonApiAudioInput: new () => RoonApiAudioInput = require("node-roon-api-audioinput");
+
+  /**
    * Creates a new [[RoonApi]] instance.
    * @param options Options used to configure roon API.
    * @returns Created [[RoonApi]] instance.
@@ -117,6 +122,12 @@ function proxyCore(core: RoonCoreProxy): RoonServer {
       (core.services as any).RoonApiTransport = proxyTransport(
         core.services.RoonApiTransport
       );
+    }
+
+    if (core.services.RoonApiAudioInput) {
+      (core.services as any).RoonApiAudioInput = proxyAudioInput(
+        core.services.RoonApiAudioInput
+      )
     }
 
     core.isProxy = true;
@@ -237,4 +248,49 @@ function proxyTransport(transport: RoonApiTransport): RoonApiTransport {
       return v;
     },
   });
+}
+
+function proxyAudioInput(audioInput: RoonApiAudioInput) {
+  return new Proxy(audioInput, {
+    get(t, p, r) {
+      let fn: Function;
+      let v: any = Reflect.get(t, p, r);
+      switch (p) {
+        case "begin_session":
+          fn = v;
+          v = (...args: any[]) => {
+            return new Promise<RoonApiAudioInputSession>((resolve, reject) => {
+              const session = fn.apply(t, args);
+              session.end = function() {
+                const _session = this;
+                return new Promise<void>((end_session_resolve, end_session_reject) => {
+                  _session.end_session(() => {
+                    end_session_resolve();
+                  });
+                });
+              }
+              resolve(session);
+            });
+          };
+          break;
+        case "clear":
+        case "update_track_info":
+        case "update_transport_info":
+          fn = v;v = (...args: any[]) => {
+            return new Promise<void>((resolve, reject) => {
+              args.push((err: string | false) => {
+                if (err) {
+                  reject(err);
+                } else {
+                  resolve();
+                }
+              });
+              fn.apply(t, args);
+            });
+          };
+          break;
+      }
+      return v;
+    }
+  })
 }

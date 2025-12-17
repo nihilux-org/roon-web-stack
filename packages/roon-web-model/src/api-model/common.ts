@@ -1,5 +1,6 @@
 import { Observable } from "rxjs";
 import {
+  AudioInputSessionManager,
   EmptyObject,
   RoonApiBrowseHierarchy,
   RoonApiBrowseLoadOptions,
@@ -11,6 +12,7 @@ import {
   SettingsManager,
   SettingsValues,
   Zone,
+  ZoneDropdownValue,
 } from "../roon-kit";
 import {
   CommandSseMessage,
@@ -61,13 +63,17 @@ export interface DataConverter {
 
 export type ServerListener = (server: RoonServer) => void;
 
-export type QueueBotState = "enabled" | "disabled";
+export type FeatureState = "enabled" | "disabled";
 
 export interface ExtensionSettings extends SettingsValues {
-  nr_queue_bot_state: QueueBotState;
+  nr_queue_bot_state: FeatureState;
   nr_queue_bot_artist_name: string;
   nr_queue_bot_pause_track_name: string;
   nr_queue_bot_standby_track_name: string;
+  nr_audio_input_state: FeatureState;
+  nr_audio_input_stream_url: string;
+  nr_audio_input_default_zone: string;
+  nr_audio_input_zones: ZoneDropdownValue[];
 }
 
 export interface Roon {
@@ -88,6 +94,7 @@ export interface Roon {
   updateSharedConfig: (shardConfigUpdate: SharedConfigUpdate) => void;
   sharedConfigEvents: () => Observable<SharedConfigMessage>;
   settings: () => SettingsManager<ExtensionSettings> | undefined;
+  audioInputSessionManager: () => AudioInputSessionManager | undefined;
 }
 
 export interface RoonPath {

@@ -52,9 +52,48 @@ const settingsLayoutBuilder: SettingsLayoutBuilder<ExtensionSettings> = (values,
     has_error = validateMandatorySetting(queueBotStandbyTrackName, values) || has_error;
     queueBotGroup.items.push(queueBotArtistName, queueBotPauseTrackName, queueBotStandbyTrackName);
   }
+  const audioInputActivation: DropdownSetting = {
+    type: "dropdown",
+    setting: "nr_audio_input_state",
+    title: "enable Audio Input feature",
+    values: [
+      {
+        title: "Yes",
+        value: "enabled",
+      },
+      {
+        title: "No",
+        value: "disabled",
+      },
+    ],
+  };
+  const audioInputSettings: GroupSetting = {
+    type: "group",
+    title: "Audio Input",
+    items: [audioInputActivation],
+  };
+  if (values.nr_audio_input_state === "enabled") {
+    const audioInputStreamUrl: StringSetting = {
+      type: "string",
+      title: "audio input stream url",
+      setting: "nr_audio_input_stream_url",
+    };
+    has_error = validateMandatorySetting(audioInputStreamUrl, values) || has_error;
+    const audioInputZones: DropdownSetting = {
+      type: "dropdown",
+      title: "default zone for audio input",
+      setting: "nr_audio_input_default_zone",
+      values: values.nr_audio_input_zones.map((zoneDropdown) => ({
+        title: zoneDropdown.zone_name,
+        value: zoneDropdown.zone_id,
+      })),
+    };
+    has_error = validateMandatorySetting(audioInputZones, values) || has_error;
+    audioInputSettings.items.push(audioInputStreamUrl, audioInputZones);
+  }
   return {
     values,
-    layout: [queueBotGroup],
+    layout: [queueBotGroup, audioInputSettings],
     has_error,
   };
 };
@@ -82,6 +121,12 @@ const settingsValidator: SettingsValidator<ExtensionSettings> = (settings_to_sav
   if (settings_to_save.nr_queue_bot_standby_track_name === "") {
     has_error = true;
   }
+  if (settings_to_save.nr_audio_input_stream_url === "") {
+    has_error = true;
+  }
+  if (settings_to_save.nr_audio_input_default_zone === "") {
+    has_error = true;
+  }
   return {
     has_error,
     values: settings_to_save,
@@ -96,5 +141,9 @@ export const settingsOptions: RoonApiSettingsOptions<ExtensionSettings> = {
     nr_queue_bot_artist_name: "Queue Bot",
     nr_queue_bot_pause_track_name: "Pause",
     nr_queue_bot_standby_track_name: "Standby",
+    nr_audio_input_state: "disabled",
+    nr_audio_input_stream_url: "",
+    nr_audio_input_default_zone: "",
+    nr_audio_input_zones: [],
   },
 };

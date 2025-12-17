@@ -4,6 +4,7 @@ export interface ZoneCommands {
   loading: ZoneCommandState;
   play: ZoneCommandState;
   pause: ZoneCommandState;
+  stop: ZoneCommandState;
   nextTrack: ZoneCommandState;
 }
 

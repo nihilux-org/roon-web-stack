@@ -33,10 +33,11 @@ export interface RoonServer {
     readonly RoonApiBrowse: RoonApiBrowse;
     readonly RoonApiImage: RoonApiImage;
     readonly RoonApiTransport: RoonApiTransport;
+    readonly RoonApiAudioInput: RoonApiAudioInput;
   };
 }
 
-export type RequestedRoonServices = RoonApiBrowse | RoonApiImage | RoonApiTransport;
+export type RequestedRoonServices = RoonApiBrowse | RoonApiImage | RoonApiTransport | RoonApiAudioInput;
 export type ProvidedRoonServices = RoonApiStatus | object;
 
 export interface RoonServiceOptions {
@@ -380,7 +381,12 @@ export interface SettingsManager<T extends SettingsValues> {
   offSettings: (listener: SettingsUpdateListener<T>) => void;
 }
 
-export type SettingsValues = Record<string, string | Zone | undefined>;
+export interface ZoneDropdownValue {
+  zone_name: string;
+  zone_id: string;
+}
+
+export type SettingsValues = Record<string, string | Zone | undefined | ZoneDropdownValue[]>;
 
 export interface ValidatedSettingsValues<T extends SettingsValues> {
   values: Partial<T>;
@@ -445,6 +451,7 @@ export interface RoonExtensionOptions<T extends SettingsValues> {
   RoonApiBrowse?: RoonServiceRequired;
   RoonApiImage?: RoonServiceRequired;
   RoonApiTransport?: RoonServiceRequired;
+  RoonApiAudioInput: RoonServiceRequired;
   RoonApiSettings?: RoonApiSettingsOptions<T>;
   subscribe_outputs?: boolean;
   subscribe_zones?: boolean;
@@ -499,4 +506,79 @@ export interface RoonExtension<T extends SettingsValues> {
   update_options(options: Partial<RoonExtensionOptions<T>>): void;
   get_core(): Promise<RoonServer>;
   settings(): SettingsManager<T> | undefined;
+  audioInputSessionManager(): AudioInputSessionManager | undefined;
+}
+
+export interface RoonApiAudioInputSession {
+  session_id: string;
+  end(): Promise<void>;
+}
+
+export interface RoonApiAudioInputSessionOptions {
+  zone_id: string;
+  display_name: string;
+  icon_url: string;
+}
+
+export type RoonApiAudioInputSessionEvent = "SessionBegan" | "ZoneNotFound" | "ZoneLost" | "SessionEnded";
+
+export type RoonApiAudioInputSessionListener = (
+  event: RoonApiAudioInputSessionEvent,
+  body: { session_id: string }
+) => void;
+
+export interface RoonAudioInputTrackInfo extends RoonThreeLine {
+  is_seek_allowed: boolean;
+  is_pause_allowed: boolean;
+}
+
+export interface RoonAudioInputPlayOptions {
+  session_id: string;
+  type: "channel";
+  slot: "play";
+  media_url: string;
+  info?: RoonAudioInputTrackInfo;
+}
+
+export type RoonApiAudioInputPlayEvent =
+  | "Playing"
+  | "Time"
+  | "StoppedUser"
+  | "EndedNaturally"
+  | "MediaError"
+  | "Paused"
+  | "ZoneNotFound"
+  | "ZoneLost";
+
+export interface RoonAudioInputUpdateTrackInfoOptions {
+  session_id: string;
+  info?: RoonAudioInputTrackInfo;
+}
+
+interface RoonAudioInputTransportOptions {
+  session_id: string;
+  controls: {
+    is_previous_allowed: boolean;
+    is_next_allowed: boolean;
+  };
+}
+
+export type RoonApiAudioInputPlayListener = (event: { name: RoonApiAudioInputPlayEvent }, body: object) => void;
+
+export interface RoonApiAudioInput {
+  begin_session(
+    options: RoonApiAudioInputSessionOptions,
+    listener: RoonApiAudioInputSessionListener
+  ): Promise<RoonApiAudioInputSession>;
+  play(options: RoonAudioInputPlayOptions, listener: RoonApiAudioInputPlayListener): void;
+  clear(): Promise<void>;
+  update_track_info(info?: RoonAudioInputUpdateTrackInfoOptions): Promise<void>;
+  update_transport_controls(controls: RoonAudioInputTransportOptions): Promise<void>;
+}
+
+export interface AudioInputSessionManager {
+  play(zone_id: string, url: string): Promise<void>;
+  update_track_info(zone_id: string, info: RoonAudioInputTrackInfo): Promise<void>;
+  end_session(zone_id: string): Promise<void>;
+  has_session(zone_id: string): boolean;
 }

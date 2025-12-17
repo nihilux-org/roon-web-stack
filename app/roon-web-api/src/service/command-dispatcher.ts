@@ -15,6 +15,7 @@ import {
   InternalCommandType,
   RoonServer,
 } from "@nihilux/roon-web-model";
+import { executor as audioInputExecutor } from "./command-executor/audio-input-command-executor";
 import { executor as controlExecutor } from "./command-executor/control-command-executor";
 import { executor as groupExecutor } from "./command-executor/group-command-executor";
 import { executor as muteExecutor } from "./command-executor/mute-command-executor";
@@ -59,7 +60,12 @@ const dispatch = (command: Command, controlChannel: Subject<CommandState>): stri
       executeCommand(command_id, command, roon.server(), groupExecutor, controlChannel);
       break;
     case CommandType.SHARED_CONFIG:
-      executeCommand(command_id, command, roon.server(), sharedConfigExecutor, controlChannel);
+      executeCommand(command_id, command, Promise.resolve(roon), sharedConfigExecutor, controlChannel);
+      break;
+    case CommandType.START_AUDIO_INPUT:
+    case CommandType.UPDATE_AUDIO_INPUT_INFO:
+    case CommandType.STOP_AUDIO_INPUT:
+      executeCommand(command_id, command, Promise.resolve(roon), audioInputExecutor, controlChannel);
       break;
   }
   return command_id;

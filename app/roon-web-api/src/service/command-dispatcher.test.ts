@@ -1,5 +1,6 @@
 import { loggerMock, nanoidMock } from "@mock";
 import { roonMock } from "../infrastructure/roon-extension.mock";
+import { audioInputCommandExecutor } from "./command-executor/audio-input-command-executor.mock";
 import { controlExecutorMock } from "./command-executor/control-command-executor.mock";
 import { groupCommandExecutorMock } from "./command-executor/group-command-executor.mock";
 import { muteCommandExecutorMock } from "./command-executor/mute-command-executor.mock";
@@ -14,6 +15,7 @@ import { volumeGroupedZoneCommandExecutorMock } from "./command-executor/volume-
 import { Subject } from "rxjs";
 import { Mock } from "vitest";
 import {
+  AudioInputCommand,
   Command,
   CommandResult,
   CommandState,
@@ -74,19 +76,26 @@ describe("command-dispatcher.ts test suite", () => {
     const promise = new Promise<void>((resolve) => {
       controlChannel.subscribe((n: CommandState) => {
         notifications.push(n);
-        if (notifications.length === commands.length - 3) {
+        if (notifications.length === commands.length - 6) {
           resolve();
         }
       });
     });
 
     commands
-      .filter((c) => c.type !== CommandType.GROUP && c.type !== CommandType.SHARED_CONFIG)
+      .filter(
+        (c) =>
+          c.type !== CommandType.GROUP &&
+          c.type !== CommandType.SHARED_CONFIG &&
+          c.type !== CommandType.START_AUDIO_INPUT &&
+          c.type !== CommandType.UPDATE_AUDIO_INPUT_INFO &&
+          c.type !== CommandType.STOP_AUDIO_INPUT
+      )
       .forEach((c: Command) => {
         commandDispatcher.dispatch(c, controlChannel);
       });
     await promise;
-    expect(nanoid_counter).toEqual(commands.length - 3);
+    expect(nanoid_counter).toEqual(commands.length - 6);
     notifications.forEach((notification: CommandState, index: number) => {
       const command_id = `${index + 1}`;
       expect(notification).toEqual({
@@ -114,19 +123,26 @@ describe("command-dispatcher.ts test suite", () => {
     const promise = new Promise<void>((resolve) => {
       controlChannel.subscribe((n: CommandState) => {
         notifications.push(n);
-        if (notifications.length === commands.length - 3) {
+        if (notifications.length === commands.length - 6) {
           resolve();
         }
       });
     });
 
     commands
-      .filter((c) => c.type !== CommandType.GROUP && c.type !== CommandType.SHARED_CONFIG)
+      .filter(
+        (c) =>
+          c.type !== CommandType.GROUP &&
+          c.type !== CommandType.SHARED_CONFIG &&
+          c.type !== CommandType.START_AUDIO_INPUT &&
+          c.type !== CommandType.UPDATE_AUDIO_INPUT_INFO &&
+          c.type !== CommandType.STOP_AUDIO_INPUT
+      )
       .forEach((c: Command) => {
         commandDispatcher.dispatch(c, controlChannel);
       });
     await promise;
-    expect(nanoid_counter).toEqual(commands.length - 3);
+    expect(nanoid_counter).toEqual(commands.length - 6);
     notifications.forEach((notification: CommandState, index: number) => {
       const command_id = `${index + 1}`;
       expect(notification).toEqual({
@@ -153,7 +169,10 @@ describe("command-dispatcher.ts test suite", () => {
         c.type !== CommandType.PLAY_FROM_HERE &&
         c.type !== CommandType.TRANSFER_ZONE &&
         c.type !== CommandType.GROUP &&
-        c.type !== CommandType.SHARED_CONFIG
+        c.type !== CommandType.SHARED_CONFIG &&
+        c.type !== CommandType.START_AUDIO_INPUT &&
+        c.type !== CommandType.UPDATE_AUDIO_INPUT_INFO &&
+        c.type !== CommandType.STOP_AUDIO_INPUT
     );
     controlExecutorMock.mockImplementation(() => Promise.resolve());
     const notifications: CommandState[] = [];
@@ -385,7 +404,33 @@ describe("command-dispatcher.ts test suite", () => {
     await promise;
     expect(commandIds).toHaveLength(sharedConfigCommands.length);
     sharedConfigCommands.forEach((command, index) => {
-      expect(sharedConfigCommandExecutor).toHaveBeenNthCalledWith(index + 1, command, server);
+      expect(sharedConfigCommandExecutor).toHaveBeenNthCalledWith(index + 1, command, roonMock);
+    });
+  });
+
+  it("command-dispatcher#dispatch should call audio-input-command-executor with any AudioInputCommand", async () => {
+    const audioInputCommands: AudioInputCommand[] = commands
+      .filter(
+        (c: Command) => c.type === CommandType.START_AUDIO_INPUT || c.type === CommandType.UPDATE_AUDIO_INPUT_INFO
+      )
+      .map((c: Command) => c as unknown as AudioInputCommand);
+    const notifications: CommandState[] = [];
+    const commandIds: string[] = [];
+    const promise = new Promise<void>((resolve) => {
+      controlChannel.subscribe((cn: CommandState) => {
+        notifications.push(cn);
+        if (notifications.length === audioInputCommands.length) {
+          resolve();
+        }
+      });
+    });
+    audioInputCommands.forEach((c: Command) => {
+      commandIds.push(commandDispatcher.dispatch(c, controlChannel));
+    });
+    await promise;
+    expect(commandIds).toHaveLength(audioInputCommands.length);
+    audioInputCommands.forEach((command, index) => {
+      expect(audioInputCommandExecutor).toHaveBeenNthCalledWith(index + 1, command, roonMock);
     });
   });
 
@@ -651,6 +696,40 @@ const commands: Command[] = [
       sharedConfigUpdate: {
         customActions: [],
       },
+    },
+  },
+  {
+    type: CommandType.START_AUDIO_INPUT,
+    data: {
+      zone_id,
+    },
+  },
+  {
+    type: CommandType.UPDATE_AUDIO_INPUT_INFO,
+    data: {
+      zone_id: "zone_id",
+      info: {
+        is_pause_allowed: false,
+        is_seek_allowed: false,
+        one_line: {
+          line1: "line1",
+        },
+        two_line: {
+          line1: "line1",
+          line2: "line2",
+        },
+        three_line: {
+          line1: "line1",
+          line2: "line2",
+          line3: "line3",
+        },
+      },
+    },
+  },
+  {
+    type: CommandType.STOP_AUDIO_INPUT,
+    data: {
+      zone_id,
     },
   },
 ];

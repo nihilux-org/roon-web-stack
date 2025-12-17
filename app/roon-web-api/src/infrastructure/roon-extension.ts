@@ -1,6 +1,7 @@
 import { BehaviorSubject, Observable, Subject } from "rxjs";
 import { hostInfo, logger } from "@infrastructure";
 import {
+  AudioInputSessionManager,
   EmptyObject,
   ExtensionSettings,
   OutputListener,
@@ -36,6 +37,7 @@ const extension: RoonExtension<ExtensionSettings> = new Extension({
   RoonApiBrowse: "required",
   RoonApiImage: "required",
   RoonApiTransport: "required",
+  RoonApiAudioInput: "required",
   RoonApiSettings: settingsOptions,
   subscribe_outputs: true,
   subscribe_zones: true,
@@ -52,11 +54,78 @@ const onServerPairedDefaultListener: ServerListener = (server: RoonServer) => {
     `extension version: ${extension_version}, paired roon server: ${server.display_name} (v${server.display_version} - ${server.core_id})`
   );
   publishSharedConfigMessage();
+  onZones(onZonesDefaultSettingsListener);
+};
+
+const onZonesDefaultSettingsListener: ZoneListener = (server: RoonServer, response, body) => {
+  const settingsManager = roon.settings();
+  /* v8 ignore else --@preserve */
+  if (settingsManager !== undefined) {
+    const settings = settingsManager.settings();
+    let settingsZones = settings.nr_audio_input_zones;
+    let updateSettings = false;
+    switch (response) {
+      case "Subscribed":
+        updateSettings = true;
+        if (body.zones !== undefined) {
+          settingsZones = body.zones
+            .map((z) => ({
+              zone_name: z.display_name,
+              zone_id: z.zone_id,
+            }))
+            .sort((z1, z2) => z1.zone_name.localeCompare(z2.zone_name));
+        } else {
+          settingsZones = [];
+        }
+        break;
+      case "Changed":
+        if (body.zones_added !== undefined) {
+          updateSettings = true;
+          settingsZones.push(
+            ...body.zones_added.map((z) => ({
+              zone_name: z.display_name,
+              zone_id: z.zone_id,
+            }))
+          );
+          settingsZones.sort((z1, z2) => z1.zone_name.localeCompare(z2.zone_name));
+        }
+        if (body.zones_removed !== undefined) {
+          updateSettings = true;
+          settingsZones = settingsZones.filter((z) => !body.zones_removed?.includes(z.zone_id));
+        }
+        if (body.zones_changed !== undefined) {
+          for (const zone of body.zones_changed) {
+            const changedZone = settingsZones.find((z) => z.zone_id === zone.zone_id);
+            /* v8 ignore else --@preserve */
+            if (changedZone !== undefined && changedZone.zone_name !== zone.display_name) {
+              updateSettings = true;
+              changedZone.zone_name = zone.display_name;
+            }
+          }
+        }
+        break;
+      case "Unsubscribed":
+        updateSettings = true;
+        settingsZones = [];
+        break;
+    }
+    /* v8 ignore else --@preserve */
+    if (updateSettings) {
+      const defaultZoneValid =
+        settingsZones.findIndex((z) => z.zone_id === settings.nr_audio_input_default_zone) !== -1;
+      settingsManager.updateSettings({
+        ...settings,
+        nr_audio_input_default_zone: defaultZoneValid ? settings.nr_audio_input_default_zone : "",
+        nr_audio_input_zones: settingsZones,
+      });
+    }
+  }
 };
 
 const onServerLostDefaultListener: ServerListener = (server: RoonServer) => {
   logger.warn(`lost roon server: ${server.display_name} (v${server.display_version} - ${server.core_id})`);
   logger.info(`waiting for adoption...`);
+  offZones(onZonesDefaultSettingsListener);
 };
 
 const onServerLost = (listener: ServerListener): void => {
@@ -162,6 +231,10 @@ const settings = (): SettingsManager<ExtensionSettings> | undefined => {
   return extension.settings();
 };
 
+const audioInputSessionManager = (): AudioInputSessionManager | undefined => {
+  return extension.audioInputSessionManager();
+};
+
 export const roon: Roon = {
   onServerPaired,
   onServerLost,
@@ -177,4 +250,5 @@ export const roon: Roon = {
   updateSharedConfig,
   sharedConfigEvents,
   settings,
+  audioInputSessionManager,
 };

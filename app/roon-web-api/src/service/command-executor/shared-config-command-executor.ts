@@ -1,7 +1,6 @@
-import { roon } from "@infrastructure";
-import { CommandExecutor, RoonServer, SharedConfigCommand } from "@nihilux/roon-web-model";
+import { CommandExecutor, Roon, SharedConfigCommand } from "@nihilux/roon-web-model";
 
-export const executor: CommandExecutor<SharedConfigCommand, RoonServer> = (command) => {
+export const executor: CommandExecutor<SharedConfigCommand, Roon> = (command, roon) => {
   try {
     roon.updateSharedConfig(command.data.sharedConfigUpdate);
     return Promise.resolve();

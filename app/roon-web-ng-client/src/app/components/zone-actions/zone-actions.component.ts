@@ -9,6 +9,7 @@ import { ZoneQueueDialogComponent } from "@components/zone-queue-dialog/zone-que
 import {
   Action,
   ActionType,
+  AudioInputAction,
   CustomAction,
   DisplayMode,
   LayoutContext,
@@ -16,6 +17,7 @@ import {
   SettingsDialogConfig,
   SettingsDialogConfigBigFonts,
 } from "@model";
+import { CommandType } from "@nihilux/roon-web-model";
 import { DialogService } from "@services/dialog.service";
 import { FullscreenService } from "@services/fullscreen.service";
 import { RoonService } from "@services/roon.service";
@@ -69,6 +71,9 @@ export class ZoneActionsComponent {
         break;
       case ActionType.CUSTOM:
         this.executeCustomAction(action);
+        break;
+      case ActionType.AUDIO_INPUT:
+        this.executeAudioInputAction(action);
         break;
     }
   }
@@ -151,6 +156,18 @@ export class ZoneActionsComponent {
             set_display_offset: true,
           });
         }
+      });
+    }
+  }
+
+  private executeAudioInputAction(action: AudioInputAction) {
+    if (action.audioInputType === "start") {
+      const zone_id = this._settingsService.displayedZoneId()();
+      this._roonService.command({
+        type: CommandType.START_AUDIO_INPUT,
+        data: {
+          zone_id,
+        },
       });
     }
   }

@@ -81,6 +81,7 @@ export class ZoneContainerComponent {
         let loading: ZoneCommandState;
         let pause: ZoneCommandState;
         let play: ZoneCommandState;
+        let stop: ZoneCommandState = ZoneCommandState.ABSENT;
         switch (zs.state) {
           case "paused":
           case "stopped":
@@ -97,6 +98,7 @@ export class ZoneContainerComponent {
             loading = ZoneCommandState.ABSENT;
             pause = zs.is_pause_allowed ? ZoneCommandState.ACTIVE : ZoneCommandState.ABSENT;
             play = ZoneCommandState.ABSENT;
+            stop = zs.is_pause_allowed ? ZoneCommandState.DISABLED : ZoneCommandState.ACTIVE;
             break;
         }
         const nextTrack = zs.is_next_allowed ? ZoneCommandState.ACTIVE : ZoneCommandState.DISABLED;
@@ -110,6 +112,7 @@ export class ZoneContainerComponent {
           pause,
           nextTrack,
           nextAlbum,
+          stop,
         };
       },
       {
