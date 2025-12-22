@@ -1,6 +1,6 @@
 {
   "name": "@nihilux/roon-web-eslint",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "private": true,
   "types": "src/index.d.ts",
   "license": "MIT",
