@@ -1,6 +1,6 @@
 {
   "name": "@nihilux/roon-web-stack",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "description": "a web stack, from api to web client, to use roon ia a browser",
   "private": true,
   "author": "nihil@nihilux.org",
