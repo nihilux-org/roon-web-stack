@@ -1529,9 +1529,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fastify/compress@npm:8.3.0":
-  version: 8.3.0
-  resolution: "@fastify/compress@npm:8.3.0"
+"@fastify/compress@npm:8.3.1":
+  version: 8.3.1
+  resolution: "@fastify/compress@npm:8.3.1"
   dependencies:
     "@fastify/accept-negotiator": "npm:^2.0.0"
     fastify-plugin: "npm:^5.0.0"
@@ -1541,7 +1541,7 @@ __metadata:
     pump: "npm:^3.0.0"
     pumpify: "npm:^2.0.1"
     readable-stream: "npm:^4.5.2"
-  checksum: 10c0/b7790680b939244aba5c13e70be16dbaba64d0059cef5078590ff12730433cd1a792e33e91d97ec1dfb8c088e6edf62f78cf80368edfb99b5f4abe423df0da8d
+  checksum: 10c0/81859322ae4e4822b74e90e45df6cca7416cbad18c47e76be9c934b99741457995cd6ed08c3dc9b010bfc3a4672c3a204c950c84cc8638a5d41259a6d507e66a
   languageName: node
   linkType: hard
 
@@ -2375,7 +2375,7 @@ __metadata:
   resolution: "@nihilux/roon-web-api@workspace:app/roon-web-api"
   dependencies:
     "@eslint/js": "npm:9.39.2"
-    "@fastify/compress": "npm:8.3.0"
+    "@fastify/compress": "npm:8.3.1"
     "@fastify/static": "npm:8.3.0"
     "@gquittet/graceful-server": "npm:4.0.9"
     "@nihilux/roon-web-model": "workspace:*"
@@ -2536,7 +2536,7 @@ __metadata:
     eslint-plugin-promise: "npm:7.2.1"
     eslint-plugin-simple-import-sort: "npm:12.1.1"
     eslint-plugin-unused-imports: "npm:4.3.0"
-    fast-equals: "npm:5.4.0"
+    fast-equals: "npm:6.0.0"
     happy-dom: "npm:20.0.11"
     nanoid: "npm:3.3.11"
     ng-mocks: "npm:14.14.0"
@@ -6156,10 +6156,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-equals@npm:5.4.0":
-  version: 5.4.0
-  resolution: "fast-equals@npm:5.4.0"
-  checksum: 10c0/4fdce3a8f814e78af7296ca4ebe82f4765074a6dfe557ee98c18f5d2958c3de59025fbff7556d65f250165ccef424d37f9952ee159400f8ebe5f2edb704ec80e
+"fast-equals@npm:6.0.0":
+  version: 6.0.0
+  resolution: "fast-equals@npm:6.0.0"
+  checksum: 10c0/aae54699ce848726679a947c8bbea78f2ea0384e4e1ee213c98f10881a17bb376bd11085eda4d6c89db5285635ee2f809b126d773532fcf602be355008a9d5ed
   languageName: node
   linkType: hard
 
