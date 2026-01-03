@@ -78,6 +78,7 @@ export class SettingsDialogComponent {
   readonly $layoutClass: Signal<string>;
   readonly $displayMode: Signal<string>;
   readonly $fullScreenToggleLabel: Signal<string>;
+  readonly $fullScreenToggleIconStyle: Signal<{ opacity: number }>;
   readonly displayModes: { id: DisplayMode; label: string }[];
   readonly version: string;
   readonly selectedTab: number;
@@ -122,6 +123,17 @@ export class SettingsDialogComponent {
         return "Yes";
       } else {
         return "No";
+      }
+    });
+    this.$fullScreenToggleIconStyle = computed(() => {
+      if (this._$showFullscreenToggle()) {
+        return {
+          opacity: 1.0,
+        };
+      } else {
+        return {
+          opacity: 0.3,
+        };
       }
     });
     this.selectedTab = data.selectedTab;

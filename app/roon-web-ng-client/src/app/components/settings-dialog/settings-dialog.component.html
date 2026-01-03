@@ -30,11 +30,11 @@
             <div class="setting">
               <label for="fullscreen-toggle-selector">Fullscreen:</label>
               <button mat-button id="fullscreen-toggle-selector" [matMenuTriggerFor]="fullScreenToggleSelector" (menuOpened)="onMenOpen()" (menuClosed)="onMenuClosed()">
-                <mat-icon fontIcon="open_in_full" />{{$fullScreenToggleLabel()}}
+                <mat-icon fontIcon="open_in_full" [style]="$fullScreenToggleIconStyle()" />{{$fullScreenToggleLabel()}}
               </button>
               <mat-menu #fullScreenToggleSelector="matMenu" yPosition="below" xPosition="after" class="nr-menu-custom" [class]="$layoutClass()">
                 <button mat-menu-item (click)="setFullScreenToggle(true)"><mat-icon fontIcon="open_in_full" />Yes</button>
-                <button mat-menu-item (click)="setFullScreenToggle(false)"><mat-icon fontIcon="close_fullscreen" />No</button>
+                <button mat-menu-item (click)="setFullScreenToggle(false)"><mat-icon fontIcon="open_in_full" [style]="{ opacity: 0.3 }" />No</button>
               </mat-menu>
             </div>
           }
