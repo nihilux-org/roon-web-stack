@@ -68,6 +68,7 @@ export class SettingsDialogComponent {
   private readonly _settingsService: SettingsService;
   private readonly _spatialNavigableService: NgxSpatialNavigableService;
   private readonly _$displayMode: Signal<DisplayMode>;
+  private readonly _$showFullscreenToggle: Signal<boolean>;
   readonly $actions: Signal<Action[]>;
   readonly $availableActions: Signal<Action[]>;
   readonly $chosenTheme: Signal<Theme>;
@@ -76,6 +77,7 @@ export class SettingsDialogComponent {
   readonly $isSmallScreen: Signal<boolean>;
   readonly $layoutClass: Signal<string>;
   readonly $displayMode: Signal<string>;
+  readonly $fullScreenToggleLabel: Signal<string>;
   readonly displayModes: { id: DisplayMode; label: string }[];
   readonly version: string;
   readonly selectedTab: number;
@@ -103,6 +105,7 @@ export class SettingsDialogComponent {
       }
     }
     this._$displayMode = this._settingsService.displayMode();
+    this._$showFullscreenToggle = this._settingsService.showFullscreenToggle();
     this.$displayMode = computed(() => DisplayModesData[this._$displayMode()].label ?? "");
     this.$chosenTheme = computed(() => {
       const chosenTheme = this._settingsService.chosenTheme()() as ChosenTheme;
@@ -114,6 +117,13 @@ export class SettingsDialogComponent {
     this.$isSmallScreen = this._settingsService.isSmallScreen();
     this.$isOneColumn = this._settingsService.isOneColumn();
     this.$layoutClass = this._settingsService.displayModeClass();
+    this.$fullScreenToggleLabel = computed(() => {
+      if (this._$showFullscreenToggle()) {
+        return "Yes";
+      } else {
+        return "No";
+      }
+    });
     this.selectedTab = data.selectedTab;
     this.version = inject(RoonService).version();
   }
@@ -136,6 +146,10 @@ export class SettingsDialogComponent {
 
   setDisplayMode(displayMode: DisplayMode) {
     this._settingsService.saveDisplayMode(displayMode);
+  }
+
+  setFullScreenToggle(showFullscreenToggle: boolean) {
+    this._settingsService.saveShowFullscreenToggle(showFullscreenToggle);
   }
 
   onSave() {

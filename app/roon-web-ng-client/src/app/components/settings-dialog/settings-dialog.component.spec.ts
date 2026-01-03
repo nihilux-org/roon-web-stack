@@ -22,6 +22,7 @@ describe("SettingsDialogComponent", () => {
   let $availableAction: WritableSignal<Action[]>;
   let $layoutClass: WritableSignal<string>;
   let $roonState: WritableSignal<ApiState>;
+  let $showFullscreenToggle: WritableSignal<boolean>;
   let settingsService: {
     chosenTheme: Mock;
     saveChosenTheme: Mock;
@@ -35,6 +36,7 @@ describe("SettingsDialogComponent", () => {
     availableActions: Mock;
     displayModeClass: Mock;
     isBigFonts: Mock;
+    showFullscreenToggle: Mock;
   };
   let version: string;
   let dialogService: {
@@ -66,6 +68,7 @@ describe("SettingsDialogComponent", () => {
       zones: [],
       outputs: [],
     });
+    $showFullscreenToggle = signal(false);
     settingsService = {
       chosenTheme: vi.fn().mockImplementation(() => $chosenTheme),
       saveChosenTheme: vi.fn().mockImplementation((chosenTheme: ChosenTheme) => {
@@ -85,6 +88,7 @@ describe("SettingsDialogComponent", () => {
       availableActions: vi.fn().mockImplementation(() => $availableAction),
       displayModeClass: vi.fn().mockImplementation(() => $layoutClass),
       isBigFonts: vi.fn().mockImplementation(() => $isBigFonts),
+      showFullscreenToggle: vi.fn().mockImplementation(() => $showFullscreenToggle),
     };
     version = "version";
     roonService = {
