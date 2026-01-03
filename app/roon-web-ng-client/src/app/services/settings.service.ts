@@ -51,6 +51,7 @@ export class SettingsService implements OnDestroy {
   private static readonly DISPLAY_MODE_KEY = "nr.DISPLAY_MODE";
   private static readonly ACTIONS_KEY = "nr.ACTIONS";
   private static readonly ROON_CLIENT_ID = "nr.ROON_CLIENT_ID";
+  private static readonly SHOW_FULLSCREEN_TOGGLE = "nr.SHOW_FULLSCREEN_TOGGLE";
   private readonly _breakpointObserver: BreakpointObserver;
   private readonly _customActionsService: CustomActionsService;
   private readonly _document: Document;
@@ -65,10 +66,12 @@ export class SettingsService implements OnDestroy {
   private readonly _$displayQueueTrack: WritableSignal<boolean>;
   private readonly _$displayMode: WritableSignal<DisplayMode>;
   private readonly _$displayModeClass: Signal<string>;
+  private readonly _$showFullscreenToggle: WritableSignal<boolean>;
   private readonly _$isBigFonts: Signal<boolean>;
   private readonly _$isOneColumn: Signal<boolean>;
   private readonly _$isSmallScreen: Signal<boolean>;
   private readonly _$isSmallTablet: Signal<boolean>;
+  private readonly _$isWithFullscreen: Signal<boolean>;
   private readonly _themeEffect: EffectRef;
   private readonly _reloadActionsEffect: EffectRef;
   private _breakPointSubscription?: Subscription;
@@ -113,6 +116,9 @@ export class SettingsService implements OnDestroy {
       const actions = this._$actions();
       return allActions.filter((a) => !actions.includes(a));
     });
+    this._$showFullscreenToggle = signal(
+      this.loadBooleanFromLocalStorage(SettingsService.SHOW_FULLSCREEN_TOGGLE, true)
+    );
     this._$isOneColumn = computed(
       () => {
         const breakpoints = this._$breakpoints();
@@ -159,6 +165,9 @@ export class SettingsService implements OnDestroy {
         equal: deepEqual,
       }
     );
+    this._$isWithFullscreen = computed(() => {
+      return this._$showFullscreenToggle() && !this._$isOneColumn() && this._$displayMode() !== DisplayMode.TEN_FEET;
+    });
     this._renderer = inject(RendererFactory2).createRenderer(null, null);
     // FIXME?: should this be more semantically placed in nr-root.component?
     this._themeEffect = effect(() => {
@@ -221,6 +230,15 @@ export class SettingsService implements OnDestroy {
     this.saveDisplayQueueTrack(!this._$displayQueueTrack());
   }
 
+  showFullscreenToggle(): Signal<boolean> {
+    return this._$showFullscreenToggle;
+  }
+
+  saveShowFullscreenToggle(showFullScreenToggle: boolean) {
+    localStorage.setItem(SettingsService.SHOW_FULLSCREEN_TOGGLE, `${showFullScreenToggle}`);
+    this._$showFullscreenToggle.set(showFullScreenToggle);
+  }
+
   isOneColumn(): Signal<boolean> {
     return this._$isOneColumn;
   }
@@ -231,6 +249,10 @@ export class SettingsService implements OnDestroy {
 
   isSmallTablet(): Signal<boolean> {
     return this._$isSmallTablet;
+  }
+
+  isWithFullscreenToggle(): Signal<boolean> {
+    return this._$isWithFullscreen;
   }
 
   saveDisplayMode(displayMode: DisplayMode) {

@@ -6,7 +6,6 @@ import { ExtensionNotEnabledComponent } from "@components/extension-not-enabled/
 import { FullScreenToggleComponent } from "@components/full-screen-toggle/full-screen-toggle.component";
 import { ZoneContainerComponent } from "@components/zone-container/zone-container.component";
 import { ZoneSelectorComponent } from "@components/zone-selector/zone-selector.component";
-import { DisplayMode } from "@model";
 import { NgxSpatialNavigableRootDirective } from "@nihilux/ngx-spatial-navigable";
 import { RoonState } from "@nihilux/roon-web-model";
 import { DialogService } from "@services/dialog.service";
@@ -58,9 +57,7 @@ export class NrRootComponent {
         equal: deepEqual,
       }
     );
-    const $isOneColumn = settingsService.isOneColumn();
-    const $displayMode = settingsService.displayMode();
-    this.$isWithFullScreen = computed(() => !$isOneColumn() && $displayMode() !== DisplayMode.TEN_FEET);
+    this.$isWithFullScreen = settingsService.isWithFullscreenToggle();
     effect(() => {
       this.$clientState();
       this._dialogService.close();

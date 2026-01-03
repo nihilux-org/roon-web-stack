@@ -54,6 +54,7 @@ describe("NrRootComponent", () => {
     await TestBed.compileComponents();
     fixture = TestBed.createComponent(NrRootComponent);
     component = fixture.componentInstance;
+    await fixture.whenStable();
   });
 
   it("should create the nr-root", () => {
