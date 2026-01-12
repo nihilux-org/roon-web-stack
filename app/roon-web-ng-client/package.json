@@ -40,7 +40,7 @@
     "@angular/compiler-cli": "21.0.8",
     "@eslint/js": "9.39.2",
     "@nihilux/roon-web-model": "workspace:*",
-    "@types/node": "25.0.5",
+    "@types/node": "25.0.6",
     "@typescript-eslint/parser": "8.52.0",
     "@vitest/coverage-v8": "4.0.16",
     "angular-eslint": "21.1.0",
