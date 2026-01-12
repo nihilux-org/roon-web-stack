@@ -27,7 +27,7 @@
   "devDependencies": {
     "@eslint/js": "9.39.2",
     "@nihilux/roon-web-model": "workspace:*",
-    "@types/node": "25.0.5",
+    "@types/node": "24.10.7",
     "@typescript-eslint/eslint-plugin": "8.52.0",
     "@typescript-eslint/parser": "8.52.0",
     "@vitest/coverage-v8": "4.0.16",
