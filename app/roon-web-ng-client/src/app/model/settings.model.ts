@@ -30,11 +30,36 @@ export const Themes: Theme[] = [
   },
 ];
 
+export interface FullscreenToggle {
+  value: boolean;
+  label: string;
+  style: {
+    opacity: number;
+  };
+}
+
+export const FullscreenToggles: FullscreenToggle[] = [
+  {
+    value: true,
+    label: "Yes",
+    style: {
+      opacity: 1.0,
+    },
+  },
+  {
+    value: false,
+    label: "No",
+    style: {
+      opacity: 0.3,
+    },
+  },
+];
+
 export type ClientBreakpoints = Record<string, boolean>;
 
 export const SettingsDialogConfig: MatDialogConfig = {
   restoreFocus: false,
-  width: "500px",
+  width: "600px",
   maxWidth: "95svw",
   maxHeight: "95svh",
   data: {
@@ -47,5 +72,5 @@ export const SettingsDialogConfig: MatDialogConfig = {
 
 export const SettingsDialogConfigBigFonts: MatDialogConfig = {
   ...SettingsDialogConfig,
-  width: "800px",
+  width: "900px",
 };

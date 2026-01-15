@@ -79,11 +79,11 @@
   }
 }
 
-@mixin icon-button-size($size: 48px, $font-size: 24px, $padding: 12px) {
+@mixin icon-button-size($size: 48px, $font-size: 24p) {
   button {
     --mdc-icon-button-state-layer-size: #{$size};
     --mdc-icon-button-icon-size: #{$font-size};
-    padding: $padding;
+    padding: 0;
     mat-icon {
       @include mat-icon-size(#{$font-size});
     }

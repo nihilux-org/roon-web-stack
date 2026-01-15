@@ -64,7 +64,7 @@
               display: flex;
               justify-content: center;
               align-items: center;
-              @include nr.icon-button-size(120px, 48px, 36px);
+              @include nr.icon-button-size(120px, 48px);
             }
           }
         }

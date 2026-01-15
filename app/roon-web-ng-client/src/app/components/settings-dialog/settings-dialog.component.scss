@@ -13,10 +13,25 @@
       .settings {
         margin-top: 40px;
         .setting {
-          padding-bottom: 40px;
+          padding: 20px 0;
           label {
-            width: 240px;
+            min-width: 240px;
           }
+        }
+      }
+    }
+    &.is-one-column {
+      .settings {
+        .setting {
+          label {
+            width: 33%;
+          }
+        }
+      }
+      .version {
+        span {
+          width: 33%;
+          min-width: 120px;
         }
       }
     }
@@ -37,12 +52,13 @@
     .setting {
       display: flex;
       align-items: center;
-      padding-bottom: 20px;
+      padding: 10px 0;
       label {
         margin-right: 10px;
-        width: 120px;
+        min-width: 120px;
         display: inline-block;
         text-align: right;
+        width: 50%;
       }
       mat-radio-button {
         padding-right: 15px;
@@ -66,11 +82,13 @@
     cursor: default;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding-left: 130px;
-  }
-  .version.small-screen {
-    padding-left: 0;
+    justify-content: flex-start;
+    padding: 10px 0;
+    gap: 10px;
+    span {
+      width: 50%;
+      text-align: right;
+    }
   }
   .actions-configuration {
     padding: 5px 0;

@@ -20,6 +20,8 @@ import {
   CustomActionsManagerDialogConfigBigFonts,
   DisplayMode,
   DisplayModesData,
+  FullscreenToggle,
+  FullscreenToggles,
   SettingsDialogConfig,
   SettingsDialogConfigBigFonts,
   Theme,
@@ -77,9 +79,9 @@ export class SettingsDialogComponent {
   readonly $isSmallScreen: Signal<boolean>;
   readonly $layoutClass: Signal<string>;
   readonly $displayMode: Signal<string>;
-  readonly $fullScreenToggleLabel: Signal<string>;
-  readonly $fullScreenToggleIconStyle: Signal<{ opacity: number }>;
+  readonly $fullScreenToggle: Signal<FullscreenToggle>;
   readonly displayModes: { id: DisplayMode; label: string }[];
+  readonly fullscreenToggles: FullscreenToggle[];
   readonly version: string;
   readonly selectedTab: number;
   constructor() {
@@ -118,22 +120,12 @@ export class SettingsDialogComponent {
     this.$isSmallScreen = this._settingsService.isSmallScreen();
     this.$isOneColumn = this._settingsService.isOneColumn();
     this.$layoutClass = this._settingsService.displayModeClass();
-    this.$fullScreenToggleLabel = computed(() => {
+    this.fullscreenToggles = FullscreenToggles;
+    this.$fullScreenToggle = computed(() => {
       if (this._$showFullscreenToggle()) {
-        return "Yes";
+        return this.fullscreenToggles[0];
       } else {
-        return "No";
-      }
-    });
-    this.$fullScreenToggleIconStyle = computed(() => {
-      if (this._$showFullscreenToggle()) {
-        return {
-          opacity: 1.0,
-        };
-      } else {
-        return {
-          opacity: 0.3,
-        };
+        return this.fullscreenToggles[1];
       }
     });
     this.selectedTab = data.selectedTab;
