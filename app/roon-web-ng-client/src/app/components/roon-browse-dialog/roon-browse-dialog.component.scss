@@ -8,7 +8,7 @@
     padding-top: 24px;
     &.is-big-fonts {
       padding-bottom: 24px;
-      @include nr.icon-button-size(48px, 36px, 6px);
+      @include nr.icon-button-size(48px, 36px);
       --mdc-filled-button-label-text-size: 24px;
       --mdc-filled-button-container-color: transparent;
       .mat-mdc-unelevated-button {

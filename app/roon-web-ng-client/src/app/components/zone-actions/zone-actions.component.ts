@@ -36,8 +36,10 @@ export class ZoneActionsComponent {
   private readonly _settingsService: SettingsService;
   private readonly _roonService: RoonService;
   private readonly _withFullScreen: boolean;
+  private readonly _$displayMode: Signal<DisplayMode>;
   private readonly _$isQueueInModal: Signal<boolean>;
   private readonly _$isOneColumn: Signal<boolean>;
+  private readonly _$isSmallScreen: Signal<boolean>;
   private readonly _$isSmallTablet: Signal<boolean>;
   private readonly _$isTenFeet: Signal<boolean>;
   readonly $isIconsOnly: Signal<boolean>;
@@ -50,12 +52,13 @@ export class ZoneActionsComponent {
     this._roonService = inject(RoonService);
     this._settingsService = inject(SettingsService);
     this._withFullScreen = inject(FullscreenService).supportsFullScreen();
+    this._$displayMode = this._settingsService.displayMode();
     this._$isOneColumn = this._settingsService.isOneColumn();
     this._$isSmallTablet = this._settingsService.isSmallTablet();
     this._$isQueueInModal = computed(() => this._$isOneColumn() || this._$isSmallTablet() || this._$isTenFeet());
-    const $isSmallScreen = this._settingsService.isSmallScreen();
-    this._$isTenFeet = computed(() => this._settingsService.displayMode()() === DisplayMode.TEN_FEET);
-    this.$isIconsOnly = computed(() => $isSmallScreen() || this._$isSmallTablet());
+    this._$isSmallScreen = this._settingsService.isSmallScreen();
+    this._$isTenFeet = computed(() => this._$displayMode() === DisplayMode.TEN_FEET);
+    this.$isIconsOnly = computed(() => this._$isSmallScreen() || this._$isSmallTablet());
     this.$actions = this._settingsService.actions();
     this.$withFullscreen = computed(() => this._withFullScreen && this._$isOneColumn());
     this.$withSettings = computed(() => !this._$isTenFeet());
