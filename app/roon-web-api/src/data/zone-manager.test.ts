@@ -153,7 +153,7 @@ describe("zone-manager.ts test suite", () => {
     } as unknown as QueueManager;
     queueManagerFactoryMock.build.mockImplementation(
       (z: Zone, eventEmitter: Subject<RoonSseMessage>, queueSize: number) => {
-        expect(queueSize).toEqual(150);
+        expect(queueSize).toEqual(1500);
         if (z.zone_id === ZONE.zone_id) {
           queueManagerRoonSseMessage = eventEmitter;
           return queueManager;

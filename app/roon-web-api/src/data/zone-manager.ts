@@ -31,6 +31,7 @@ interface ZoneData {
 }
 
 class InternalZoneManager implements ZoneManager {
+  private static readonly QUEUE_SIZE = 1500;
   private readonly zoneData: Map<string, ZoneData>;
   private _state: RoonState;
   private readonly roonEventSource: Subject<RoonSseMessage>;
@@ -43,7 +44,7 @@ class InternalZoneManager implements ZoneManager {
   }
 
   private readonly outputListener: OutputListener = (
-    core: RoonServer,
+    _: RoonServer,
     response: RoonSubscriptionResponse,
     body: RoonApiTransportOutputs
   ) => {
@@ -178,7 +179,7 @@ class InternalZoneManager implements ZoneManager {
       /* v8 ignore else --@preserve */
       if (zd.backup?.zone) {
         zd.zone = zd.backup.zone;
-        zd.queueManager = queueManagerFactory.build(zd.zone, this.roonEventSource, 150);
+        zd.queueManager = queueManagerFactory.build(zd.zone, this.roonEventSource, InternalZoneManager.QUEUE_SIZE);
         void zd.queueManager
           .start()
           .then(() => {
@@ -224,7 +225,7 @@ class InternalZoneManager implements ZoneManager {
   private initZone = (z: Zone): boolean => {
     const zd = this.zoneData.get(z.zone_id);
     if (!zd) {
-      const queueManager = queueManagerFactory.build(z, this.roonEventSource, 150);
+      const queueManager = queueManagerFactory.build(z, this.roonEventSource, InternalZoneManager.QUEUE_SIZE);
       this.zoneData.set(z.zone_id, {
         displayName: z.display_name,
         queueManager,
