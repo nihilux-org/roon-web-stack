@@ -1,5 +1,5 @@
 # Packages must have been built via `yarn cd` before building this Dockerfile, docker context is the root of the repository
-ARG ALPINE_VERSION=3.22
+ARG ALPINE_VERSION=3.23
 
 FROM node:24-alpine${ALPINE_VERSION} AS builder
 RUN mkdir -p /usr/src/roon-web-stack
