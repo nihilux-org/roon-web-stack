@@ -2014,9 +2014,9 @@ __metadata:
     eslint-plugin-promise: "npm:7.2.1"
     eslint-plugin-simple-import-sort: "npm:12.1.1"
     eslint-plugin-unused-imports: "npm:4.3.0"
-    fastify: "npm:5.7.1"
+    fastify: "npm:5.7.2"
     fastify-plugin: "npm:5.1.0"
-    fastify-sse-v2: "npm:4.2.1"
+    fastify-sse-v2: "npm:4.2.2"
     nanoid: "npm:3.3.11"
     node-roon-api: "github:roonlabs/node-roon-api"
     node-roon-api-audioinput: "github:roonlabs/node-roon-api-audioinput"
@@ -5603,22 +5603,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fastify-sse-v2@npm:4.2.1":
-  version: 4.2.1
-  resolution: "fastify-sse-v2@npm:4.2.1"
+"fastify-sse-v2@npm:4.2.2":
+  version: 4.2.2
+  resolution: "fastify-sse-v2@npm:4.2.2"
   dependencies:
     fastify-plugin: "npm:^4.3.0"
     it-pushable: "npm:^1.4.2"
     it-to-stream: "npm:^1.0.0"
   peerDependencies:
     fastify: ">=4"
-  checksum: 10c0/f578a07f6162567eb7b6ce79b782dbe25e666aecef521c665f3fe0e539bae42641e5beb48489fce09733d262ee190ddce4a79cf31f4c18b6137db20e399bd7e2
+  checksum: 10c0/e207da1dd5e4d0f7f8ecb85617dd3f4f7b48259cd86b4c15030ec08ba165a87d9129cd2b5daac3ae5428aebe7aace396aed41de2da46657976ca8c0fa4eb6c6b
   languageName: node
   linkType: hard
 
-"fastify@npm:5.7.1":
-  version: 5.7.1
-  resolution: "fastify@npm:5.7.1"
+"fastify@npm:5.7.2":
+  version: 5.7.2
+  resolution: "fastify@npm:5.7.2"
   dependencies:
     "@fastify/ajv-compiler": "npm:^4.0.5"
     "@fastify/error": "npm:^4.0.0"
@@ -5635,7 +5635,7 @@ __metadata:
     secure-json-parse: "npm:^4.0.0"
     semver: "npm:^7.6.0"
     toad-cache: "npm:^3.7.0"
-  checksum: 10c0/98ac581b9674eaffb761ca822083af24919bd1f91434ab035658fe2bac94153dc7de01298122306cd1eef27932469bb67e3bbf09f755ae41fed5508217de1d50
+  checksum: 10c0/0faaf6de06a696868c088e47285cc61a3d0caffc52686f6c72b39d924fb5adb5b21caabc2147ee3cd04fbeea5b7af87c83ef285501e405f5d93b2b81d639445e
   languageName: node
   linkType: hard
 
