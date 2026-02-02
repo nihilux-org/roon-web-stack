@@ -10,7 +10,7 @@ updates:
       github-actions:
         patterns:
           - "*"
-  - package-ecosystem: "npm"
+  - package-ecosystem: "bun"
     directory: "/"
     schedule:
       interval: "weekly"
@@ -24,6 +24,8 @@ updates:
         dependency-type: "production"
         exclude-patterns:
         - "@angular*"
+        - "angular-eslint"
+        - "ng-packagr"
       development-dependencies:
         dependency-type: "development"
         exclude-patterns:
@@ -31,16 +33,12 @@ updates:
         - "angular-eslint"
         - "ng-packagr"
     ignore:
-      - dependency-name: "nanoid"
-        update-types:
-          - "version-update:semver-major"
       - dependency-name: "typescript"
         update-types:
           - "version-update:semver-major"
           - "version-update:semver-minor"
-      - dependency-name: "@gquittet/graceful-server"
+      - dependency-name: "@types/bun"
         update-types:
           - "version-update:semver-major"
-      - dependency-name: "@types/node"
-        update-types:
-          - "version-update:semver-major"
+          - "version-update:semver-minor"
+          - "version-update:semver-patch"

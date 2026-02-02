@@ -51,15 +51,6 @@ fi
 script_source=$(readlink -f "${0%/*}")
 cd "${script_source}/.." || exit;
 
-printf "%s%-55s%s\n" "${fg_bold[green]}" "building the js bundles:" "${reset_color}";
-yarn cd;
-printf "%s%-55s%s" "${fg_bold[green]}" "js bundles built: " "${reset_color}";
-printf "%s\n" "📦 => ✅ ";
-
-printf "%s%-55s%s" "${fg_bold[green]}" "moving Angular app to 'backend' bin folder:" "${reset_color}";
-cp -r ./app/roon-web-ng-client/dist/roon-web-ng-client/browser ./app/roon-web-api/bin/web;
-printf "%s\n" "✅ ";
-
 printf "%s%-55s%s\n" "${fg_bold[green]}" "setting buildx builder to:" "${reset_color}";
 docker buildx use "${builder}";
 printf "%s%-55s%s%s\n" "${fg_bold[blue]}" "${builder}" "${reset_color}" "✅ ";
@@ -77,6 +68,7 @@ DOCKER_BUILD_COMMAND="docker buildx build \
 
 if (( $#flag_not_push )); then
   printf "%s%-55s%s" "${fg_bold[green]}" "built image(s) won't be pushed to Docker Hub:" "${reset_color}";
+  DOCKER_BUILD_COMMAND="${DOCKER_BUILD_COMMAND} --load";
   printf "%s\n" "📦 => 🐳 => 💻 ";
 else
   printf "%s%-55s%s" "${fg_bold[green]}" "built image(s) will be pushed to Docker Hub:" "${reset_color}";

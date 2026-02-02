@@ -1,0 +1,12 @@
+[install]
+# Equivalent to nmHoistingLimits: workspaces in .yarnrc.yml
+hoist = true
+hoist-workspace-packages = true
+
+[run]
+# Enable color output
+bun = true
+
+[test]
+# Default test timeout
+timeout = 30000

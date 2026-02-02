@@ -7,7 +7,7 @@ import { fastifyStatic } from "@fastify/static";
 const appRoute: FastifyPluginAsync = async (server: FastifyInstance): Promise<void> => {
   await server.register(fastifyCompress);
   return server.register(fastifyStatic, {
-    root: path.join(__dirname, "web"),
+    root: path.join(process.env.WEB_NG_PATH ?? __dirname, "web"),
     immutable: true,
     maxAge: "1 days",
     wildcard: true,
