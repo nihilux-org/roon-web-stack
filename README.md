@@ -34,7 +34,7 @@ docker run \
 -v {somewhere_on_your_host}/config:/usr/src/app/config
 nihiluxorg/roon-web-stack
 ```
-- The `network host` setting is needed to enable autodiscovery of your `roon` server.  
+- The `network host` setting is needed to enable auto-discovery of your `roon` server.  
 It should be possible to make this requirement optional by providing explicit information about the `roon` server to connect with.  
 This will be explored later, so for now, this is mandatory.   
 - You can configure the `port` used by `node` with the `-e PORT={port_number}` env variable definition.  

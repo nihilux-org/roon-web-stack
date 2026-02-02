@@ -13,13 +13,10 @@ jobs:
     steps:
       # set-up build env
       - uses: actions/checkout@v6
-      - name: Set-up yarn version
-        run: corepack enable yarn
-      - name: Set-up Node.js
-        uses: actions/setup-node@v6
+      - name: Set-up Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          node-version-file: package.json
-          cache: yarn
+          bun-version: 1.3.6
       # install:immutable,clean,build,lint,test
-      - name: Ci
-        run: yarn ci
+      - name: CI
+        run: bun run ci

@@ -7,7 +7,7 @@
       "@angular-eslint/schematics",
       "angular-eslint"
     ],
-    "packageManager": "yarn"
+    "packageManager": "bun"
   },
   "projects": {
     "@nihilux/roon-web-ng-client": {
@@ -84,8 +84,7 @@
           "builder": "@angular/build:unit-test",
           "options": {
             "setupFiles": ["src/test-setup.ts"],
-            "providersFile": "src/test-providers.ts",
-            "coverage": true
+            "providersFile": "src/test-providers.ts"
           }
         },
         "lint": {
@@ -123,8 +122,7 @@
         "test": {
           "builder": "@angular/build:unit-test",
           "options": {
-            "setupFiles": ["projects/nihilux/ngx-spatial-navigable/src/test-setup.ts"],
-            "coverage": true
+            "setupFiles": ["projects/nihilux/ngx-spatial-navigable/src/test-setup.ts"]
           }
         },
         "lint": {

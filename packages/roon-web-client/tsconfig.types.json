@@ -1,0 +1,8 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "emitDeclarationOnly": true,
+    "declaration": true
+  },
+  "exclude": ["node_modules", "bin", "**/*.test.ts", "**/mock/**/*", "vitest.config.mts"]
+}

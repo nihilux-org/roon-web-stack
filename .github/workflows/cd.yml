@@ -18,23 +18,10 @@ jobs:
       matrix:
         platform:
           - linux/amd64
-          # - linux/arm/v7 disable until => https://github.com/felddy/npm-hang-test/actions/workflows/build.yml 🤷
           - linux/arm64
     steps:
       - name: Checkout
         uses: actions/checkout@v6
-      - name: Set-up yarn version
-        run: corepack enable yarn
-      - name: Set-up Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version-file: package.json
-          cache: yarn
-      - name: Build
-        # install:immutable,clean,build
-        run: yarn cd
-      - name: Copy web app
-        run: cp -r app/roon-web-ng-client/dist/roon-web-ng-client/browser app/roon-web-api/bin/web
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v5
