@@ -54,7 +54,11 @@ printf "%s%-55s%s%s\n" "${fg_bold[blue]}" "requested version" "${VERSION}" "${re
 printf "%s%-55s%s%s\n" "${fg_bold[blue]}" "version compatibility check" "${reset_color}" "✅ ";
 
 printf "%s%-55s%s\n" "${fg_bold[green]}" "updating root package.json engines.bun..." "${reset_color}";
-jq --arg v ">= ${VERSION}" '.engines.bun = $v' package.json > package.json.tmp && mv package.json.tmp package.json
+jq --arg v "${VERSION}" '.engines.bun = $v' package.json > package.json.tmp && mv package.json.tmp package.json
+printf "%s%-55s%s%s\n" "${fg_bold[blue]}" "root/package.json" "${reset_color}" "✅ ";
+
+printf "%s%-55s%s\n" "${fg_bold[green]}" "updating root package.json packageManager..." "${reset_color}";
+jq --arg v "bun@${VERSION}" '.packageManager = $v' package.json > package.json.tmp && mv package.json.tmp package.json
 printf "%s%-55s%s%s\n" "${fg_bold[blue]}" "root/package.json" "${reset_color}" "✅ ";
 
 printf "%s%-55s%s\n" "${fg_bold[green]}" "updating @types/bun in app/roon-web-api/package.json..." "${reset_color}";
