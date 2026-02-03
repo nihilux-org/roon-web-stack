@@ -12,7 +12,7 @@
         "mock/index.ts"
       ]
     },
-    "types": ["vitest/globals"],
+    "types": ["vitest/globals", "bun"],
     "outDir": "bin"
   }
 }
