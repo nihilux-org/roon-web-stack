@@ -27,13 +27,8 @@ ENV WEB_NG_PATH=/usr/src/app
 
 COPY ./LICENSE ./LICENSE
 
-COPY --from=builder /usr/src/node_modules/.bun/node-roon-api-audioinput@github+roonlabs+node-roon-api-audioinput+21ff59e/node_modules/node-roon-api-audioinput ./node_modules/node-roon-api-audioinput
-COPY --from=builder /usr/src/node_modules/.bun/node-roon-api-browse@github+roonlabs+node-roon-api-browse+98adcba/node_modules/node-roon-api-browse ./node_modules/node-roon-api-browse
-COPY --from=builder /usr/src/node_modules/.bun/node-roon-api-image@github+roonlabs+node-roon-api-image+a5f0efa/node_modules/node-roon-api-image ./node_modules/node-roon-api-image
-COPY --from=builder /usr/src/node_modules/.bun/node-roon-api-settings@github+roonlabs+node-roon-api-settings+67cd8ca/node_modules/node-roon-api-settings ./node_modules/node-roon-api-settings
-COPY --from=builder /usr/src/node_modules/.bun/node-roon-api-status@github+roonlabs+node-roon-api-status+504c918/node_modules/node-roon-api-status ./node_modules/node-roon-api-status
-COPY --from=builder /usr/src/node_modules/.bun/node-roon-api-transport@github+roonlabs+node-roon-api-transport+2ee6000/node_modules/node-roon-api-transport ./node_modules/node-roon-api-transport
 COPY --from=builder /usr/src/app/roon-web-api/bin/roon-web-api ./roon-web-api
+COPY --from=builder /usr/src/app/roon-web-api/bin/node_modules ./node_modules
 COPY --from=builder /usr/src/app/roon-web-ng-client/dist/roon-web-ng-client/browser ./web
 
 USER bun
