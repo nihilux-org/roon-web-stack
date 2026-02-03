@@ -14,9 +14,10 @@
     }
   },
   "scripts": {
-    "build": "bun build --minify src/index.ts --outfile bin/roon-web-client.js && bun run build:declaration",
+    "build": "bun run src/build.ts build",
+    "build:old": "bun build --minify src/index.ts --outfile bin/roon-web-client.js && bun run build:declaration",
     "build:declaration": "tsc --emitDeclarationOnly --project tsconfig.types.json",
-    "clean": "rimraf bin",
+    "clean": "bun run src/build.ts build",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "test": "vitest run",
@@ -43,13 +44,10 @@
     "eslint-plugin-unused-imports": "4.3.0",
     "happy-dom": "20.4.0",
     "prettier": "3.8.1",
-    "rimraf": "6.1.2",
-    "ts-loader": "9.5.4",
     "typescript": "5.9.3",
     "typescript-eslint": "8.54.0",
     "vite-tsconfig-paths": "6.0.5",
     "vitest": "4.0.18",
-    "vitest-fetch-mock": "0.4.5",
-    "webpack-cli": "6.0.1"
+    "vitest-fetch-mock": "0.4.5"
   }
 }
