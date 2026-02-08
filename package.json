@@ -10,9 +10,9 @@
     "app/*"
   ],
   "engines": {
-    "bun": "1.3.6"
+    "bun": "1.3.9"
   },
-  "packageManager": "bun@1.3.6",
+  "packageManager": "bun@1.3.9",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/nihilux-org/roon-web-stack.git"
