@@ -18,7 +18,7 @@ export default defineConfig({
         "src/infrastructure/logger.ts",
         "src/infrastructure/host-info.ts",
         "src/route/**/*",
-        "src/service/register-graceful-shutdown.ts",
+        "src/service/graceful-shutdown.ts",
         "src/**/*.mock.ts",
         "src/**/*.test.ts",
       ],

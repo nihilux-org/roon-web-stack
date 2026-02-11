@@ -37,18 +37,7 @@ And what I read made a lot of sens:
 
 So angular it is.
 
-So bad for `vue`, `svelte`, `htmx`, and all the other ones I don't even know... maybe next time. I wanted to start `coding`, and wasn't making a choice to build an internal `stack` used by dozens of devs.
-
-Oh, `karma` is deprecated... but the `Angular cli` stills generates everything with it...  
-`javascript` ecosystem will always be `javascript` ecosystem... I guess...  
-
-... 🤷 ...  
-
-*is there a blog post to plug `jest` on an `Angular 17` app...* 
-
-Oh `javascript`...
-
-### Why Sass?
+`### Why Sass?
 
 It comes with `Angular Material`, that was a massive point in the decision to go with `Anuglar`.
 
@@ -60,19 +49,6 @@ I know about non-semantic `css`.
 I agree, at least on paper, as I've never tried this approach myself (but good people, outside the [`tailwind`](https://tailwindcss.com) team, agreed too).  
 I didn't want to buy a [`tailwind`](https://tailwindcss.com) license.    
 So I've written my `css`, via `sass`, the old fashion way... and I'm ok with it: this is a one human (for now) project, with a dozen components, I'm not a web agency. Guess I'll try that another time, or later in this project lifecycle 🤷.
-
-
-### Why yarn?
-
-If you're still reading, you know now that I think tooling must be stable and efficient. Especially for a project of this size (things change at organisation scale).  
-From my understanding, `npm` had matured enough to be self-sufficient.  
-But my first attempts with `workspaces` didn't produce anything.  
-
-I've read quickly about `Lerna` and `Turbo`, **but**, the lib I've finally inlined in this repo ([Stevenic/roon-kit](https://github.com/Stevenic/roon-kit)) was built with `Lerna`, and couldn't be updated to the last `Lerna` version, because of major breaking changes... so I resisted once again to include yet another tool as neither the size of this `monorepo` nor it's scope could justify it.  
-
-I then applied the base rule of this project: no more than one hour to discover, try or evaluate, then back to well-known solution.  
-`yarn` is maintained by a big player, it won't disappear soon, and I managed to have something working(ish) almost instantly.  
-I guess, `pnpm` and the new kids on the block, `vite` (that is used by `Angular` for the dev server) and `bun` (which is way more than just a build tool) will be tried in another project.
 
 ## Backend API proxy
 
@@ -109,24 +85,13 @@ At the end, isolating this complexity in an abstraction layer was just making se
 
 Finally, it was also a way to ease, for others, the development of their own `web application`: just fork the repo, remove the angular app, build what you want having this `client` as a dependency, copy the bundle in the appropriate folder during [CD](../.github/workflows/cd.yml) (see the step `Copy web app`), and you're good to go!
 
-### Why Fastify?
+### Why Bun?
 
-Because `express` is deprecated, and I needed something else.
+`bun` is used as a runtime, a package manager and a bundler on this project. It's also used to delegate to other tools when needed (`eslint`, `Angular CLI`, `vitest`).
 
-I had not followed what was happening on this part of the ecosystem, so I made a quick research on the new (actually not so new) alternatives.  
+After two years in this project life, `bun` appeared to be both stable and futur proof, at least as long as anthropic can burn cash. It's also fully OSS, so a fork could survive if needed.
 
-`Fastify` was checking all the boxes.
-
-I especially liked the ability to `type` the different parts of the `API`, with the plugin architecture allowing to enrich the core api.
-
-Once again, regarding the load the server part will have to deal with, any solution would have done the job.
-
-This part is not tested, as `mocking` is a little complicated and the code itself is very straight-forward. Still, it should be done.
-
-### Why node?
-
-Because I had no incitation, regarding my use case, to spend time trying other `runtime`.  
-Not a real choice, but, once again, the idea was **both** to learn and deliver.
+After a quick integration phase, regarding the produced gains (no framework, just a simple integration of bun native `http`, native binary compiled artifact), the migration has been validated.
 
 ### Why typescript?
 
@@ -137,21 +102,3 @@ Have I mentioned that I **strongly** believe that **strongly typed** code is exp
 `JSDoc` can be an alternative, but I've worked with `typescript` many times and didn't want to lose any time with unexpected caveats discovering how to type vanilla `JS` via `JSDoc`, seems I'll test this stack later 🤷. 
 
 As `typescript` is also the standard for `Angular`, at the end, it just made sens to go with `typescript`.
-
-### Why webpack?
-
-The main reason is not a very good one: `webpack` was used by the last `frontend` tech lead/architect I worked with (I was his `backend` counterpart).  
-He was genuinely good and passionate, told me about `tree shaking`, and, while coding `lambda` with the `stack` he had built (he was the subject-matter expert for `typescript/javascript`), I really appreciated the `import` auto-ordering that was making `mocking` in test so easy and transparent.  
-I also appreciated the integration of `es-lint` and `prettier` in the build process, making `CI` way lighter.  
-It was a good occasion for a personal, quick, crash course through the `webpack` doc.  
-I'm not proud of the result, but it does the job I wanted it to do.  
-Any `PR` demonstrating that it's not needed is welcome! Otherwise, it is very low in the `backlog`.
-
-### Why the API is not an ES module?
-
-The [client](../packages/roon-web-client) is an `ES module`, but yes, the [API](../app/roon-web-api) is not.
-
-I've tried once, ended with a successful build but found a bunch of errors when launching the app...  
-I then went back to my rule, this time even faster, and, after 30 minutes spent, kept the [API](../app/roon-web-api) the way it is: a `commonJS` `node` app.  
-Except being stuck with an old version of `nanoid`, this has no effect on the final result. This `code` is not supposed to be consumed outside of this project.  
-Any `PR` dealing with this situation is, once again, welcome! Otherwise, it is very low in the `backlog`.

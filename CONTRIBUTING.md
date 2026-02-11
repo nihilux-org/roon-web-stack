@@ -3,7 +3,7 @@
 The main architecture is not supposed to shift (see [stack choices](./doc/stack-choices.md)).
 
 Even if testing is not complete, the main goal is still to:
-- keep `100%` as a target for the [`client`](packages/roon-web-client/README.md) and the [`api`](app/roon-web-api/README.md) (still need to test the `fastify` routes and `app`)
+- keep `100%` as a target for the [`client`](packages/roon-web-client/README.md) and the [`api`](app/roon-web-api/README.md) (still need to test the `Bun.serve()` routes and `app` entry point)
 - add real testing to the [`angular app`](app/roon-web-ng-client/README.md) (I've been lazy on this, and wanted to have an MVP product as fast as possible to see the community feedback)
 
 So there will be discussion if untested `code` is submitted in `PRs`.

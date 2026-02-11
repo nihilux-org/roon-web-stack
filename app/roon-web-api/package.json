@@ -16,13 +16,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@fastify/compress": "8.3.1",
-    "@fastify/static": "9.0.0",
     "@nihilux/roon-web-model": "workspace:*",
-    "fastify": "5.7.4",
-    "fastify-graceful-shutdown": "5.0.0",
-    "fastify-plugin": "5.1.0",
-    "fastify-sse-v2": "4.2.2",
     "nanoid": "5.1.6",
     "node-roon-api": "github:roonlabs/node-roon-api",
     "node-roon-api-audioinput": "github:roonlabs/node-roon-api-audioinput",

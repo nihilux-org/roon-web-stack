@@ -7,7 +7,7 @@ An ensemble of tools to drive `roon`, from a web browser.
 
 <img style="max-width: 800px;" alt="Application first launch, without extension being enabled in roon settings" src="./doc/images/main-screen.png">
 
-The final produced artifact is a [`docker` image](https://hub.docker.com/repository/docker/nihiluxorg/roon-web-stack/general) containing a `node` application serving both an `Angular` app and a `node` [CQRS](https://martinfowler.com/bliki/CQRS.html) http proxy fronting the [node roon api](https://github.com/RoonLabs/node-roon-api).
+The final produced artifact is a [`docker` image](https://hub.docker.com/repository/docker/nihiluxorg/roon-web-stack/general) containing a compiled native `Bun` binary serving both an `Angular` app and a [CQRS](https://martinfowler.com/bliki/CQRS.html) http proxy fronting the [node roon api](https://github.com/RoonLabs/node-roon-api). The HTTP server uses `Bun.serve()` natively, with no external framework dependency.
 
 ## How to use it
 
@@ -37,9 +37,9 @@ nihiluxorg/roon-web-stack
 - The `network host` setting is needed to enable auto-discovery of your `roon` server.  
 It should be possible to make this requirement optional by providing explicit information about the `roon` server to connect with.  
 This will be explored later, so for now, this is mandatory.   
-- You can configure the `port` used by `node` with the `-e PORT={port_number}` env variable definition.  
-If you don't specify a `port`, the `node` default, `3000` will be used.
-- You can configure the `log` level used by the `node` app via the `-e LOG_LEVEL={level}` env variable definition.  
+- You can configure the `port` with the `-e PORT={port_number}` env variable definition.  
+If you don't specify a `port`, the default `3000` will be used.
+- You can configure the `log` level via the `-e LOG_LEVEL={level}` env variable definition.  
 Supported values are one of `trace|debug|info|warn|error`.  
 If you don't set this variable, `info` will be used. 
 - The volume mounted by `-v {somewhere_on_your_host}/config:/usr/src/app/config` is here to save the `config.json` file used by the `roon` extension.  
@@ -47,9 +47,7 @@ The corresponding `path` is declared as a `volume` in the [Dockerfile](./app/roo
 This directory must be readable and writable by the user inside the `docker`.
 
 **disclaimer:**  
-*There's a bug somewhere between `node lts-alpine` images, `qemu`, `buildx` and `github actions` that breaks them for `armv7` (32 bits `ARM`, like Raspberry Pi 2 and older).  
-I want neither to add a dedicated pipeline for this architecture as a workaround, nor I want to use `debian` as base image, because it's hundred of `MB` larger.  
-Waiting for this bug to be resolved, this platform is not supported (see [this issue](https://github.com/nodejs/docker-node/issues/1798) and this [repo that reproduces this bug](https://github.com/felddy/npm-hang-test)).*
+*The `docker` image is built for `amd64` and `arm64` architectures. 32 bits `ARM` (like Raspberry Pi 2 and older) is not supported.*
 
 ### Using docker-compose
 
@@ -57,7 +55,6 @@ Another way to ease all that has been described above is to go with `docker-comp
 Here is an exemple of a `docker-compose.yaml` (that I use on `dietpi` to run this app at home):
 
 ```yaml
-version: '3.8'
 services:
   roon-web-stack:
     image: nihiluxorg/roon-web-stack
@@ -114,46 +111,39 @@ As a reminder, this is how to enable an extension in `roon` settings:
 
 ## How to build it from source
 
-First, you'll need the last `lts` version of `node` (newer might work, not tested though). Currently, the [CI](./.github/workflows/ci.yml) and the [CD](./.github/workflows/cd.yml) are using what's defined in the main `package.json`: `node >= 22.6.0`. This will follow availability of node `lts` in `github` actions.
-How you install `node` is your story, after all you want to build from sources.
+You'll need `Bun` `1.3.9` (as defined in the root `package.json`). See [bun.sh](https://bun.sh) for installation instructions.
 
 Checkout the code and `cd` in the directory.
 
-This `monorepo` uses `yarn 4.4.0` as it's package manager as defined in the root `package.json`.
+This `monorepo` uses `Bun` workspaces.
 
-To enable `corepack` for this project, you'll be good for a pair of:
+Install dependencies and build:
 ```bash
-corepack install
-corepack enable yarn
+bun install
+bun run build
 ```
-
-Then install, build (just to check everything works fine), have fun:
+To launch the `backend` in dev mode (with hot reload, but its not working that well 🤷):
 ```bash
-yarn install
-yarn build
-```
-To launch the `backend` in watch mode:
-```bash
-yarn backend
+bun run backend
 ```
 To launch the `frontend` in watch mode:
 ```bash
-yarn frontend
+bun run frontend
 ```
 Most commands are available at `root` of the `monorepo`:
 ```bash
-yarn lint       #lint every workspace in their dependency order
-yarn lint:fix   #lint and auto-fix every workspace in their dependency order
-yarn build      #build every workspace in their dependency order, run lint during build process
-yarn test       #test every workspace in their dependency order
+bun run lint
+bun run build
+bun run test
 ```
 
-The angular dev server is configured to proxy calls to the api on the `node` default port, so everything should be ready for you to `code`.
-
-If you want to build locally the `docker` image, you'll have to manually copy the built `Angular` app in the build folder of the `api`, then run `docker build`:
+If you want to build locally the `docker` image, can use the provided script in `scripts/local-release.zsh`
+This script expects `docker` and `buildx` to be installed. Use `-l` because you can't push to the `dockerhub` repo (or I've leaked my tokens and I'm in trouble).
 ```bash
-yarn build
-cp -r ./app/roon-web-ng-client/dist/roon-web-ng-client/browser ./app/roon-web-api/bin/web
+scripts/local-release.zsh -l
+```
+Otherwise, simply build the `Dockerfile` with:
+```bash
 docker build -t nihiluxorg/roon-web-stack:latest -f app/roon-web-api/Dockerfile .
 ```
 Then you can use the `docker` command already mentioned to launch your freshly built image.
@@ -163,8 +153,7 @@ Then you can use the `docker` command already mentioned to launch your freshly b
 This project is young and at its very early stage. It's just enough functionalities to be usable and I value the feedback from the community. The idea is to feed further development by these feedbacks.
 
 Also, despite building software for a living, I'm not a `frontend` developer.
-My core experiences and expertises are in designing and building distributed and scalable `apis` (`µ-services`, `cloud stuff`, `k8s`, `dbs` and all the usual suspects).   
-Recently I've only used `typescript`, at work, to build `serverless` and `@edge` stuffs.
+My core experiences and expertises are in designing and building distributed and scalable `apis` (`µ-services`, `cloud stuff`, `k8s`, `dbs` and all the usual suspects).
 
 This project was for me an occasion to go back to `web` development (I'd not done that for at least 7 years), helping to deal with some personal stuff in the process.
 
@@ -197,20 +186,15 @@ Sorry if I forgot anyone, please don't argue on the order.
 - [Angular](https://github.com/angular)
 - [Angular Material](https://github.com/angular/components)
 - [@bbc/lrud-spatial](https://github.com/bbc/lrud-spatial)
-- [Fastify](https://github.com/fastify/fastify)
-- [Fastify SSE v2](https://github.com/mpetrunic/fastify-sse-v2)
-- [Fastify static](https://github.com/fastify/fastify-static)
-- [graceful server](https://github.com/gquittet/graceful-server)
+- [Bun](https://bun.sh) (runtime, package manager, bundler, and HTTP server)
 - [nanoid](https://github.com/ai/nanoid)
+- [pino](https://github.com/pinojs/pino)
 - [ts-retry-promise](https://github.com/normartin/ts-retry-promise)
 - [fast-equals](https://github.com/planttheidea/fast-equals)
 - [rxjs](https://github.com/ReactiveX/rxjs)
-- [jest](https://github.com/jestjs/jest)
-- [node](https://github.com/nodejs/node)
+- [vitest](https://github.com/vitest-dev/vitest)
 - [typescript](https://github.com/microsoft/TypeScript)
-- [yarn](https://github.com/yarnpkg/berry)
 - [Sass](https://github.com/sass/sass)
-- [webpack](https://github.com/webpack/webpack) (can't list every plugin used, but thanks to everyone!)
 - [eslint](https://github.com/eslint/eslint) (can't list everything's used, but thanks to everyone!)
 - [prettier](https://github.com/prettier/prettier)
 - [editorconfig](https://github.com/editorconfig/editorconfig)
