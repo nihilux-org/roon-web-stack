@@ -186,7 +186,7 @@ Sorry if I forgot anyone, please don't argue on the order.
 - [Angular](https://github.com/angular)
 - [Angular Material](https://github.com/angular/components)
 - [@bbc/lrud-spatial](https://github.com/bbc/lrud-spatial)
-- [Bun](https://bun.sh) (runtime, package manager, bundler, and HTTP server)
+- [Bun](https://bun.sh)
 - [nanoid](https://github.com/ai/nanoid)
 - [pino](https://github.com/pinojs/pino)
 - [ts-retry-promise](https://github.com/normartin/ts-retry-promise)
