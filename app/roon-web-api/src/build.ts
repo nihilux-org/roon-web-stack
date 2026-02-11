@@ -110,6 +110,7 @@ const main = async (target: string) => {
         await doBuild(target, roonWebApiBaseDirectory, {
           outdir: outdirFullPath,
           target: "bun",
+          naming: "[dir]/roon-web-api.[ext]",
         });
         break;
       default:

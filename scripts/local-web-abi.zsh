@@ -43,7 +43,7 @@ export LOG_LEVEL=debug
 export WEB_NG_PATH="${ROON_WEB_API_BIN}"
 
 if (( $#flag_debug )); then
-  bun run ./app.js
+  bun run ./roon-web-api.js
 else
   ./roon-web-api
 fi
