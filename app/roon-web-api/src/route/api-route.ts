@@ -1,186 +1,183 @@
-import { FastifyInstance, FastifyPluginAsync, FastifyReply, FastifyRequest } from "fastify";
-import { fastifyPlugin } from "fastify-plugin";
-import { FastifySSEPlugin } from "fastify-sse-v2";
 import { extension_version, logger, roon } from "@infrastructure";
 import {
   Client,
-  ClientRoonApiBrowseLoadOptions,
-  ClientRoonApiBrowseOptions,
   Command,
+  RoonApiBrowseLoadOptions,
+  RoonApiBrowseOptions,
   RoonImageFormat,
   RoonImageScale,
 } from "@nihilux/roon-web-model";
 import { clientManager } from "@service";
 
-interface ClientIdParam {
-  client_id: string;
-}
+const encoder = new TextEncoder();
 
-interface ImageQuery {
-  height: string;
-  width: string;
-  scale: string;
-  format: string;
-  image_key: string;
-}
-
-const apiRoute: FastifyPluginAsync = async (server: FastifyInstance): Promise<void> => {
-  await server.register(FastifySSEPlugin);
-  server.get("/version", (_: FastifyRequest, reply: FastifyReply) => {
-    return reply.status(204).header("x-roon-web-stack-version", extension_version).send();
-  });
-  server.post<{ Params: { previous_client_id?: string } }>("/register/:previous_client_id?", (req, reply) => {
-    const previous_client_id = req.params.previous_client_id;
-    const client_id = clientManager.register(previous_client_id);
-    const location = `/api/${client_id}`;
-    return reply.status(201).header("location", location).send();
-  });
-  server.post<{ Params: ClientIdParam }>("/:client_id/unregister", (req, reply) => {
-    const client_id = req.params.client_id;
-    clientManager.unregister(client_id);
-    return reply.status(204).send();
-  });
-  server.post<{ Params: ClientIdParam; Body: Command }>("/:client_id/command", async (req, reply) => {
-    const { client, badRequestReply } = getClient(req, reply);
-    if (client) {
-      const command_id = client.command(req.body);
-      return reply.status(202).send({
-        command_id,
-      });
-    } else {
-      return badRequestReply;
-    }
-  });
-  server.post<{ Params: ClientIdParam; Body: ClientRoonApiBrowseOptions }>("/:client_id/browse", async (req, reply) => {
-    const { client, badRequestReply } = getClient(req, reply);
-    if (client) {
-      const browseResponse = await client.browse(req.body);
-      return reply.status(200).send(browseResponse);
-    } else {
-      return badRequestReply;
-    }
-  });
-  server.post<{ Params: ClientIdParam; Body: ClientRoonApiBrowseLoadOptions }>(
-    "/:client_id/load",
-    async (req, reply) => {
-      const { client, badRequestReply } = getClient(req, reply);
-      if (client) {
-        const loadResponse = await client.load(req.body);
-        return reply.status(200).send(loadResponse);
-      } else {
-        return badRequestReply;
-      }
-    }
-  );
-  server.get<{ Params: ClientIdParam }>("/:client_id/events", (req, reply) => {
-    const { client, badRequestReply } = getClient(req, reply);
-    if (client) {
-      reply = reply.header("x-accel-buffering", "no");
+const handleEvents = (client: Client, req: Request): Response => {
+  const stream = new ReadableStream({
+    start(controller) {
       const events = client.events();
       const sub = events.subscribe({
         next: (message) => {
-          reply.sse({
-            event: message.event,
-            data: JSON.stringify(message.data),
-          });
+          try {
+            const { event, data } = message;
+            const chunk = encoder.encode(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
+            controller.enqueue(chunk);
+          } catch {
+            // do nothing
+          }
         },
         complete: () => {
-          reply.sseContext.source.end();
-          sub.unsubscribe();
+          try {
+            controller.close();
+          } catch {
+            // do nothing
+          } finally {
+            sub.unsubscribe();
+          }
         },
       });
-      req.socket.on("close", () => {
+      req.signal.addEventListener("abort", () => {
         sub.unsubscribe();
-        client.close();
+        try {
+          controller.close();
+        } catch {
+          // do nothing
+        }
       });
-    } else {
-      return badRequestReply;
-    }
+    },
   });
-  server.get<{ Querystring: ImageQuery }>("/image", async (req, reply) => {
-    const { image_key, width, height, scale, format } = req.query;
-    if (!image_key) {
-      return reply.status(400).send();
-    }
-    let widthOption: number | undefined = undefined;
-    let heightOption: number | undefined = undefined;
-    let scaleOption: RoonImageScale | undefined = undefined;
-    let formatOption: RoonImageFormat | undefined = undefined;
-    if (width) {
-      const parsedWidth = parseInt(width, 10);
-      if (isNaN(parsedWidth)) {
-        return reply.status(400).send();
-      } else {
-        widthOption = parsedWidth;
-      }
-    }
-    if (height) {
-      const parsedHeight = parseInt(height, 10);
-      if (isNaN(parsedHeight)) {
-        return reply.status(400).send();
-      } else {
-        heightOption = parsedHeight;
-      }
-    }
-    if (scale === "fit" || scale === "fill" || scale === "stretch") {
-      scaleOption = scale;
-    }
-    if (scaleOption && !(heightOption && widthOption)) {
-      return reply.status(400).send();
-    }
-    if (format === "jpeg") {
-      formatOption = "image/jpeg";
-    } else if (format === "png") {
-      formatOption = "image/png";
-    }
-    try {
-      const { content_type, image } = await roon.getImage(image_key, {
-        format: formatOption,
-        height: heightOption,
-        scale: scaleOption,
-        width: widthOption,
-      });
-      return await reply
-        .status(200)
-        .header("cache-control", "public, max-age=86400, immutable")
-        .header("age", "0")
-        .header("content-type", content_type)
-        .send(image);
-    } catch (err) {
-      if (err === "NotFound") {
-        return reply.status(404).header("cache-control", "public, max-age=86400, immutable").header("age", "0").send();
-      } else {
-        logger.error(err, "image can't be fetched from roon");
-        return reply.status(500).send();
-      }
-    }
+  return new Response(stream, {
+    headers: {
+      "content-type": "text/event-stream",
+      "cache-control": "no-cache",
+      "connection": "keep-alive",
+      "x-accel-buffering": "no",
+    },
   });
 };
 
-const getClient = (
-  req: FastifyRequest<{ Params: ClientIdParam }>,
-  res: FastifyReply
-): {
-  client?: Client;
-  badRequestReply?: FastifyReply;
-} => {
-  try {
-    const client_id = req.params.client_id;
-    return {
-      client: clientManager.get(client_id),
-    };
-  } catch (err) {
-    if (err instanceof Error) {
-      logger.warn(err.message);
+const jsonResponse = (body: unknown, status: number, headers?: Record<string, string>): Response => {
+  return Response.json(body, { status, headers });
+};
+
+const emptyResponse = (status: number, headers?: Record<string, string>): Response => {
+  return new Response(null, { status, headers });
+};
+
+const handleImage = async (url: URL): Promise<Response> => {
+  const params = url.searchParams;
+  const image_key = params.get("image_key");
+  if (!image_key) {
+    return emptyResponse(400);
+  }
+  let widthOption: number | undefined = undefined;
+  let heightOption: number | undefined = undefined;
+  let scaleOption: RoonImageScale | undefined = undefined;
+  let formatOption: RoonImageFormat | undefined = undefined;
+  const width = params.get("width");
+  const height = params.get("height");
+  const scale = params.get("scale");
+  const format = params.get("format");
+  if (width) {
+    const parsedWidth = parseInt(width, 10);
+    if (isNaN(parsedWidth)) {
+      return emptyResponse(400);
     }
-    return {
-      badRequestReply: res.status(403).send(),
-    };
+    widthOption = parsedWidth;
+  }
+  if (height) {
+    const parsedHeight = parseInt(height, 10);
+    if (isNaN(parsedHeight)) {
+      return emptyResponse(400);
+    }
+    heightOption = parsedHeight;
+  }
+  if (scale === "fit" || scale === "fill" || scale === "stretch") {
+    scaleOption = scale;
+  }
+  if (scaleOption && !(heightOption && widthOption)) {
+    return emptyResponse(400);
+  }
+  if (format === "jpeg") {
+    formatOption = "image/jpeg";
+  } else if (format === "png") {
+    formatOption = "image/png";
+  }
+  try {
+    const { content_type, image } = await roon.getImage(image_key, {
+      format: formatOption,
+      height: heightOption,
+      scale: scaleOption,
+      width: widthOption,
+    });
+    return new Response(image, {
+      status: 200,
+      headers: {
+        "cache-control": "public, max-age=86400, immutable",
+        "age": "0",
+        "content-type": content_type,
+      },
+    });
+  } catch (err) {
+    if (err === "NotFound") {
+      return emptyResponse(404, {
+        "cache-control": "public, max-age=86400, immutable",
+        "age": "0",
+      });
+    }
+    logger.error(err, "image can't be fetched from roon");
+    return emptyResponse(500);
   }
 };
 
-export default fastifyPlugin(async (app) => {
-  return app.register(apiRoute, {
-    prefix: "/api",
-  });
-});
+const API_PREFIX = "/api/";
+
+export const isApiRequest = (url: URL): boolean => {
+  return url.pathname.startsWith(API_PREFIX);
+};
+
+export const handleApiRequest = async (req: Request, url: URL): Promise<Response> => {
+  const method = req.method;
+  const segments = url.pathname
+    .slice(API_PREFIX.length)
+    .split("/")
+    .filter((s) => s.length > 0);
+  if (method === "POST" && segments[0] === "register") {
+    const previousClientId = segments.length > 1 ? segments[1] : undefined;
+    const client_id = clientManager.register(previousClientId);
+    const location = `/api/${client_id}`;
+    return emptyResponse(201, { location });
+  } else if (method === "GET" && segments.length === 1) {
+    if (segments[0] === "version") {
+      return emptyResponse(204, { "x-roon-web-stack-version": extension_version });
+    } else if (segments[0] === "image") {
+      return handleImage(url);
+    }
+  } else if (segments.length === 2) {
+    const clientId = segments[0];
+    const action = segments[1];
+    try {
+      const client = clientManager.get(clientId);
+      if (method === "GET" && action === "events") {
+        return handleEvents(client, req);
+      } else if (method === "POST" && action === "unregister") {
+        clientManager.unregister(clientId);
+        return emptyResponse(204);
+      } else if (method === "POST") {
+        const body = await req.json();
+        if (action === "command") {
+          const command_id = client.command(body as Command);
+          return jsonResponse({ command_id }, 202);
+        } else if (action === "browse") {
+          const browseResponse = await client.browse(body as RoonApiBrowseOptions);
+          return jsonResponse(browseResponse, 200);
+        } else if (action === "load") {
+          const loadResponse = await client.load(body as RoonApiBrowseLoadOptions);
+          return jsonResponse(loadResponse, 200);
+        }
+      }
+    } catch {
+      return emptyResponse(403);
+    }
+  }
+  return emptyResponse(404);
+};

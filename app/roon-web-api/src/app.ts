@@ -1,23 +1,29 @@
-import { fastify } from "fastify";
 import * as process from "process";
-import { buildLoggerOptions, hostInfo } from "@infrastructure";
-import { clientManager, gracefulShutdown } from "@service";
-import apiRoute from "./route/api-route";
-import appRoute from "./route/app-route";
+import { hostInfo, logger } from "@infrastructure";
+import { clientManager, registerGracefulShutdown } from "@service";
+import { handleApiRequest, isApiRequest } from "./route/api-route";
+import { handleStaticRequest } from "./route/app-route";
 
 const init = async (): Promise<void> => {
-  const server = fastify({
-    logger: buildLoggerOptions("debug"),
-  });
-  await server.register(gracefulShutdown);
-  await server.register(apiRoute);
-  await server.register(appRoute);
   try {
-    await server.listen({ host: hostInfo.host, port: hostInfo.port });
     await clientManager.start();
+    const server = Bun.serve({
+      port: hostInfo.port,
+      hostname: hostInfo.host,
+      idleTimeout: 0,
+      async fetch(req) {
+        const url = new URL(req.url);
+        if (isApiRequest(url)) {
+          return handleApiRequest(req, url);
+        } else {
+          return handleStaticRequest(req, url);
+        }
+      },
+    });
+    registerGracefulShutdown(server);
+    logger.info(`roon-web-api listening on ${server.hostname}:${server.port}`);
   } catch (err: unknown) {
-    server.log.error(err);
-    await server.close();
+    logger.error(err);
     process.exit(1);
   }
 };

@@ -1,18 +1,14 @@
-import { FastifyInstance } from "fastify";
-import { fastifyGracefulShutdown } from "fastify-graceful-shutdown";
-import { fastifyPlugin } from "fastify-plugin";
+import { logger } from "@infrastructure";
 import { clientManager } from "./client-manager";
 
-const gracefulShutdownHook = (server: FastifyInstance): void => {
-  server.register(fastifyGracefulShutdown).after(() => {
-    server.gracefulShutdown((signal) => {
-      server.log.debug(`starting roon-web-api graceful shutdown (signal: ${signal})`);
-      clientManager.stop();
-      server.log.info("roon-web-api shutdown complete");
-    });
-  });
+export const registerGracefulShutdown = (server: { stop: () => void }): void => {
+  const shutdown = (signal: string): void => {
+    logger.debug(`starting roon-web-api graceful shutdown (signal: ${signal})`);
+    clientManager.stop();
+    logger.info("roon-web-api shutdown complete");
+    server.stop();
+    process.exit(0);
+  };
+  process.on("SIGTERM", () => shutdown("SIGTERM"));
+  process.on("SIGINT", () => shutdown("SIGINT"));
 };
-
-export const gracefulShutdown = fastifyPlugin((server: FastifyInstance) => {
-  gracefulShutdownHook(server);
-});
