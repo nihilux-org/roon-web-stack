@@ -1,6 +1,10 @@
-const executor = vi.fn();
+import { Mock } from "vitest";
 
-export const volumeGroupedZoneCommandExecutorMock = executor;
+const executor: Mock = vi.fn();
+
+export type VolumeGroupedZoneCommandExecutorMock = Mock;
+
+export const volumeGroupedZoneCommandExecutorMock: VolumeGroupedZoneCommandExecutorMock = executor;
 
 vi.mock("./volume-grouped-zone-command-executor", () => ({
   executor,

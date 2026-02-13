@@ -1,6 +1,12 @@
-const retryDecorator = vi.fn();
+import { Mock } from "vitest";
 
-export const retryMock = {
+const retryDecorator: Mock = vi.fn();
+
+export interface RetryMock {
+  retryDecorator: Mock;
+}
+
+export const retryMock: RetryMock = {
   retryDecorator,
 };
 

@@ -1,7 +1,14 @@
-const start = vi.fn();
-const watchQueue = vi.fn();
+import { Mock } from "vitest";
 
-export const queueBotMock = {
+const start: Mock = vi.fn();
+const watchQueue: Mock = vi.fn();
+
+export interface QueueBotMock {
+  start: Mock;
+  watchQueue: Mock;
+}
+
+export const queueBotMock: QueueBotMock = {
   start,
   watchQueue,
 };

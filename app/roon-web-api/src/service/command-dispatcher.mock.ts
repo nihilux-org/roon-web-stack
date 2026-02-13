@@ -1,7 +1,14 @@
-const dispatch = vi.fn();
-const dispatchInternal = vi.fn();
+import { Mock } from "vitest";
 
-export const commandDispatcherMock = {
+const dispatch: Mock = vi.fn();
+const dispatchInternal: Mock = vi.fn();
+
+export interface CommandDispatcherMock {
+  dispatch: Mock;
+  dispatchInternal: Mock;
+}
+
+export const commandDispatcherMock: CommandDispatcherMock = {
   dispatch,
   dispatchInternal,
 };

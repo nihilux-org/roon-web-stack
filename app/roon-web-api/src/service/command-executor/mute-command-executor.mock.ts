@@ -1,6 +1,10 @@
-const executor = vi.fn();
+import { Mock } from "vitest";
 
-export const muteCommandExecutorMock = executor;
+const executor: Mock = vi.fn();
+
+export type MuteCommandExecutorMock = Mock;
+
+export const muteCommandExecutorMock: MuteCommandExecutorMock = executor;
 
 vi.mock("./mute-command-executor", () => ({
   executor,

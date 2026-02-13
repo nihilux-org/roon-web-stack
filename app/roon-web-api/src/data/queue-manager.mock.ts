@@ -1,6 +1,12 @@
-const build = vi.fn();
+import { Mock } from "vitest";
 
-export const queueManagerFactoryMock = {
+const build: Mock = vi.fn();
+
+export interface QueueManagerFactoryMock {
+  build: Mock;
+}
+
+export const queueManagerFactoryMock: QueueManagerFactoryMock = {
   build,
 };
 

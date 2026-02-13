@@ -1,19 +1,31 @@
-import { vi } from "vitest";
+import { Mock, vi } from "vitest";
 
-const on = vi.fn();
-const off = vi.fn();
-const get_core = vi.fn();
-const set_status = vi.fn();
-const start_discovery = vi.fn();
-const save_config = vi.fn();
-const load_config = vi.fn();
+const on: Mock = vi.fn();
+const off: Mock = vi.fn();
+const get_core: Mock = vi.fn();
+const set_status: Mock = vi.fn();
+const start_discovery: Mock = vi.fn();
+const save_config: Mock = vi.fn();
+const load_config: Mock = vi.fn();
 const api = () => ({
   save_config,
   load_config,
 });
-const settings = vi.fn();
-const audioInputSessionManager = vi.fn();
-export const extensionMock = {
+const settings: Mock = vi.fn();
+const audioInputSessionManager: Mock = vi.fn();
+
+export interface ExtensionMock {
+  on: Mock;
+  off: Mock;
+  set_status: Mock;
+  get_core: Mock;
+  start_discovery: Mock;
+  api: () => { save_config: Mock; load_config: Mock };
+  settings: Mock;
+  audioInputSessionManager: Mock;
+}
+
+export const extensionMock: ExtensionMock = {
   on,
   off,
   set_status,
