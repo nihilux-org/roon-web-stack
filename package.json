@@ -84,7 +84,7 @@
     "backend": "bun run --filter @nihilux/roon-web-api start",
     "frontend": "bun run --filter @nihilux/roon-web-client build && bun run --filter @nihilux/roon-web-ng-client serve",
     "ci": "bun install --frozen-lockfile && bun run build && bun run lint && bun run test",
-    "cd": "bun install --frozen-lockfile && bun run build",
+    "cd": "bun install --frozen-lockfile && bun run --sequential build",
     "cd:debug": "bun install --frozen-lockfile && bun run build:debug"
   }
 }
