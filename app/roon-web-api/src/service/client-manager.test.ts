@@ -251,7 +251,7 @@ describe("client-manager.ts test suite", () => {
     }
   );
 
-  it("Client#events should return the same Observable if called again without closing", async () => {
+  it("Client#events should return a new Observable if called again without closing", async () => {
     const sharedConfigSubject = new Subject<SharedConfigMessage>();
     roonMock.sharedConfigEvents.mockImplementation(() => sharedConfigSubject);
     await clientManager.start();
@@ -259,7 +259,7 @@ describe("client-manager.ts test suite", () => {
     const client = clientManager.get(client_id);
     const events = client.events();
     const calledAgain = client.events();
-    expect(calledAgain).toBe(events);
+    expect(calledAgain).not.toBe(events);
   });
 
   it("Client#close should call roon#browse to clean browse state and remove client instance of clientManager", async () => {
