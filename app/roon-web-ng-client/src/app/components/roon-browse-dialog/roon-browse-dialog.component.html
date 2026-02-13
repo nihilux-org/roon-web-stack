@@ -39,7 +39,7 @@
 <mat-dialog-actions align="end" ngxSnContainer>
   @if (isRecording) {
     <button mat-button (click)="closeDialog()" id="roon-dialog-cancel"><mat-icon fontIcon="cancel"/>Cancel</button>
-    <button mat-button (click)="closeDialog()" id="roon-dialog-save"><mat-icon fontIcon="save"/>Save</button>
+    <button mat-button (click)="onRecordedBrowse()" id="roon-dialog-save"><mat-icon fontIcon="save"/>Save</button>
   } @else {
     <button mat-button (click)="closeDialog()" id="roon-dialog-close"><mat-icon fontIcon="close"/>Close</button>
   }
