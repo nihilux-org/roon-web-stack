@@ -21,7 +21,6 @@ class InternalClient implements Client {
   private readonly client_id: string;
   private readonly commandChannel: Subject<CommandState>;
   private readonly onCloseListener: (client: InternalClient) => void;
-  private eventChannel?: Observable<RoonSseMessage>;
 
   constructor(client_id: string, onCloseListener: (client: InternalClient) => void) {
     this.client_id = client_id;
@@ -30,20 +29,17 @@ class InternalClient implements Client {
   }
 
   events = (): Observable<RoonSseMessage> => {
-    if (this.eventChannel === undefined) {
-      const pingObservable: Observable<RoonSseMessage> = interval(InternalClient.PING_PERIOD * 1000).pipe(
-        map(() => ({
-          event: "ping",
-          data: {
-            next: InternalClient.PING_PERIOD,
-          },
-        }))
-      );
-      this.eventChannel = this.commandChannel
-        .pipe(map(dataConverter.toRoonSseMessage))
-        .pipe(mergeWith(roon.sharedConfigEvents(), zoneManager.events(), pingObservable));
-    }
-    return this.eventChannel;
+    const pingObservable: Observable<RoonSseMessage> = interval(InternalClient.PING_PERIOD * 1000).pipe(
+      map(() => ({
+        event: "ping",
+        data: {
+          next: InternalClient.PING_PERIOD,
+        },
+      }))
+    );
+    return this.commandChannel
+      .pipe(map(dataConverter.toRoonSseMessage))
+      .pipe(mergeWith(roon.sharedConfigEvents(), zoneManager.events(), pingObservable));
   };
 
   close = (): void => {
