@@ -1,6 +1,10 @@
-const executor = vi.fn();
+import { Mock } from "vitest";
 
-export const volumeCommandExecutorMock = executor;
+const executor: Mock = vi.fn();
+
+export type VolumeCommandExecutorMock = Mock;
+
+export const volumeCommandExecutorMock: VolumeCommandExecutorMock = executor;
 
 vi.mock("./volume-command-executor", () => ({
   executor,

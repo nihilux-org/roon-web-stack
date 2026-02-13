@@ -1,6 +1,10 @@
-const internalExecutor = vi.fn();
+import { Mock } from "vitest";
 
-export const queueBotInternalCommandExecutorMock = internalExecutor;
+const internalExecutor: Mock = vi.fn();
+
+export type QueueBotInternalCommandExecutorMock = Mock;
+
+export const queueBotInternalCommandExecutorMock: QueueBotInternalCommandExecutorMock = internalExecutor;
 
 vi.mock("./queue-bot-internal-command-executor", () => ({
   internalExecutor,

@@ -1,6 +1,10 @@
-const executor = vi.fn();
+import { Mock } from "vitest";
 
-export const controlExecutorMock = executor;
+const executor: Mock = vi.fn();
+
+export type ControlExecutorMock = Mock;
+
+export const controlExecutorMock: ControlExecutorMock = executor;
 
 vi.mock("./control-command-executor", () => ({
   executor,

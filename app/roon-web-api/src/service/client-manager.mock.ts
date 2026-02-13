@@ -1,10 +1,20 @@
-const events = vi.fn();
-const close = vi.fn();
-const command = vi.fn();
-const browse = vi.fn();
-const load = vi.fn();
+import { Mock } from "vitest";
 
-export const clientMock = {
+const events: Mock = vi.fn();
+const close: Mock = vi.fn();
+const command: Mock = vi.fn();
+const browse: Mock = vi.fn();
+const load: Mock = vi.fn();
+
+export interface ClientMock {
+  events: Mock;
+  close: Mock;
+  command: Mock;
+  browse: Mock;
+  load: Mock;
+}
+
+export const clientMock: ClientMock = {
   events,
   close,
   command,
@@ -12,13 +22,21 @@ export const clientMock = {
   load,
 };
 
-const register = vi.fn();
-const unregister = vi.fn();
-const get = vi.fn().mockImplementation((_) => clientMock);
-const start = vi.fn();
-const stop = vi.fn();
+const register: Mock = vi.fn();
+const unregister: Mock = vi.fn();
+const get: Mock = vi.fn().mockImplementation((_) => clientMock);
+const start: Mock = vi.fn();
+const stop: Mock = vi.fn();
 
-export const clientManagerMock = {
+export interface ClientManagerMock {
+  register: Mock;
+  unregister: Mock;
+  get: Mock;
+  start: Mock;
+  stop: Mock;
+}
+
+export const clientManagerMock: ClientManagerMock = {
   register,
   unregister,
   get,

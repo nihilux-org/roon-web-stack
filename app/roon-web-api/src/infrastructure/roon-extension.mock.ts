@@ -1,3 +1,5 @@
+import { Mock } from "vitest";
+
 const onServerPaired = vi.fn();
 const onServerLost = vi.fn();
 const server = vi.fn();
@@ -14,7 +16,26 @@ const sharedConfigEvents = vi.fn();
 const settings = vi.fn();
 const audioInputSessionManager = vi.fn();
 
-export const roonMock = {
+export interface RoonMock {
+  onServerPaired: Mock;
+  onServerLost: Mock;
+  server: Mock;
+  onZones: Mock;
+  offZones: Mock;
+  onOutputs: Mock;
+  offOutputs: Mock;
+  startExtension: Mock;
+  getImage: Mock;
+  browse: Mock;
+  load: Mock;
+  updateSharedConfig: Mock;
+  sharedConfigEvents: Mock;
+  settings: Mock;
+  audioInputSessionManager: Mock;
+  extension_version: string;
+}
+
+export const roonMock: RoonMock = {
   onServerPaired,
   onServerLost,
   server,

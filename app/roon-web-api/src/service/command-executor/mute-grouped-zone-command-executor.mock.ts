@@ -1,6 +1,10 @@
-const executor = vi.fn();
+import { Mock } from "vitest";
 
-export const muteGroupedZoneCommandExecutorMock = executor;
+const executor: Mock = vi.fn();
+
+export type MuteGroupedZoneCommandExecutorMock = Mock;
+
+export const muteGroupedZoneCommandExecutorMock: MuteGroupedZoneCommandExecutorMock = executor;
 
 vi.mock("./mute-grouped-zone-command-executor", () => ({
   executor,

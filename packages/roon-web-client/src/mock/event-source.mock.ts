@@ -1,3 +1,5 @@
+import { Mock } from "vitest";
+
 export const eventSourceMocks: Map<string, EventSourceMock> = new Map<string, EventSourceMock>();
 
 export const resetEventSourceMocks: () => void = (): void => {
@@ -15,13 +17,13 @@ export class EventSourceMock {
     eventSourceMocks.set(url.toString(), this);
   }
 
-  close = vi.fn().mockImplementation(() => {
+  close: Mock = vi.fn().mockImplementation(() => {
     this._state = 0;
     this.listeners.clear();
     return;
   });
 
-  addEventListener = vi.fn().mockImplementation((type: string, listener: EventListener): void => {
+  addEventListener: Mock = vi.fn().mockImplementation((type: string, listener: EventListener): void => {
     this.listeners.set(type, listener);
   });
 

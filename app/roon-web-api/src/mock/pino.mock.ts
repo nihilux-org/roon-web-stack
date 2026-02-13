@@ -1,9 +1,18 @@
-const debug = vi.fn();
-const info = vi.fn();
-const error = vi.fn();
-const warn = vi.fn();
+import { Mock } from "vitest";
 
-export const loggerMock = {
+const debug: Mock = vi.fn();
+const info: Mock = vi.fn();
+const error: Mock = vi.fn();
+const warn: Mock = vi.fn();
+
+export interface LoggerMock {
+  debug: Mock;
+  info: Mock;
+  error: Mock;
+  warn: Mock;
+}
+
+export const loggerMock: LoggerMock = {
   debug,
   info,
   error,

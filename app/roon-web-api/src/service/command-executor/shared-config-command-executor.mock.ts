@@ -1,6 +1,10 @@
-const executor = vi.fn();
+import { Mock } from "vitest";
 
-export const sharedConfigCommandExecutor = executor;
+const executor: Mock = vi.fn();
+
+export type SharedConfigCommandExecutor = Mock;
+
+export const sharedConfigCommandExecutor: SharedConfigCommandExecutor = executor;
 
 vi.mock("./shared-config-command-executor", () => ({
   executor,
