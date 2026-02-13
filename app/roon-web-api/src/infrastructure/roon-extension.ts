@@ -59,7 +59,7 @@ const onServerPairedDefaultListener: ServerListener = (server: RoonServer) => {
 
 const onZonesDefaultSettingsListener: ZoneListener = (server: RoonServer, response, body) => {
   const settingsManager = roon.settings();
-  /* v8 ignore else --@preserve */
+  /* istanbul ignore else --@preserve */
   if (settingsManager !== undefined) {
     const settings = settingsManager.settings();
     let settingsZones = settings.nr_audio_input_zones;
@@ -96,7 +96,7 @@ const onZonesDefaultSettingsListener: ZoneListener = (server: RoonServer, respon
         if (body.zones_changed !== undefined) {
           for (const zone of body.zones_changed) {
             const changedZone = settingsZones.find((z) => z.zone_id === zone.zone_id);
-            /* v8 ignore else --@preserve */
+            /* istanbul ignore else --@preserve */
             if (changedZone !== undefined && changedZone.zone_name !== zone.display_name) {
               updateSettings = true;
               changedZone.zone_name = zone.display_name;
@@ -109,7 +109,7 @@ const onZonesDefaultSettingsListener: ZoneListener = (server: RoonServer, respon
         settingsZones = [];
         break;
     }
-    /* v8 ignore else --@preserve */
+    /* istanbul ignore else --@preserve */
     if (updateSettings) {
       const defaultZoneValid =
         settingsZones.findIndex((z) => z.zone_id === settings.nr_audio_input_default_zone) !== -1;

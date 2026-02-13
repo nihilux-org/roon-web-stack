@@ -8,7 +8,7 @@ export default defineConfig(({ mode }) => ({
     environment: "happy-dom",
     globals: true,
     coverage: {
-      provider: "v8",
+      provider: "istanbul",
       include: ["src/client/**/*.ts"],
       exclude: [
         "bin",

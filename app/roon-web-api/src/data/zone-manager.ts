@@ -176,7 +176,7 @@ class InternalZoneManager implements ZoneManager {
 
   private readonly reconnect = () => {
     for (const zd of this.zoneData.values()) {
-      /* v8 ignore else --@preserve */
+      /* istanbul ignore else --@preserve */
       if (zd.backup?.zone) {
         zd.zone = zd.backup.zone;
         zd.queueManager = queueManagerFactory.build(zd.zone, this.roonEventSource, InternalZoneManager.QUEUE_SIZE);
@@ -190,7 +190,7 @@ class InternalZoneManager implements ZoneManager {
           });
       }
     }
-    /* v8 ignore else --@preserve */
+    /* istanbul ignore else --@preserve */
     if (this._state !== RoonState.SYNC) {
       this.updateState(RoonState.SYNCING);
     }

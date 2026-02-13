@@ -30,8 +30,14 @@ export const roonMock = {
   sharedConfigEvents,
   settings,
   audioInputSessionManager,
+  extension_version: "to_replace",
 };
 
-vi.mock("./roon-extension", () => ({
-  roon: roonMock,
-}));
+vi.mock("./roon-extension", async (importOriginal) => {
+  const roonExtension: { extension_version: string } = await importOriginal();
+  roonMock.extension_version = roonExtension.extension_version;
+  return {
+    roon: roonMock,
+    extension_version: roonExtension.extension_version,
+  };
+});

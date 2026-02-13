@@ -154,7 +154,7 @@ class InternalRoonWebClient implements RoonWebClient {
   };
 
   onRoonState: (listener: RoonStateListener) => void = (listener: RoonStateListener) => {
-    if (this._apiState && this._apiState.state !== RoonState.STOPPED) {
+    if (this._apiState !== undefined && this._apiState.state !== RoonState.STOPPED) {
       listener(this._apiState);
     } else if (this._apiState === undefined) {
       listener({ state: RoonState.STARTING, zones: [], outputs: [] });
@@ -182,7 +182,7 @@ class InternalRoonWebClient implements RoonWebClient {
 
   onZoneState: (listener: ZoneStateListener) => void = (listener: ZoneStateListener) => {
     for (const zs of this._zones.values()) {
-      /* v8 ignore else --@preserve */
+      /* istanbul ignore else --@preserve */
       if (zs.zone) {
         listener(zs.zone);
       }
@@ -199,7 +199,7 @@ class InternalRoonWebClient implements RoonWebClient {
 
   onQueueState: (listener: QueueStateListener) => void = (listener: QueueStateListener) => {
     for (const zs of this._zones.values()) {
-      /* v8 ignore else --@preserve */
+      /* istanbul ignore else --@preserve */
       if (zs.queue) {
         listener(zs.queue);
       }
@@ -220,7 +220,7 @@ class InternalRoonWebClient implements RoonWebClient {
 
   offClientState: (listener: ClientStateListener) => void = (listener: ClientStateListener) => {
     const listenerIndex = this._clientStateListeners.indexOf(listener);
-    /* v8 ignore else --@preserve */
+    /* istanbul ignore else --@preserve */
     if (listenerIndex !== -1) {
       this._clientStateListeners.splice(listenerIndex, 1);
     }
@@ -232,7 +232,7 @@ class InternalRoonWebClient implements RoonWebClient {
 
   offSharedConfig: (listener: SharedConfigListener) => void = (listener: SharedConfigListener) => {
     const listenerIndex = this._sharedConfigListeners.indexOf(listener);
-    /* v8 ignore else --@preserve */
+    /* istanbul ignore else --@preserve */
     if (listenerIndex !== -1) {
       this._sharedConfigListeners.splice(listenerIndex, 1);
     }
@@ -415,7 +415,7 @@ class InternalRoonWebClient implements RoonWebClient {
   };
 
   private connectEventSource: () => void = (): void => {
-    /* v8 ignore else --@preserve */
+    /* istanbul ignore else --@preserve */
     if (this._eventSource === undefined) {
       const clientPath = this.ensureStared();
       const eventSourceUrl = new URL(`${clientPath}/events`, this._apiHost);
@@ -444,7 +444,7 @@ class InternalRoonWebClient implements RoonWebClient {
 
   private onCommandStateMessage = (m: MessageEvent<string>): void => {
     const commandState = parseJson<CommandState>(m.data);
-    /* v8 ignore else --@preserve */
+    /* istanbul ignore else --@preserve */
     if (commandState) {
       for (const commandStateListener of this._commandStateListeners) {
         commandStateListener(commandState);
@@ -488,7 +488,7 @@ class InternalRoonWebClient implements RoonWebClient {
 
   private onPingMessage = (m: MessageEvent<string>): void => {
     const ping = parseJson<Ping>(m.data);
-    /* v8 ignore else --@preserve */
+    /* istanbul ignore else --@preserve */
     if (ping) {
       if (this._pingInterval) {
         clearTimeout(this._pingInterval);
