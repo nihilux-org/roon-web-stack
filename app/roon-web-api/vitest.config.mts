@@ -6,24 +6,25 @@ export default defineConfig({
   test: {
     globals: true,
     coverage: {
-      provider: "v8",
+      provider: "istanbul",
       include: ["**/*.ts"],
       exclude: [
         "bin",
         "coverage",
         "node_modules",
-        "src/app.ts",
+        "src/index.ts",
+        "src/build.ts",
         "src/setup-test.ts",
         "src/roon-kit/**/*",
         "src/infrastructure/logger.ts",
         "src/infrastructure/host-info.ts",
-        "src/route/**/*",
-        "src/service/graceful-shutdown.ts",
+        "src/router/static-router.ts",
+        "src/router/index.ts",
         "src/**/*.mock.ts",
         "src/**/*.test.ts",
       ],
       thresholds: {
-        100: true
+        100: true,
       },
     },
   },

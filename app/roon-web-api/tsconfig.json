@@ -18,6 +18,9 @@
       ],
       "@roon-kit": [
         "roon-kit/index.ts"
+      ],
+      "@router": [
+        "router/index.ts"
       ]
     },
     "types": ["vitest/globals", "bun"],

@@ -117,8 +117,11 @@ class InternalClientManager implements ClientManager {
     return client_id;
   };
 
-  get = (client_id: string): Client => {
+  get = (client_id?: string): Client => {
     this.ensureStarted();
+    if (client_id === undefined) {
+      throw new Error("no client_id");
+    }
     const client = this.clients.get(client_id);
     if (!client) {
       throw new Error(`'${client_id}' is not a registered client_id`);

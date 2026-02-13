@@ -101,6 +101,11 @@ describe("client-manager.ts test suite", () => {
     expect(clientManager.get).toThrow(NOT_STARTED_ERROR);
   });
 
+  it("clientManager#get should throw an Error if called with undefined client_id", async () => {
+    await clientManager.start();
+    expect(() => clientManager.get(undefined)).toThrow(new Error("no client_id"));
+  });
+
   it("clientManager#get should throw an Error if called with a client_id not previously registered", async () => {
     const unregistered_client_id = "unregistered_client_id";
     await clientManager.start();

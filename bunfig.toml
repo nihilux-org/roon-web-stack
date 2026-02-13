@@ -1,10 +1,7 @@
 [install]
-# Equivalent to nmHoistingLimits: workspaces in .yarnrc.yml
-hoist = true
-hoist-workspace-packages = true
+linker = "isolated"
 
 [run]
-# Enable color output
 bun = true
 
 [test]

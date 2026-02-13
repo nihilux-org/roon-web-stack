@@ -59,7 +59,7 @@ const cdBin = async (baseDirectory: string) => {
 
 const doBuild = async (target: string, baseDirectory: string, config: Partial<BuildConfig>) => {
   const buildConfig = {
-    entrypoints: [`${baseDirectory}/src/app.ts`],
+    entrypoints: [`${baseDirectory}/src/index.ts`],
     minify: true,
     sourcemap: true,
     external: EXTERNALS,
