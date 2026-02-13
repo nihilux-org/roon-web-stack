@@ -186,6 +186,14 @@ export class RoonBrowseDialogComponent implements OnInit {
     }
   }
 
+  onRecordedBrowse() {
+    const path = [...this.$dialogTitle()].slice(1);
+    this._customActionsService.saveHierarchy(this._firstPath.hierarchy);
+    this._customActionsService.savePath(path);
+    this._customActionsService.saveActionIndex(undefined);
+    this._dialogService.close();
+  }
+
   onRecordedAction(recordedAction: RecordedAction) {
     const path = [...this.$dialogTitle(), recordedAction.title].slice(1);
     this._customActionsService.saveHierarchy(this._firstPath.hierarchy);
