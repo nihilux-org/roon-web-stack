@@ -77,17 +77,12 @@
     "url": "git+https://github.com/nihilux-org/roon-web-stack.git"
   },
   "scripts": {
-    "build": "bun run build:client && bun run build:api && bun run build:ng",
-    "build:debug": "bun run build:client && bun run build:api-debug && bun run build:ng",
-    "build:api": "bun run --filter @nihilux/roon-web-api build",
-    "build:api-debug": "bun run --filter @nihilux/roon-web-api build:debug",
-    "build:client": "bun run --filter @nihilux/roon-web-client build",
-    "build:ng": "bun run --filter @nihilux/roon-web-ng-client build",
+    "build": "bun run --filter '*' --if-present build",
     "lint": "bun run --filter '*' lint",
     "lint:fix": "bun run --filter '*' lint:fix",
     "test": "bun run --filter '*' test",
     "backend": "bun run --filter @nihilux/roon-web-api start",
-    "frontend": "bun run build:client && bun run --filter @nihilux/roon-web-ng-client serve",
+    "frontend": "bun run --filter @nihilux/roon-web-client build && bun run --filter @nihilux/roon-web-ng-client serve",
     "ci": "bun install --frozen-lockfile && bun run build && bun run lint && bun run test",
     "cd": "bun install --frozen-lockfile && bun run build",
     "cd:debug": "bun install --frozen-lockfile && bun run build:debug"
