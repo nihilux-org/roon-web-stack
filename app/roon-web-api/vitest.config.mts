@@ -18,7 +18,7 @@ export default defineConfig({
         "src/roon-kit/**/*",
         "src/infrastructure/logger.ts",
         "src/infrastructure/host-info.ts",
-        "src/router/static-router.ts",
+        "src/router/app-router.ts",
         "src/router/index.ts",
         "src/**/*.mock.ts",
         "src/**/*.test.ts",
