@@ -15,10 +15,12 @@ export const roonWebApiRouter = new Hono()
   .route("/api", apiRouter)
   .route("/", appRouter)
 
-  .onError((err, c) => {
-    logger.error(err, "unexpected error");
-    return c.json({ error: "Internal Server Error" }, 500);
-  })
+  .onError(
+    /* istanbul ignore next */ (err, c) => {
+      logger.error(err, "unexpected error");
+      return c.json({ error: "Internal Server Error" }, 500);
+    }
+  )
   .notFound((c) => {
     return c.body(null, 404);
   });

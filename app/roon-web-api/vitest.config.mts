@@ -19,7 +19,6 @@ export default defineConfig({
         "src/infrastructure/logger.ts",
         "src/infrastructure/host-info.ts",
         "src/router/app-router.ts",
-        "src/router/index.ts",
         "src/**/*.mock.ts",
         "src/**/*.test.ts",
       ],
