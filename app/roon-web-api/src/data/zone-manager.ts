@@ -69,17 +69,16 @@ class InternalZoneManager implements ZoneManager {
   };
 
   private readonly zoneListener: ZoneListener = (core, response, body) => {
-    let zoneRemoved = false;
-    let zoneAdded = false;
-    let zoneChanged = false;
     switch (response) {
       case "Changed":
-        zoneRemoved = this.dispatchZonesRemoved(body);
-        zoneAdded = this.dispatchZonesAdded(body);
-        zoneChanged = this.dispatchZonesChanged(body);
-        this.dispatchZonesSeeked(body);
-        if (zoneRemoved || zoneAdded || zoneChanged) {
-          this.updateState(RoonState.SYNC);
+        {
+          const zoneRemoved = this.dispatchZonesRemoved(body);
+          const zoneAdded = this.dispatchZonesAdded(body);
+          const zoneChanged = this.dispatchZonesChanged(body);
+          this.dispatchZonesSeeked(body);
+          if (zoneRemoved || zoneAdded || zoneChanged) {
+            this.updateState(RoonState.SYNC);
+          }
         }
         break;
       case "Subscribed":

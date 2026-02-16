@@ -102,7 +102,7 @@ export class NgxSpatialNavigableService implements OnDestroy {
 
   private getNextFocus(current: HTMLElement | null, direction: Direction, scope: HTMLElement): HTMLElement | undefined {
     let candidate = current;
-    let disabled = false;
+    let disabled: boolean;
     do {
       candidate = getNextFocus(candidate, direction, scope);
       disabled = candidate?.getAttribute("disabled") === "true";
