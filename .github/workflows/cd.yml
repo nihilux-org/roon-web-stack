@@ -58,7 +58,7 @@ jobs:
           PLATFORM=`echo $PLATFORM | sed 's/\//-/g'`
           echo "PLATFORM=$PLATFORM" >> $GITHUB_ENV
       - name: Upload digest
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: digests-${{ env.PLATFORM }}
           path: /tmp/digests/*
@@ -71,7 +71,7 @@ jobs:
       - build
     steps:
       - name: Download digests
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           pattern: digests-*
           merge-multiple: true
