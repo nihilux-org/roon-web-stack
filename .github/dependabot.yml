@@ -11,7 +11,7 @@ updates:
         patterns:
           - "*"
   - package-ecosystem: "docker"
-    directory: "/"
+    directory: "/app/roon-web-api"
     schedule:
       interval: "weekly"
     labels:
