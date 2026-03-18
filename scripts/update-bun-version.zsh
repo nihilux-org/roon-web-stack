@@ -61,18 +61,6 @@ printf "%s%-55s%s\n" "${fg_bold[green]}" "updating root package.json packageMana
 jq --arg v "bun@${VERSION}" '.packageManager = $v' package.json > package.json.tmp && mv package.json.tmp package.json
 printf "%s%-55s%s%s\n" "${fg_bold[blue]}" "root/package.json" "${reset_color}" "✅ ";
 
-printf "%s%-55s%s\n" "${fg_bold[green]}" "updating @types/bun in app/roon-web-api/package.json..." "${reset_color}";
-jq --arg v "${VERSION}" '.devDependencies["@types/bun"] = $v' app/roon-web-api/package.json > app/roon-web-api/package.json.tmp && mv app/roon-web-api/package.json.tmp app/roon-web-api/package.json
-printf "%s%-55s%s%s\n" "${fg_bold[blue]}" "app/roon-web-api/package.json" "${reset_color}" "✅ ";
-
-printf "%s%-55s%s\n" "${fg_bold[green]}" "updating @types/bun in packages/roon-web-client/package.json..." "${reset_color}";
-jq --arg v "${VERSION}" '.devDependencies["@types/bun"] = $v' packages/roon-web-client/package.json > packages/roon-web-client/package.json.tmp && mv packages/roon-web-client/package.json.tmp packages/roon-web-client/package.json
-printf "%s%-55s%s%s\n" "${fg_bold[blue]}" "packages/roon-web-client/package.json" "${reset_color}" "✅ ";
-
-printf "%s%-55s%s\n" "${fg_bold[green]}" "updating @types/bun in app/roon-web-ng-client/package.json..." "${reset_color}";
-jq --arg v "${VERSION}" '.devDependencies["@types/bun"] = $v' app/roon-web-ng-client/package.json > app/roon-web-ng-client/package.json.tmp && mv app/roon-web-ng-client/package.json.tmp app/roon-web-ng-client/package.json
-printf "%s%-55s%s%s\n" "${fg_bold[blue]}" "app/roon-web-ng-client/package.json" "${reset_color}" "✅ ";
-
 printf "%s%-55s%s\n" "${fg_bold[green]}" "updating Dockerfile BUN_VERSION..." "${reset_color}";
 sed -i '' "s/^ARG BUN_VERSION=.*/ARG BUN_VERSION=${VERSION}/" app/roon-web-api/Dockerfile
 printf "%s%-55s%s%s\n" "${fg_bold[blue]}" "app/roon-web-api/Dockerfile" "${reset_color}" "✅ ";
