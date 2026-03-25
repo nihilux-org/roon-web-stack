@@ -75,7 +75,6 @@ export interface ExtensionSettings extends SettingsValues {
   nr_audio_input_default_zone: string;
   nr_audio_input_zones: ZoneDropdownValue[];
   nr_airplay_state: FeatureState;
-  nr_airplay_stream_url: string;
   nr_airplay_zone: string;
   nr_airplay_zones: ZoneDropdownValue[];
 }

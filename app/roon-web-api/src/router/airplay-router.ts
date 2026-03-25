@@ -20,7 +20,12 @@ export const airplayRouter = new Hono()
   })
 
   .post("/", async (c) => {
-    await airplayService.start();
+    const airplay_stream_url = c.req.header("x-roon-airplay-stream-url");
+    if (airplay_stream_url !== undefined) {
+      await airplayService.start(airplay_stream_url);
+    } else {
+      logger.error("POST /airplay: x-roon-airplay-stream-url is empty");
+    }
     c.status(204);
     return c.body(null);
   })

@@ -281,7 +281,6 @@ function proxyAudioInput(audioInput: RoonApiAudioInput) {
             return new Promise<void>((resolve, reject) => {
               args.push((err: string | false) => {
                 if (err) {
-                  console.log(err);
                   reject(err);
                 } else {
                   resolve();

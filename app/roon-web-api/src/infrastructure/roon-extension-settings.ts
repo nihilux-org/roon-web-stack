@@ -145,12 +145,6 @@ const buildAirplaySettings = (values: ExtensionSettings, has_error: boolean) => 
     items: [airplayActivation],
   };
   if (values.nr_airplay_state === "enabled") {
-    const airplayHost: StringSetting = {
-      type: "string",
-      title: "airplay stream url",
-      setting: "nr_airplay_stream_url",
-    };
-    has_error = validateMandatorySetting(airplayHost, values) || has_error;
     const airplayZones: DropdownSetting = {
       type: "dropdown",
       title: "airplay zone",
@@ -161,7 +155,7 @@ const buildAirplaySettings = (values: ExtensionSettings, has_error: boolean) => 
       })),
     };
     has_error = validateMandatorySetting(airplayZones, values) || has_error;
-    group.items.push(airplayHost, airplayZones);
+    group.items.push(airplayZones);
   }
   return {
     group,
@@ -198,9 +192,6 @@ const settingsValidator: SettingsValidator<ExtensionSettings> = (settings_to_sav
   if (settings_to_save.nr_audio_input_default_zone === "") {
     has_error = true;
   }
-  if (settings_to_save.nr_airplay_stream_url === "") {
-    has_error = true;
-  }
   if (settings_to_save.nr_airplay_zone === "") {
     has_error = true;
   }
@@ -223,7 +214,6 @@ export const settingsOptions: RoonApiSettingsOptions<ExtensionSettings> = {
     nr_audio_input_default_zone: "",
     nr_audio_input_zones: [],
     nr_airplay_state: "disabled",
-    nr_airplay_stream_url: "",
     nr_airplay_zone: "",
     nr_airplay_zones: [],
   },

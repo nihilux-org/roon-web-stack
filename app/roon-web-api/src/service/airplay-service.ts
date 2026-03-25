@@ -17,10 +17,9 @@ class InternalAirplayService implements AirplayService {
     this.settingsManager = roon.settings();
   }
 
-  start = async (): Promise<void> => {
+  start = async (airplay_stream_url: string): Promise<void> => {
     if (this.isEnabled()) {
       const zone_id = this.settingsManager!.settings().nr_airplay_zone;
-      const airplay_stream_url = this.settingsManager!.settings().nr_airplay_stream_url;
       const line1 = "Roon Airplay";
       await this.audioInputSessionManager?.play(zone_id, airplay_stream_url, "Roon Airplay", {
         is_seek_allowed: false,
