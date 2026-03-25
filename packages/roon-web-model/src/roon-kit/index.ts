@@ -538,6 +538,7 @@ export interface RoonAudioInputTrackInfoUpdate extends RoonAudioInputTrackInfo {
 
 export interface RoonAudioInputPlayOptions {
   session_id: string;
+  track_id: string;
   type: "channel";
   slot: "play";
   media_url: string;

@@ -8,6 +8,7 @@ import {
 } from "@nihilux/roon-web-model";
 
 export class RoonAudioInputSessionManager implements AudioInputSessionManager {
+  private static readonly AIRPLAY_TRACK_ID = "roon_web_stack_airplay_track_id";
   private readonly _roonExtension: RoonExtension<ExtensionSettings>;
   private readonly _currentSessions: Map<string, {
     url: string;
@@ -84,6 +85,7 @@ export class RoonAudioInputSessionManager implements AudioInputSessionManager {
               return server.services.RoonApiAudioInput.play(
                 {
                   session_id: currentSession.session.session_id,
+                  track_id: RoonAudioInputSessionManager.AIRPLAY_TRACK_ID,
                   type: "channel",
                   slot: "play",
                   media_url: currentSession.url,
@@ -124,7 +126,7 @@ export class RoonAudioInputSessionManager implements AudioInputSessionManager {
     if (currentSession !== undefined) {
       const server = await this._roonExtension.get_core();
       const update_track_info: RoonAudioInputUpdateTrackInfoUpdateOptions = {
-        track_id: "",
+        track_id: RoonAudioInputSessionManager.AIRPLAY_TRACK_ID,
         session_id: currentSession.session.session_id,
         info,
       };
