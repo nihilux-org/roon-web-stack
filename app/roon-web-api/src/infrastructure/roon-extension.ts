@@ -111,12 +111,15 @@ const onZonesDefaultSettingsListener: ZoneListener = (server: RoonServer, respon
     }
     /* istanbul ignore else --@preserve */
     if (updateSettings) {
-      const defaultZoneValid =
+      const audioInputDefaultZoneValid =
         settingsZones.findIndex((z) => z.zone_id === settings.nr_audio_input_default_zone) !== -1;
+      const airplayZoneValid = settingsZones.findIndex((z) => z.zone_id === settings.nr_airplay_zone) !== -1;
       settingsManager.updateSettings({
         ...settings,
-        nr_audio_input_default_zone: defaultZoneValid ? settings.nr_audio_input_default_zone : "",
+        nr_audio_input_default_zone: audioInputDefaultZoneValid ? settings.nr_audio_input_default_zone : "",
         nr_audio_input_zones: settingsZones,
+        nr_airplay_zone: airplayZoneValid ? settings.nr_airplay_zone : "",
+        nr_airplay_zones: settingsZones,
       });
     }
   }

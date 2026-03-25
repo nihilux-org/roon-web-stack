@@ -2,8 +2,9 @@
 import { defineConfig } from "vitest/config";
 import tsconfigPaths from "vite-tsconfig-paths";
 
-export default defineConfig(({ mode }) => ({
-  plugins: [tsconfigPaths()],
+export default defineConfig({resolve: {
+    tsconfigPaths: true,
+  },
   test: {
     environment: "happy-dom",
     globals: true,
@@ -24,7 +25,4 @@ export default defineConfig(({ mode }) => ({
       },
     },
   },
-  define: {
-    "import.meta.vitest": mode !== "production",
-  },
-}));
+});

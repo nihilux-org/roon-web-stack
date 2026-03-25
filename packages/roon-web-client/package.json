@@ -42,7 +42,6 @@
     "prettier": "3.8.1",
     "typescript": "5.9.3",
     "typescript-eslint": "8.57.1",
-    "vite-tsconfig-paths": "6.1.1",
     "vitest": "4.1.0",
     "vitest-fetch-mock": "0.4.5"
   }

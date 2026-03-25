@@ -532,6 +532,10 @@ export interface RoonAudioInputTrackInfo extends RoonThreeLine {
   is_pause_allowed: boolean;
 }
 
+export interface RoonAudioInputTrackInfoUpdate extends RoonAudioInputTrackInfo {
+  track_id: string;
+}
+
 export interface RoonAudioInputPlayOptions {
   session_id: string;
   type: "channel";
@@ -550,9 +554,10 @@ export type RoonApiAudioInputPlayEvent =
   | "ZoneNotFound"
   | "ZoneLost";
 
-export interface RoonAudioInputUpdateTrackInfoOptions {
+export interface RoonAudioInputUpdateTrackInfoUpdateOptions {
   session_id: string;
-  info?: RoonAudioInputTrackInfo;
+  track_id: string;
+  info: RoonAudioInputTrackInfoUpdate;
 }
 
 interface RoonAudioInputTransportOptions {
@@ -572,13 +577,13 @@ export interface RoonApiAudioInput {
   ): Promise<RoonApiAudioInputSession>;
   play(options: RoonAudioInputPlayOptions, listener: RoonApiAudioInputPlayListener): void;
   clear(): Promise<void>;
-  update_track_info(info?: RoonAudioInputUpdateTrackInfoOptions): Promise<void>;
+  update_track_info(info?: RoonAudioInputUpdateTrackInfoUpdateOptions): Promise<void>;
   update_transport_controls(controls: RoonAudioInputTransportOptions): Promise<void>;
 }
 
 export interface AudioInputSessionManager {
-  play(zone_id: string, url: string): Promise<void>;
-  update_track_info(zone_id: string, info: RoonAudioInputTrackInfo): Promise<void>;
+  play(zone_id: string, url: string, display_name?: string, info?: RoonAudioInputTrackInfo): Promise<void>;
+  update_track_info(zone_id: string, info: RoonAudioInputTrackInfoUpdate): Promise<void>;
   end_session(zone_id: string): Promise<void>;
   has_session(zone_id: string): boolean;
 }

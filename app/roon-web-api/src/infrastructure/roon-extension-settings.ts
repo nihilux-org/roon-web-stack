@@ -10,7 +10,26 @@ import {
   StringSetting,
 } from "@nihilux/roon-web-model";
 
+interface BuiltSettings {
+  group: GroupSetting;
+  has_error: boolean;
+}
+
 const settingsLayoutBuilder: SettingsLayoutBuilder<ExtensionSettings> = (values, has_error) => {
+  const queueBotSettings = buildQueueBotSettings(values, has_error);
+  has_error = has_error || queueBotSettings.has_error;
+  const audioInputSettings = buildAudioInputSettings(values, has_error);
+  has_error = has_error || audioInputSettings.has_error;
+  const airplaySettings = buildAirplaySettings(values, has_error);
+  has_error = has_error || airplaySettings.has_error;
+  return {
+    values,
+    layout: [queueBotSettings.group, audioInputSettings.group, airplaySettings.group],
+    has_error,
+  };
+};
+
+const buildQueueBotSettings = (values: ExtensionSettings, has_error: boolean): BuiltSettings => {
   const queueBotActivation: DropdownSetting = {
     type: "dropdown",
     setting: "nr_queue_bot_state",
@@ -26,7 +45,7 @@ const settingsLayoutBuilder: SettingsLayoutBuilder<ExtensionSettings> = (values,
       },
     ],
   };
-  const queueBotGroup: GroupSetting = {
+  const group: GroupSetting = {
     type: "group",
     title: "Queue Bot",
     items: [queueBotActivation],
@@ -50,8 +69,15 @@ const settingsLayoutBuilder: SettingsLayoutBuilder<ExtensionSettings> = (values,
       setting: "nr_queue_bot_standby_track_name",
     };
     has_error = validateMandatorySetting(queueBotStandbyTrackName, values) || has_error;
-    queueBotGroup.items.push(queueBotArtistName, queueBotPauseTrackName, queueBotStandbyTrackName);
+    group.items.push(queueBotArtistName, queueBotPauseTrackName, queueBotStandbyTrackName);
   }
+  return {
+    group,
+    has_error,
+  };
+};
+
+const buildAudioInputSettings = (values: ExtensionSettings, has_error: boolean): BuiltSettings => {
   const audioInputActivation: DropdownSetting = {
     type: "dropdown",
     setting: "nr_audio_input_state",
@@ -67,7 +93,7 @@ const settingsLayoutBuilder: SettingsLayoutBuilder<ExtensionSettings> = (values,
       },
     ],
   };
-  const audioInputSettings: GroupSetting = {
+  const group: GroupSetting = {
     type: "group",
     title: "Audio Input",
     items: [audioInputActivation],
@@ -89,11 +115,56 @@ const settingsLayoutBuilder: SettingsLayoutBuilder<ExtensionSettings> = (values,
       })),
     };
     has_error = validateMandatorySetting(audioInputZones, values) || has_error;
-    audioInputSettings.items.push(audioInputStreamUrl, audioInputZones);
+    group.items.push(audioInputStreamUrl, audioInputZones);
   }
   return {
-    values,
-    layout: [queueBotGroup, audioInputSettings],
+    group,
+    has_error,
+  };
+};
+
+const buildAirplaySettings = (values: ExtensionSettings, has_error: boolean) => {
+  const airplayActivation: DropdownSetting = {
+    type: "dropdown",
+    setting: "nr_airplay_state",
+    title: "enable Airplay feature",
+    values: [
+      {
+        title: "Yes",
+        value: "enabled",
+      },
+      {
+        title: "No",
+        value: "disabled",
+      },
+    ],
+  };
+  const group: GroupSetting = {
+    type: "group",
+    title: "Airplay",
+    items: [airplayActivation],
+  };
+  if (values.nr_airplay_state === "enabled") {
+    const airplayHost: StringSetting = {
+      type: "string",
+      title: "airplay stream url",
+      setting: "nr_airplay_stream_url",
+    };
+    has_error = validateMandatorySetting(airplayHost, values) || has_error;
+    const airplayZones: DropdownSetting = {
+      type: "dropdown",
+      title: "airplay zone",
+      setting: "nr_airplay_zone",
+      values: values.nr_airplay_zones.map((zoneDropdown) => ({
+        title: zoneDropdown.zone_name,
+        value: zoneDropdown.zone_id,
+      })),
+    };
+    has_error = validateMandatorySetting(airplayZones, values) || has_error;
+    group.items.push(airplayHost, airplayZones);
+  }
+  return {
+    group,
     has_error,
   };
 };
@@ -127,6 +198,12 @@ const settingsValidator: SettingsValidator<ExtensionSettings> = (settings_to_sav
   if (settings_to_save.nr_audio_input_default_zone === "") {
     has_error = true;
   }
+  if (settings_to_save.nr_airplay_stream_url === "") {
+    has_error = true;
+  }
+  if (settings_to_save.nr_airplay_zone === "") {
+    has_error = true;
+  }
   return {
     has_error,
     values: settings_to_save,
@@ -145,5 +222,9 @@ export const settingsOptions: RoonApiSettingsOptions<ExtensionSettings> = {
     nr_audio_input_stream_url: "",
     nr_audio_input_default_zone: "",
     nr_audio_input_zones: [],
+    nr_airplay_state: "disabled",
+    nr_airplay_stream_url: "",
+    nr_airplay_zone: "",
+    nr_airplay_zones: [],
   },
 };

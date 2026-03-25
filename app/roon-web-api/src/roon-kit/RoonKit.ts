@@ -276,10 +276,12 @@ function proxyAudioInput(audioInput: RoonApiAudioInput) {
         case "clear":
         case "update_track_info":
         case "update_transport_info":
-          fn = v;v = (...args: any[]) => {
+          fn = v;
+          v = (...args: any[]) => {
             return new Promise<void>((resolve, reject) => {
               args.push((err: string | false) => {
                 if (err) {
+                  console.log(err);
                   reject(err);
                 } else {
                   resolve();

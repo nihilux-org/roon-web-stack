@@ -1,3 +1,4 @@
+import { loggerMock } from "@mock";
 import { roonMock } from "../infrastructure/roon-extension.mock";
 import { clientManagerMock, clientMock } from "../service/client-manager.mock";
 
@@ -150,6 +151,7 @@ describe("api-router.ts test suite", () => {
       const res = await apiRouter.request("/image?image_key=error", { method: "GET" });
 
       expect(res.status).toBe(500);
+      expect(loggerMock.error).toHaveBeenCalled();
     });
   });
 
@@ -252,7 +254,7 @@ describe("api-router.ts test suite", () => {
   });
 
   describe("POST /:clientId/load", () => {
-    it("should return laod response", async () => {
+    it("should return load response", async () => {
       const loadOptions = { load: "options" };
       const loadResponse = {
         load: "test_response",
