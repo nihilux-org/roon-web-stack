@@ -1,5 +1,5 @@
 export interface AirplayService {
-  start: () => Promise<void>;
+  start: (streamUrl: string) => Promise<void>;
   stop: () => Promise<void>;
   updateMetadata: (metadata: AirplayMetadata) => Promise<void>;
 }

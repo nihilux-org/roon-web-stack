@@ -14,13 +14,28 @@ describe("airplay-router.ts test suite", () => {
   });
 
   describe("POST /", () => {
-    it("should return 201 with Location header when start succeeds", async () => {
-      airplayServiceMock.start.mockResolvedValue("http://test-host:42/airplay");
+    it("should return 204 with empty body when start succeeds", async () => {
+      const airplayStreamUrl = "airplay_stream_url";
 
+      const res = await airplayRouter.request("/", {
+        method: "POST",
+        headers: {
+          "x-roon-airplay-stream-url": airplayStreamUrl,
+        },
+      });
+
+      expect(res.status).toBe(204);
+      expect(res.body).toBeNull();
+      expect(airplayServiceMock.start).toHaveBeenCalledTimes(1);
+      expect(airplayServiceMock.start).toHaveBeenCalledWith(airplayStreamUrl);
+    });
+
+    it("should do nothing and return 204 with empty body when missing x-roon-airplay-stream-url header", async () => {
       const res = await airplayRouter.request("/", { method: "POST" });
 
       expect(res.status).toBe(204);
-      expect(airplayServiceMock.start).toHaveBeenCalledTimes(1);
+      expect(res.body).toBeNull();
+      expect(airplayServiceMock.start).not.toHaveBeenCalled();
     });
   });
 

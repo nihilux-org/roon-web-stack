@@ -1,7 +1,11 @@
 name: roon-airplay.yml
 on:
-  release:
-    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to create'
+        required: true
+        type: string
 concurrency:
   group: ${{ github.workflow }}
   cancel-in-progress: true
@@ -82,7 +86,9 @@ jobs:
         uses: docker/metadata-action@v6
         with:
           images: ${{ env.REGISTRY_IMAGE }}
-          tags: ${{env.VERSION}},latest
+          tags: |
+            type=raw,value=${{ inputs.tag }}
+            type=raw,value=latest
       - name: Login to Docker Hub
         uses: docker/login-action@v4
         with:

@@ -56,25 +56,23 @@ describe("airplay-service.ts test suite", () => {
   });
 
   it("should return stream URL when start is called", async () => {
-    await airplayService.start();
-    expect(audioInputSessionManagerMock.play).toHaveBeenCalledWith(
-      "test_zone_id",
-      "http://test-host:42/airplay",
-      "Roon Airplay",
-      {
-        is_pause_allowed: false,
-        is_seek_allowed: false,
-        one_line: {
-          line1: "Roon Airplay",
-        },
-        two_line: {
-          line1: "Roon Airplay",
-        },
-        three_line: {
-          line1: "Roon Airplay",
-        },
-      }
-    );
+    const airplay_stream_url = "http://test-host:42/airplay";
+
+    await airplayService.start(airplay_stream_url);
+
+    expect(audioInputSessionManagerMock.play).toHaveBeenCalledWith("test_zone_id", airplay_stream_url, "Roon Airplay", {
+      is_pause_allowed: false,
+      is_seek_allowed: false,
+      one_line: {
+        line1: "Roon Airplay",
+      },
+      two_line: {
+        line1: "Roon Airplay",
+      },
+      three_line: {
+        line1: "Roon Airplay",
+      },
+    });
     await airplayService.stop();
   });
 
@@ -82,10 +80,10 @@ describe("airplay-service.ts test suite", () => {
     settingsManagerMock.settings.mockReturnValue({
       nr_airplay_state: "disabled",
       nr_airplay_zone: "",
-      nr_airplay_stream_url: "",
     } as ExtensionSettings);
+    const airplay_stream_url = "http://test-host:42/airplay";
 
-    await airplayService.start();
+    await airplayService.start(airplay_stream_url);
 
     expect(audioInputSessionManagerMock.play).not.toHaveBeenCalled();
   });
@@ -94,7 +92,6 @@ describe("airplay-service.ts test suite", () => {
     settingsManagerMock.settings.mockReturnValue({
       nr_airplay_state: "disabled",
       nr_airplay_zone: "",
-      nr_airplay_stream_url: "",
     } as ExtensionSettings);
 
     await expect(airplayService.stop()).resolves.toBeUndefined();
@@ -145,7 +142,6 @@ describe("airplay-service.ts test suite", () => {
       settingsManagerMock.settings.mockReturnValue({
         nr_airplay_state: "disabled",
         nr_airplay_zone: "",
-        nr_airplay_stream_url: "",
       } as ExtensionSettings);
 
       await airplayService.updateMetadata({ artist: "Test Artist", album: "Test Album", title: "Test Title" });

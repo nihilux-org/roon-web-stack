@@ -241,7 +241,6 @@ describe("roon-extension-settings test suite", () => {
           },
         ],
         nr_airplay_state: "disabled",
-        nr_airplay_stream_url: "",
         nr_airplay_zone: "",
         nr_airplay_zones: [],
       },
@@ -336,14 +335,6 @@ describe("roon-extension-settings test suite", () => {
 
     validated = settingsOptions.validate_settings(
       {
-        nr_airplay_stream_url: "",
-      },
-      roonExtension
-    );
-    expect(validated.has_error).toBe(true);
-
-    validated = settingsOptions.validate_settings(
-      {
         nr_airplay_zone: "",
       },
       roonExtension
@@ -407,11 +398,6 @@ describe("roon-extension-settings test suite", () => {
           ],
         },
         {
-          type: "string",
-          title: "airplay stream url",
-          setting: "nr_airplay_stream_url",
-        },
-        {
           type: "dropdown",
           title: "airplay zone",
           setting: "nr_airplay_zone",
@@ -442,7 +428,6 @@ describe("roon-extension-settings test suite", () => {
         nr_audio_input_default_zone: "",
         nr_audio_input_zones: [],
         nr_airplay_state: "enabled",
-        nr_airplay_stream_url: "",
         nr_airplay_zone: "",
         nr_airplay_zones: [
           {
@@ -477,12 +462,6 @@ describe("roon-extension-settings test suite", () => {
               value: "disabled",
             },
           ],
-        },
-        {
-          type: "string",
-          title: "airplay stream url",
-          setting: "nr_airplay_stream_url",
-          error: "this field is required",
         },
         {
           type: "dropdown",
@@ -524,7 +503,6 @@ const DEFAULT_VALUES: ExtensionSettings = {
     },
   ],
   nr_airplay_state: "disabled",
-  nr_airplay_stream_url: "http://airplay.test",
   nr_airplay_zone: "zone_id",
   nr_airplay_zones: [
     {

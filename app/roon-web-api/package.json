@@ -9,9 +9,8 @@
     "lint": "bun run eslint .",
     "lint:fix": "bun run eslint . --fix",
     "start": "NODE_ENV=development LOG_LEVEL=debug  bun run --watch --inspect src/index.ts",
-    "test": "bun run vitest run --coverage",
-    "test:coverage": "bun run vitest run --coverage",
-    "test:watch": "bun run vitest"
+    "test": "vitest --coverage",
+    "test:watch": "vitest --watch"
   },
   "dependencies": {
     "@nihilux/roon-web-model": "workspace:*",
