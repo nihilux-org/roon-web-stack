@@ -53,6 +53,15 @@ describe("roon-extension.ts test suite", () => {
       ],
       nr_audio_input_default_zone: "existing_zone_id",
       nr_audio_input_stream_url: "",
+      nr_airplay_state: "disabled",
+      nr_airplay_stream_url: "",
+      nr_airplay_zone: "",
+      nr_airplay_zones: [
+        {
+          zone_id: "existing_zone_id",
+          zone_name: "existing_zone_name",
+        },
+      ],
       nr_queue_bot_state: "disabled",
       nr_queue_bot_standby_track_name: "",
       nr_queue_bot_artist_name: "",
@@ -587,6 +596,17 @@ describe("roon-extension.ts test suite", () => {
             zone_name: "second_new_zone_name",
           },
         ],
+        nr_airplay_zone: "",
+        nr_airplay_zones: [
+          {
+            zone_id: "first_new_zone_id",
+            zone_name: "first_new_zone_name",
+          },
+          {
+            zone_id: "second_new_zone_id",
+            zone_name: "second_new_zone_name",
+          },
+        ],
       },
     ],
     [
@@ -595,6 +615,8 @@ describe("roon-extension.ts test suite", () => {
       {
         nr_audio_input_default_zone: "",
         nr_audio_input_zones: [],
+        nr_airplay_zone: "",
+        nr_airplay_zones: [],
       },
     ],
     [
@@ -627,6 +649,21 @@ describe("roon-extension.ts test suite", () => {
             zone_name: "second_new_zone_name",
           },
         ],
+        nr_airplay_zone: "",
+        nr_airplay_zones: [
+          {
+            zone_id: "existing_zone_id",
+            zone_name: "existing_zone_name",
+          },
+          {
+            zone_id: "first_new_zone_id",
+            zone_name: "first_new_zone_name",
+          },
+          {
+            zone_id: "second_new_zone_id",
+            zone_name: "second_new_zone_name",
+          },
+        ],
       },
     ],
     [
@@ -637,6 +674,8 @@ describe("roon-extension.ts test suite", () => {
       {
         nr_audio_input_default_zone: "",
         nr_audio_input_zones: [],
+        nr_airplay_zone: "",
+        nr_airplay_zones: [],
       },
     ],
     [
@@ -657,6 +696,13 @@ describe("roon-extension.ts test suite", () => {
             zone_name: "new_existing_zone_name",
           },
         ],
+        nr_airplay_zone: "",
+        nr_airplay_zones: [
+          {
+            zone_id: "existing_zone_id",
+            zone_name: "new_existing_zone_name",
+          },
+        ],
       },
     ],
     [
@@ -665,6 +711,8 @@ describe("roon-extension.ts test suite", () => {
       {
         nr_audio_input_default_zone: "",
         nr_audio_input_zones: [],
+        nr_airplay_zone: "",
+        nr_airplay_zones: [],
       },
     ],
   ])(
@@ -696,4 +744,87 @@ describe("roon-extension.ts test suite", () => {
       });
     }
   );
+
+  it("should reset airplay zone to empty when the zone is removed", () => {
+    settings.nr_airplay_zone = "existing_zone_id";
+
+    let zonesRegisteredListener: ZoneListener | null = null;
+    let corePairedRegisteredListener: ServerListener | null = null;
+    extensionMock.on.mockImplementation((eventName: string, listener: ZoneListener | ServerListener) => {
+      if (eventName === "subscribe_zones") {
+        zonesRegisteredListener = listener;
+      } else if (eventName === "core_paired") {
+        corePairedRegisteredListener = listener as ServerListener;
+      }
+    });
+    roon.startExtension();
+    expect(corePairedRegisteredListener).not.toBeNull();
+    corePairedRegisteredListener!({} as RoonServer);
+    expect(zonesRegisteredListener).not.toBeNull();
+    zonesRegisteredListener!(
+      {} as RoonServer,
+      "Changed" as RoonSubscriptionResponse,
+      {
+        zones_removed: ["existing_zone_id"],
+      } as RoonApiTransportZones
+    );
+    expect(settingsManagerMock.settings).toHaveBeenCalledTimes(1);
+    expect(settingsManagerMock.updateSettings).toHaveBeenCalledTimes(1);
+    expect(settingsManagerMock.updateSettings).toHaveBeenCalledWith({
+      ...settings,
+      nr_audio_input_default_zone: "",
+      nr_audio_input_zones: [],
+      nr_airplay_zone: "",
+      nr_airplay_zones: [],
+    });
+  });
+
+  it("should keep valid airplay zone when zones are subscribed", () => {
+    settings.nr_airplay_zone = "existing_zone_id";
+
+    let zonesRegisteredListener: ZoneListener | null = null;
+    let corePairedRegisteredListener: ServerListener | null = null;
+    extensionMock.on.mockImplementation((eventName: string, listener: ZoneListener | ServerListener) => {
+      if (eventName === "subscribe_zones") {
+        zonesRegisteredListener = listener;
+      } else if (eventName === "core_paired") {
+        corePairedRegisteredListener = listener as ServerListener;
+      }
+    });
+    roon.startExtension();
+    expect(corePairedRegisteredListener).not.toBeNull();
+    corePairedRegisteredListener!({} as RoonServer);
+    expect(zonesRegisteredListener).not.toBeNull();
+    zonesRegisteredListener!(
+      {} as RoonServer,
+      "Subscribed" as RoonSubscriptionResponse,
+      {
+        zones: [
+          {
+            zone_id: "existing_zone_id",
+            display_name: "Existing Zone",
+          },
+          {
+            zone_id: "other_zone_id",
+            display_name: "Other Zone",
+          },
+        ],
+      } as RoonApiTransportZones
+    );
+    expect(settingsManagerMock.settings).toHaveBeenCalledTimes(1);
+    expect(settingsManagerMock.updateSettings).toHaveBeenCalledTimes(1);
+    expect(settingsManagerMock.updateSettings).toHaveBeenCalledWith({
+      ...settings,
+      nr_audio_input_default_zone: "existing_zone_id",
+      nr_audio_input_zones: [
+        { zone_id: "existing_zone_id", zone_name: "Existing Zone" },
+        { zone_id: "other_zone_id", zone_name: "Other Zone" },
+      ],
+      nr_airplay_zone: "existing_zone_id",
+      nr_airplay_zones: [
+        { zone_id: "existing_zone_id", zone_name: "Existing Zone" },
+        { zone_id: "other_zone_id", zone_name: "Other Zone" },
+      ],
+    });
+  });
 });

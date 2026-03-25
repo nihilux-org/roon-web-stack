@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { compress } from "hono/compress";
 import { logger } from "@infrastructure";
+import { airplayRouter } from "./airplay-router";
 import { apiRouter } from "./api-router";
 import { appRouter } from "./app-router";
 
@@ -12,6 +13,7 @@ export const roonWebApiRouter = new Hono()
     })
   )
 
+  .route("/airplay", airplayRouter)
   .route("/api", apiRouter)
   .route("/", appRouter)
 

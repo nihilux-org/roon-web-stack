@@ -1,5 +1,6 @@
 import { roonMock } from "./roon-extension.mock";
 
+import { expect } from "vitest";
 import { ExtensionSettings, RoonExtension } from "@nihilux/roon-web-model";
 import { settingsOptions } from "./roon-extension-settings";
 
@@ -7,7 +8,7 @@ describe("roon-extension-settings test suite", () => {
   const roonExtension = roonMock as unknown as RoonExtension<ExtensionSettings>;
   it("settingsOptions should produce expected layout if Queue Bot is disabled", () => {
     const settingsLayout = settingsOptions.build_layout(DEFAULT_VALUES, false, roonExtension);
-    expect(settingsLayout.layout).toHaveLength(2);
+    expect(settingsLayout.layout).toHaveLength(3);
     expect(settingsLayout.layout[0]).toEqual({
       type: "group",
       title: "Queue Bot",
@@ -40,7 +41,7 @@ describe("roon-extension-settings test suite", () => {
       false,
       roonExtension
     );
-    expect(settingsLayout.layout).toHaveLength(2);
+    expect(settingsLayout.layout).toHaveLength(3);
     expect(settingsLayout.layout[0]).toEqual({
       type: "group",
       title: "Queue Bot",
@@ -90,11 +91,15 @@ describe("roon-extension-settings test suite", () => {
         nr_audio_input_stream_url: "",
         nr_audio_input_default_zone: "",
         nr_audio_input_zones: [],
+        nr_airplay_state: "disabled",
+        nr_airplay_stream_url: "",
+        nr_airplay_zone: "",
+        nr_airplay_zones: [],
       },
       false,
       roonExtension
     );
-    expect(settingsLayout.layout).toHaveLength(2);
+    expect(settingsLayout.layout).toHaveLength(3);
     expect(settingsLayout.layout[0]).toEqual({
       type: "group",
       title: "Queue Bot",
@@ -138,7 +143,7 @@ describe("roon-extension-settings test suite", () => {
 
   it("settingsOptions should produce expected layout if Audio Input is disabled", () => {
     const settingsLayout = settingsOptions.build_layout(DEFAULT_VALUES, false, roonExtension);
-    expect(settingsLayout.layout).toHaveLength(2);
+    expect(settingsLayout.layout).toHaveLength(3);
     expect(settingsLayout.layout[1]).toEqual({
       type: "group",
       title: "Audio Input",
@@ -171,7 +176,7 @@ describe("roon-extension-settings test suite", () => {
       false,
       roonExtension
     );
-    expect(settingsLayout.layout).toHaveLength(2);
+    expect(settingsLayout.layout).toHaveLength(3);
     expect(settingsLayout.layout[1]).toEqual({
       type: "group",
       title: "Audio Input",
@@ -235,11 +240,15 @@ describe("roon-extension-settings test suite", () => {
             zone_name: "other_zone_name",
           },
         ],
+        nr_airplay_state: "disabled",
+        nr_airplay_stream_url: "",
+        nr_airplay_zone: "",
+        nr_airplay_zones: [],
       },
       false,
       roonExtension
     );
-    expect(settingsLayout.layout).toHaveLength(2);
+    expect(settingsLayout.layout).toHaveLength(3);
     expect(settingsLayout.layout[1]).toEqual({
       type: "group",
       title: "Audio Input",
@@ -324,6 +333,175 @@ describe("roon-extension-settings test suite", () => {
       roonExtension
     );
     expect(validated.has_error).toBe(true);
+
+    validated = settingsOptions.validate_settings(
+      {
+        nr_airplay_stream_url: "",
+      },
+      roonExtension
+    );
+    expect(validated.has_error).toBe(true);
+
+    validated = settingsOptions.validate_settings(
+      {
+        nr_airplay_zone: "",
+      },
+      roonExtension
+    );
+    expect(validated.has_error).toBe(true);
+  });
+
+  it("settingsOptions should produce expected layout if Airplay is disabled", () => {
+    const settingsLayout = settingsOptions.build_layout(DEFAULT_VALUES, false, roonExtension);
+    expect(settingsLayout.layout).toHaveLength(3);
+    expect(settingsLayout.layout[2]).toEqual({
+      type: "group",
+      title: "Airplay",
+      items: [
+        {
+          type: "dropdown",
+          setting: "nr_airplay_state",
+          title: "enable Airplay feature",
+          values: [
+            {
+              title: "Yes",
+              value: "enabled",
+            },
+            {
+              title: "No",
+              value: "disabled",
+            },
+          ],
+        },
+      ],
+    });
+  });
+
+  it("settingsOptions should produce expected layout if Airplay is enabled", () => {
+    const settingsLayout = settingsOptions.build_layout(
+      {
+        ...DEFAULT_VALUES,
+        nr_airplay_state: "enabled",
+      },
+      false,
+      roonExtension
+    );
+    expect(settingsLayout.layout).toHaveLength(3);
+    expect(settingsLayout.layout[2]).toEqual({
+      type: "group",
+      title: "Airplay",
+      items: [
+        {
+          type: "dropdown",
+          setting: "nr_airplay_state",
+          title: "enable Airplay feature",
+          values: [
+            {
+              title: "Yes",
+              value: "enabled",
+            },
+            {
+              title: "No",
+              value: "disabled",
+            },
+          ],
+        },
+        {
+          type: "string",
+          title: "airplay stream url",
+          setting: "nr_airplay_stream_url",
+        },
+        {
+          type: "dropdown",
+          title: "airplay zone",
+          setting: "nr_airplay_zone",
+          values: [
+            {
+              title: "zone_name",
+              value: "zone_id",
+            },
+            {
+              title: "other_zone_name",
+              value: "other_zone_id",
+            },
+          ],
+        },
+      ],
+    });
+  });
+
+  it("settingsOptions should produce expected layout if Airplay is enabled and some fields are not populated", () => {
+    const settingsLayout = settingsOptions.build_layout(
+      {
+        nr_queue_bot_state: "disabled",
+        nr_queue_bot_artist_name: "",
+        nr_queue_bot_pause_track_name: "",
+        nr_queue_bot_standby_track_name: "",
+        nr_audio_input_state: "disabled",
+        nr_audio_input_stream_url: "",
+        nr_audio_input_default_zone: "",
+        nr_audio_input_zones: [],
+        nr_airplay_state: "enabled",
+        nr_airplay_stream_url: "",
+        nr_airplay_zone: "",
+        nr_airplay_zones: [
+          {
+            zone_id: "zone_id",
+            zone_name: "zone_name",
+          },
+          {
+            zone_id: "other_zone_id",
+            zone_name: "other_zone_name",
+          },
+        ],
+      },
+      false,
+      roonExtension
+    );
+    expect(settingsLayout.layout).toHaveLength(3);
+    expect(settingsLayout.layout[2]).toEqual({
+      type: "group",
+      title: "Airplay",
+      items: [
+        {
+          type: "dropdown",
+          setting: "nr_airplay_state",
+          title: "enable Airplay feature",
+          values: [
+            {
+              title: "Yes",
+              value: "enabled",
+            },
+            {
+              title: "No",
+              value: "disabled",
+            },
+          ],
+        },
+        {
+          type: "string",
+          title: "airplay stream url",
+          setting: "nr_airplay_stream_url",
+          error: "this field is required",
+        },
+        {
+          type: "dropdown",
+          title: "airplay zone",
+          setting: "nr_airplay_zone",
+          error: "this field is required",
+          values: [
+            {
+              title: "zone_name",
+              value: "zone_id",
+            },
+            {
+              title: "other_zone_name",
+              value: "other_zone_id",
+            },
+          ],
+        },
+      ],
+    });
   });
 });
 
@@ -336,6 +514,19 @@ const DEFAULT_VALUES: ExtensionSettings = {
   nr_audio_input_stream_url: "http://stream.org/test",
   nr_audio_input_default_zone: "zone_id",
   nr_audio_input_zones: [
+    {
+      zone_id: "zone_id",
+      zone_name: "zone_name",
+    },
+    {
+      zone_id: "other_zone_id",
+      zone_name: "other_zone_name",
+    },
+  ],
+  nr_airplay_state: "disabled",
+  nr_airplay_stream_url: "http://airplay.test",
+  nr_airplay_zone: "zone_id",
+  nr_airplay_zones: [
     {
       zone_id: "zone_id",
       zone_name: "zone_name",

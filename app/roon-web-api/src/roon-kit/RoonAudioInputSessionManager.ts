@@ -3,7 +3,7 @@ import {
   ExtensionSettings,
   RoonApiAudioInputSession,
   RoonApiAudioInputSessionListener,
-  RoonAudioInputTrackInfo,
+  RoonAudioInputTrackInfo, RoonAudioInputTrackInfoUpdate, RoonAudioInputUpdateTrackInfoUpdateOptions,
   RoonExtension,
 } from "@nihilux/roon-web-model";
 
@@ -28,17 +28,17 @@ export class RoonAudioInputSessionManager implements AudioInputSessionManager {
     return this._currentSessions.has(zone_id);
   }
 
-  public async play(zone_id: string, url: string): Promise<void> {
+  public async play(zone_id: string, url: string, display_name: string = "Roon Audio Input", info?: RoonAudioInputTrackInfo): Promise<void> {
     const currentSession = this._currentSessions.get(zone_id);
     await currentSession?.session.end();
     const server = await this._roonExtension.get_core();
     return server.services.RoonApiAudioInput.begin_session(
       {
         zone_id,
-        display_name: "Roon Audio Input",
+        display_name,
         icon_url: "",
       },
-      this.sessionListener(zone_id)
+      this.sessionListener(zone_id, info)
     ).then((session) => {
       this._currentSessions.set(zone_id, {
         session,
@@ -67,7 +67,7 @@ export class RoonAudioInputSessionManager implements AudioInputSessionManager {
               });
               info = info ?? {
                 is_seek_allowed: false,
-                is_pause_allowed: true,
+                is_pause_allowed: false,
                 one_line: {
                   line1: "Audio Input",
                 },
@@ -119,14 +119,16 @@ export class RoonAudioInputSessionManager implements AudioInputSessionManager {
     };
   }
 
-  public async update_track_info(zone_id: string, info: RoonAudioInputTrackInfo): Promise<void> {
+  public async update_track_info(zone_id: string, info: RoonAudioInputTrackInfoUpdate): Promise<void> {
     const currentSession = this._currentSessions.get(zone_id);
     if (currentSession !== undefined) {
       const server = await this._roonExtension.get_core();
-      return server.services.RoonApiAudioInput.update_track_info({
+      const update_track_info: RoonAudioInputUpdateTrackInfoUpdateOptions = {
+        track_id: "",
         session_id: currentSession.session.session_id,
         info,
-      });
+      };
+      return server.services.RoonApiAudioInput.update_track_info(update_track_info);
     }
   }
 }
