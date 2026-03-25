@@ -41,7 +41,7 @@ push_metadata() {
 		--max-time 5 \
 		-X PUT "http://${ROON_WEB_HOST}:${ROON_WEB_PORT}/airplay/metadata" \
 		-H "Content-Type: application/json" \
-		-d "_json" \
+		-d "$_json" \
 		< /dev/null 2>&1)
 	_rc=$?
 

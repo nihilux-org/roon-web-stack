@@ -7,8 +7,8 @@ airplay_in = input.external.rawaudio(
   "cat /tmp/shairport-sync-audio",
   samplerate = 44100,
   channels = 2,
-  buffer = 0.1,
-  max = 1.0,
+  buffer = 0.2,
+  max = 0.5,
   restart = true
 )
 
