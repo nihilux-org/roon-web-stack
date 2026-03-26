@@ -60,7 +60,7 @@ mkfifo "$PIPE_PATH"
 chmod 666 "$PIPE_PATH"
 
 echo "Starting Liquidsoap..."
-su-exec liquidsoap liquidsoap "$LIQUIDSOAP_SCRIPT" &
+su-exec shairport-sync liquidsoap "$LIQUIDSOAP_SCRIPT" &
 LIQUIDSOAP_PID=$!
 
 sleep 2
@@ -76,7 +76,7 @@ echo "Liquidsoap started successfully (PID: $LIQUIDSOAP_PID)"
 echo "Starting metadata pipeline..."
 mkfifo /tmp/shairport-sync-metadata 2>/dev/null || true
 chmod 666 /tmp/shairport-sync-metadata 2>/dev/null || true
-su-exec liquidsoap sh -c 'shairport-sync-metadata-reader < /tmp/shairport-sync-metadata 2>/dev/null | /opt/scripts/metadata-bridge.sh 2>&1' &
+su-exec shairport-sync sh -c 'shairport-sync-metadata-reader < /tmp/shairport-sync-metadata 2>/dev/null | /opt/scripts/metadata-bridge.sh 2>&1' &
 METADATA_READER_PID=$!
 echo "Metadata pipeline started (PID: $METADATA_READER_PID)"
 

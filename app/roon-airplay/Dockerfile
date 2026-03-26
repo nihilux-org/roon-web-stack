@@ -1,28 +1,22 @@
-FROM alpine:3.23 AS metadata-reader-builder
+FROM alpine:3.20 AS metadata-reader-builder
 
 RUN apk add --no-cache build-base autoconf automake libtool git && \
     git clone --depth=1 https://github.com/mikebrady/shairport-sync-metadata-reader.git /build && \
     cd /build && autoreconf -i -f && ./configure && make
 
-FROM alpine:3.23 AS downloader
+FROM savonet/liquidsoap-alpine:v2.4.2 AS liquidsoap-img
 
-ARG TARGETARCH
-RUN apk add --no-cache curl && \
-    ARCH=$(echo "$TARGETARCH" | sed 's/arm64/aarch64/' | sed 's/x86_64/amd64/') && \
-    curl -sL -o /liquidsoap.apk \
-      "https://github.com/savonet/liquidsoap/releases/download/v2.4.2/liquidsoap-ocaml5.4.0-${ARCH}-2.4.2-r0.apk"
+USER root
+RUN liquidsoap --cache-stdlib
 
 FROM mikebrady/shairport-sync:latest
 
-RUN echo 'https://dl-cdn.alpinelinux.org/alpine/edge/community' >> /etc/apk/repositories && \
-    echo 'https://dl-cdn.alpinelinux.org/alpine/edge/testing' >> /etc/apk/repositories && \
-    apk update
-COPY --from=downloader /liquidsoap.apk /tmp/
-RUN apk add --allow-untrusted --no-cache /tmp/liquidsoap.apk && \
-    rm /tmp/liquidsoap.apk
-RUN apk add --no-cache su-exec curl
-RUN mkdir -p /opt/liquidsoap /opt/scripts /var/run/shairport-sync
-COPY --from=metadata-reader-builder /build/shairport-sync-metadata-reader /usr/local/bin/shairport-sync-metadata-reader
+RUN apk add --no-cache curl su-exec
+COPY --from=liquidsoap-img /usr/bin/liquidsoap /usr/bin/
+COPY --from=liquidsoap-img /usr/lib/*.so* /usr/lib/
+COPY --from=liquidsoap-img /usr/lib/pulseaudio/ /usr/lib/pulseaudio/
+COPY --from=liquidsoap-img /usr/share/liquidsoap/ /usr/share/liquidsoap/
+COPY --from=metadata-reader-builder /build/shairport-sync-metadata-reader /usr/local/bin/
 COPY pipeline.liq /opt/liquidsoap/pipeline.liq
 COPY config/shairport-sync.conf /etc/shairport-sync.conf
 COPY scripts/notify-roon.sh /opt/scripts/notify.sh
@@ -31,11 +25,8 @@ COPY entrypoint.sh /entrypoint-custom.sh
 RUN chmod +x /entrypoint-custom.sh && \
     chmod +x /opt/scripts/notify.sh && \
     chmod +x /opt/scripts/metadata-bridge.sh && \
-    chown -R liquidsoap:liquidsoap /opt/liquidsoap /opt/scripts
-USER liquidsoap
-RUN liquidsoap --cache-stdlib
-USER root
+    mkdir -p /opt/liquidsoap /opt/scripts /var/run/shairport-sync && \
+    chown -R shairport-sync:shairport-sync /opt/liquidsoap /opt/scripts && \
+    liquidsoap --cache-stdlib
 
 ENTRYPOINT ["/entrypoint-custom.sh"]
-
-EXPOSE 8000
