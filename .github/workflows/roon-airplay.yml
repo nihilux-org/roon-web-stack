@@ -1,4 +1,4 @@
-name: roon-airplay.yml
+name: Build and publish roon-airplay docker image
 on:
   workflow_dispatch:
     inputs:
