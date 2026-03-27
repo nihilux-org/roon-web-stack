@@ -13,9 +13,9 @@
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
-    "@typescript-eslint/eslint-plugin": "8.57.1",
-    "@typescript-eslint/parser": "8.57.1",
-    "eslint": "10.0.3",
+    "@typescript-eslint/eslint-plugin": "8.57.2",
+    "@typescript-eslint/parser": "8.57.2",
+    "eslint": "10.1.0",
     "eslint-config-prettier": "10.1.8",
     "eslint-import-resolver-typescript": "4.4.4",
     "eslint-plugin-import": "2.32.0",
@@ -25,6 +25,6 @@
     "eslint-plugin-unused-imports": "4.4.1",
     "prettier": "3.8.1",
     "typescript": "5.9.3",
-    "typescript-eslint": "8.57.1"
+    "typescript-eslint": "8.57.2"
   }
 }
