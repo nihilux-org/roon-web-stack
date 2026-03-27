@@ -10,7 +10,7 @@
       "version": "0.0.13",
       "dependencies": {
         "@nihilux/roon-web-model": "workspace:*",
-        "hono": "4.12.8",
+        "hono": "4.12.9",
         "nanoid": "5.1.7",
         "node-roon-api": "github:roonlabs/node-roon-api",
         "node-roon-api-audioinput": "github:roonlabs/node-roon-api-audioinput",
@@ -1115,7 +1115,7 @@
 
     "hasown": ["hasown@2.0.2", "", { "dependencies": { "function-bind": "^1.1.2" } }, "sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ=="],
 
-    "hono": ["hono@4.12.8", "", {}, "sha512-VJCEvtrezO1IAR+kqEYnxUOoStaQPGrCmX3j4wDTNOcD1uRPFpGlwQUIW8niPuvHXaTUxeOUl5MMDGrl+tmO9A=="],
+    "hono": ["hono@4.12.9", "", {}, "sha512-wy3T8Zm2bsEvxKZM5w21VdHDDcwVS1yUFFY6i8UobSsKfFceT7TOwhbhfKsDyx7tYQlmRM5FLpIuYvNFyjctiA=="],
 
     "hosted-git-info": ["hosted-git-info@9.0.2", "", { "dependencies": { "lru-cache": "^11.1.0" } }, "sha512-M422h7o/BR3rmCQ8UHi7cyyMqKltdP9Uo+J2fXK+RSAY+wTcKOIRyhTuKv4qn+DJf3g+PL890AzId5KZpX+CBg=="],
 
@@ -1365,19 +1365,19 @@
 
     "node-releases": ["node-releases@2.0.36", "", {}, "sha512-TdC8FSgHz8Mwtw9g5L4gR/Sh9XhSP/0DEkQxfEFXOpiul5IiHgHan2VhYYb6agDSfp4KuvltmGApc8HMgUrIkA=="],
 
-    "node-roon-api": ["node-roon-api@github:roonlabs/node-roon-api#055dae6", { "dependencies": { "node-uuid": "^1.4.7", "ws": ">=3.3.1" } }, "RoonLabs-node-roon-api-055dae6", "sha512-tk22ReIl1xcvXe8ZYj7SU861o3wljSKHxnLF50XbL3G2aQ0TMmchhJaJfhgrhTttMTFa1BMWhF52dq4wb0CYzw=="],
+    "node-roon-api": ["node-roon-api@github:roonlabs/node-roon-api#055dae6", { "dependencies": { "node-uuid": "^1.4.7", "ws": ">=3.3.1" } }, "RoonLabs-node-roon-api-055dae6"],
 
-    "node-roon-api-audioinput": ["node-roon-api-audioinput@github:roonlabs/node-roon-api-audioinput#21ff59e", {}, "RoonLabs-node-roon-api-audioinput-21ff59e", "sha512-JWRJtFiNFtrG+hTDIREJd/fTjS87hm0ftsoGJ28eYFr+nmyNi7ym6PgE6DomTX0R/Wy5w8l2ChjrcyYGUWD7hA=="],
+    "node-roon-api-audioinput": ["node-roon-api-audioinput@github:roonlabs/node-roon-api-audioinput#21ff59e", {}, "RoonLabs-node-roon-api-audioinput-21ff59e"],
 
-    "node-roon-api-browse": ["node-roon-api-browse@github:roonlabs/node-roon-api-browse#98adcba", {}, "RoonLabs-node-roon-api-browse-98adcba", "sha512-dBSdlQhGJTyBNJsrgOSzkfJfYbEM+mDO/ZPR+lLBm5v3sWNWghKwSC+sYZVfjog06K0Qzmys2FWiwmpqmeKASg=="],
+    "node-roon-api-browse": ["node-roon-api-browse@github:roonlabs/node-roon-api-browse#98adcba", {}, "RoonLabs-node-roon-api-browse-98adcba"],
 
-    "node-roon-api-image": ["node-roon-api-image@github:roonlabs/node-roon-api-image#a5f0efa", {}, "RoonLabs-node-roon-api-image-a5f0efa", "sha512-hmSX0FnhcZ1yt18wYJ2HrTrHJgF3OnUCWcUJrb3kxu4N1SQk5yWSCPQ2SQd4LdBZfDlhd1KdWL01F0OFlek8qw=="],
+    "node-roon-api-image": ["node-roon-api-image@github:roonlabs/node-roon-api-image#a5f0efa", {}, "RoonLabs-node-roon-api-image-a5f0efa"],
 
-    "node-roon-api-settings": ["node-roon-api-settings@github:roonlabs/node-roon-api-settings#67cd8ca", {}, "RoonLabs-node-roon-api-settings-67cd8ca", "sha512-C/XMa88e5TEbjq2YZQe8VgA5IAssHR3imUsnFTyPlNreCmf17yWeW4zPwJ1+x6uoBRZ8dTD7IjgThyeYrwQqiA=="],
+    "node-roon-api-settings": ["node-roon-api-settings@github:roonlabs/node-roon-api-settings#67cd8ca", {}, "RoonLabs-node-roon-api-settings-67cd8ca"],
 
-    "node-roon-api-status": ["node-roon-api-status@github:roonlabs/node-roon-api-status#504c918", {}, "RoonLabs-node-roon-api-status-504c918", "sha512-E2nPoHCNTNTyxEARKVXP0Yw6OWrd92pL/pc3xJnnV+PbrrzkYlLEQw4cbNGhkioUecZyt2cXL8+z85zlV37tZA=="],
+    "node-roon-api-status": ["node-roon-api-status@github:roonlabs/node-roon-api-status#504c918", {}, "RoonLabs-node-roon-api-status-504c918"],
 
-    "node-roon-api-transport": ["node-roon-api-transport@github:roonlabs/node-roon-api-transport#2ee6000", {}, "RoonLabs-node-roon-api-transport-2ee6000", "sha512-e9haEnyhLs8lNS4oASvHTpBVQj/vtrEUB8mbsrsqarysLw5oPL0M3S+Ki492EzSmUlWacrEGqM5YR7H/4uoM8A=="],
+    "node-roon-api-transport": ["node-roon-api-transport@github:roonlabs/node-roon-api-transport#2ee6000", {}, "RoonLabs-node-roon-api-transport-2ee6000"],
 
     "node-uuid": ["node-uuid@1.4.8", "", { "bin": { "uuid": "./bin/uuid" } }, "sha512-TkCET/3rr9mUuRp+CpO7qfgT++aAxfDRaalQhwPFzI9BY/2rCDn6OfpZOVggi1AXfTPpfkTrg5f5WQx5G1uLxA=="],
 
@@ -1784,6 +1784,8 @@
     "@inquirer/external-editor/iconv-lite": ["iconv-lite@0.7.2", "", { "dependencies": { "safer-buffer": ">= 2.1.2 < 3.0.0" } }, "sha512-im9DjEDQ55s9fL4EYzOAv0yMqmMBSZp6G0VvFyTMPKWxiSBHUj9NW/qqLmXUwXrrM7AvqSlTCfvqRb0cM8yYqw=="],
 
     "@modelcontextprotocol/sdk/ajv": ["ajv@8.18.0", "", { "dependencies": { "fast-deep-equal": "^3.1.3", "fast-uri": "^3.0.1", "json-schema-traverse": "^1.0.0", "require-from-string": "^2.0.2" } }, "sha512-PlXPeEWMXMZ7sPYOHqmDyCJzcfNrUr3fGNKtezX14ykXOEIvyK81d+qydx89KY5O71FKMPaQ2vBfBFI5NHR63A=="],
+
+    "@modelcontextprotocol/sdk/hono": ["hono@4.12.8", "", {}, "sha512-VJCEvtrezO1IAR+kqEYnxUOoStaQPGrCmX3j4wDTNOcD1uRPFpGlwQUIW8niPuvHXaTUxeOUl5MMDGrl+tmO9A=="],
 
     "@npmcli/agent/lru-cache": ["lru-cache@11.2.7", "", {}, "sha512-aY/R+aEsRelme17KGQa/1ZSIpLpNYYrhcrepKTZgE+W3WM16YMCaPwOHLHsmopZHELU0Ojin1lPVxKR0MihncA=="],
 
