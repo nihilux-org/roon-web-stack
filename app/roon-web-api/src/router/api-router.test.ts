@@ -1,10 +1,10 @@
-import { loggerMock } from "@mock";
 import { roonMock } from "../infrastructure/roon-extension.mock";
 import { clientManagerMock, clientMock } from "../service/client-manager.mock";
+import { imageFetcherMock } from "../service/image-fetcher.mock";
 
 import { Subject } from "rxjs";
 import { beforeEach, expect, vi } from "vitest";
-import { CommandResult, RoonSseMessage } from "@nihilux/roon-web-model";
+import { CommandResult, MissingImageError, RoonSseMessage } from "@nihilux/roon-web-model";
 import { apiRouter } from "./api-router";
 
 const clientId = "test-client-id";
@@ -70,21 +70,46 @@ describe("api-router.ts test suite", () => {
     });
 
     it("should return 200 with image on success", async () => {
-      roonMock.getImage.mockResolvedValue({
-        content_type: "image/jpeg",
-        image: Buffer.from("fake-image-data"),
+      const imageData = Buffer.from("fake-image-data");
+      imageFetcherMock.fetch.mockResolvedValue({
+        data: imageData,
+        contentType: "image/jpeg",
+        cacheable: false,
       });
 
       const res = await apiRouter.request("/image?image_key=abc123", { method: "GET" });
 
       expect(res.status).toBe(200);
       expect(res.headers.get("content-type")).toBe("image/jpeg");
+      expect(res.headers.get("cache-control")).toBe("public, max-age=0, must-revalidate");
+      expect(imageFetcherMock.fetch).toHaveBeenCalledWith("abc123", {
+        format: undefined,
+        height: undefined,
+        scale: undefined,
+        width: undefined,
+      });
+    });
+
+    it("should return 200 with cacheable headers when image is cacheable", async () => {
+      const imageData = Buffer.from("fake-image-data");
+      imageFetcherMock.fetch.mockResolvedValue({
+        data: imageData,
+        contentType: "image/jpeg",
+        cacheable: true,
+      });
+
+      const res = await apiRouter.request("/image?image_key=abc123", { method: "GET" });
+
+      expect(res.status).toBe(200);
+      expect(res.headers.get("cache-control")).toBe("public, max-age=86400, immutable");
     });
 
     it("should return 200 with image with all params for pngs", async () => {
-      roonMock.getImage.mockResolvedValue({
-        content_type: "image/png",
-        image: Buffer.from("fake-image-data"),
+      const imageData = Buffer.from("fake-image-data");
+      imageFetcherMock.fetch.mockResolvedValue({
+        data: imageData,
+        contentType: "image/png",
+        cacheable: false,
       });
       const image_key = "image_key";
       const format = "png";
@@ -101,7 +126,7 @@ describe("api-router.ts test suite", () => {
 
       expect(res.status).toBe(200);
       expect(res.headers.get("content-type")).toBe("image/png");
-      expect(roonMock.getImage).toHaveBeenCalledWith(image_key, {
+      expect(imageFetcherMock.fetch).toHaveBeenCalledWith(image_key, {
         format: "image/png",
         height,
         scale,
@@ -110,9 +135,11 @@ describe("api-router.ts test suite", () => {
     });
 
     it("should return 200 with image with all params for jpegs", async () => {
-      roonMock.getImage.mockResolvedValue({
-        content_type: "image/jpeg",
-        image: Buffer.from("fake-image-data"),
+      const imageData = Buffer.from("fake-image-data");
+      imageFetcherMock.fetch.mockResolvedValue({
+        data: imageData,
+        contentType: "image/jpeg",
+        cacheable: false,
       });
       const image_key = "image_key";
       const format = "jpeg";
@@ -129,7 +156,7 @@ describe("api-router.ts test suite", () => {
 
       expect(res.status).toBe(200);
       expect(res.headers.get("content-type")).toBe("image/jpeg");
-      expect(roonMock.getImage).toHaveBeenCalledWith(image_key, {
+      expect(imageFetcherMock.fetch).toHaveBeenCalledWith(image_key, {
         format: "image/jpeg",
         height,
         scale,
@@ -137,21 +164,30 @@ describe("api-router.ts test suite", () => {
       });
     });
 
-    it("should return 404 when image not found", async () => {
-      roonMock.getImage.mockRejectedValue("NotFound");
+    it("should return 404 when MissingImageError with cacheable=false is thrown", async () => {
+      imageFetcherMock.fetch.mockRejectedValue(new MissingImageError("not found", false));
 
       const res = await apiRouter.request("/image?image_key=notfound", { method: "GET" });
 
       expect(res.status).toBe(404);
+      expect(res.headers.get("cache-control")).toBe("public, max-age=0, must-revalidate");
+    });
+
+    it("should return 404 with cacheable headers when MissingImageError has cacheable=true", async () => {
+      imageFetcherMock.fetch.mockRejectedValue(new MissingImageError("not found", true));
+
+      const res = await apiRouter.request("/image?image_key=notfound", { method: "GET" });
+
+      expect(res.status).toBe(404);
+      expect(res.headers.get("cache-control")).toBe("public, max-age=86400, immutable");
     });
 
     it("should return 500 on server error", async () => {
-      roonMock.getImage.mockRejectedValue(new Error("Server error"));
+      imageFetcherMock.fetch.mockRejectedValue(new Error("Server error"));
 
       const res = await apiRouter.request("/image?image_key=error", { method: "GET" });
 
       expect(res.status).toBe(500);
-      expect(loggerMock.error).toHaveBeenCalled();
     });
   });
 

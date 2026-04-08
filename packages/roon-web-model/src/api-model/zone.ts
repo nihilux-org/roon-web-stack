@@ -37,6 +37,7 @@ export interface ZoneManager {
   stop: () => void;
   isStarted: () => boolean;
 }
+
 export interface ZoneNicePlaying {
   track: Track;
   total_queue_remaining_time?: string;

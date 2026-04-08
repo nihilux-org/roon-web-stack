@@ -1,5 +1,6 @@
 import { loggerMock } from "@mock";
 import { roonMock } from "../infrastructure/roon-extension.mock";
+import { airplayManagerMock } from "./airplay-manager.mock";
 import { dataConverterMock } from "./data-converter.mock";
 import { queueBotMock } from "./queue-bot-manager.mock";
 import { queueManagerFactoryMock } from "./queue-manager.mock";
@@ -28,6 +29,7 @@ import {
   Zone,
   ZoneListener,
   ZoneManager,
+  ZoneNowPlaying,
   ZoneState,
 } from "@nihilux/roon-web-model";
 
@@ -766,6 +768,135 @@ describe("zone-manager.ts test suite", () => {
       expect(messages).toHaveLength(7);
     }
   );
+
+  it("zoneManager should inject airplay image_key when zone is an airplay zone with now_playing", async () => {
+    airplayManagerMock.isAirplayZone.mockImplementation((zone_id: string) => zone_id === ZONE.zone_id);
+    airplayManagerMock.image = {
+      data: new Uint8Array([0xff, 0xd8]),
+      contentType: "image/jpeg",
+      image_key: "airplay_image_key_1",
+    };
+    dataConverterMock.toRoonSseMessage.mockImplementation((data: Zone | Queue | ApiState): RoonSseMessage => {
+      if ("display_name" in data) {
+        const state: ZoneState = {
+          ...ZONE_STATE,
+          is_airplay: data.is_airplay,
+        };
+        if (data.now_playing?.image_key === "airplay_image_key_1") {
+          state.nice_playing = { ...ZONE_STATE.nice_playing! };
+          state.nice_playing.track = { ...ZONE_STATE.nice_playing!.track, image_key: "airplay_image_key_1" };
+        }
+        return { event: "zone", data: state };
+      } else if ("zones" in data) {
+        return { event: "state", data };
+      } else {
+        return {} as unknown as RoonSseMessage;
+      }
+    });
+    await zoneManager.start();
+    zoneListener(server, "Subscribed", {
+      zones: [ZONE],
+    });
+    const messages: RoonSseMessage[] = [];
+    zoneManager.events().subscribe((message) => messages.push(message));
+    zoneListener(server, "Changed", {
+      zones_seek_changed: [
+        {
+          zone_id: ZONE.zone_id,
+          seek_position: 420,
+          queue_time_remaining: 424242,
+        },
+      ],
+    });
+    const zoneMessages = messages.filter((m) => m.event === "zone") as { event: "zone"; data: ZoneState }[];
+    const dispatched = zoneMessages.find((m) => m.data.zone_id === ZONE.zone_id);
+    expect(dispatched).toBeDefined();
+    expect(dispatched!.data.is_airplay).toBe(true);
+    expect(dispatched!.data.nice_playing!.track.image_key).toBe("airplay_image_key_1");
+    airplayManagerMock.isAirplayZone.mockClear();
+    airplayManagerMock.image = undefined;
+  });
+
+  it("zoneManager should set is_airplay to false when zone is not an airplay zone", async () => {
+    airplayManagerMock.isAirplayZone.mockReturnValue(false);
+    dataConverterMock.toRoonSseMessage.mockImplementation((data: Zone | Queue | ApiState): RoonSseMessage => {
+      if ("display_name" in data) {
+        const state: ZoneState = { ...ZONE_STATE, is_airplay: data.is_airplay };
+        return { event: "zone", data: state };
+      } else if ("zones" in data) {
+        return { event: "state", data };
+      } else {
+        return {} as unknown as RoonSseMessage;
+      }
+    });
+    await zoneManager.start();
+    zoneListener(server, "Subscribed", {
+      zones: [ZONE],
+    });
+    const messages: RoonSseMessage[] = [];
+    zoneManager.events().subscribe((message) => messages.push(message));
+    zoneListener(server, "Changed", {
+      zones_seek_changed: [
+        {
+          zone_id: ZONE.zone_id,
+          seek_position: 420,
+          queue_time_remaining: 424242,
+        },
+      ],
+    });
+    const zoneMessages = messages.filter((m) => m.event === "zone") as { event: "zone"; data: ZoneState }[];
+    const dispatched = zoneMessages.find((m) => m.data.zone_id === ZONE.zone_id);
+    expect(dispatched).toBeDefined();
+    expect(dispatched!.data.is_airplay).toBe(false);
+    expect(dispatched!.data.nice_playing!.track.image_key).toBe("image_key");
+    airplayManagerMock.isAirplayZone.mockClear();
+  });
+
+  it("zoneManager should not inject airplay image_key when zone is airplay but has no now_playing", async () => {
+    airplayManagerMock.isAirplayZone.mockImplementation((zone_id: string) => zone_id === ZONE.zone_id);
+    airplayManagerMock.image = {
+      data: new Uint8Array([0xff, 0xd8]),
+      contentType: "image/jpeg",
+      image_key: "airplay_image_key_1",
+    };
+    const zoneWithoutNowPlaying: Zone = { ...ZONE, now_playing: undefined };
+    dataConverterMock.toRoonSseMessage.mockImplementation((data: Zone | Queue | ApiState): RoonSseMessage => {
+      if ("display_name" in data) {
+        const state: ZoneState & { now_playing?: ZoneNowPlaying } = {
+          ...ZONE_STATE,
+          is_airplay: data.is_airplay,
+          now_playing: data.now_playing,
+        };
+        return { event: "zone", data: state };
+      } else if ("zones" in data) {
+        return { event: "state", data };
+      } else {
+        return {} as unknown as RoonSseMessage;
+      }
+    });
+    await zoneManager.start();
+    zoneListener(server, "Subscribed", {
+      zones: [zoneWithoutNowPlaying],
+    });
+    const messages: RoonSseMessage[] = [];
+    zoneManager.events().subscribe((message) => messages.push(message));
+    zoneListener(server, "Changed", {
+      zones_seek_changed: [
+        {
+          zone_id: ZONE.zone_id,
+          seek_position: 420,
+          queue_time_remaining: 424242,
+        },
+      ],
+    });
+    const zoneMessages = messages.filter((m) => m.event === "zone") as { event: "zone"; data: ZoneState }[];
+    const dispatched = zoneMessages.find((m) => m.data.zone_id === ZONE.zone_id);
+    expect(dispatched).toBeDefined();
+    expect(dispatched!.data.is_airplay).toBe(true);
+    expect(dispatched!.data.nice_playing!.track.image_key).toBe("image_key");
+    airplayManagerMock.isAirplayZone.mockClear();
+    airplayManagerMock.image = undefined;
+  });
 
   it("zoneManager#events should send 'complete' to Observers when event 'Unsubscribed' is received from roon", async () => {
     await zoneManager.start();
@@ -1703,6 +1834,7 @@ const ZONE: Zone = {
       output_id: OUTPUT.output_id + "_other",
     },
   ],
+  is_airplay: false,
   is_next_allowed: true,
   is_play_allowed: true,
   is_previous_allowed: true,

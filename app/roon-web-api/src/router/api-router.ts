@@ -1,16 +1,17 @@
 import { Hono } from "hono";
 import { createMiddleware } from "hono/factory";
 import { streamSSE } from "hono/streaming";
-import { extension_version, logger, roon } from "@infrastructure";
+import { extension_version, logger } from "@infrastructure";
 import {
   type Client,
   type Command,
+  MissingImageError,
   type RoonApiBrowseLoadOptions,
   type RoonApiBrowseOptions,
   type RoonImageFormat,
   type RoonImageScale,
 } from "@nihilux/roon-web-model";
-import { clientManager } from "@service";
+import { clientManager, imageFetcher } from "@service";
 
 interface Variables {
   client: Client;
@@ -106,28 +107,29 @@ export const apiRouter = new Hono()
     }
 
     try {
-      const { content_type, image } = await roon.getImage(image_key, {
+      const image = await imageFetcher.fetch(image_key, {
         format: formatOption,
         height: heightOption,
         scale: scaleOption,
         width: widthOption,
       });
-
-      // @ts-expect-error typings
-      return c.body(image, 200, {
-        "cache-control": "public, max-age=86400, immutable",
+      const cacheControl = image.cacheable ? "public, max-age=86400, immutable" : "public, max-age=0, must-revalidate";
+      return c.body(image.data, 200, {
+        "cache-control": cacheControl,
         "age": "0",
-        "content-type": content_type,
+        "Content-Type": image.contentType,
+        "Content-Length": `${image.data.length}`,
       });
     } catch (err) {
-      if (err === "NotFound") {
+      if (err instanceof MissingImageError) {
+        const cacheControl = err.cacheable ? "public, max-age=86400, immutable" : "public, max-age=0, must-revalidate";
         return c.body(null, 404, {
-          "cache-control": "public, max-age=86400, immutable",
+          "cache-control": cacheControl,
           "age": "0",
         });
+      } else {
+        return c.body(null, 500);
       }
-      logger.error(err, "image can't be fetched from roon");
-      return c.body(null, 500);
     }
   })
 

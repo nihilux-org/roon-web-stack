@@ -172,6 +172,7 @@ export interface Zone {
   is_pause_allowed: boolean;
   is_play_allowed: boolean;
   is_seek_allowed: boolean;
+  is_airplay: boolean;
   queue_items_remaining?: number;
   queue_time_remaining?: number;
   settings?: ZoneSettings;

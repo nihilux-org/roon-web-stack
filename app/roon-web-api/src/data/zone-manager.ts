@@ -1,5 +1,5 @@
 import { concatWith, from, Observable, Subject } from "rxjs";
-import { dataConverter, queueBot, queueManagerFactory } from "@data";
+import { airplayManager, dataConverter, queueBot, queueManagerFactory } from "@data";
 import { logger, roon } from "@infrastructure";
 import {
   ApiState,
@@ -196,6 +196,10 @@ class InternalZoneManager implements ZoneManager {
   };
 
   private readonly dispatch = (zone: Zone): void => {
+    zone.is_airplay = airplayManager.isAirplayZone(zone.zone_id);
+    if (zone.is_airplay && zone.now_playing !== undefined) {
+      zone.now_playing.image_key = airplayManager.image?.image_key;
+    }
     this.roonEventSource.next(dataConverter.toRoonSseMessage(zone));
   };
 

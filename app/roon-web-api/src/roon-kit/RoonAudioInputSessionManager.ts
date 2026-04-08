@@ -130,7 +130,7 @@ export class RoonAudioInputSessionManager implements AudioInputSessionManager {
         session_id: currentSession.session.session_id,
         info,
       };
-      return server.services.RoonApiAudioInput.update_track_info(update_track_info);
+      await server.services.RoonApiAudioInput.update_track_info(update_track_info);
     }
   }
 }
