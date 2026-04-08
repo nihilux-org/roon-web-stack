@@ -91,7 +91,7 @@ export interface Roon {
   getImage: (
     image_key: string,
     options: RoonApiImageResultOptions
-  ) => Promise<{ content_type: string; image: Uint8Array }>;
+  ) => Promise<{ content_type: string; image: Uint8Array<ArrayBuffer> }>;
   browse: (options: RoonApiBrowseOptions | EmptyObject) => Promise<RoonApiBrowseResponse>;
   load: (options: RoonApiBrowseLoadOptions) => Promise<RoonApiBrowseLoadResponse>;
   updateSharedConfig: (shardConfigUpdate: SharedConfigUpdate) => void;

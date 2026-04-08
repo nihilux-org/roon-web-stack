@@ -149,6 +149,7 @@ const ZONE: Zone = {
   seek_position: 42,
   queue_items_remaining: 420,
   queue_time_remaining: 4242,
+  is_airplay: false,
   settings: {
     loop: "disabled",
     shuffle: false,

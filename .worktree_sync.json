@@ -1,0 +1,4 @@
+{
+  "files": ["config.json"],
+  "commands": ["bun install"]
+}

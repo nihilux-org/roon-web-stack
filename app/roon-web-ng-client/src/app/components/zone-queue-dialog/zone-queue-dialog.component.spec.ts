@@ -33,6 +33,7 @@ describe("ZoneQueueDialogComponent", () => {
         title: "track_disk_title",
         artist: "track_artist",
       },
+      is_airplay: false,
     });
     dialogData = {
       $trackDisplay,

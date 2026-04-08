@@ -1,7 +1,7 @@
 import { Hono } from "hono";
+import { airplayManager } from "@data";
 import { logger } from "@infrastructure";
 import { AirplayMetadata } from "@nihilux/roon-web-model";
-import { airplayService } from "@service";
 
 export const airplayRouter = new Hono()
   .use(async (c, next) => {
@@ -22,7 +22,7 @@ export const airplayRouter = new Hono()
   .post("/", async (c) => {
     const airplay_stream_url = c.req.header("x-roon-airplay-stream-url");
     if (airplay_stream_url !== undefined) {
-      await airplayService.start(airplay_stream_url);
+      await airplayManager.start(airplay_stream_url);
     } else {
       logger.error("POST /airplay: x-roon-airplay-stream-url is empty");
     }
@@ -31,14 +31,28 @@ export const airplayRouter = new Hono()
   })
 
   .delete("/", async (c) => {
-    await airplayService.stop();
+    await airplayManager.stop();
     c.status(204);
     return c.body(null);
   })
 
   .put("/metadata", async (c) => {
     const metadata: AirplayMetadata = await c.req.json();
-    await airplayService.updateMetadata(metadata);
+    await airplayManager.updateMetadata(metadata);
+    c.status(204);
+    return c.body(null);
+  })
+
+  .put("/image", async (c) => {
+    const body = await c.req.arrayBuffer();
+    if (body.byteLength === 0) {
+      return c.body(null, 400);
+    }
+    const contentType = c.req.header("Content-Type") ?? "image/jpeg";
+    airplayManager.image = {
+      data: new Uint8Array(body),
+      contentType,
+    };
     c.status(204);
     return c.body(null);
   });

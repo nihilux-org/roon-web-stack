@@ -61,7 +61,7 @@ export class ZoneContainerComponent {
     this._$zone = inject(RoonService).zoneState(this._settingsService.displayedZoneId());
     this.$trackDisplay = computed(
       () => {
-        const { image_key, title, artist, disk } = this._$zone().nice_playing?.track ?? EMPTY_TRACK;
+        const { image_key, title, artist, disk } = this._$zone()?.nice_playing?.track ?? EMPTY_TRACK;
         return {
           image_key,
           title,

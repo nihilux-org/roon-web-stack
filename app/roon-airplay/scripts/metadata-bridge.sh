@@ -53,6 +53,36 @@ push_metadata() {
 	return 0
 }
 
+push_image() {
+	_coverart_file=$(ls /tmp/shairport-sync/.cache/coverart/cover-* 2>/dev/null | head -1)
+	if [ -z "$_coverart_file" ]; then
+		return 0
+	fi
+
+	_case="${_coverart_file##*.}"
+	case "$_case" in
+		jpg) _content_type="image/jpeg" ;;
+		png) _content_type="image/png" ;;
+		*) _content_type="image/jpeg" ;;
+	esac
+
+	_http_code=$(curl \
+		-w '%{http_code}' -o /dev/null -sSg \
+		--max-time 5 \
+		-X PUT "http://${ROON_WEB_HOST}:${ROON_WEB_PORT}/airplay/image" \
+		-H "Content-Type: ${_content_type}" \
+		--data-binary @"$_coverart_file" \
+		< /dev/null 2>&1)
+	_rc=$?
+
+	if [ "$_rc" -ne 0 ]; then
+		echo "metadata-bridge: image curl failed (rc=$_rc, http=$_http_code)" >&2
+	elif [ "$_http_code" -ge 400 ]; then
+		echo "metadata-bridge: image server error (http=$_http_code)" >&2
+	fi
+	return 0
+}
+
 reset_metadata() {
 	_meta_artist=""
 	_meta_title=""
@@ -76,6 +106,10 @@ while IFS= read -r _line || [ -n "$_line" ]; do
 		*Metadata*bundle*end*)
 			push_metadata
 			reset_metadata
+			;;
+
+		*Picture\ received*)
+			push_image
 			;;
 
 		*)

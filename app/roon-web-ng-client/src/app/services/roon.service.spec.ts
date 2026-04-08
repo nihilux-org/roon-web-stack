@@ -188,6 +188,7 @@ const ZONE_STATE: ZoneState = {
   seek_position: 42,
   queue_items_remaining: 420,
   queue_time_remaining: 4242,
+  is_airplay: false,
   settings: {
     loop: "disabled",
     shuffle: false,
@@ -226,6 +227,7 @@ const OTHER_ZONE_STATE: ZoneState = {
   seek_position: 420,
   queue_items_remaining: 42,
   queue_time_remaining: 424242,
+  is_airplay: false,
   settings: {
     loop: "disabled",
     shuffle: false,

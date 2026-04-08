@@ -1,20 +1,31 @@
 import { logger, roon } from "@infrastructure";
 import {
+  AirplayImage,
+  AirplayManager,
   AirplayMetadata,
-  AirplayService,
   AudioInputSessionManager,
   ExtensionSettings,
   RoonAudioInputTrackInfoUpdate,
   SettingsManager,
 } from "@nihilux/roon-web-model";
 
-class InternalAirplayService implements AirplayService {
+interface AirplaySession {
+  airplay_stream_url: string;
+  zone_id: string;
+}
+
+class InternalAirplayManager implements AirplayManager {
+  private static readonly AIRPLAY_IMAGE_KEY_PREFIX = "airplay_image";
   private readonly audioInputSessionManager?: AudioInputSessionManager;
   private readonly settingsManager?: SettingsManager<ExtensionSettings>;
+  private airplaySession?: AirplaySession;
+  private airplayImage?: AirplayImage;
+  private airplayImageCounter: number;
 
   constructor() {
     this.audioInputSessionManager = roon.audioInputSessionManager();
     this.settingsManager = roon.settings();
+    this.airplayImageCounter = 0;
   }
 
   start = async (airplay_stream_url: string): Promise<void> => {
@@ -34,13 +45,44 @@ class InternalAirplayService implements AirplayService {
           line1,
         },
       });
+      delete this.airplayImage;
+      this.airplaySession = {
+        airplay_stream_url,
+        zone_id,
+      };
     }
   };
 
   stop = async (): Promise<void> => {
-    if (this.isEnabled()) {
-      await this.audioInputSessionManager!.end_session(this.settingsManager!.settings().nr_airplay_zone);
+    if (this.isEnabled() && this.airplaySession !== undefined) {
+      await this.audioInputSessionManager!.end_session(this.airplaySession.zone_id);
+      delete this.airplaySession;
+      delete this.airplayImage;
     }
+  };
+
+  isAirplayZone = (zone_id: string): boolean => {
+    return this.airplaySession?.zone_id === zone_id;
+  };
+
+  set image(image: AirplayImage) {
+    if (image !== undefined) {
+      this.airplayImageCounter++;
+      this.airplayImage = {
+        ...image,
+        image_key: `${InternalAirplayManager.AIRPLAY_IMAGE_KEY_PREFIX}_${this.airplayImageCounter}`,
+      };
+    } else {
+      delete this.airplayImage;
+    }
+  }
+
+  get image(): AirplayImage | undefined {
+    return this.airplayImage;
+  }
+
+  isAirplayImageKey = (image_key: string): boolean => {
+    return image_key.startsWith(InternalAirplayManager.AIRPLAY_IMAGE_KEY_PREFIX);
   };
 
   updateMetadata = async (metadata: AirplayMetadata): Promise<void> => {
@@ -72,4 +114,4 @@ class InternalAirplayService implements AirplayService {
   };
 }
 
-export const airplayService: AirplayService = new InternalAirplayService();
+export const airplayManager: AirplayManager = new InternalAirplayManager();

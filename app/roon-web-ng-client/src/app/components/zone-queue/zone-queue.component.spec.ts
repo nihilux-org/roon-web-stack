@@ -29,7 +29,7 @@ describe("ZoneQueueComponent", () => {
       zone_id: "zone_id",
       tracks: [],
     });
-    $trackDisplay = signal(EMPTY_TRACK);
+    $trackDisplay = signal({ ...EMPTY_TRACK, is_airplay: false });
     $displayQueueTrack = signal(true);
     roonService = {
       queueState: vi.fn().mockImplementation(($zoneId: Signal<string>) => {

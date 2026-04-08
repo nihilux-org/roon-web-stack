@@ -1365,19 +1365,19 @@
 
     "node-releases": ["node-releases@2.0.36", "", {}, "sha512-TdC8FSgHz8Mwtw9g5L4gR/Sh9XhSP/0DEkQxfEFXOpiul5IiHgHan2VhYYb6agDSfp4KuvltmGApc8HMgUrIkA=="],
 
-    "node-roon-api": ["node-roon-api@github:roonlabs/node-roon-api#055dae6", { "dependencies": { "node-uuid": "^1.4.7", "ws": ">=3.3.1" } }, "RoonLabs-node-roon-api-055dae6"],
+    "node-roon-api": ["node-roon-api@github:roonlabs/node-roon-api#055dae6", { "dependencies": { "node-uuid": "^1.4.7", "ws": ">=3.3.1" } }, "RoonLabs-node-roon-api-055dae6", "sha512-tk22ReIl1xcvXe8ZYj7SU861o3wljSKHxnLF50XbL3G2aQ0TMmchhJaJfhgrhTttMTFa1BMWhF52dq4wb0CYzw=="],
 
-    "node-roon-api-audioinput": ["node-roon-api-audioinput@github:roonlabs/node-roon-api-audioinput#21ff59e", {}, "RoonLabs-node-roon-api-audioinput-21ff59e"],
+    "node-roon-api-audioinput": ["node-roon-api-audioinput@github:roonlabs/node-roon-api-audioinput#21ff59e", {}, "RoonLabs-node-roon-api-audioinput-21ff59e", "sha512-JWRJtFiNFtrG+hTDIREJd/fTjS87hm0ftsoGJ28eYFr+nmyNi7ym6PgE6DomTX0R/Wy5w8l2ChjrcyYGUWD7hA=="],
 
-    "node-roon-api-browse": ["node-roon-api-browse@github:roonlabs/node-roon-api-browse#98adcba", {}, "RoonLabs-node-roon-api-browse-98adcba"],
+    "node-roon-api-browse": ["node-roon-api-browse@github:roonlabs/node-roon-api-browse#98adcba", {}, "RoonLabs-node-roon-api-browse-98adcba", "sha512-dBSdlQhGJTyBNJsrgOSzkfJfYbEM+mDO/ZPR+lLBm5v3sWNWghKwSC+sYZVfjog06K0Qzmys2FWiwmpqmeKASg=="],
 
-    "node-roon-api-image": ["node-roon-api-image@github:roonlabs/node-roon-api-image#a5f0efa", {}, "RoonLabs-node-roon-api-image-a5f0efa"],
+    "node-roon-api-image": ["node-roon-api-image@github:roonlabs/node-roon-api-image#a5f0efa", {}, "RoonLabs-node-roon-api-image-a5f0efa", "sha512-hmSX0FnhcZ1yt18wYJ2HrTrHJgF3OnUCWcUJrb3kxu4N1SQk5yWSCPQ2SQd4LdBZfDlhd1KdWL01F0OFlek8qw=="],
 
-    "node-roon-api-settings": ["node-roon-api-settings@github:roonlabs/node-roon-api-settings#67cd8ca", {}, "RoonLabs-node-roon-api-settings-67cd8ca"],
+    "node-roon-api-settings": ["node-roon-api-settings@github:roonlabs/node-roon-api-settings#67cd8ca", {}, "RoonLabs-node-roon-api-settings-67cd8ca", "sha512-C/XMa88e5TEbjq2YZQe8VgA5IAssHR3imUsnFTyPlNreCmf17yWeW4zPwJ1+x6uoBRZ8dTD7IjgThyeYrwQqiA=="],
 
-    "node-roon-api-status": ["node-roon-api-status@github:roonlabs/node-roon-api-status#504c918", {}, "RoonLabs-node-roon-api-status-504c918"],
+    "node-roon-api-status": ["node-roon-api-status@github:roonlabs/node-roon-api-status#504c918", {}, "RoonLabs-node-roon-api-status-504c918", "sha512-E2nPoHCNTNTyxEARKVXP0Yw6OWrd92pL/pc3xJnnV+PbrrzkYlLEQw4cbNGhkioUecZyt2cXL8+z85zlV37tZA=="],
 
-    "node-roon-api-transport": ["node-roon-api-transport@github:roonlabs/node-roon-api-transport#2ee6000", {}, "RoonLabs-node-roon-api-transport-2ee6000"],
+    "node-roon-api-transport": ["node-roon-api-transport@github:roonlabs/node-roon-api-transport#2ee6000", {}, "RoonLabs-node-roon-api-transport-2ee6000", "sha512-e9haEnyhLs8lNS4oASvHTpBVQj/vtrEUB8mbsrsqarysLw5oPL0M3S+Ki492EzSmUlWacrEGqM5YR7H/4uoM8A=="],
 
     "node-uuid": ["node-uuid@1.4.8", "", { "bin": { "uuid": "./bin/uuid" } }, "sha512-TkCET/3rr9mUuRp+CpO7qfgT++aAxfDRaalQhwPFzI9BY/2rCDn6OfpZOVggi1AXfTPpfkTrg5f5WQx5G1uLxA=="],
 
