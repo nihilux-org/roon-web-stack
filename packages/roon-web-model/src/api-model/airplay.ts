@@ -2,6 +2,7 @@ export interface AirplayManager {
   start: (streamUrl: string) => Promise<void>;
   stop: () => Promise<void>;
   isAirplayZone: (zone_id: string) => boolean;
+  transferAirplayZone: (new_zone_id: string) => Promise<void>;
   updateMetadata: (metadata: AirplayMetadata) => Promise<void>;
   image?: AirplayImage;
   isAirplayImageKey: (image_key: string) => boolean;

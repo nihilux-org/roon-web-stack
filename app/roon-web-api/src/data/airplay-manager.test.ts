@@ -192,22 +192,36 @@ describe("airplay-manager.ts test suite", () => {
   });
 
   describe("image", () => {
-    it("should store image when setImage is called", () => {
+    it("should not store image when image setter is called without an ongoing airplay session", () => {
       const data = new Uint8Array([1, 2, 3]);
 
       airplayManager.image = { data, contentType: "image/jpeg" };
 
       const result = airplayManager.image;
+      expect(result).toBeUndefined();
+    });
+    it("should store image when image setter is called with an ongoing airplay session", async () => {
+      await airplayManager.start("stream_url");
+      const data = new Uint8Array([1, 2, 3]);
+
+      airplayManager.image = { data, contentType: "image/jpeg" };
+
+      const result = airplayManager.image;
+
       expect(result).toBeDefined();
       expect(result.data).toBe(data);
       expect(result.contentType).toBe("image/jpeg");
     });
 
-    it("should return undefined when getImage is called before setImage", () => {
+    it("should return undefined when image getter is called without being set", () => {
       expect(airplayManager.image).toBeUndefined();
     });
 
-    it("should not modify internal state when set to undefined", () => {
+    it("should delete the image if setter called with undefined during an airplay session", async () => {
+      await airplayManager.start("stream_url");
+      const data = new Uint8Array([1, 2, 3]);
+      airplayManager.image = { data, contentType: "image/jpeg" };
+
       airplayManager.image = undefined;
       expect(airplayManager.image).toBeUndefined();
     });
@@ -229,6 +243,78 @@ describe("airplay-manager.ts test suite", () => {
       await airplayManager.start(airplay_stream_url);
 
       expect(airplayManager.image).toBeUndefined();
+    });
+  });
+
+  describe("transferAirplayZone", () => {
+    it("should call stop then start with new zone_id when transferring airplay zone", async () => {
+      const airplay_stream_url = "http://test-host:42/airplay";
+      await airplayManager.start(airplay_stream_url);
+
+      await airplayManager.transferAirplayZone("new_zone_id");
+
+      expect(audioInputSessionManagerMock.end_session).toHaveBeenCalledWith(test_zone_id);
+      expect(audioInputSessionManagerMock.play).toHaveBeenCalledWith(
+        "new_zone_id",
+        airplay_stream_url,
+        "Roon Airplay",
+        {
+          is_pause_allowed: false,
+          is_seek_allowed: false,
+          one_line: { line1: "Roon Airplay" },
+          two_line: { line1: "Roon Airplay" },
+          three_line: { line1: "Roon Airplay" },
+        }
+      );
+      await airplayManager.stop();
+    });
+
+    it("should do nothing when airplay is disabled", async () => {
+      settingsManagerMock.settings.mockReturnValue({
+        nr_airplay_state: "disabled",
+        nr_airplay_zone: "",
+      } as ExtensionSettings);
+
+      await airplayManager.transferAirplayZone("new_zone_id");
+
+      expect(audioInputSessionManagerMock.end_session).not.toHaveBeenCalled();
+      expect(audioInputSessionManagerMock.play).not.toHaveBeenCalled();
+    });
+
+    it("should do nothing when no active airplay session", async () => {
+      await airplayManager.transferAirplayZone("new_zone_id");
+
+      expect(audioInputSessionManagerMock.end_session).not.toHaveBeenCalled();
+      expect(audioInputSessionManagerMock.play).not.toHaveBeenCalled();
+    });
+
+    it("should do nothing when new zone_id is same as current zone_id", async () => {
+      const airplay_stream_url = "http://test-host:42/airplay";
+      await airplayManager.start(airplay_stream_url);
+
+      await airplayManager.transferAirplayZone(test_zone_id);
+
+      expect(audioInputSessionManagerMock.end_session).not.toHaveBeenCalled();
+      expect(audioInputSessionManagerMock.play).toHaveBeenCalledTimes(1);
+      await airplayManager.stop();
+    });
+  });
+
+  describe("isAirplayImageKey", () => {
+    it("should return true for image keys starting with 'airplay_image'", () => {
+      expect(airplayManager.isAirplayImageKey("airplay_image_1")).toBe(true);
+    });
+
+    it("should return true for 'airplay_image' prefix without suffix", () => {
+      expect(airplayManager.isAirplayImageKey("airplay_image")).toBe(true);
+    });
+
+    it("should return false for non-airplay image keys", () => {
+      expect(airplayManager.isAirplayImageKey("other_image_1")).toBe(false);
+    });
+
+    it("should return false for empty string", () => {
+      expect(airplayManager.isAirplayImageKey("")).toBe(false);
     });
   });
 });
