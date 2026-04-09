@@ -1,3 +1,5 @@
+import { airplayManagerMock } from "../../data/airplay-manager.mock";
+
 import { Mock } from "vitest";
 import {
   CommandType,
@@ -15,6 +17,9 @@ describe("transfer-zone-command-executor.ts test suite", () => {
   let server: RoonServer;
   let foundZone: FoundZone;
   beforeEach(() => {
+    vi.clearAllMocks();
+    airplayManagerMock.isAirplayZone.mockReturnValue(false);
+    airplayManagerMock.transferAirplayZone.mockResolvedValue(undefined);
     transferZoneApi = vi.fn().mockImplementation(() => Promise.resolve());
     zoneByZoneIdApi = vi.fn().mockImplementation((zid) => {
       if (zid === to_zone_id) {
@@ -83,6 +88,39 @@ describe("transfer-zone-command-executor.ts test suite", () => {
     await expect(executorPromise).rejects.toEqual(error);
     expect(zoneByZoneIdApi).toHaveBeenCalledWith(to_zone_id);
     expect(transferZoneApi).toHaveBeenCalledWith(zone, to_zone);
+  });
+
+  it("executor should call airplayManager.transferAirplayZone when the source zone is an Airplay zone", async () => {
+    airplayManagerMock.isAirplayZone.mockReturnValue(true);
+    airplayManagerMock.transferAirplayZone.mockResolvedValue(undefined);
+    const command: TransferZoneCommand = {
+      type: CommandType.TRANSFER_ZONE,
+      data: {
+        zone_id,
+        to_zone_id,
+      },
+    };
+    const executorPromise = executor(command, foundZone);
+    await expect(executorPromise).resolves.toBeUndefined();
+    expect(airplayManagerMock.transferAirplayZone).toHaveBeenCalledWith(to_zone_id);
+    expect(transferZoneApi).toHaveBeenCalledTimes(0);
+  });
+
+  it("executor should return a rejected Promise if airplayManager.transferAirplayZone returns a rejected Promise", async () => {
+    airplayManagerMock.isAirplayZone.mockReturnValue(true);
+    const error = new Error("error!");
+    airplayManagerMock.transferAirplayZone.mockRejectedValue(error);
+    const command: TransferZoneCommand = {
+      type: CommandType.TRANSFER_ZONE,
+      data: {
+        zone_id,
+        to_zone_id,
+      },
+    };
+    const executorPromise = executor(command, foundZone);
+    await expect(executorPromise).rejects.toEqual(error);
+    expect(airplayManagerMock.transferAirplayZone).toHaveBeenCalledWith(to_zone_id);
+    expect(transferZoneApi).toHaveBeenCalledTimes(0);
   });
 });
 

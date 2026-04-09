@@ -1,10 +1,15 @@
+import { airplayManager } from "@data";
 import { CommandExecutor, FoundZone, TransferZoneCommand } from "@nihilux/roon-web-model";
 
 export const executor: CommandExecutor<TransferZoneCommand, FoundZone> = (command, foundZone) => {
   const { zone, server } = foundZone;
   const toZone = server.services.RoonApiTransport.zone_by_zone_id(command.data.to_zone_id);
   if (toZone) {
-    return server.services.RoonApiTransport.transfer_zone(zone, toZone);
+    if (airplayManager.isAirplayZone(zone.zone_id)) {
+      return airplayManager.transferAirplayZone(toZone.zone_id);
+    } else {
+      return server.services.RoonApiTransport.transfer_zone(zone, toZone);
+    }
   } else {
     return Promise.reject(new Error(`'${command.data.to_zone_id}' is not a valid zone_id`));
   }

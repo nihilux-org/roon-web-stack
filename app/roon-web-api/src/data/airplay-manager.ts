@@ -12,6 +12,7 @@ import {
 interface AirplaySession {
   airplay_stream_url: string;
   zone_id: string;
+  image?: AirplayImage;
 }
 
 class InternalAirplayManager implements AirplayManager {
@@ -19,7 +20,6 @@ class InternalAirplayManager implements AirplayManager {
   private readonly audioInputSessionManager?: AudioInputSessionManager;
   private readonly settingsManager?: SettingsManager<ExtensionSettings>;
   private airplaySession?: AirplaySession;
-  private airplayImage?: AirplayImage;
   private airplayImageCounter: number;
 
   constructor() {
@@ -31,8 +31,20 @@ class InternalAirplayManager implements AirplayManager {
   start = async (airplay_stream_url: string): Promise<void> => {
     if (this.isEnabled()) {
       const zone_id = this.settingsManager!.settings().nr_airplay_zone;
-      const line1 = "Roon Airplay";
-      await this.audioInputSessionManager?.play(zone_id, airplay_stream_url, "Roon Airplay", {
+      return this._start({
+        airplay_stream_url,
+        zone_id,
+      });
+    }
+  };
+
+  private _start = async (airplaySession: AirplaySession): Promise<void> => {
+    const line1 = "Roon Airplay";
+    await this.audioInputSessionManager?.play(
+      airplaySession.zone_id,
+      airplaySession.airplay_stream_url,
+      "Roon Airplay",
+      {
         is_seek_allowed: false,
         is_pause_allowed: false,
         one_line: {
@@ -44,20 +56,15 @@ class InternalAirplayManager implements AirplayManager {
         three_line: {
           line1,
         },
-      });
-      delete this.airplayImage;
-      this.airplaySession = {
-        airplay_stream_url,
-        zone_id,
-      };
-    }
+      }
+    );
+    this.airplaySession = airplaySession;
   };
 
   stop = async (): Promise<void> => {
     if (this.isEnabled() && this.airplaySession !== undefined) {
       await this.audioInputSessionManager!.end_session(this.airplaySession.zone_id);
       delete this.airplaySession;
-      delete this.airplayImage;
     }
   };
 
@@ -65,20 +72,29 @@ class InternalAirplayManager implements AirplayManager {
     return this.airplaySession?.zone_id === zone_id;
   };
 
+  transferAirplayZone = async (new_zone_id: string): Promise<void> => {
+    if (this.isEnabled() && this.airplaySession !== undefined && this.airplaySession.zone_id !== new_zone_id) {
+      const newSession = this.airplaySession;
+      await this.stop();
+      newSession.zone_id = new_zone_id;
+      await this._start(newSession);
+    }
+  };
+
   set image(image: AirplayImage) {
-    if (image !== undefined) {
+    if (image !== undefined && this.airplaySession !== undefined) {
       this.airplayImageCounter++;
-      this.airplayImage = {
+      this.airplaySession.image = {
         ...image,
         image_key: `${InternalAirplayManager.AIRPLAY_IMAGE_KEY_PREFIX}_${this.airplayImageCounter}`,
       };
-    } else {
-      delete this.airplayImage;
+    } else if (this.airplaySession !== undefined) {
+      delete this.airplaySession.image;
     }
   }
 
   get image(): AirplayImage | undefined {
-    return this.airplayImage;
+    return this.airplaySession?.image;
   }
 
   isAirplayImageKey = (image_key: string): boolean => {

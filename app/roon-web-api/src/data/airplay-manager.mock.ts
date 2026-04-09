@@ -2,6 +2,7 @@ import { Mock, vi } from "vitest";
 import { AirplayImage } from "@nihilux/roon-web-model";
 
 const isAirplayZone: Mock = vi.fn();
+const transferAirplayZone: Mock = vi.fn();
 const start: Mock = vi.fn();
 const stop: Mock = vi.fn();
 const updateMetadata: Mock = vi.fn();
@@ -10,6 +11,7 @@ const isAirplayImageKey: Mock = vi.fn();
 export interface AirplayManagerMock {
   isAirplayZone: Mock;
   isAirplayImageKey: Mock;
+  transferAirplayZone: Mock;
   image: AirplayImage | undefined;
   start: Mock;
   stop: Mock;
@@ -22,6 +24,7 @@ export const airplayManagerMock: AirplayManagerMock = {
   start,
   stop,
   updateMetadata,
+  transferAirplayZone,
   image: undefined,
 };
 

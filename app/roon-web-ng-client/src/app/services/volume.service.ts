@@ -9,6 +9,7 @@ import {
   VolumeCommand,
   VolumeGroupedZoneCommand,
   VolumeStrategy,
+  ZoneState,
 } from "@nihilux/roon-web-model";
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
@@ -19,6 +20,7 @@ import { SettingsService } from "@services/settings.service";
 export class VolumeService {
   private readonly _roonService: RoonService;
   private readonly _$displayedZoneId: Signal<string>;
+  private readonly _$zone: Signal<ZoneState>;
   private readonly _$zoneOutputs: Signal<Output[]>;
   private readonly _$isGrouped: Signal<boolean>;
   private readonly _$isGroupedZoneMute: Signal<boolean>;
@@ -28,11 +30,9 @@ export class VolumeService {
   constructor() {
     this._roonService = inject(RoonService);
     this._$displayedZoneId = inject(SettingsService).displayedZoneId();
+    this._$zone = this._roonService.zoneState(this._$displayedZoneId);
     this._$zoneOutputs = computed(
-      () => {
-        const $zone = this._roonService.zoneState(this._$displayedZoneId);
-        return $zone().outputs.sort((o1, o2) => o1.display_name.localeCompare(o2.display_name));
-      },
+      () => this._$zone().outputs.sort((o1, o2) => o1.display_name.localeCompare(o2.display_name)),
       {
         equal: deepEqual,
       }
@@ -44,6 +44,9 @@ export class VolumeService {
       return this._$zoneOutputs().reduce((isMuted, output) => isMuted && (output.volume?.is_muted ?? false), true);
     });
     this._$canGroup = computed(() => {
+      if (this._$zone().is_airplay) {
+        return false;
+      }
       const outputs = this._$zoneOutputs();
       return outputs.length > 0 && outputs[0].can_group_with_output_ids.length > 0;
     });
