@@ -11,9 +11,11 @@ const shutdown = (signal: string, server: { stop: () => void }): void => {
   process.exit(0);
 };
 
-const init = async (): Promise<void> => {
+const init = (): void => {
   try {
-    await clientManager.start();
+    void clientManager.start().catch((err: Error) => {
+      throw err;
+    });
 
     const server = Bun.serve({
       port: hostInfo.port,
@@ -33,4 +35,4 @@ const init = async (): Promise<void> => {
   }
 };
 
-void init();
+init();
