@@ -169,7 +169,7 @@ const startExtension = (): void => {
 const getImage = async (
   image_key: string,
   options: RoonApiImageResultOptions
-): Promise<{ content_type: string; image: Uint8Array }> => {
+): Promise<{ content_type: string; image: Uint8Array<ArrayBuffer> }> => {
   const roonServer = await server();
   return roonServer.services.RoonApiImage.get_image(image_key, options);
 };
