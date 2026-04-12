@@ -26,7 +26,7 @@
       },
       "devDependencies": {
         "@eslint/js": "10.0.1",
-        "@types/bun": "1.3.11",
+        "@types/bun": "1.3.12",
         "@typescript-eslint/eslint-plugin": "8.58.1",
         "@typescript-eslint/parser": "8.58.1",
         "@vitest/coverage-istanbul": "4.1.4",
@@ -75,7 +75,7 @@
         "@angular/compiler-cli": "21.2.8",
         "@eslint/js": "10.0.1",
         "@nihilux/roon-web-model": "workspace:*",
-        "@types/bun": "1.3.11",
+        "@types/bun": "1.3.12",
         "@typescript-eslint/parser": "8.58.1",
         "@vitest/coverage-v8": "4.1.4",
         "angular-eslint": "21.3.1",
@@ -106,7 +106,7 @@
       "devDependencies": {
         "@eslint/js": "10.0.1",
         "@nihilux/roon-web-model": "workspace:*",
-        "@types/bun": "1.3.11",
+        "@types/bun": "1.3.12",
         "@typescript-eslint/eslint-plugin": "8.58.1",
         "@typescript-eslint/parser": "8.58.1",
         "@vitest/coverage-istanbul": "4.1.4",
@@ -663,7 +663,7 @@
 
     "@tybys/wasm-util": ["@tybys/wasm-util@0.10.1", "", { "dependencies": { "tslib": "^2.4.0" } }, "sha512-9tTaPJLSiejZKx+Bmog4uSubteqTvFrVrURwkmHixBo0G4seD0zUxp98E1DzUBJxLQ3NPwXrGKDiVjwx/DpPsg=="],
 
-    "@types/bun": ["@types/bun@1.3.11", "", { "dependencies": { "bun-types": "1.3.11" } }, "sha512-5vPne5QvtpjGpsGYXiFyycfpDF2ECyPcTSsFBMa0fraoxiQyMJ3SmuQIGhzPg2WJuWxVBoxWJ2kClYTcw/4fAg=="],
+    "@types/bun": ["@types/bun@1.3.12", "", { "dependencies": { "bun-types": "1.3.12" } }, "sha512-DBv81elK+/VSwXHDlnH3Qduw+KxkTIWi7TXkAeh24zpi5l0B2kUg9Ga3tb4nJaPcOFswflgi/yAvMVBPrxMB+A=="],
 
     "@types/chai": ["@types/chai@5.2.3", "", { "dependencies": { "@types/deep-eql": "*", "assertion-error": "^2.0.1" } }, "sha512-Mw558oeA9fFbv65/y4mHtXDs9bPnFMZAL/jxdPFUpOHHIXX91mcgEHbS5Lahr+pwZFR8A7GQleRWeI6cGFC2UA=="],
 
@@ -831,7 +831,7 @@
 
     "buffer-from": ["buffer-from@1.1.2", "", {}, "sha512-E+XQCRwSbaaiChtv6k6Dwgc+bx+Bs6vuKJHHl5kox/BaKbhiXzqQOwK4cO22yElGp2OCmjwVhT3HmxgyPGnJfQ=="],
 
-    "bun-types": ["bun-types@1.3.11", "", { "dependencies": { "@types/node": "*" } }, "sha512-1KGPpoxQWl9f6wcZh57LvrPIInQMn2TQ7jsgxqpRzg+l0QPOFvJVH7HmvHo/AiPgwXy+/Thf6Ov3EdVn1vOabg=="],
+    "bun-types": ["bun-types@1.3.12", "", { "dependencies": { "@types/node": "*" } }, "sha512-HqOLj5PoFajAQciOMRiIZGNoKxDJSr6qigAttOX40vJuSp6DN/CxWp9s3C1Xwm4oH7ybueITwiaOcWXoYVoRkA=="],
 
     "bytes": ["bytes@3.1.2", "", {}, "sha512-/Nf7TyzTx6S3yRJObOAV7956r8cr2+Oj8AC5dt8wSP3BQAoeX58NoHyCU8P8zGkNXStjTSi6fzO6F0pBdcYbEg=="],
 
@@ -1365,19 +1365,19 @@
 
     "node-releases": ["node-releases@2.0.36", "", {}, "sha512-TdC8FSgHz8Mwtw9g5L4gR/Sh9XhSP/0DEkQxfEFXOpiul5IiHgHan2VhYYb6agDSfp4KuvltmGApc8HMgUrIkA=="],
 
-    "node-roon-api": ["node-roon-api@github:roonlabs/node-roon-api#055dae6", { "dependencies": { "node-uuid": "^1.4.7", "ws": ">=3.3.1" } }, "RoonLabs-node-roon-api-055dae6"],
+    "node-roon-api": ["node-roon-api@github:roonlabs/node-roon-api#055dae6", { "dependencies": { "node-uuid": "^1.4.7", "ws": ">=3.3.1" } }, "RoonLabs-node-roon-api-055dae6", "sha512-tk22ReIl1xcvXe8ZYj7SU861o3wljSKHxnLF50XbL3G2aQ0TMmchhJaJfhgrhTttMTFa1BMWhF52dq4wb0CYzw=="],
 
-    "node-roon-api-audioinput": ["node-roon-api-audioinput@github:roonlabs/node-roon-api-audioinput#21ff59e", {}, "RoonLabs-node-roon-api-audioinput-21ff59e"],
+    "node-roon-api-audioinput": ["node-roon-api-audioinput@github:roonlabs/node-roon-api-audioinput#21ff59e", {}, "RoonLabs-node-roon-api-audioinput-21ff59e", "sha512-JWRJtFiNFtrG+hTDIREJd/fTjS87hm0ftsoGJ28eYFr+nmyNi7ym6PgE6DomTX0R/Wy5w8l2ChjrcyYGUWD7hA=="],
 
-    "node-roon-api-browse": ["node-roon-api-browse@github:roonlabs/node-roon-api-browse#98adcba", {}, "RoonLabs-node-roon-api-browse-98adcba"],
+    "node-roon-api-browse": ["node-roon-api-browse@github:roonlabs/node-roon-api-browse#98adcba", {}, "RoonLabs-node-roon-api-browse-98adcba", "sha512-dBSdlQhGJTyBNJsrgOSzkfJfYbEM+mDO/ZPR+lLBm5v3sWNWghKwSC+sYZVfjog06K0Qzmys2FWiwmpqmeKASg=="],
 
-    "node-roon-api-image": ["node-roon-api-image@github:roonlabs/node-roon-api-image#a5f0efa", {}, "RoonLabs-node-roon-api-image-a5f0efa"],
+    "node-roon-api-image": ["node-roon-api-image@github:roonlabs/node-roon-api-image#a5f0efa", {}, "RoonLabs-node-roon-api-image-a5f0efa", "sha512-hmSX0FnhcZ1yt18wYJ2HrTrHJgF3OnUCWcUJrb3kxu4N1SQk5yWSCPQ2SQd4LdBZfDlhd1KdWL01F0OFlek8qw=="],
 
-    "node-roon-api-settings": ["node-roon-api-settings@github:roonlabs/node-roon-api-settings#67cd8ca", {}, "RoonLabs-node-roon-api-settings-67cd8ca"],
+    "node-roon-api-settings": ["node-roon-api-settings@github:roonlabs/node-roon-api-settings#67cd8ca", {}, "RoonLabs-node-roon-api-settings-67cd8ca", "sha512-C/XMa88e5TEbjq2YZQe8VgA5IAssHR3imUsnFTyPlNreCmf17yWeW4zPwJ1+x6uoBRZ8dTD7IjgThyeYrwQqiA=="],
 
-    "node-roon-api-status": ["node-roon-api-status@github:roonlabs/node-roon-api-status#504c918", {}, "RoonLabs-node-roon-api-status-504c918"],
+    "node-roon-api-status": ["node-roon-api-status@github:roonlabs/node-roon-api-status#504c918", {}, "RoonLabs-node-roon-api-status-504c918", "sha512-E2nPoHCNTNTyxEARKVXP0Yw6OWrd92pL/pc3xJnnV+PbrrzkYlLEQw4cbNGhkioUecZyt2cXL8+z85zlV37tZA=="],
 
-    "node-roon-api-transport": ["node-roon-api-transport@github:roonlabs/node-roon-api-transport#2ee6000", {}, "RoonLabs-node-roon-api-transport-2ee6000"],
+    "node-roon-api-transport": ["node-roon-api-transport@github:roonlabs/node-roon-api-transport#2ee6000", {}, "RoonLabs-node-roon-api-transport-2ee6000", "sha512-e9haEnyhLs8lNS4oASvHTpBVQj/vtrEUB8mbsrsqarysLw5oPL0M3S+Ki492EzSmUlWacrEGqM5YR7H/4uoM8A=="],
 
     "node-uuid": ["node-uuid@1.4.8", "", { "bin": { "uuid": "./bin/uuid" } }, "sha512-TkCET/3rr9mUuRp+CpO7qfgT++aAxfDRaalQhwPFzI9BY/2rCDn6OfpZOVggi1AXfTPpfkTrg5f5WQx5G1uLxA=="],
 
