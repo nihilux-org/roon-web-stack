@@ -55,11 +55,10 @@ export class ZoneGroupingDialogComponent {
       zoneState.outputs
         .filter((o) => o.output_id !== this.mainOutput.output_id)
         .map(
-          (o) =>
-            ({
-              ...o,
-              state: "checked",
-            }) as GroupOutputDescription
+          (o): GroupOutputDescription => ({
+            ...o,
+            state: "checked",
+          })
         )
         .sort((o1, o2) => o1.display_name.localeCompare(o2.display_name))
     );
@@ -71,13 +70,13 @@ export class ZoneGroupingDialogComponent {
             zoneState.outputs.findIndex((o) => o.output_id === output_id) === -1 &&
             outputs.findIndex((o) => o.output_id === output_id) !== -1
         )
-        .map((output_id) => {
+        .map((output_id): GroupOutputDescription => {
           const output = outputs.find((o) => o.output_id === output_id);
           if (output) {
             return {
               ...output,
               state: "none",
-            } as GroupOutputDescription;
+            };
           } else {
             throw new Error("this is a bug!");
           }

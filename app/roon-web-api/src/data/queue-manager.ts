@@ -121,8 +121,9 @@ class InternalQueueManager implements QueueManager {
       const queueListener = queueListenerFactory(this, resolve, reject);
       try {
         server.services.RoonApiTransport.subscribe_queue(this._zone, this._queueSize, queueListener);
-      } catch (err) {
-        reject(err as Error);
+      } catch (err: unknown) {
+        const rejection = err instanceof Error ? err : new Error("unknown queue event error");
+        reject(rejection);
       }
     });
   };
