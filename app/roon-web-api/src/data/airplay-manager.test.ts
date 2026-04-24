@@ -2,7 +2,7 @@ import { loggerMock } from "@mock";
 import { roonMock } from "../infrastructure/roon-extension.mock";
 
 import { afterEach, beforeEach, describe, expect, it, Mock, vi } from "vitest";
-import { AirplayManager, ExtensionSettings } from "@nihilux/roon-web-model";
+import { AirplayManager } from "@nihilux/roon-web-model";
 
 describe("airplay-manager.ts test suite", () => {
   const test_zone_id = "test_zone_id";
@@ -34,7 +34,7 @@ describe("airplay-manager.ts test suite", () => {
         nr_queue_bot_standby_track_name: "",
         nr_queue_bot_artist_name: "",
         nr_queue_bot_pause_track_name: "",
-      } as ExtensionSettings),
+      }),
       updateSettings: vi.fn(),
       onSettings: vi.fn(),
       offSettings: vi.fn(),
@@ -81,7 +81,7 @@ describe("airplay-manager.ts test suite", () => {
     settingsManagerMock.settings.mockReturnValue({
       nr_airplay_state: "disabled",
       nr_airplay_zone: "",
-    } as ExtensionSettings);
+    });
     const airplay_stream_url = "http://test-host:42/airplay";
 
     await airplayManager.start(airplay_stream_url);
@@ -93,7 +93,7 @@ describe("airplay-manager.ts test suite", () => {
     settingsManagerMock.settings.mockReturnValue({
       nr_airplay_state: "disabled",
       nr_airplay_zone: "",
-    } as ExtensionSettings);
+    });
 
     await expect(airplayManager.stop()).resolves.toBeUndefined();
     expect(audioInputSessionManagerMock.end_session).not.toHaveBeenCalled();
@@ -167,7 +167,7 @@ describe("airplay-manager.ts test suite", () => {
       settingsManagerMock.settings.mockReturnValue({
         nr_airplay_state: "disabled",
         nr_airplay_zone: "",
-      } as ExtensionSettings);
+      });
 
       await airplayManager.updateMetadata({ artist: "Test Artist", album: "Test Album", title: "Test Title" });
 
@@ -273,7 +273,7 @@ describe("airplay-manager.ts test suite", () => {
       settingsManagerMock.settings.mockReturnValue({
         nr_airplay_state: "disabled",
         nr_airplay_zone: "",
-      } as ExtensionSettings);
+      });
 
       await airplayManager.transferAirplayZone("new_zone_id");
 

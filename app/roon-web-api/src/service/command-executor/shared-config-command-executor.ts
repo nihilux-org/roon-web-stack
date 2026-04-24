@@ -5,6 +5,7 @@ export const executor: CommandExecutor<SharedConfigCommand, Roon> = (command, ro
     roon.updateSharedConfig(command.data.sharedConfigUpdate);
     return Promise.resolve();
   } catch (err: unknown) {
-    return Promise.reject(err as Error);
+    const rejection = err instanceof Error ? err : new Error("unknown error during config update");
+    return Promise.reject(rejection);
   }
 };

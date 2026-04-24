@@ -102,6 +102,22 @@ describe("queue-manager.ts test suite", () => {
     });
   });
 
+  it("QueueManager#start should return a rejected Promise wrapping a non-Error throwable from the underlying roon API", async () => {
+    subscribe_queue.mockImplementation(() => {
+      // eslint-disable-next-line @typescript-eslint/only-throw-error -- testing non-Error catch branch
+      throw "string error";
+    });
+    const queueManager = queueManagerFactory.build(ZONE, roonSubject, QUEUE_SIZE);
+    const queueManagerPromise = queueManager.start();
+    await expect(queueManagerPromise).rejects.toEqual(new Error("unknown queue event error"));
+    expect(retryMock.retryDecorator).toHaveBeenCalledTimes(1);
+    expect(retryMock.retryDecorator).toHaveBeenCalledWith(expect.anything(), {
+      delay: 3500,
+      backoff: "FIXED",
+      retries: 200,
+    });
+  });
+
   it("QueueManager#start should return a rejected Promise if the underlying roon API return an unknown event before 'Subscribed'", async () => {
     subscribe_queue.mockImplementation((z: Zone, queueSize: number, listener: QueueListener) => {
       queueListener = listener;
@@ -158,10 +174,10 @@ describe("queue-manager.ts test suite", () => {
     };
     queueListener("Changed", {
       changes: [firstChange],
-    } as unknown as RoonApiTransportQueue);
+    });
     queueListener("Changed", {
       changes: [secondChange],
-    } as unknown as RoonApiTransportQueue);
+    });
     queueManager.stop();
     expect(states).toHaveLength(3);
     expect(states[0]).toEqual({
@@ -195,7 +211,7 @@ describe("queue-manager.ts test suite", () => {
     });
     subscribe_queue.mockImplementation((z: Zone, queueSize: number, listener: QueueListener) => {
       queueListener = listener;
-      queueListener("Subscribed", {} as unknown as RoonApiTransportQueue);
+      queueListener("Subscribed", {});
     });
     const queueManager = queueManagerFactory.build(ZONE, roonSubject, QUEUE_SIZE);
     await queueManager.start();
@@ -225,11 +241,11 @@ describe("queue-manager.ts test suite", () => {
     const roonEvent = {
       changes: [change],
     } as unknown as RoonApiTransportQueue;
-    queueListener("Unsubscribed", {} as RoonApiTransportQueue);
+    queueListener("Unsubscribed", {});
     queueListener("Changed", roonEvent);
     queueListener("Changed", roonEvent);
     queueListener("Changed", roonEvent);
-    queueListener("Unsubscribed", {} as RoonApiTransportQueue);
+    queueListener("Unsubscribed", {});
 
     expect(messages).toHaveLength(1);
     expect(loggerMock.warn).toHaveBeenCalledTimes(2);
@@ -238,7 +254,7 @@ describe("queue-manager.ts test suite", () => {
   it("QueueManager should log unknown events coming from roon API", async () => {
     const queueManager = queueManagerFactory.build(ZONE, roonSubject, QUEUE_SIZE);
     await queueManager.start();
-    queueListener("Unknown" as RoonSubscriptionResponse, {} as RoonApiTransportQueue);
+    queueListener("Unknown" as RoonSubscriptionResponse, {});
     expect(loggerMock.debug).toHaveBeenCalledTimes(1);
     expect(loggerMock.debug).toHaveBeenCalledWith(
       "unknown queue event '%s' with body %s for zone '%s'",

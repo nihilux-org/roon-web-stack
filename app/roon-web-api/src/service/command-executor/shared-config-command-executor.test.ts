@@ -38,4 +38,22 @@ describe("shared-config-command-executor test suite", () => {
     await expect(result).rejects.toBe(error);
     expect(roonMock.updateSharedConfig).toHaveBeenCalledWith(command.data.sharedConfigUpdate);
   });
+  it("executor should return a rejected Promise wrapping a non-Error throwable", async () => {
+    roonMock.updateSharedConfig.mockImplementation(() => {
+      // eslint-disable-next-line @typescript-eslint/only-throw-error -- testing non-Error catch branch
+      throw "string error";
+    });
+    const command: SharedConfigCommand = {
+      type: CommandType.SHARED_CONFIG,
+      data: {
+        sharedConfigUpdate: {
+          customActions: [],
+        },
+      },
+    };
+
+    const result = executor(command, roonMock);
+    await expect(result).rejects.toEqual(new Error("unknown error during config update"));
+    expect(roonMock.updateSharedConfig).toHaveBeenCalledWith(command.data.sharedConfigUpdate);
+  });
 });

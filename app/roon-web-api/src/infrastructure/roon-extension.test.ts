@@ -731,11 +731,7 @@ describe("roon-extension.ts test suite", () => {
       expect(corePairedRegisteredListener).not.toBeNull();
       corePairedRegisteredListener!({} as RoonServer);
       expect(zonesRegisteredListener).not.toBeNull();
-      zonesRegisteredListener!(
-        {} as RoonServer,
-        response as RoonSubscriptionResponse,
-        eventBody as RoonApiTransportZones
-      );
+      zonesRegisteredListener!({} as RoonServer, response as RoonSubscriptionResponse, eventBody);
       expect(settingsManagerMock.settings).toHaveBeenCalledTimes(1);
       expect(settingsManagerMock.updateSettings).toHaveBeenCalledTimes(1);
       expect(settingsManagerMock.updateSettings).toHaveBeenCalledWith({
@@ -761,13 +757,9 @@ describe("roon-extension.ts test suite", () => {
     expect(corePairedRegisteredListener).not.toBeNull();
     corePairedRegisteredListener!({} as RoonServer);
     expect(zonesRegisteredListener).not.toBeNull();
-    zonesRegisteredListener!(
-      {} as RoonServer,
-      "Changed" as RoonSubscriptionResponse,
-      {
-        zones_removed: ["existing_zone_id"],
-      } as RoonApiTransportZones
-    );
+    zonesRegisteredListener!({} as RoonServer, "Changed", {
+      zones_removed: ["existing_zone_id"],
+    });
     expect(settingsManagerMock.settings).toHaveBeenCalledTimes(1);
     expect(settingsManagerMock.updateSettings).toHaveBeenCalledTimes(1);
     expect(settingsManagerMock.updateSettings).toHaveBeenCalledWith({
@@ -795,22 +787,18 @@ describe("roon-extension.ts test suite", () => {
     expect(corePairedRegisteredListener).not.toBeNull();
     corePairedRegisteredListener!({} as RoonServer);
     expect(zonesRegisteredListener).not.toBeNull();
-    zonesRegisteredListener!(
-      {} as RoonServer,
-      "Subscribed" as RoonSubscriptionResponse,
-      {
-        zones: [
-          {
-            zone_id: "existing_zone_id",
-            display_name: "Existing Zone",
-          },
-          {
-            zone_id: "other_zone_id",
-            display_name: "Other Zone",
-          },
-        ],
-      } as RoonApiTransportZones
-    );
+    zonesRegisteredListener!({} as RoonServer, "Subscribed", {
+      zones: [
+        {
+          zone_id: "existing_zone_id",
+          display_name: "Existing Zone",
+        },
+        {
+          zone_id: "other_zone_id",
+          display_name: "Other Zone",
+        },
+      ],
+    } as RoonApiTransportZones);
     expect(settingsManagerMock.settings).toHaveBeenCalledTimes(1);
     expect(settingsManagerMock.updateSettings).toHaveBeenCalledTimes(1);
     expect(settingsManagerMock.updateSettings).toHaveBeenCalledWith({

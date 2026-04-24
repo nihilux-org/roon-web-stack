@@ -251,7 +251,7 @@ class InternalRoonWebClient implements RoonWebClient {
     });
     const response = await this.fetchRefreshed(req);
     if (response.status === 202) {
-      const json: CommandJsonResponse = (await response.json()) as unknown as CommandJsonResponse;
+      const json: CommandJsonResponse = (await response.json()) as CommandJsonResponse;
       return json.command_id;
     }
     throw new Error("unable to send command");
@@ -272,7 +272,7 @@ class InternalRoonWebClient implements RoonWebClient {
     });
     const response = await this.fetchRefreshed(req);
     if (response.status === 200) {
-      return (await response.json()) as unknown as RoonApiBrowseResponse;
+      return (await response.json()) as RoonApiBrowseResponse;
     } else {
       throw new Error("unable to browse content");
     }
@@ -293,7 +293,7 @@ class InternalRoonWebClient implements RoonWebClient {
     });
     const response = await this.fetchRefreshed(req);
     if (response.status === 200) {
-      return (await response.json()) as unknown as RoonApiBrowseLoadResponse;
+      return (await response.json()) as RoonApiBrowseLoadResponse;
     } else {
       throw new Error("unable to load content");
     }
@@ -562,7 +562,7 @@ export const roonWebClientFactory: RoonWebClientFactory = {
 
 const parseJson = <T>(json: string): T | undefined => {
   try {
-    return JSON.parse(json) as unknown as T;
+    return JSON.parse(json) as T;
   } catch {
     return undefined;
   }

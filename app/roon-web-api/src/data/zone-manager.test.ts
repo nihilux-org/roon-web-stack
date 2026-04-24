@@ -54,7 +54,7 @@ describe("zone-manager.ts test suite", () => {
     await vi
       .importActual<{ zoneManager: ZoneManager }>("./zone-manager")
       .then((module) => {
-        zoneManager = module.zoneManager as unknown as ZoneManager;
+        zoneManager = module.zoneManager;
       })
       .catch((err: unknown) => {
         logger.error(err);
@@ -129,7 +129,7 @@ describe("zone-manager.ts test suite", () => {
       stop: vi.fn(),
       start: vi.fn().mockImplementation(() => Promise.resolve()),
       isStarted: vi.fn().mockImplementation(() => true),
-    } as unknown as QueueManager;
+    };
     otherQueueManager = {
       queue: vi.fn().mockImplementation(() => ({
         event: "queue",
@@ -140,7 +140,7 @@ describe("zone-manager.ts test suite", () => {
       stop: vi.fn(),
       start: vi.fn().mockImplementation(() => Promise.resolve()),
       isStarted: vi.fn().mockImplementation(() => true),
-    } as unknown as QueueManager;
+    };
     yetAnotherQueueManagerIsStarted = vi.fn().mockImplementation(() => true);
     yetAnotherQueueManager = {
       queue: vi.fn().mockImplementation(() => ({
@@ -152,7 +152,7 @@ describe("zone-manager.ts test suite", () => {
       stop: vi.fn(),
       start: vi.fn().mockImplementation(() => Promise.resolve()),
       isStarted: yetAnotherQueueManagerIsStarted,
-    } as unknown as QueueManager;
+    };
     queueManagerFactoryMock.build.mockImplementation(
       (z: Zone, eventEmitter: Subject<RoonSseMessage>, queueSize: number) => {
         expect(queueSize).toEqual(1500);
@@ -235,7 +235,7 @@ describe("zone-manager.ts test suite", () => {
             .then(() => resolve());
         }
       });
-      zoneListener(server, "Subscribed", {} as unknown as RoonApiTransportZones);
+      zoneListener(server, "Subscribed", {});
     });
   });
 
@@ -248,7 +248,7 @@ describe("zone-manager.ts test suite", () => {
       stop: vi.fn(),
       start: vi.fn().mockImplementation(() => Promise.reject(error)),
       isStarted: vi.fn().mockImplementation(() => false),
-    } as unknown as QueueManager;
+    };
     await zoneManager.start();
     zoneListener(server, "Subscribed", {
       zones: [ZONE, OTHER_ZONE],
@@ -1006,7 +1006,7 @@ describe("zone-manager.ts test suite", () => {
     });
     const messages: RoonSseMessage[] = [];
     zoneManager.events().subscribe((m) => messages.push(m));
-    outputListener(server, "Changed", {} as unknown as RoonApiTransportOutputs);
+    outputListener(server, "Changed", {});
     expect(messages).toHaveLength(3);
     outputListener(server, "Changed", {
       changed_outputs: [
@@ -1065,7 +1065,7 @@ describe("zone-manager.ts test suite", () => {
         },
         ZONE.outputs[0],
       ],
-    } as unknown as RoonApiTransportOutputs);
+    });
     expect(messages).toHaveLength(4);
     expect(messages).toEqual([
       {
@@ -1777,7 +1777,7 @@ describe("zone-manager.ts test suite", () => {
           return Promise.reject(error);
         }),
         isStarted: vi.fn().mockImplementation(() => false),
-      } as unknown as QueueManager;
+      };
     });
     serverPairedListener(server);
     zoneListener(server, "Subscribed", {});
