@@ -23,7 +23,7 @@ import {
 import { Extension } from "@roon-kit";
 import { settingsOptions } from "./roon-extension-settings";
 
-export const extension_version = "0.0.13-beta-21";
+export const extension_version = "0.0.13-beta-22";
 
 const extension: RoonExtension<ExtensionSettings> = new Extension({
   description: {
