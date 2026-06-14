@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, Signal, signal, WritableSignal } from "@angular/core";
+import { Component, inject, Signal, signal, WritableSignal } from "@angular/core";
 import { MatButton } from "@angular/material/button";
 import { MatCheckbox } from "@angular/material/checkbox";
 import { MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle } from "@angular/material/dialog";
@@ -32,7 +32,6 @@ export interface GroupOutputDescription extends OutputDescription {
   ],
   templateUrl: "./zone-grouping-dialog.component.html",
   styleUrl: "./zone-grouping-dialog.component.scss",
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ZoneGroupingDialogComponent {
   private readonly _dialogRef: MatDialogRef<ZoneGroupingDialogComponent>;

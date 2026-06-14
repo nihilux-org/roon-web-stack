@@ -1,6 +1,6 @@
 import { deepEqual } from "fast-equals";
 import { CommonModule } from "@angular/common";
-import { ChangeDetectionStrategy, Component, computed, effect, inject, Signal } from "@angular/core";
+import { Component, computed, effect, inject, Signal } from "@angular/core";
 import { MatProgressSpinner } from "@angular/material/progress-spinner";
 import { ExtensionNotEnabledComponent } from "@components/extension-not-enabled/extension-not-enabled.component";
 import { FullScreenToggleComponent } from "@components/full-screen-toggle/full-screen-toggle.component";
@@ -25,7 +25,6 @@ import { SettingsService } from "@services/settings.service";
   ],
   templateUrl: "./nr-root.component.html",
   styleUrl: "./nr-root.component.scss",
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NrRootComponent {
   private readonly _dialogService: DialogService;

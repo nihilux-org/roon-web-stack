@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, Signal } from "@angular/core";
+import { Component, inject, Signal } from "@angular/core";
 import { MatButton } from "@angular/material/button";
 import { MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle } from "@angular/material/dialog";
 import { MatDivider } from "@angular/material/divider";
@@ -26,7 +26,6 @@ import { SettingsService } from "@services/settings.service";
   ],
   templateUrl: "./zone-transfer-dialog.component.html",
   styleUrl: "./zone-transfer-dialog.component.scss",
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ZoneTransferDialogComponent {
   private readonly _dialogRef: MatDialogRef<ZoneTransferDialogComponent>;

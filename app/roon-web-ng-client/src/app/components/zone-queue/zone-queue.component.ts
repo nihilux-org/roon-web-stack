@@ -3,7 +3,6 @@ import { animate, AnimationEvent, state, style, transition, trigger } from "@ang
 import { CdkFixedSizeVirtualScroll, CdkVirtualForOf, CdkVirtualScrollViewport } from "@angular/cdk/scrolling";
 import {
   AfterViewInit,
-  ChangeDetectionStrategy,
   Component,
   computed,
   HostBinding,
@@ -39,7 +38,6 @@ import { SettingsService } from "@services/settings.service";
   ],
   templateUrl: "./zone-queue.component.html",
   styleUrl: "./zone-queue.component.scss",
-  changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [
     trigger("toggleQueue", [
       state(

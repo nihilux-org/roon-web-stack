@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, Signal } from "@angular/core";
+import { Component, inject, Signal } from "@angular/core";
 import { MatIconButton } from "@angular/material/button";
 import { MatIcon } from "@angular/material/icon";
 import { FullscreenService } from "@services/fullscreen.service";
@@ -8,7 +8,6 @@ import { FullscreenService } from "@services/fullscreen.service";
   imports: [MatIcon, MatIconButton],
   templateUrl: "./full-screen-toggle.component.html",
   styleUrl: "./full-screen-toggle.component.scss",
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FullScreenToggleComponent {
   private readonly _fullScreenService: FullscreenService;

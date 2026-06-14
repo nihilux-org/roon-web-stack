@@ -7,7 +7,8 @@
       "@angular-eslint/schematics",
       "angular-eslint"
     ],
-    "packageManager": "bun"
+    "packageManager": "bun",
+    "analytics": false
   },
   "projects": {
     "@nihilux/roon-web-ng-client": {

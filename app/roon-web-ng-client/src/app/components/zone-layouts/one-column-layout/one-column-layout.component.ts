@@ -1,5 +1,5 @@
 import { NgTemplateOutlet } from "@angular/common";
-import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
+import { Component, Input } from "@angular/core";
 import { LayoutData } from "@model";
 
 @Component({
@@ -7,7 +7,6 @@ import { LayoutData } from "@model";
   imports: [NgTemplateOutlet],
   templateUrl: "./one-column-layout.component.html",
   styleUrl: "./one-column-layout.component.scss",
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OneColumnLayoutComponent {
   @Input({ required: true }) layout!: LayoutData;

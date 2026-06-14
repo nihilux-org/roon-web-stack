@@ -1,11 +1,10 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Output } from "@angular/core";
+import { Component, EventEmitter, Output } from "@angular/core";
 
 @Component({
   selector: "nr-alphabetical-index",
   imports: [],
   templateUrl: "./alphabetical-index.component.html",
   styleUrl: "./alphabetical-index.component.scss",
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AlphabeticalIndexComponent {
   @Output() clickedLetter = new EventEmitter<string>();

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, Signal } from "@angular/core";
+import { Component, inject, Signal } from "@angular/core";
 import { MatIconButton } from "@angular/material/button";
 import { MatDialogContent, MatDialogTitle } from "@angular/material/dialog";
 import { MatDivider } from "@angular/material/divider";
@@ -32,7 +32,6 @@ import { VolumeService } from "@services/volume.service";
   ],
   templateUrl: "./zone-volume-dialog.component.html",
   styleUrl: "./zone-volume-dialog.component.scss",
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ZoneVolumeDialogComponent {
   private readonly _dialogService: DialogService;

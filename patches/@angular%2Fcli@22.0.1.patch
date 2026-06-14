@@ -1,0 +1,13 @@
+diff --git a/src/utilities/node-version.js b/src/utilities/node-version.js
+index 21a5425b0c791dc70b91ccbbb0dd5470d9aab643..fbfd9083078e963affa6f3c3d63a23cc308c6a8f 100755
+--- a/src/utilities/node-version.js
++++ b/src/utilities/node-version.js
+@@ -17,7 +17,7 @@ exports.isNodeVersionMinSupported = isNodeVersionMinSupported;
+ /**
+  * The supported Node.js version for the Angular CLI.
+  */
+-const SUPPORTED_NODE_VERSIONS = '^22.22.3 || ^24.15.0 || >=26.0.0';
++const SUPPORTED_NODE_VERSIONS = '^22.22.3 || ^24.3.0 || >=26.0.0';
+ /**
+  * The supported Node.js versions.
+  */

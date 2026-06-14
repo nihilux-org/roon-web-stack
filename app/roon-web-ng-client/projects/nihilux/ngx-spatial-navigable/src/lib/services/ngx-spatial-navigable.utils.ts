@@ -60,7 +60,7 @@ const containerRememberChildId = (container: HTMLElement): boolean => {
   return container.getAttribute(dataRememberLastFocusedChildId) !== "false";
 };
 
-const getFocusables = (scope: HTMLElement | null): HTMLElement[] => {
+const getFocusable = (scope: HTMLElement | null): HTMLElement[] => {
   if (!scope) {
     return [];
   }
@@ -73,12 +73,12 @@ const getFocusables = (scope: HTMLElement | null): HTMLElement[] => {
     .filter((node) => parseInt(node.getAttribute("tabindex") ?? "0", 10) > -1);
 };
 
-const getAllFocusables = (scope: HTMLElement): HTMLElement[] => {
+const getAllFocusable = (scope: HTMLElement): HTMLElement[] => {
   const contained = new Set<HTMLElement>();
   const containers = toArray(scope.querySelectorAll(containerSelector)).filter((container) => {
     const containerRemembersChildId = containerRememberChildId(container);
     if (containerRemembersChildId) {
-      const inContainer = getFocusables(container);
+      const inContainer = getFocusable(container);
       if (inContainer.length > 0) {
         inContainer.forEach((focusable) => contained.add(focusable));
         return true;
@@ -86,8 +86,8 @@ const getAllFocusables = (scope: HTMLElement): HTMLElement[] => {
     }
     return false;
   });
-  const focusables = getFocusables(scope).filter((focusable) => !contained.has(focusable));
-  return [...containers, ...focusables];
+  const focusable = getFocusable(scope).filter((focusable) => !contained.has(focusable));
+  return [...containers, ...focusable];
 };
 
 const collectContainers = (initialContainer: HTMLElement | null): HTMLElement[] => {
@@ -258,7 +258,7 @@ const getParentFocusableContainer = (startingCandidate: HTMLElement | null): HTM
 export const getNextFocus = (elem: HTMLElement | null, exitDir: Direction, scope: HTMLElement | null) => {
   scope ??= document.body;
   if (!elem) {
-    return getFocusables(scope)[0];
+    return getFocusable(scope)[0];
   }
   const focusable = findNextFocusable(elem, exitDir, scope);
   if (focusable) {
@@ -300,11 +300,11 @@ const findNextFocusable = (elem: HTMLElement, exitDir: Direction, scope: HTMLEle
     parentContainer?.getAttribute(dataContainerPrioritizedChildrenAttribute) !== "false" &&
     scope.contains(parentContainer)
   ) {
-    const focusableSiblings = getAllFocusables(parentContainer!);
+    const focusableSiblings = getAllFocusable(parentContainer!);
     focusableCandidates = sortValidCandidates(focusableSiblings, elem, exitDir);
   }
   if (focusableCandidates.length === 0) {
-    const candidates = getAllFocusables(scope);
+    const candidates = getAllFocusable(scope);
     focusableCandidates = sortValidCandidates(candidates, elem, exitDir);
   }
   for (const candidate of focusableCandidates) {
@@ -323,7 +323,7 @@ const findNextFocusable = (elem: HTMLElement, exitDir: Direction, scope: HTMLEle
         // are already nested in
         const lastActiveChildId = candidateContainer.getAttribute(dataContainerLastFocusChildId);
         const lastActiveChild = lastActiveChildId ? document.getElementById(lastActiveChildId) : null;
-        const newFocus = lastActiveChild ?? getFocusables(candidateContainer)[0];
+        const newFocus = lastActiveChild ?? getFocusable(candidateContainer)[0];
         getParentFocusableContainer(candidateContainer)?.setAttribute(dataContainerLastFocusChildId, newFocus.id);
         candidateContainer.setAttribute(dataContainerLastFocusChildId, newFocus.id);
         return newFocus;

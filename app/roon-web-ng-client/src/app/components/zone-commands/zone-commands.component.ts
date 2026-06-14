@@ -1,6 +1,6 @@
 import { deepEqual } from "fast-equals";
 import { NgTemplateOutlet } from "@angular/common";
-import { ChangeDetectionStrategy, Component, computed, inject, Input, Signal, TemplateRef } from "@angular/core";
+import { Component, computed, inject, Input, Signal, TemplateRef } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { ZoneSelectorComponent } from "@components/zone-selector/zone-selector.component";
@@ -21,7 +21,6 @@ import { SettingsService } from "@services/settings.service";
   ],
   templateUrl: "./zone-commands.component.html",
   styleUrl: "./zone-commands.component.scss",
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ZoneCommandsComponent {
   private readonly _roonService: RoonService;

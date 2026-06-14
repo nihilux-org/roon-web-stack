@@ -1,5 +1,5 @@
 import { deepEqual } from "fast-equals";
-import { ChangeDetectionStrategy, Component, computed, inject, Signal } from "@angular/core";
+import { Component, computed, inject, Signal } from "@angular/core";
 import { ZoneActionsComponent } from "@components/zone-actions/zone-actions.component";
 import { ZoneCommandsComponent } from "@components/zone-commands/zone-commands.component";
 import { ZoneCurrentTrackComponent } from "@components/zone-current-track/zone-current-track.component";
@@ -43,7 +43,6 @@ import { SettingsService } from "@services/settings.service";
   ],
   templateUrl: "./zone-container.component.html",
   styleUrl: "./zone-container.component.scss",
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ZoneContainerComponent {
   private readonly _settingsService: SettingsService;

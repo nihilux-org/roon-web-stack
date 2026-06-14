@@ -1,14 +1,5 @@
 import { deepEqual } from "fast-equals";
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  OnInit,
-  Signal,
-  signal,
-  WritableSignal,
-} from "@angular/core";
+import { Component, computed, inject, OnInit, Signal, signal, WritableSignal } from "@angular/core";
 import { MatButton, MatIconButton } from "@angular/material/button";
 import {
   MAT_DIALOG_DATA,
@@ -51,7 +42,6 @@ import { SettingsService } from "@services/settings.service";
   ],
   templateUrl: "./roon-browse-dialog.component.html",
   styleUrl: "./roon-browse-dialog.component.scss",
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RoonBrowseDialogComponent implements OnInit {
   private static readonly TITLES_WITH_INDEX = ["Albums", "Artists", "Composers", "My Live Radio", "Playlists", "Tags"];

@@ -1,16 +1,5 @@
 import { deepEqual } from "fast-equals";
-import {
-  booleanAttribute,
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  effect,
-  inject,
-  Input,
-  input,
-  Signal,
-  ViewChild,
-} from "@angular/core";
+import { booleanAttribute, Component, computed, effect, inject, Input, input, Signal, ViewChild } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { MatMenuModule, MatMenuTrigger } from "@angular/material/menu";
@@ -25,7 +14,6 @@ import { SettingsService } from "@services/settings.service";
   imports: [MatButtonModule, MatIconModule, MatMenuModule],
   templateUrl: "./zone-selector.component.html",
   styleUrl: "./zone-selector.component.scss",
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ZoneSelectorComponent {
   @Input({ required: false, transform: booleanAttribute }) withoutLabel: boolean;

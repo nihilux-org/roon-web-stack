@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, Signal, signal } from "@angular/core";
+import { Component, inject, Signal, signal } from "@angular/core";
 import { MatButton, MatFabButton } from "@angular/material/button";
 import {
   MatDialogActions,
@@ -39,7 +39,6 @@ interface RecordableHierarchy {
   ],
   templateUrl: "./custom-action-recorder.component.html",
   styleUrl: "./custom-action-recorder.component.scss",
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CustomActionRecorderComponent {
   readonly recordableHierarchies: RecordableHierarchy[] = [

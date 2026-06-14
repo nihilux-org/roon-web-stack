@@ -1,16 +1,6 @@
 import { animate, animateChild, group, query, state, style, transition, trigger } from "@angular/animations";
 import { NgTemplateOutlet } from "@angular/common";
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  effect,
-  inject,
-  Input,
-  OnDestroy,
-  OnInit,
-  Signal,
-} from "@angular/core";
+import { Component, computed, effect, inject, Input, OnDestroy, OnInit, Signal } from "@angular/core";
 import { MatIconButton } from "@angular/material/button";
 import { MatRipple } from "@angular/material/core";
 import { MatIcon } from "@angular/material/icon";
@@ -34,7 +24,6 @@ import { SettingsService } from "@services/settings.service";
   ],
   templateUrl: "./ten-feet-layout.component.html",
   styleUrl: "./ten-feet-layout.component.scss",
-  changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [
     trigger("zoneImage", [
       state(

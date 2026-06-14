@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, Signal } from "@angular/core";
+import { Component, computed, inject, Signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MatButton } from "@angular/material/button";
 import { MatFormFieldModule, MatLabel } from "@angular/material/form-field";
@@ -25,7 +25,6 @@ import { SettingsService } from "@services/settings.service";
   ],
   templateUrl: "./custom-action-editor.component.html",
   styleUrl: "./custom-action-editor.component.scss",
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CustomActionEditorComponent {
   private readonly _customActionsService: CustomActionsService;

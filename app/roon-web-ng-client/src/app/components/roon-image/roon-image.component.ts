@@ -1,12 +1,11 @@
 import { IMAGE_LOADER, ImageLoaderConfig, NgOptimizedImage } from "@angular/common";
-import { booleanAttribute, ChangeDetectionStrategy, Component, Input, numberAttribute, OnInit } from "@angular/core";
+import { booleanAttribute, Component, Input, numberAttribute, OnInit } from "@angular/core";
 
 @Component({
   selector: "nr-roon-image",
   imports: [NgOptimizedImage],
   templateUrl: "./roon-image.component.html",
   styleUrl: "./roon-image.component.scss",
-  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     {
       provide: IMAGE_LOADER,
