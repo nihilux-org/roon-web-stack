@@ -1,9 +1,7 @@
-import { inject, Injectable, OnDestroy, Signal, signal, WritableSignal } from "@angular/core";
+import { inject, OnDestroy, Service, Signal, signal, WritableSignal } from "@angular/core";
 import { NgxSpatialNavigableService } from "@nihilux/ngx-spatial-navigable";
 
-@Injectable({
-  providedIn: "root",
-})
+@Service()
 export class IdleService implements OnDestroy {
   private static readonly IDLE_TIME = 7000;
   private readonly _spatialNavigableService: NgxSpatialNavigableService;

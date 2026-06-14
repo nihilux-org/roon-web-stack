@@ -1,9 +1,7 @@
 import { DOCUMENT } from "@angular/common";
-import { inject, Injectable, OnDestroy, Signal, signal, WritableSignal } from "@angular/core";
+import { inject, OnDestroy, Service, Signal, signal, WritableSignal } from "@angular/core";
 
-@Injectable({
-  providedIn: "root",
-})
+@Service()
 export class FullscreenService implements OnDestroy {
   private readonly _document: Document;
 

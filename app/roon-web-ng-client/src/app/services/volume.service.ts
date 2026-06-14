@@ -1,5 +1,5 @@
 import { deepEqual } from "fast-equals";
-import { computed, inject, Injectable, Signal } from "@angular/core";
+import { computed, inject, Service, Signal } from "@angular/core";
 import {
   CommandType,
   MuteCommand,
@@ -14,9 +14,7 @@ import {
 import { RoonService } from "@services/roon.service";
 import { SettingsService } from "@services/settings.service";
 
-@Injectable({
-  providedIn: "root",
-})
+@Service()
 export class VolumeService {
   private readonly _roonService: RoonService;
   private readonly _$displayedZoneId: Signal<string>;

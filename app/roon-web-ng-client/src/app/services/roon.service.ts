@@ -2,7 +2,7 @@ import { deepEqual } from "fast-equals";
 import { DeviceDetectorService } from "ngx-device-detector";
 import { Observable } from "rxjs";
 import { DOCUMENT } from "@angular/common";
-import { computed, inject, Injectable, OnDestroy, Signal, signal, WritableSignal } from "@angular/core";
+import { computed, inject, OnDestroy, Service, Signal, signal, WritableSignal } from "@angular/core";
 import {
   ApiResultCallback,
   BrowseApiResult,
@@ -50,9 +50,7 @@ import { ROON_WORKER } from "@services/roon.worker.provider";
 import { SettingsService } from "@services/settings.service";
 import { VisibilityService } from "@services/visibility.service";
 
-@Injectable({
-  providedIn: "root",
-})
+@Service()
 export class RoonService implements OnDestroy {
   private static readonly THIS_IS_A_BUG_ERROR_MSG = "this is a bug!";
 
@@ -641,3 +639,5 @@ export class RoonService implements OnDestroy {
     return this._workerApiRequestId++;
   }
 }
+
+export default RoonService;
