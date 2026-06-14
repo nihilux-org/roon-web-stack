@@ -39,7 +39,7 @@ export class IdleService implements OnDestroy {
   private refreshIdleTimeout() {
     this.stopIdleTimeout();
     this._idleTimeoutId = setTimeout(() => {
-      this._$isIdle.set(false);
+      this._$isIdle.set(true);
       this._spatialNavigableService.resetSpatialNavigation();
     }, IdleService.IDLE_TIME);
   }

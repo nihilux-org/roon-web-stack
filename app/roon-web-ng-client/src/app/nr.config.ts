@@ -1,5 +1,6 @@
 import { ApplicationConfig, inject, provideAppInitializer, provideZonelessChangeDetection } from "@angular/core";
 import { MatIconRegistry } from "@angular/material/icon";
+import { provideAnimationsAsync } from "@angular/platform-browser/animations/async";
 import { RoonService } from "@services/roon.service";
 import { provideRoonWorker } from "@services/roon.worker.provider";
 
@@ -13,6 +14,7 @@ const useMaterialSymbol = (iconRegistry: MatIconRegistry) => {
 
 export const nrConfig: ApplicationConfig = {
   providers: [
+    provideAnimationsAsync(),
     provideZonelessChangeDetection(),
     provideRoonWorker(),
     provideAppInitializer(() => {
