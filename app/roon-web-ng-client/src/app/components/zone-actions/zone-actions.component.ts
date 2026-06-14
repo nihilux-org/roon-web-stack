@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, Input, Signal, TemplateRef } from "@angular/core";
+import { Component, computed, inject, Input, Signal, TemplateRef } from "@angular/core";
 import { MatButton, MatIconButton } from "@angular/material/button";
 import { MatDialogConfig } from "@angular/material/dialog";
 import { MatIcon } from "@angular/material/icon";
@@ -28,7 +28,6 @@ import { SettingsService } from "@services/settings.service";
   imports: [MatButton, MatIcon, MatIconButton, FullScreenToggleComponent],
   templateUrl: "./zone-actions.component.html",
   styleUrl: "./zone-actions.component.scss",
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ZoneActionsComponent {
   @Input({ required: true }) queueComponentTemplateRef!: TemplateRef<LayoutContext>;

@@ -1,5 +1,5 @@
 import { deepEqual } from "fast-equals";
-import { ChangeDetectionStrategy, Component, computed, Input, Signal } from "@angular/core";
+import { Component, computed, Input, Signal } from "@angular/core";
 import { RoonImageComponent } from "@components/roon-image/roon-image.component";
 import { EMPTY_TRACK, TrackDisplay, TrackImage } from "@model";
 
@@ -8,7 +8,6 @@ import { EMPTY_TRACK, TrackDisplay, TrackImage } from "@model";
   imports: [RoonImageComponent],
   templateUrl: "./zone-image.component.html",
   styleUrl: "./zone-image.component.scss",
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ZoneImageComponent {
   protected readonly EMPTY_TRACK = EMPTY_TRACK;

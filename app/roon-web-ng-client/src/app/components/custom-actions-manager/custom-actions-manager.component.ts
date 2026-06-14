@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, Signal } from "@angular/core";
+import { Component, computed, inject, Signal } from "@angular/core";
 import { MatButton, MatIconButton } from "@angular/material/button";
 import { MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogTitle } from "@angular/material/dialog";
 import { MatIcon } from "@angular/material/icon";
@@ -33,7 +33,6 @@ import { SettingsService } from "@services/settings.service";
   ],
   templateUrl: "./custom-actions-manager.component.html",
   styleUrl: "./custom-actions-manager.component.scss",
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CustomActionsManagerComponent {
   private readonly _dialogService: DialogService;

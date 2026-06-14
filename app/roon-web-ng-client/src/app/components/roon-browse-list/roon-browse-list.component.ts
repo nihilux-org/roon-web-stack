@@ -4,7 +4,6 @@ import { CdkFixedSizeVirtualScroll, CdkVirtualForOf, CdkVirtualScrollViewport } 
 import {
   AfterViewChecked,
   booleanAttribute,
-  ChangeDetectionStrategy,
   Component,
   computed,
   EventEmitter,
@@ -69,7 +68,6 @@ interface MenuTriggerData {
   ],
   templateUrl: "./roon-browse-list.component.html",
   styleUrl: "./roon-browse-list.component.scss",
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RoonBrowseListComponent implements OnChanges, AfterViewChecked {
   private static readonly SUBTITLE_SPLITTER = /\s?\/?\s?\[\[\d*\|/;

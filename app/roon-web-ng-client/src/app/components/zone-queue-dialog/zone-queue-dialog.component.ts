@@ -1,6 +1,6 @@
 import { Subscription } from "rxjs";
 import { NgTemplateOutlet } from "@angular/common";
-import { ChangeDetectionStrategy, Component, inject, OnDestroy, TemplateRef } from "@angular/core";
+import { Component, inject, OnDestroy, TemplateRef } from "@angular/core";
 import { MatButton } from "@angular/material/button";
 import { MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogRef } from "@angular/material/dialog";
 import { MatIcon } from "@angular/material/icon";
@@ -12,7 +12,6 @@ import { SettingsService } from "@services/settings.service";
   imports: [MatButton, MatDialogActions, MatDialogContent, MatIcon, NgTemplateOutlet],
   templateUrl: "./zone-queue-dialog.component.html",
   styleUrl: "./zone-queue-dialog.component.scss",
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ZoneQueueDialogComponent implements OnDestroy {
   private readonly _dialogRef: MatDialogRef<ZoneQueueDialogComponent>;

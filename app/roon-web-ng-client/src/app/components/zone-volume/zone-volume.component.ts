@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, Signal, ViewChild } from "@angular/core";
+import { Component, computed, inject, Signal, ViewChild } from "@angular/core";
 import { MatButtonModule, MatIconButton } from "@angular/material/button";
 import { MatRipple } from "@angular/material/core";
 import { MatIconModule } from "@angular/material/icon";
@@ -26,7 +26,6 @@ import { VolumeService } from "@services/volume.service";
   ],
   templateUrl: "./zone-volume.component.html",
   styleUrl: "./zone-volume.component.scss",
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ZoneVolumeComponent {
   @ViewChild("volumeButton") _volumeButton!: MatIconButton;

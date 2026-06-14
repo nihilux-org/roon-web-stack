@@ -1,5 +1,5 @@
 import { CdkDrag, CdkDragDrop, CdkDragHandle, CdkDropList, moveItemInArray } from "@angular/cdk/drag-drop";
-import { ChangeDetectionStrategy, Component, computed, effect, inject, Signal } from "@angular/core";
+import { Component, computed, effect, inject, Signal } from "@angular/core";
 import { MatButton, MatIconButton } from "@angular/material/button";
 import {
   MAT_DIALOG_DATA,
@@ -62,7 +62,6 @@ import { SettingsService } from "@services/settings.service";
   ],
   templateUrl: "./settings-dialog.component.html",
   styleUrl: "./settings-dialog.component.scss",
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SettingsDialogComponent {
   private readonly _dialogRef: MatDialogRef<SettingsDialogComponent>;
