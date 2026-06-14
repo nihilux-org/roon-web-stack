@@ -1,12 +1,10 @@
 import { nanoid } from "nanoid";
-import { computed, inject, Injectable, Signal, signal, WritableSignal } from "@angular/core";
+import { computed, inject, Service, Signal, signal, WritableSignal } from "@angular/core";
 import { ActionType, CustomAction, EditedCustomAction, SharedCustomActions } from "@model";
 import { NgxSpatialNavigableService } from "@nihilux/ngx-spatial-navigable";
 import { CommandType, RoonApiBrowseHierarchy, SharedConfigCommand } from "@nihilux/roon-web-model";
 
-@Injectable({
-  providedIn: "root",
-})
+@Service()
 export class CustomActionsService {
   private readonly _spatialNavigationService: NgxSpatialNavigableService;
   private readonly _$customActions: WritableSignal<CustomAction[]>;

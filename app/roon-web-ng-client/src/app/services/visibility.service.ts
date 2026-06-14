@@ -1,5 +1,5 @@
 import { DOCUMENT } from "@angular/common";
-import { inject, Injectable, OnDestroy } from "@angular/core";
+import { inject, OnDestroy, Service } from "@angular/core";
 import { VisibilityListener, VisibilityState } from "@model";
 
 interface VisibilityEvent {
@@ -7,9 +7,7 @@ interface VisibilityEvent {
   time: number;
 }
 
-@Injectable({
-  providedIn: "root",
-})
+@Service()
 export class VisibilityService implements OnDestroy {
   private readonly _document: Document;
   private readonly _eventsToListen = ["pageshow", "pagehide"];

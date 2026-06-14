@@ -1,13 +1,11 @@
 import { ComponentType } from "@angular/cdk/overlay";
-import { inject, Injectable, Signal } from "@angular/core";
+import { inject, Service, Signal } from "@angular/core";
 import { MatDialog, MatDialogConfig, MatDialogRef } from "@angular/material/dialog";
 import { NgxSpatialNavigableService } from "@nihilux/ngx-spatial-navigable";
 import { IdleService } from "@services/idle.service";
 import { SettingsService } from "@services/settings.service";
 
-@Injectable({
-  providedIn: "root",
-})
+@Service()
 export class DialogService {
   private readonly _dialog: MatDialog;
   private readonly _idleService: IdleService;

@@ -7,10 +7,10 @@ import {
   effect,
   EffectRef,
   inject,
-  Injectable,
   OnDestroy,
   Renderer2,
   RendererFactory2,
+  Service,
   Signal,
   signal,
   WritableSignal,
@@ -30,9 +30,7 @@ import {
 } from "@model";
 import { CustomActionsService } from "@services/custom-actions.service";
 
-@Injectable({
-  providedIn: "root",
-})
+@Service()
 export class SettingsService implements OnDestroy {
   private static readonly SMALL_TABLET_LANDSCAPE =
     "(max-width: 1000px) and (max-height: 800px) and (orientation: landscape)";
