@@ -1,4 +1,5 @@
 import {
+  AudioInputSession,
   AudioInputSessionManager,
   ExtensionSettings,
   RoonApiAudioInputSession,
@@ -29,15 +30,16 @@ export class RoonAudioInputSessionManager implements AudioInputSessionManager {
     return this._currentSessions.has(zone_id);
   }
 
-  public async play(zone_id: string, url: string, display_name: string = "Roon Audio Input", info?: RoonAudioInputTrackInfo): Promise<void> {
+  public async play(audioInputSession: AudioInputSession): Promise<void> {
+    const { zone_id, url,  display_name, icon_url, info } = audioInputSession;
     const currentSession = this._currentSessions.get(zone_id);
     await currentSession?.session.end();
     const server = await this._roonExtension.get_core();
     return server.services.RoonApiAudioInput.begin_session(
       {
         zone_id,
-        display_name,
-        icon_url: "",
+        display_name: display_name ?? "Roon Audio Input",
+        icon_url: icon_url ?? "",
       },
       this.sessionListener(zone_id, info)
     ).then((session) => {
@@ -97,7 +99,7 @@ export class RoonAudioInputSessionManager implements AudioInputSessionManager {
                     case "MediaError":
                     case "ZoneLost":
                     case "ZoneNotFound":
-                      void this.end_session(zone_id).catch((error) => {
+                      void this.end_session(zone_id).catch((_) => {
                         // do nothing
                       });
                       break;
@@ -105,7 +107,7 @@ export class RoonAudioInputSessionManager implements AudioInputSessionManager {
                 }
               );
             })
-            .catch((error) => {
+            .catch((_) => {
               // do nothing
             });
           break;
@@ -114,7 +116,7 @@ export class RoonAudioInputSessionManager implements AudioInputSessionManager {
           break;
         case "ZoneNotFound":
         case "ZoneLost":
-          currentSession.session.end().catch((error) => {
+          currentSession.session.end().catch((_) => {
             // do nothing
           });
       }

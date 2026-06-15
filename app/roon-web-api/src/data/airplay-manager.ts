@@ -40,11 +40,11 @@ class InternalAirplayManager implements AirplayManager {
 
   private _start = async (airplaySession: AirplaySession): Promise<void> => {
     const line1 = "Roon Airplay";
-    await this.audioInputSessionManager?.play(
-      airplaySession.zone_id,
-      airplaySession.airplay_stream_url,
-      "Roon Airplay",
-      {
+    const audioInputSession = {
+      zone_id: airplaySession.zone_id,
+      url: airplaySession.airplay_stream_url,
+      display_name: "Roon Airplay",
+      info: {
         is_seek_allowed: false,
         is_pause_allowed: false,
         one_line: {
@@ -56,8 +56,9 @@ class InternalAirplayManager implements AirplayManager {
         three_line: {
           line1,
         },
-      }
-    );
+      },
+    };
+    await this.audioInputSessionManager?.play(audioInputSession);
     this.airplaySession = airplaySession;
   };
 

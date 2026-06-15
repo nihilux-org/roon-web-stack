@@ -24,7 +24,6 @@ describe("airplay-manager.ts test suite", () => {
       settings: vi.fn().mockReturnValue({
         nr_airplay_state: "enabled",
         nr_airplay_zone: test_zone_id,
-        nr_airplay_stream_url: "http://test-host:42/airplay",
         nr_audio_input_zones: [],
         nr_audio_input_default_zone: "",
         nr_audio_input_state: "disabled",
@@ -61,17 +60,22 @@ describe("airplay-manager.ts test suite", () => {
 
     await airplayManager.start(airplay_stream_url);
 
-    expect(audioInputSessionManagerMock.play).toHaveBeenCalledWith(test_zone_id, airplay_stream_url, "Roon Airplay", {
-      is_pause_allowed: false,
-      is_seek_allowed: false,
-      one_line: {
-        line1: "Roon Airplay",
-      },
-      two_line: {
-        line1: "Roon Airplay",
-      },
-      three_line: {
-        line1: "Roon Airplay",
+    expect(audioInputSessionManagerMock.play).toHaveBeenCalledWith({
+      zone_id: test_zone_id,
+      url: airplay_stream_url,
+      display_name: "Roon Airplay",
+      info: {
+        is_seek_allowed: false,
+        is_pause_allowed: false,
+        one_line: {
+          line1: "Roon Airplay",
+        },
+        two_line: {
+          line1: "Roon Airplay",
+        },
+        three_line: {
+          line1: "Roon Airplay",
+        },
       },
     });
     await airplayManager.stop();
@@ -249,23 +253,30 @@ describe("airplay-manager.ts test suite", () => {
   describe("transferAirplayZone", () => {
     it("should call stop then start with new zone_id when transferring airplay zone", async () => {
       const airplay_stream_url = "http://test-host:42/airplay";
+      const new_zone_id = "new_zone_id";
       await airplayManager.start(airplay_stream_url);
 
-      await airplayManager.transferAirplayZone("new_zone_id");
+      await airplayManager.transferAirplayZone(new_zone_id);
 
       expect(audioInputSessionManagerMock.end_session).toHaveBeenCalledWith(test_zone_id);
-      expect(audioInputSessionManagerMock.play).toHaveBeenCalledWith(
-        "new_zone_id",
-        airplay_stream_url,
-        "Roon Airplay",
-        {
-          is_pause_allowed: false,
+      expect(audioInputSessionManagerMock.play).toHaveBeenCalledWith({
+        zone_id: new_zone_id,
+        url: airplay_stream_url,
+        display_name: "Roon Airplay",
+        info: {
           is_seek_allowed: false,
-          one_line: { line1: "Roon Airplay" },
-          two_line: { line1: "Roon Airplay" },
-          three_line: { line1: "Roon Airplay" },
-        }
-      );
+          is_pause_allowed: false,
+          one_line: {
+            line1: "Roon Airplay",
+          },
+          two_line: {
+            line1: "Roon Airplay",
+          },
+          three_line: {
+            line1: "Roon Airplay",
+          },
+        },
+      });
       await airplayManager.stop();
     });
 

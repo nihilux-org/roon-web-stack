@@ -250,6 +250,12 @@ function proxyTransport(transport: RoonApiTransport): RoonApiTransport {
   });
 }
 
+interface AudioInputSessionResponse {
+  headers: Record<string, string>;
+  verb: "REQUEST" | "CONTINUE" | "COMPLETE";
+  name: string;
+}
+
 function proxyAudioInput(audioInput: RoonApiAudioInput) {
   return new Proxy(audioInput, {
     get(t, p, r) {
@@ -274,16 +280,18 @@ function proxyAudioInput(audioInput: RoonApiAudioInput) {
           };
           break;
         case "clear":
-        case "update_track_info":
         case "update_transport_info":
+        case "update_track_info":
           fn = v;
           v = (...args: any[]) => {
             return new Promise<void>((resolve, reject) => {
-              args.push((err: string | false) => {
-                if (err) {
-                  reject(err);
-                } else {
-                  resolve();
+              args.push((res: AudioInputSessionResponse) => {
+                if (res.verb === "CONTINUE") {
+                  if (res.name === "Success") {
+                    resolve();
+                  } else {
+                    reject(res.name);
+                  }
                 }
               });
               fn.apply(t, args);

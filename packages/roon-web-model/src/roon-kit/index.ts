@@ -583,8 +583,16 @@ export interface RoonApiAudioInput {
   update_transport_controls(controls: RoonAudioInputTransportOptions): Promise<void>;
 }
 
+export interface AudioInputSession {
+  zone_id: string;
+  url: string;
+  display_name?: string;
+  icon_url?: string;
+  info?: RoonAudioInputTrackInfo;
+}
+
 export interface AudioInputSessionManager {
-  play(zone_id: string, url: string, display_name?: string, info?: RoonAudioInputTrackInfo): Promise<void>;
+  play(audioInputSession: AudioInputSession): Promise<void>;
   update_track_info(zone_id: string, info: RoonAudioInputTrackInfoUpdate): Promise<void>;
   end_session(zone_id: string): Promise<void>;
   has_session(zone_id: string): boolean;
