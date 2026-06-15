@@ -286,7 +286,7 @@ function proxyAudioInput(audioInput: RoonApiAudioInput) {
           v = (...args: any[]) => {
             return new Promise<void>((resolve, reject) => {
               args.push((res: AudioInputSessionResponse) => {
-                if (res.verb === "CONTINUE") {
+                if (res.verb === "COMPLETE") {
                   if (res.name === "Success") {
                     resolve();
                   } else {
