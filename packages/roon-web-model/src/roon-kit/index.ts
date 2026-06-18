@@ -52,7 +52,7 @@ export interface WSConnectOptions {
   onclose?: () => void;
 }
 
-export type RoonSubscriptionResponse = "Subscribed" | "Changed" | "Unsubscribed";
+export type RoonSubscriptionResponse = "Subscribed" | "Changed" | "Unsubscribed" | "NetworkError" | "ZoneNotFound";
 
 export interface RoonApi {
   // constructor(options: RoonApiOptions);
