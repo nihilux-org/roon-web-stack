@@ -1,21 +1,22 @@
-import { loggerMock, retryMock } from "@mock";
+import { loggerMock, nanoidMock, retryMock } from "@mock";
 import { roonMock } from "../infrastructure/roon-extension.mock";
 import { dataConverterMock } from "./data-converter.mock";
 import { queueBotMock } from "./queue-bot-manager.mock";
 
 import { Subject } from "rxjs";
-import { Mock } from "vitest";
+import { expect, Mock } from "vitest";
 import {
   Queue,
   QueueChange,
   QueueItem,
-  QueueListener,
+  QueueListenerCallback,
   QueueState,
   QueueTrack,
   RoonApiBrowse,
   RoonApiImage,
   RoonApiTransport,
   RoonApiTransportQueue,
+  RoonApiTransportZones,
   RoonServer,
   RoonSseMessage,
   RoonSubscriptionResponse,
@@ -25,20 +26,24 @@ import { queueManagerFactory } from "./queue-manager";
 
 describe("queue-manager.ts test suite", () => {
   let roonSubject: Subject<RoonSseMessage>;
+  let queueListener: QueueListenerCallback;
   let RoonApiBrowse: RoonApiBrowse;
   let RoonApiImage: RoonApiImage;
-  let queueListener: QueueListener;
+  let get_zones: Mock;
   let subscribe_queue: Mock;
   let RoonApiTransport: RoonApiTransport;
   let server: RoonServer;
+  let nanoidCounter: number;
 
   beforeEach(() => {
     roonSubject = new Subject<RoonSseMessage>();
     RoonApiBrowse = vi.mocked({}) as unknown as RoonApiBrowse;
     RoonApiImage = vi.mocked({}) as unknown as RoonApiImage;
+    get_zones = vi.fn();
     subscribe_queue = vi.fn();
     RoonApiTransport = vi.mocked({
       subscribe_queue,
+      get_zones,
     }) as unknown as RoonApiTransport;
     server = {
       services: {
@@ -48,7 +53,7 @@ describe("queue-manager.ts test suite", () => {
       },
     } as unknown as RoonServer;
     roonMock.server.mockImplementation(() => Promise.resolve(server));
-    subscribe_queue.mockImplementation((z: Zone, queueSize: number, listener: QueueListener) => {
+    subscribe_queue.mockImplementation((z: Zone, queueSize: number, listener: QueueListenerCallback) => {
       queueListener = listener;
       queueListener("Subscribed", {
         items: [queueItem],
@@ -73,6 +78,12 @@ describe("queue-manager.ts test suite", () => {
       };
     });
     retryMock.retryDecorator.mockImplementation((a) => a as unknown);
+    nanoidCounter = 0;
+    nanoidMock.mockImplementation(() => {
+      const id = `${nanoidCounter}`;
+      nanoidCounter++;
+      return id;
+    });
   });
 
   afterEach(() => {
@@ -109,7 +120,9 @@ describe("queue-manager.ts test suite", () => {
     });
     const queueManager = queueManagerFactory.build(ZONE, roonSubject, QUEUE_SIZE);
     const queueManagerPromise = queueManager.start();
-    await expect(queueManagerPromise).rejects.toEqual(new Error("unknown queue event error"));
+    await expect(queueManagerPromise).rejects.toEqual(
+      new Error(`unknown error during subscription for zone ${ZONE.zone_id}`)
+    );
     expect(retryMock.retryDecorator).toHaveBeenCalledTimes(1);
     expect(retryMock.retryDecorator).toHaveBeenCalledWith(expect.anything(), {
       delay: 3500,
@@ -119,7 +132,7 @@ describe("queue-manager.ts test suite", () => {
   });
 
   it("QueueManager#start should return a rejected Promise if the underlying roon API return an unknown event before 'Subscribed'", async () => {
-    subscribe_queue.mockImplementation((z: Zone, queueSize: number, listener: QueueListener) => {
+    subscribe_queue.mockImplementation((z: Zone, queueSize: number, listener: QueueListenerCallback) => {
       queueListener = listener;
       queueListener("Unknown" as RoonSubscriptionResponse, {
         items: [queueItem],
@@ -209,7 +222,7 @@ describe("queue-manager.ts test suite", () => {
     roonSubject.subscribe((qm) => {
       messages.push(qm);
     });
-    subscribe_queue.mockImplementation((z: Zone, queueSize: number, listener: QueueListener) => {
+    subscribe_queue.mockImplementation((z: Zone, queueSize: number, listener: QueueListenerCallback) => {
       queueListener = listener;
       queueListener("Subscribed", {});
     });
@@ -271,6 +284,137 @@ describe("queue-manager.ts test suite", () => {
     expect(queueManager.isStarted()).toEqual(true);
     queueManager.stop();
     expect(queueManager.isStarted()).toEqual(false);
+  });
+
+  it("QueueManager should restart its subscription on NetworkError and ZOneNotFound events", async () => {
+    get_zones.mockImplementation(() => {
+      return new Promise<RoonApiTransportZones>((resolve) => {
+        resolve({
+          zones: [ZONE],
+        });
+      });
+    });
+    const queueManager = queueManagerFactory.build(ZONE, roonSubject, QUEUE_SIZE);
+    await queueManager.start();
+    const restartSpy = vi.spyOn(queueManager, "restart");
+    restartSpy.mockImplementation(async () => {
+      // do nothing
+    });
+    queueListener("NetworkError", {});
+    expect(restartSpy).toHaveBeenCalledTimes(1);
+    queueListener("ZoneNotFound", {});
+    expect(restartSpy).toHaveBeenCalledTimes(2);
+  });
+
+  it("QueueManager should discard past ghost subscription ", async () => {
+    const messages: RoonSseMessage[] = [];
+    roonSubject.subscribe((qm) => {
+      messages.push(qm);
+    });
+    const queueManager = queueManagerFactory.build(ZONE, roonSubject, QUEUE_SIZE);
+    await queueManager.start();
+    let newQueueListener: QueueListenerCallback;
+    subscribe_queue.mockImplementation((z: Zone, queueSize: number, listener: QueueListenerCallback) => {
+      newQueueListener = listener;
+      newQueueListener("Subscribed", {
+        items: [queueItem],
+      });
+    });
+    await queueManager.start();
+    expect(messages).toHaveLength(2);
+    queueListener("Changed", {
+      items: [queueItem],
+    });
+    expect(messages).toHaveLength(2);
+  });
+
+  it("QueueManager#restart should register call QueueManager#start and register a new QueueListenerCallback if current zone is still available", async () => {
+    get_zones.mockImplementation(async () => {
+      return Promise.resolve({
+        zones: [ZONE],
+      });
+    });
+    const queueManager = queueManagerFactory.build(ZONE, roonSubject, QUEUE_SIZE);
+    const startSpy = vi.spyOn(queueManager, "start");
+    await queueManager.start();
+    let newQueueListener: QueueListenerCallback | undefined = undefined;
+    subscribe_queue.mockImplementation((z: Zone, queueSize: number, listener: QueueListenerCallback) => {
+      newQueueListener = listener;
+      newQueueListener("Subscribed", {
+        items: [queueItem],
+      });
+    });
+    await queueManager.restart("ZoneNotFound", 0);
+    expect(startSpy).toHaveBeenCalledTimes(2);
+    expect(queueListener).not.toBeUndefined();
+    expect(newQueueListener).not.toBeUndefined();
+    expect(queueListener).not.toBe(newQueueListener);
+  });
+
+  it("QueueManager#restart should retry on error", async () => {
+    get_zones.mockImplementation(async () => {
+      return Promise.resolve({
+        zones: [ZONE],
+      });
+    });
+    const queueManager = queueManagerFactory.build(ZONE, roonSubject, QUEUE_SIZE);
+    const startSpy = vi.spyOn(queueManager, "start");
+    const restartSpy = vi.spyOn(queueManager, "restart");
+    await queueManager.start();
+    startSpy
+      .mockImplementationOnce(() => Promise.reject(new Error("error")))
+      // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
+      .mockImplementationOnce(async () => Promise.reject("error"));
+    const attempt = 0;
+    const cause = "ZoneNotFound";
+    try {
+      vi.useFakeTimers();
+      void queueManager.restart(cause, attempt);
+      await vi.advanceTimersByTimeAsync(8001);
+      expect(restartSpy).toHaveBeenCalledTimes(3);
+      expect(restartSpy).toHaveBeenNthCalledWith(2, cause, attempt + 1);
+      expect(restartSpy).toHaveBeenNthCalledWith(3, cause, attempt + 2);
+      expect(subscribe_queue).toHaveBeenCalledTimes(2);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("QueueManager#restart should recall itself recursively (with backoff) if the current zone is not available", async () => {
+    get_zones
+      .mockImplementationOnce(async () => Promise.resolve({}))
+      .mockImplementationOnce(async () =>
+        Promise.resolve({
+          zones: [ZONE],
+        })
+      );
+    const queueManager = queueManagerFactory.build(ZONE, roonSubject, QUEUE_SIZE);
+    await queueManager.start();
+    const restartSpy = vi.spyOn(queueManager, "restart");
+    const attempt = 0;
+    const cause = "ZoneNotFound";
+    try {
+      vi.useFakeTimers();
+      void queueManager.restart(cause, attempt);
+      await vi.advanceTimersByTimeAsync(2001);
+      expect(restartSpy).toHaveBeenCalledTimes(2);
+      expect(restartSpy).toHaveBeenLastCalledWith(cause, attempt + 1);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("QueueManager#restart should do nothing at the 5th attempt", async () => {
+    get_zones.mockImplementation(async () => {
+      return Promise.resolve({
+        zones: [ZONE],
+      });
+    });
+    const queueManager = queueManagerFactory.build(ZONE, roonSubject, QUEUE_SIZE);
+    const startSpy = vi.spyOn(queueManager, "start");
+    await queueManager.start();
+    await queueManager.restart("ZoneNotFound", 5);
+    expect(startSpy).toHaveBeenCalledTimes(1);
   });
 });
 

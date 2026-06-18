@@ -12,13 +12,19 @@ export interface QueueManager {
   start: () => Promise<void>;
   queue: () => RoonSseMessage;
   isStarted: () => boolean;
+  restart: (cause: RoonSubscriptionResponse, attempts: number) => Promise<void>;
 }
 
 export interface QueueManagerFactory {
   build: (zone: Zone, eventPublisher: Subject<RoonSseMessage>, queueSize: number) => QueueManager;
 }
 
-export type QueueListener = (response: RoonSubscriptionResponse, body: RoonApiTransportQueue) => void;
+export type QueueListenerCallback = (queue: RoonSubscriptionResponse, body: RoonApiTransportQueue) => void;
+
+export interface QueueListener {
+  listener: QueueListenerCallback;
+  listener_id: string;
+}
 
 export interface QueueTrack extends Omit<Track, "seek_position" | "seek_percentage"> {
   queue_item_id: number;

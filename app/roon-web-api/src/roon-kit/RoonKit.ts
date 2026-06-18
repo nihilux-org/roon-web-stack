@@ -250,12 +250,6 @@ function proxyTransport(transport: RoonApiTransport): RoonApiTransport {
   });
 }
 
-interface AudioInputSessionResponse {
-  headers: Record<string, string>;
-  verb: "REQUEST" | "CONTINUE" | "COMPLETE";
-  name: string;
-}
-
 function proxyAudioInput(audioInput: RoonApiAudioInput) {
   return new Proxy(audioInput, {
     get(t, p, r) {
@@ -285,7 +279,7 @@ function proxyAudioInput(audioInput: RoonApiAudioInput) {
           fn = v;
           v = (...args: any[]) => {
             return new Promise<void>((resolve, reject) => {
-              args.push((res: AudioInputSessionResponse) => {
+              args.push((res: { verb: "REQUEST" | "CONTINUE" | "COMPLETE"; name: string; }) => {
                 if (res.verb === "COMPLETE") {
                   if (res.name === "Success") {
                     resolve();
