@@ -362,16 +362,17 @@ describe("queue-manager.ts test suite", () => {
     const restartSpy = vi.spyOn(queueManager, "restart");
     await queueManager.start();
     startSpy
-      .mockImplementationOnce(() => Promise.reject(new Error("error")))
+      .mockImplementationOnce(async () => Promise.reject(new Error("error")))
       // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
       .mockImplementationOnce(async () => Promise.reject("error"));
     const attempt = 0;
-    const cause = "ZoneNotFound";
+    const cause = "NetworkError";
     try {
       vi.useFakeTimers();
       void queueManager.restart(cause, attempt);
-      await vi.advanceTimersByTimeAsync(8001);
+      await vi.advanceTimersByTimeAsync(50001);
       expect(restartSpy).toHaveBeenCalledTimes(3);
+      expect(restartSpy).toHaveBeenNthCalledWith(1, cause, attempt);
       expect(restartSpy).toHaveBeenNthCalledWith(2, cause, attempt + 1);
       expect(restartSpy).toHaveBeenNthCalledWith(3, cause, attempt + 2);
       expect(subscribe_queue).toHaveBeenCalledTimes(2);
