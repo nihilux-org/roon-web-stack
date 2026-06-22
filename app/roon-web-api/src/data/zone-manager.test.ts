@@ -128,6 +128,7 @@ describe("zone-manager.ts test suite", () => {
       })),
       stop: vi.fn(),
       start: vi.fn().mockImplementation(() => Promise.resolve()),
+      restart: vi.fn(),
       isStarted: vi.fn().mockImplementation(() => true),
     };
     otherQueueManager = {
@@ -139,6 +140,7 @@ describe("zone-manager.ts test suite", () => {
       })),
       stop: vi.fn(),
       start: vi.fn().mockImplementation(() => Promise.resolve()),
+      restart: vi.fn(),
       isStarted: vi.fn().mockImplementation(() => true),
     };
     yetAnotherQueueManagerIsStarted = vi.fn().mockImplementation(() => true);
@@ -151,6 +153,7 @@ describe("zone-manager.ts test suite", () => {
       })),
       stop: vi.fn(),
       start: vi.fn().mockImplementation(() => Promise.resolve()),
+      restart: vi.fn(),
       isStarted: yetAnotherQueueManagerIsStarted,
     };
     queueManagerFactoryMock.build.mockImplementation(
@@ -247,6 +250,7 @@ describe("zone-manager.ts test suite", () => {
       }),
       stop: vi.fn(),
       start: vi.fn().mockImplementation(() => Promise.reject(error)),
+      restart: vi.fn(),
       isStarted: vi.fn().mockImplementation(() => false),
     };
     await zoneManager.start();
@@ -1776,6 +1780,7 @@ describe("zone-manager.ts test suite", () => {
           resolve();
           return Promise.reject(error);
         }),
+        restart: vi.fn(),
         isStarted: vi.fn().mockImplementation(() => false),
       };
     });

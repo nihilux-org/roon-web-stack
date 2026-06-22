@@ -48,7 +48,15 @@ const queueListenerFactory = (
           break;
         case "NetworkError":
         case "ZoneNotFound":
-          void queueManager.restart(response, 0);
+          if (queueManager.isStarted()) {
+            void queueManager.restart(response, 0);
+          } else {
+            reject(
+              new Error(
+                `received ${response} event during subscription for zone ${queueManager.zone_id}, core might not be reay yet`
+              )
+            );
+          }
           break;
         default:
           logger.debug(
@@ -57,7 +65,9 @@ const queueListenerFactory = (
             JSON.stringify(body),
             queueManager.zone_id
           );
-          reject(new Error("core not ready yet..."));
+          if (!queueManager.isStarted()) {
+            reject(new Error("core not ready yet..."));
+          }
           break;
       }
     } else {
