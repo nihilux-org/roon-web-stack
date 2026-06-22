@@ -163,11 +163,15 @@ class InternalQueueManager implements QueueManager {
       try {
         const server = await roon.server();
         const zones = (await server.services.RoonApiTransport.get_zones()).zones ?? [];
+        let delay = 1000 * (attempts + 1);
+        if (cause === "NetworkError") {
+          delay = delay * 5;
+        }
         if (zones.findIndex((z: Zone) => z.zone_id === this.zone_id) !== -1) {
-          await this.wait(1000);
+          await this.wait(delay);
           await this.start();
         } else {
-          await this.wait(1000 * (attempts + 1));
+          await this.wait(delay);
           await this.restart(cause, attempts + 1);
         }
       } catch (err: unknown) {
