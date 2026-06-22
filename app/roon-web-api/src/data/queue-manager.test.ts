@@ -286,7 +286,11 @@ describe("queue-manager.ts test suite", () => {
     expect(queueManager.isStarted()).toEqual(false);
   });
 
-  it("QueueManager should restart its subscription on NetworkError and ZOneNotFound events", async () => {
+  it.each`
+    cause
+    ${"NetworkError"}
+    ${"ZoneNotFound"}
+  `("QueueManager should restart its subscription on $cause events", async ({ cause }) => {
     get_zones.mockImplementation(() => {
       return new Promise<RoonApiTransportZones>((resolve) => {
         resolve({
@@ -300,11 +304,28 @@ describe("queue-manager.ts test suite", () => {
     restartSpy.mockImplementation(async () => {
       // do nothing
     });
-    queueListener("NetworkError", {});
+    queueListener(cause as RoonSubscriptionResponse, {});
     expect(restartSpy).toHaveBeenCalledTimes(1);
-    queueListener("ZoneNotFound", {});
-    expect(restartSpy).toHaveBeenCalledTimes(2);
   });
+
+  it.each`
+    cause
+    ${"NetworkError"}
+    ${"ZoneNotFound"}
+  `(
+    `QueueManager should not restart its subscription on $cause event if errors occurred during startup`,
+    async ({ cause }) => {
+      subscribe_queue.mockImplementation((z: Zone, queueSize: number, listener: QueueListenerCallback) => {
+        queueListener = listener;
+        queueListener(cause as RoonSubscriptionResponse, {});
+      });
+      const queueManager = queueManagerFactory.build(ZONE, roonSubject, QUEUE_SIZE);
+      const restartSpy = vi.spyOn(queueManager, "restart");
+      const startPromise = queueManager.start();
+      await expect(startPromise).rejects.toThrow();
+      expect(restartSpy).not.toHaveBeenCalled();
+    }
+  );
 
   it("QueueManager should discard past ghost subscription ", async () => {
     const messages: RoonSseMessage[] = [];
