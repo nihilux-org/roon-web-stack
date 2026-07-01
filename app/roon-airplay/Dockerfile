@@ -4,7 +4,7 @@ RUN apk add --no-cache build-base autoconf automake libtool git && \
     git clone --depth=1 https://github.com/mikebrady/shairport-sync-metadata-reader.git /build && \
     cd /build && autoreconf -i -f && ./configure && make
 
-FROM savonet/liquidsoap-alpine:v2.4.2 AS liquidsoap-img
+FROM savonet/liquidsoap-alpine:v2.4.x-latest AS liquidsoap-img
 
 USER root
 RUN liquidsoap --cache-stdlib
