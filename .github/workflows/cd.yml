@@ -7,15 +7,12 @@ concurrency:
   group: ${{ github.workflow }}
   cancel-in-progress: true
 
-env:
-  REGISTRY_IMAGE: nihiluxorg/roon-web-stack
-
 jobs:
   build:
     uses: docker/github-builder/.github/workflows/build.yml@v1
     permissions:
-      contents: read # to fetch the repository content
-      id-token: write # for signing attestation(s) with GitHub OIDC Token
+      contents: read
+      id-token: write
     with:
       output: image
       push: true
@@ -23,9 +20,6 @@ jobs:
       file: app/roon-web-api/Dockerfile
       platforms: linux/amd64,linux/arm64
       target: runtime
-      build-args: |
-        NODE_ENV=production
-        VERSION=${{ github.sha }}
       cache: true
       cache-scope: roon-web-stack
       meta-images: nihiluxorg/roon-web-stack
