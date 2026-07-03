@@ -10,7 +10,7 @@ This container runs `shairport-sync` to receive AirPlay audio from iOS devices, 
 2. `shairport-sync-metadata-reader` parses the metadata pipe and outputs human-readable text
 3. `metadata-bridge.sh` accumulates metadata fields and sends them to roon-web-api via HTTP PUT
 4. `liquidsoap` encodes audio to OGG/FLAC and serves it via HTTP on port 8000
-5. roon-web-api receives the metadata and updates Roon's track info display
+5. `roon-web-api` receives the metadata and updates Roon's track info display
 
 ## Docker image
 
@@ -28,25 +28,31 @@ docker build -t roon-airplay:latest -f app/roon-airplay/Dockerfile app/roon-airp
 docker run \
   -d \
   --network host \
+  --cap-add=sys_nice \
   --name roon-airplay \
   -e ROON_WEB_HOST=192.168.1.100 \
   -e ROON_WEB_PORT=3000 \
+  -e ROON_AIRPLAY_HOST=name_or_ip_of_the_docker_host.local \
+  -e ROON_AIRPLAY_PORT=8000
   -v /path/to/config:/etc/shairport-sync \
   roon-airplay:latest
 ```
 
 ### Required Docker flags
 
-| Flag | Purpose |
-|------|---------|
-| `--network host` | **Required.** AirPlay uses mDNS/Bonjour for discovery, which requires host network access. Without this, i<br/>OS devices cannot find the AirPlay receiver. |
+| Flag                 | Purpose                                                                                                                                                     |
+|----------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `--network host`     | **Required.** AirPlay uses mDNS/Bonjour for discovery, which requires host network access. Without this, i<br/>OS devices cannot find the AirPlay receiver. |
+| `--capp-add=sys_nice`| **Prefered.** Ensure smoother scheduling for real time processing inside of the `roon-airplay` container.                                                   |
 
 ### Environment variables
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `ROON_WEB_HOST` | `127.0.0.1` | Host where `roon-web-api` is running. Used by the notification script to signal AirPlay session start/stop. |
-| `ROON_WEB_PORT` | `3000` | Port where `roon-web-api` is listening. |
+| Variable            | Default     | Description                                                                                                 |
+|---------------------|-------------|-------------------------------------------------------------------------------------------------------------|
+| `ROON_WEB_HOST`     | `127.0.0.1` | Host where `roon-web-api` is running. Used by the notification script to signal AirPlay session start/stop. |
+| `ROON_WEB_PORT`     | `3000`      | Port where `roon-web-api` is listening.                                                                     |
+| `ROON_AIRPLAY_HOST` | `none`      | Host where `roon-airplay` is running. Needed in order to send the stream address to your roon server.       |
+| `ROON_WEB_PORT`     | `8000`      | Port where `roon-airplay` is listening. Needed in order to send the stream address to your roon server.     |
 
 ### Volume mounts
 
@@ -62,16 +68,58 @@ The HTTP stream is available at:
 http://<host-ip>:8000/airplay
 ```
 
-Use this URL when configuring Roon to play an internet radio station.
-
 ## Configuring Roon
 
-1. Open Roon
-2. Go to **Settings** > **Audio**
-3. Add a new **Internet Radio** station
-4. Enter the stream URL: `http://<host-ip>:8000/airplay`
-5. Give it a name like "AirPlay Stream"
-6. Save and play this station when you want to hear AirPlay audio
+When used with `roon-web-stack` you need to activate the feature in the extension settings (in roon: `Settings/Extensions`)
+When activated, you also need to define a default zone where, when an `Airplay` stream is detected, the stream will be automatically played.
+Other needed configuration is done via the `env variables` of the `roon-airplay` container.
+When setup, the behavior is:
+- when a stream is sent to the `roon-airplay` entrypoint, the stream is automatically sent to the configured zone
+- the queue of the airplay zone is *suspended*, the same way it is suspended when listening a web radio.
+- you can transfer the stream to any other zone, group zone, etc.
+- when stream stops, the queue of the streaming zone is automatically restored
+
+### Airplay support limitations
+
+There are many limitations in Airplay support:
+- playback control is not functional: `shairport-sync` does not support playback control from the `Airplay` entrypoint, so no playback support from `roon` is available
+- volume management: in order to avoid two layers of volume management, volume management is disabled in `Airplay`. SO the `roon` zone volume management is the only way.
+
+If you interrupt the stream from `roon` (via the `stop` button) the airplay device will continue to stream.
+
+### Example of a complete docker-compose setup:
+
+```yaml
+name: roon-web-stack
+services:
+  roon-web-stack:
+    image: nihiluxorg/roon-web-stack:latest
+    container_name: roon-web-stack
+    network_mode: host
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - config:/usr/src/app/config
+    environment:
+      - "PORT=8484"
+      - "LOG_LEVEL=debug"
+  roon-airplay:
+    image: nihiluxorg/roon-airplay:latest
+    container_name: roon-airplay
+    network_mode: host
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      - "ROON_WEB_HOST=host.docker.internal"
+      - "ROON_WEB_PORT=8484"
+      - "ROON_AIRPLAY_HOST=docker-host.local"
+      - "ROON_AIRPLAY_PORT=8000"
+    cap_add:
+      - SYS_NICE
+
+volumes:
+  config:
+```
 
 ## AirPlay device name
 

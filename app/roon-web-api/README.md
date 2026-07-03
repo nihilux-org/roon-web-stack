@@ -26,8 +26,12 @@ Every client needs first to `register`, the use the `client_id` provided in the 
 
 To ease this choreography, a [client module](../../packages/roon-web-client) is also available in this repo. Utilisation of this [client module](../../packages/roon-web-client) is highly recommended.
 
-if you're still interested to understand how the API works, see the [api-route.ts](./src/route/api-route.ts). 
+if you're still interested to understand how the API works, see the [api-router.ts](./src/router/api-router.ts). 
 Another option is to look at the code of the [client](../../packages/roon-web-client/src/client/roon-web-client-factory.ts).
+
+### AirPlay Integration
+
+The API also includes an AirPlay router (`/airplay`) for managing AirPlay streaming sessions and metadata. See [airplay-router.ts](./src/router/airplay-router.ts) for details.
 
 ## Docker image
 
@@ -37,9 +41,9 @@ See the documentation available in the [main README](../../README.md) for how to
 
 Use, at the root of this `monorepo` the command:
 ```bash
-yarn backend
+bun run backend
 ```
-It will transpile the app and launch it via `nodemon` which will recompile the app after any change made in the code.
+It will launch the app in watch mode using Bun's native `--watch` flag.
 
 ## Contributing
 
