@@ -151,9 +151,4 @@ export interface SharedConfigMessage extends SseMessage<SharedConfig> {
 }
 
 export type RoonSseMessage =
-  | QueueSseMessage
-  | ZoneSseMessage
-  | SseStateMessage
-  | CommandSseMessage
-  | PingSseMessage
-  | SharedConfigMessage;
+  QueueSseMessage | ZoneSseMessage | SseStateMessage | CommandSseMessage | PingSseMessage | SharedConfigMessage;

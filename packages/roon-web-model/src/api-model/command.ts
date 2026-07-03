@@ -220,12 +220,7 @@ export type Command =
   | AudioInputCommand;
 
 export type ControlCommand =
-  | PlayCommand
-  | PauseCommand
-  | PlayPauseCommand
-  | StopCommand
-  | NextCommand
-  | PreviousCommand;
+  PlayCommand | PauseCommand | PlayPauseCommand | StopCommand | NextCommand | PreviousCommand;
 
 export type AudioInputCommand = StartAudioInputCommand | UpdateAudioInputInfoCommand | StopAudioInputCommand;
 

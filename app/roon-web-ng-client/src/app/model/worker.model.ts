@@ -49,10 +49,7 @@ export interface WorkerClientRestartAction {
 }
 
 export type WorkerClientAction =
-  | WorkerClientStartAction
-  | WorkerClientRefreshAction
-  | WorkerClientStopAction
-  | WorkerClientRestartAction;
+  WorkerClientStartAction | WorkerClientRefreshAction | WorkerClientStopAction | WorkerClientRestartAction;
 
 export interface WorkerClientActionMessage extends WorkerMessage<WorkerClientAction> {
   event: "worker-client";
@@ -185,11 +182,7 @@ export interface FoundItemIndexApiResult extends ApiResult<FoundItemIndexRespons
 }
 
 export type RawApiResult =
-  | BrowseApiResult
-  | LoadApiResult
-  | CommandApiResult
-  | VersionApiResult
-  | FoundItemIndexApiResult;
+  BrowseApiResult | LoadApiResult | CommandApiResult | VersionApiResult | FoundItemIndexApiResult;
 
 export interface ApiResultWorkerEvent extends WorkerEvent<RawApiResult> {
   event: "apiResult";

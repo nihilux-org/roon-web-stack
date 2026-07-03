@@ -77,15 +77,7 @@ export interface RoonApiBrowseOptions {
 }
 
 export type RoonApiBrowseHierarchy =
-  | "browse"
-  | "playlists"
-  | "settings"
-  | "internet_radio"
-  | "albums"
-  | "artists"
-  | "genres"
-  | "composers"
-  | "search";
+  "browse" | "playlists" | "settings" | "internet_radio" | "albums" | "artists" | "genres" | "composers" | "search";
 
 export interface RoonApiBrowseResponse {
   action: string;
@@ -547,14 +539,7 @@ export interface RoonAudioInputPlayOptions {
 }
 
 export type RoonApiAudioInputPlayEvent =
-  | "Playing"
-  | "Time"
-  | "StoppedUser"
-  | "EndedNaturally"
-  | "MediaError"
-  | "Paused"
-  | "ZoneNotFound"
-  | "ZoneLost";
+  "Playing" | "Time" | "StoppedUser" | "EndedNaturally" | "MediaError" | "Paused" | "ZoneNotFound" | "ZoneLost";
 
 export interface RoonAudioInputUpdateTrackInfoUpdateOptions {
   session_id: string;

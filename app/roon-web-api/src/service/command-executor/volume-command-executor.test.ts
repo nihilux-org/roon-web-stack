@@ -46,17 +46,15 @@ describe("volume-command-executor.ts test suite", () => {
     const volumeStrategies = [VolumeStrategy.ABSOLUTE, VolumeStrategy.RELATIVE, VolumeStrategy.RELATIVE_STEP];
     await Promise.all(
       volumeStrategies
-        .map(
-          (strategy): VolumeCommand => ({
-            type: CommandType.VOLUME,
-            data: {
-              strategy,
-              zone_id,
-              output_id,
-              value: 42,
-            },
-          })
-        )
+        .map((strategy): VolumeCommand => ({
+          type: CommandType.VOLUME,
+          data: {
+            strategy,
+            zone_id,
+            output_id,
+            value: 42,
+          },
+        }))
         .map(async (command) => {
           const expectedRoonChangeVolumeHow = expectedRoonChangeVolumeHows[command.data.strategy];
           const executorPromise = executor(command, foundZone);
@@ -70,17 +68,15 @@ describe("volume-command-executor.ts test suite", () => {
     const volumeStrategies = [VolumeStrategy.ABSOLUTE, VolumeStrategy.RELATIVE, VolumeStrategy.RELATIVE_STEP];
     await Promise.all(
       volumeStrategies
-        .map(
-          (strategy): VolumeCommand => ({
-            type: CommandType.VOLUME,
-            data: {
-              strategy,
-              zone_id,
-              output_id: other_output_id,
-              value: 42,
-            },
-          })
-        )
+        .map((strategy): VolumeCommand => ({
+          type: CommandType.VOLUME,
+          data: {
+            strategy,
+            zone_id,
+            output_id: other_output_id,
+            value: 42,
+          },
+        }))
         .map(async (command) => {
           const executorPromise = executor(command, foundZone);
           await expect(executorPromise).resolves.toBeUndefined();
@@ -93,17 +89,15 @@ describe("volume-command-executor.ts test suite", () => {
     const volumeStrategies = [VolumeStrategy.ABSOLUTE, VolumeStrategy.RELATIVE, VolumeStrategy.RELATIVE_STEP];
     await Promise.all(
       volumeStrategies
-        .map(
-          (strategy): VolumeCommand => ({
-            type: CommandType.VOLUME,
-            data: {
-              strategy,
-              zone_id,
-              output_id: "unknown_output_id",
-              value: 42,
-            },
-          })
-        )
+        .map((strategy): VolumeCommand => ({
+          type: CommandType.VOLUME,
+          data: {
+            strategy,
+            zone_id,
+            output_id: "unknown_output_id",
+            value: 42,
+          },
+        }))
         .map(async (command) => {
           const error = new Error(
             `'${command.data.output_id}' is not a valid 'output_id' for zone '${command.data.zone_id}'`
@@ -126,17 +120,15 @@ describe("volume-command-executor.ts test suite", () => {
     const volumeStrategies = [VolumeStrategy.ABSOLUTE, VolumeStrategy.RELATIVE, VolumeStrategy.RELATIVE_STEP];
     await Promise.all(
       volumeStrategies
-        .map(
-          (strategy): VolumeCommand => ({
-            type: CommandType.VOLUME,
-            data: {
-              strategy,
-              zone_id,
-              output_id,
-              value: 42,
-            },
-          })
-        )
+        .map((strategy): VolumeCommand => ({
+          type: CommandType.VOLUME,
+          data: {
+            strategy,
+            zone_id,
+            output_id,
+            value: 42,
+          },
+        }))
         .map(async (command, index) => {
           const expectedRoonChangeVolumeHow = expectedRoonChangeVolumeHows[command.data.strategy];
           const executorPromise = executor(command, foundZone);

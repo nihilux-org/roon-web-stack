@@ -53,12 +53,10 @@ export class ZoneGroupingDialogComponent {
     this.$groupedOutputs = signal(
       zoneState.outputs
         .filter((o) => o.output_id !== this.mainOutput.output_id)
-        .map(
-          (o): GroupOutputDescription => ({
-            ...o,
-            state: "checked",
-          })
-        )
+        .map((o): GroupOutputDescription => ({
+          ...o,
+          state: "checked",
+        }))
         .sort((o1, o2) => o1.display_name.localeCompare(o2.display_name))
     );
     this.$canGroupOutputs = signal(

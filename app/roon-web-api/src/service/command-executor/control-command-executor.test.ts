@@ -60,14 +60,12 @@ describe("control-command.d.ts test suite", () => {
     ];
     await Promise.all(
       controlCommandTypes
-        .map(
-          (type): ControlCommand => ({
-            type,
-            data: {
-              zone_id: zone.zone_id,
-            },
-          })
-        )
+        .map((type): ControlCommand => ({
+          type,
+          data: {
+            zone_id: zone.zone_id,
+          },
+        }))
         .map(async (command) => {
           const expectedRoonControl = expectedRoonControls[command.type];
           const executorPromise = executor(command, foundZone);
