@@ -29,6 +29,6 @@
     "cd:debug": "bun install --frozen-lockfile && bun run build:debug"
   },
   "patchedDependencies": {
-    "@angular/cli@22.0.4": "patches/@angular%2Fcli@22.0.4.patch"
+    "@angular/cli@22.0.5": "patches/@angular%2Fcli@22.0.5.patch"
   }
 }
