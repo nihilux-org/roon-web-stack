@@ -30,7 +30,7 @@ jobs:
       cache-scope: roon-web-stack
       meta-images: nihiluxorg/roon-web-stack
       meta-tags: |
-        type=semver,pattern={{version}}
+        type=semver,pattern=v{{version}}
       set-meta-labels: true
     secrets:
       registry-auths: |
