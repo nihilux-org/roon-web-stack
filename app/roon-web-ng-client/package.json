@@ -1,6 +1,6 @@
 {
   "name": "@nihilux/roon-web-ng-client",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "scripts": {
     "serve": "bun run ng serve",
     "build": "bun run ng build",
