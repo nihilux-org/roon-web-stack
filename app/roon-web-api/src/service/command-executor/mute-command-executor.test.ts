@@ -41,16 +41,14 @@ describe("mute-command-executor.ts test suite", () => {
     const muteTypes = [MuteType.MUTE, MuteType.TOGGLE, MuteType.UN_MUTE];
     await Promise.all(
       muteTypes
-        .map(
-          (type): MuteCommand => ({
-            type: CommandType.MUTE,
-            data: {
-              type,
-              zone_id,
-              output_id,
-            },
-          })
-        )
+        .map((type): MuteCommand => ({
+          type: CommandType.MUTE,
+          data: {
+            type,
+            zone_id,
+            output_id,
+          },
+        }))
         .map(async (command) => {
           const expectedRoonMuteHow: RoonMuteHow = command.data.type === MuteType.UN_MUTE ? "unmute" : "mute";
           const executorPromise = executor(command, foundZone);
@@ -92,16 +90,14 @@ describe("mute-command-executor.ts test suite", () => {
     const muteTypes = [MuteType.MUTE, MuteType.TOGGLE, MuteType.UN_MUTE];
     await Promise.all(
       muteTypes
-        .map(
-          (type): MuteCommand => ({
-            type: CommandType.MUTE,
-            data: {
-              type,
-              zone_id,
-              output_id: other_output_id,
-            },
-          })
-        )
+        .map((type): MuteCommand => ({
+          type: CommandType.MUTE,
+          data: {
+            type,
+            zone_id,
+            output_id: other_output_id,
+          },
+        }))
         .map(async (command) => {
           const executorPromise = executor(command, foundZone);
           await expect(executorPromise).resolves.toBeUndefined();
@@ -114,16 +110,14 @@ describe("mute-command-executor.ts test suite", () => {
     const muteTypes = [MuteType.MUTE, MuteType.TOGGLE, MuteType.UN_MUTE];
     await Promise.all(
       muteTypes
-        .map(
-          (type): MuteCommand => ({
-            type: CommandType.MUTE,
-            data: {
-              type,
-              zone_id,
-              output_id: "unknown_output_id",
-            },
-          })
-        )
+        .map((type): MuteCommand => ({
+          type: CommandType.MUTE,
+          data: {
+            type,
+            zone_id,
+            output_id: "unknown_output_id",
+          },
+        }))
         .map(async (command) => {
           const error = new Error(
             `'${command.data.output_id}' is not a valid 'output_id' for zone '${command.data.zone_id}'`
@@ -141,16 +135,14 @@ describe("mute-command-executor.ts test suite", () => {
     const muteTypes = [MuteType.MUTE, MuteType.TOGGLE, MuteType.UN_MUTE];
     await Promise.all(
       muteTypes
-        .map(
-          (type): MuteCommand => ({
-            type: CommandType.MUTE,
-            data: {
-              type,
-              zone_id,
-              output_id,
-            },
-          })
-        )
+        .map((type): MuteCommand => ({
+          type: CommandType.MUTE,
+          data: {
+            type,
+            zone_id,
+            output_id,
+          },
+        }))
         .map(async (command, index) => {
           const executorPromise = executor(command, foundZone);
           const expectedRoonMuteHow: RoonMuteHow = command.data.type === MuteType.UN_MUTE ? "unmute" : "mute";

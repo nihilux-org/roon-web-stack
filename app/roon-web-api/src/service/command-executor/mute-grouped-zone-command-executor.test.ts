@@ -37,15 +37,13 @@ describe("mute-groped-zone-command-executor.ts test suite", () => {
     const muteTypes = [MuteType.MUTE, MuteType.TOGGLE, MuteType.UN_MUTE];
     const expectedCalls = await Promise.all(
       muteTypes
-        .map(
-          (type): MuteGroupedZoneCommand => ({
-            type: CommandType.MUTE_GROUPED_ZONE,
-            data: {
-              zone_id,
-              type,
-            },
-          })
-        )
+        .map((type): MuteGroupedZoneCommand => ({
+          type: CommandType.MUTE_GROUPED_ZONE,
+          data: {
+            zone_id,
+            type,
+          },
+        }))
         .map(async (command) => {
           const expectedRoonMuteHow: RoonMuteHow = command.data.type === MuteType.UN_MUTE ? "unmute" : "mute";
           const executorPromise = executor(command, foundZone);
