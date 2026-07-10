@@ -21,7 +21,7 @@
     "@angular/platform-browser": "22.0.6",
     "@angular/platform-browser-dynamic": "22.0.6",
     "@nihilux/roon-web-client": "workspace:*",
-    "fast-equals": "6.0.0",
+    "fast-equals": "6.0.2",
     "nanoid": "5.1.16",
     "ngx-device-detector": "12.0.0",
     "rxjs": "7.8.2",
