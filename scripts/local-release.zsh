@@ -66,10 +66,6 @@ DOCKER_BUILD_COMMAND="docker buildx build \
   -f app/roon-web-api/Dockerfile \
   --platform ${platforms}";
 
-if [[ tag != "beta" ]]; then
-  DOCKER_BUILD_COMMAND="${DOCKER_BUILD_COMMAND} -t ${repo}/${app}:latest"
-fi
-
 if (( $#flag_not_push )); then
   printf "%s%-55s%s" "${fg_bold[green]}" "built image(s) won't be pushed to Docker Hub:" "${reset_color}";
   DOCKER_BUILD_COMMAND="${DOCKER_BUILD_COMMAND} --load";
