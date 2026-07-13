@@ -1,8 +1,6 @@
 import { deepEqual } from "fast-equals";
-import { animate, AnimationEvent, state, style, transition, trigger } from "@angular/animations";
 import { CdkFixedSizeVirtualScroll, CdkVirtualForOf, CdkVirtualScrollViewport } from "@angular/cdk/scrolling";
 import {
-  AfterViewInit,
   Component,
   computed,
   HostBinding,
@@ -38,26 +36,8 @@ import { SettingsService } from "@services/settings.service";
   ],
   templateUrl: "./zone-queue.component.html",
   styleUrl: "./zone-queue.component.scss",
-  animations: [
-    trigger("toggleQueue", [
-      state(
-        "open",
-        style({
-          height: "100%",
-        })
-      ),
-      state(
-        "closed",
-        style({
-          height: "0",
-        })
-      ),
-      transition("open => closed", [animate("0.3s ease-in")]),
-      transition("closed => open", [animate("0.3s ease-out")]),
-    ]),
-  ],
 })
-export class ZoneQueueComponent implements AfterViewInit {
+export class ZoneQueueComponent {
   @HostBinding("class.open") open: boolean;
   @Input({ required: true }) $trackDisplay!: Signal<TrackDisplay>;
   private readonly _roonService: RoonService;
@@ -69,7 +49,6 @@ export class ZoneQueueComponent implements AfterViewInit {
   readonly $imageSize: Signal<number>;
   readonly $itemSize: Signal<number>;
   readonly $layoutClass: Signal<string>;
-  disabled: boolean;
   @ViewChild(CdkVirtualScrollViewport) _virtualScroll?: CdkVirtualScrollViewport;
   @ViewChildren(MatMenuTrigger) _menuTriggers!: QueryList<MatMenuTrigger>;
 
@@ -110,7 +89,6 @@ export class ZoneQueueComponent implements AfterViewInit {
       }
     });
     this.$layoutClass = settingsService.displayModeClass();
-    this.disabled = true;
   }
 
   openActionMenu(queue_item_id: number) {
@@ -146,18 +124,14 @@ export class ZoneQueueComponent implements AfterViewInit {
     }
   }
 
-  onQueueTrackToggleStart(event: AnimationEvent) {
+  onQueueTrackToggleStart() {
     if (this.$displayQueue()) {
       this.open = true;
       if ((this._virtualScroll?.getViewportSize() ?? -1) === 0) {
         setTimeout(() => {
           this._virtualScroll?.checkViewportSize();
-        }, event.totalTime / 3);
+        }, 100);
       }
     }
-  }
-
-  ngAfterViewInit(): void {
-    this.disabled = false;
   }
 }
