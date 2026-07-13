@@ -1,18 +1,18 @@
 @if ($queue().length > 0) {
   <cdk-virtual-scroll-viewport
-    [@toggleQueue]="$displayQueue() ? 'open' : 'closed'"
-    (@toggleQueue.done)="onQueueTrackToggled()"
-    (@toggleQueue.start)="onQueueTrackToggleStart($event)"
-    [@.disabled]="disabled"
+    (transitionend)="onQueueTrackToggled()"
+    (transitionstart)="onQueueTrackToggleStart()"
     [itemSize]="$itemSize()"
     class="queue"
     [class.is-big-fonts]="$isBigFonts()"
+    [class.open]="$displayQueue()"
+    [class.closed]="!$displayQueue()"
     ngxSnContainer
     [ngxSnContainerIgnore]="!open"
     [ngxSnContainerRememberLastFocusedChild]="true"
   >
     <ol>
-        <li *cdkVirtualFor="let track of $queue(); let last = last; let index = index;">
+        <li *cdkVirtualFor="let track of $queue(); let last = last;">
           <button
             (click)="openActionMenu(track.queue_item_id)"
             class="track"
@@ -33,8 +33,8 @@
             }
             <div class="track-info">
               <span class="track-title">{{track.title}}</span>
-              @if (track.disk?.title) {
-                <span class="track-album">on {{track.disk.title}}</span>
+              @if (track.disk?.title !== undefined) {
+                <span class="track-album">on {{track.disk?.title}}</span>
               }
               @if (track.artist) {
                 <span class="track-artist">by {{track.artist}}</span>

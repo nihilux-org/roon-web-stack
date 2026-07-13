@@ -7,12 +7,16 @@
     height: 100%;
     width: 100%;
     box-sizing: border-box;
+    &.open {
+      height: 100%;
+      transition: height 0.3s ease-out;
+    }
+    &.closed {
+      height: 0;
+      transition: height 0.3s ease-in;
+    }
     span {
       @include nr.block-overflow-ellipsis();
-    }
-    cdk-virtual-scroll-viewport {
-      height: 100%;
-      width: 100%;
     }
     ol {
       list-style: none;

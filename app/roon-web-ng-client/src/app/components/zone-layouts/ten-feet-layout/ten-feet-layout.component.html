@@ -1,18 +1,18 @@
-<div class="zone-display" [class.active]="!$isIdle()" [@idleOverlay]="$animationState()">
-  <div class="ten-feet-image" [@zoneImage]="$animationState()">
+<div class="zone-display" [class.active]="!$isIdle()">
+  <div class="ten-feet-image" [class.idle]="$isIdle()" [class.active]="!$isIdle()">
     <ng-container [ngTemplateOutlet]="layout.zoneImage" [ngTemplateOutletContext]="layout.context"></ng-container>
   </div>
   <div class="layout-overlay">
-    <div class="zone-info" [@zoneInfo]="$animationState()">
+    <div class="zone-info" [class.idle]="$isIdle()" [class.active]="!$isIdle()">
       <ng-container [ngTemplateOutlet]="layout.zoneCurrentTrack" [ngTemplateOutletContext]="layout.context"></ng-container>
     </div>
-    <div class="zone-commands" [@zoneCommands]="$animationState()">
+    <div class="zone-commands" [class.idle]="$isIdle()" [class.active]="!$isIdle()">
       <ng-container [ngTemplateOutlet]="layout.zoneCommands" [ngTemplateOutletContext]="layout.context"></ng-container>
     </div>
     <div class="zone-progression">
       <ng-container [ngTemplateOutlet]="layout.zoneProgression" [ngTemplateOutletContext]="layout.context"></ng-container>
     </div>
-    <div class="zone-actions" [@zoneActions]="$animationState()" ngxSnContainer>
+    <div class="zone-actions" [class.idle]="$isIdle()" [class.active]="!$isIdle()" ngxSnContainer>
       <div>
         <ng-container [ngTemplateOutlet]="layout.zoneActions" [ngTemplateOutletContext]="layout.context"></ng-container>
       </div>
