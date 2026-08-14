@@ -27,8 +27,8 @@ ENV WEB_NG_PATH=/usr/src/app
 
 COPY ./LICENSE ./LICENSE
 
-COPY --from=builder /usr/src/app/roon-web-api/bin/roon-web-api ./roon-web-api
 COPY --from=builder /usr/src/app/roon-web-api/bin/node_modules ./node_modules
+COPY --from=builder /usr/src/app/roon-web-api/bin/roon-web-api ./roon-web-api
 COPY --from=builder /usr/src/app/roon-web-ng-client/dist/roon-web-ng-client/browser ./web
 
 USER bun
