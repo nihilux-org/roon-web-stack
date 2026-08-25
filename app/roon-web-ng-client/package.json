@@ -52,7 +52,7 @@
     "eslint-plugin-simple-import-sort": "14.0.0",
     "eslint-plugin-unused-imports": "4.4.1",
     "happy-dom": "20.11.2",
-    "ng-mocks": "14.17.1",
+    "ng-mocks": "14.17.2",
     "ng-packagr": "22.1.1",
     "prettier": "3.9.6",
     "typescript": "6.0.3",
