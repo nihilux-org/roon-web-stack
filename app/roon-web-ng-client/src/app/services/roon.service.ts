@@ -639,5 +639,3 @@ export class RoonService implements OnDestroy {
     return this._workerApiRequestId++;
   }
 }
-
-export default RoonService;
