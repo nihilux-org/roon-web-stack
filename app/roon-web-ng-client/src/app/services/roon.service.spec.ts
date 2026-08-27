@@ -14,6 +14,7 @@ import {
   ZoneDescription,
   ZoneState,
 } from "@nihilux/roon-web-model";
+import { ROON_WORKER } from "@services/roon.worker.provider";
 import { RoonService } from "./roon.service";
 
 describe("RoonServiceService", () => {
@@ -23,7 +24,14 @@ describe("RoonServiceService", () => {
   beforeEach(() => {
     $zoneId = signal(zone_id);
     roonWorkerMock.clearMessages();
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      providers: [
+        {
+          provide: ROON_WORKER,
+          useFactory: () => roonWorkerMock,
+        },
+      ],
+    });
     service = TestBed.inject(RoonService);
   });
 
