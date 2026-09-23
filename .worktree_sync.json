@@ -1,4 +1,0 @@
-{
-  "files": ["app/roon-web-api/config.json"],
-  "commands": ["bun install"]
-}
