@@ -40,10 +40,10 @@
     "@eslint/js": "10.0.1",
     "@nihilux/roon-web-model": "workspace:*",
     "@types/bun": "1.4.3",
-    "@typescript-eslint/parser": "8.71.2",
-    "@vitest/coverage-v8": "5.0.4",
+    "@typescript-eslint/parser": "8.72.0",
+    "@vitest/coverage-v8": "5.0.5",
     "angular-eslint": "22.6.0",
-    "eslint": "10.12.0",
+    "eslint": "10.13.0",
     "eslint-config-prettier": "10.1.8",
     "eslint-import-resolver-typescript": "4.4.5",
     "eslint-plugin-import": "2.32.0",
@@ -51,13 +51,13 @@
     "eslint-plugin-promise": "7.3.0",
     "eslint-plugin-simple-import-sort": "14.0.0",
     "eslint-plugin-unused-imports": "4.4.1",
-    "happy-dom": "21.0.1",
-    "ng-mocks": "14.18.1",
+    "happy-dom": "21.0.4",
+    "ng-mocks": "14.18.4",
     "ng-packagr": "22.2.4",
     "prettier": "3.9.10",
     "typescript": "6.0.3",
-    "typescript-eslint": "8.71.2",
+    "typescript-eslint": "8.72.0",
     "vite-tsconfig-paths": "6.1.1",
-    "vitest": "5.0.4"
+    "vitest": "5.0.5"
   }
 }
