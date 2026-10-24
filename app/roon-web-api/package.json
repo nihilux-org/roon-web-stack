@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
-    "@types/bun": "1.4.3",
+    "@types/bun": "1.4.4",
     "@typescript-eslint/eslint-plugin": "8.72.0",
     "@typescript-eslint/parser": "8.72.0",
     "@vitest/coverage-istanbul": "5.0.5",
