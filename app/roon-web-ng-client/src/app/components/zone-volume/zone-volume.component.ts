@@ -1,4 +1,4 @@
-import { Component, computed, inject, Signal, ViewChild } from "@angular/core";
+import { Component, computed, inject, Signal, viewChild } from "@angular/core";
 import { MatButtonModule, MatIconButton } from "@angular/material/button";
 import { MatRipple } from "@angular/material/core";
 import { MatIconModule } from "@angular/material/icon";
@@ -28,7 +28,7 @@ import { VolumeService } from "@services/volume.service";
   styleUrl: "./zone-volume.component.scss",
 })
 export class ZoneVolumeComponent {
-  @ViewChild("volumeButton") _volumeButton!: MatIconButton;
+  _volumeButton = viewChild.required<MatIconButton>("volumeButton");
   private readonly _dialogService: DialogService;
   private readonly _settingsService: SettingsService;
   private readonly _volumeService: VolumeService;
@@ -59,7 +59,7 @@ export class ZoneVolumeComponent {
     const nbOutputs = this.$outputs().length;
     if (nbOutputs > 0) {
       const buttonElementRect = (
-        this._volumeButton._elementRef.nativeElement as HTMLButtonElement
+        this._volumeButton()._elementRef.nativeElement as HTMLButtonElement
       ).getBoundingClientRect();
       // FIXME? this must be updated if CSS changes... but it's efficient 🤷
       let topDelta: number;

@@ -1,5 +1,5 @@
 import { NgTemplateOutlet } from "@angular/common";
-import { Component, Input } from "@angular/core";
+import { Component, input } from "@angular/core";
 import { LayoutData } from "@model";
 
 @Component({
@@ -9,5 +9,5 @@ import { LayoutData } from "@model";
   styleUrl: "./one-column-layout.component.scss",
 })
 export class OneColumnLayoutComponent {
-  @Input({ required: true }) layout!: LayoutData;
+  layout = input.required<LayoutData>();
 }

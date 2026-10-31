@@ -1,5 +1,5 @@
 import { deepEqual } from "fast-equals";
-import { Component, computed, Input, Signal } from "@angular/core";
+import { Component, computed, input, Signal } from "@angular/core";
 import { RoonImageComponent } from "@components/roon-image/roon-image.component";
 import { EMPTY_TRACK, TrackDisplay, TrackImage } from "@model";
 
@@ -11,7 +11,7 @@ import { EMPTY_TRACK, TrackDisplay, TrackImage } from "@model";
 })
 export class ZoneImageComponent {
   protected readonly EMPTY_TRACK = EMPTY_TRACK;
-  @Input({ required: true }) $trackDisplay!: Signal<TrackDisplay>;
+  $trackDisplay = input.required<TrackDisplay>();
   readonly $image: Signal<TrackImage>;
 
   constructor() {

@@ -1,5 +1,5 @@
 import { deepEqual } from "fast-equals";
-import { booleanAttribute, Component, computed, effect, inject, Input, input, Signal, ViewChild } from "@angular/core";
+import { Component, computed, effect, inject, input, Signal, viewChild } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { MatMenuModule, MatMenuTrigger } from "@angular/material/menu";
@@ -16,11 +16,13 @@ import { SettingsService } from "@services/settings.service";
   styleUrl: "./zone-selector.component.scss",
 })
 export class ZoneSelectorComponent {
-  @Input({ required: false, transform: booleanAttribute }) withoutLabel: boolean;
-  @Input({ required: false }) xPosition: "before" | "after";
-  @Input({ required: false }) yPosition: "below" | "above";
+  readonly withoutLabel = input(false, {
+    transform: (v: boolean | string) => !!(v || v === "true"),
+  });
+  readonly xPosition = input<"before" | "after">("before");
+  readonly yPosition = input<"below" | "above">("above");
   readonly idSuffix = input<string>("");
-  @ViewChild(MatMenuTrigger) menuTrigger!: MatMenuTrigger;
+  readonly menuTrigger = viewChild.required(MatMenuTrigger);
   private readonly _idleService: IdleService;
   private readonly _settingsService: SettingsService;
   private readonly _spatialNavigableService: NgxSpatialNavigableService;
@@ -35,9 +37,6 @@ export class ZoneSelectorComponent {
     this._idleService = inject(IdleService);
     this._settingsService = inject(SettingsService);
     this._spatialNavigableService = inject(NgxSpatialNavigableService);
-    this.withoutLabel = false;
-    this.xPosition = "before";
-    this.yPosition = "above";
     this._$zoneId = this._settingsService.displayedZoneId();
     this._$roonState = inject(RoonService).roonState();
     this.$zones = computed(
@@ -55,7 +54,7 @@ export class ZoneSelectorComponent {
     this.$layoutClass = this._settingsService.displayModeClass();
     effect(() => {
       if (this._idleService.isIdle()()) {
-        this.menuTrigger.closeMenu();
+        this.menuTrigger().closeMenu();
       }
     });
     this.$idSuffix = computed(() => {

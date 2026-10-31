@@ -1,6 +1,6 @@
 import { MockProvider } from "ng-mocks";
 import { beforeEach, describe, expect, it } from "vitest";
-import { Component, Input, Signal, signal, ViewChild, WritableSignal } from "@angular/core";
+import { Component, input, Signal, signal, viewChild, WritableSignal } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { SettingsService } from "@services/settings.service";
 import { CompactLayoutComponent } from "./compact-layout.component";
@@ -46,8 +46,8 @@ import { CompactLayoutComponent } from "./compact-layout.component";
   imports: [CompactLayoutComponent],
 })
 class TemplateProducerComponent {
-  @Input() $layoutClass!: Signal<string>;
-  @ViewChild(CompactLayoutComponent) compactLayout!: CompactLayoutComponent;
+  $layoutClass = input.required<string>();
+  compactLayout = viewChild.required(CompactLayoutComponent);
 }
 
 describe("CompactLayoutComponent", () => {
@@ -72,7 +72,7 @@ describe("CompactLayoutComponent", () => {
     fixture = TestBed.createComponent(TemplateProducerComponent);
     fixture.componentRef.setInput("$layoutClass", $layoutClass);
     await fixture.whenStable();
-    component = fixture.componentInstance.compactLayout;
+    component = fixture.componentInstance.compactLayout();
   });
 
   it("should create", () => {

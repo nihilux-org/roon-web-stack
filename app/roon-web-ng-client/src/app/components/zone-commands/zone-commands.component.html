@@ -1,7 +1,7 @@
 <div [class.is-small-screen]="$isSmallScreen()">
-  @if (zoneVolume !== undefined) {
+  @if ($zoneVolume() !== undefined) {
     <div class="volume">
-      <ng-container [ngTemplateOutlet]="zoneVolume" />
+      <ng-container [ngTemplateOutlet]="$zoneVolume()" />
     </div>
   }
   <div class="buttons">
@@ -78,7 +78,7 @@
       </button>
     }
   </div>
-  @if (zoneVolume !== undefined) {
+  @if ($zoneVolume() !== undefined) {
     <nr-zone-selector class="zones" [withoutLabel]="$isSmallScreen()" idSuffix="in-zone" />
   }
 </div>

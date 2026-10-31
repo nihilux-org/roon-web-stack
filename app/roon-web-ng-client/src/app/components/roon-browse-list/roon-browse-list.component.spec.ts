@@ -1,6 +1,6 @@
 import { MockProvider } from "ng-mocks";
 import { beforeEach, describe, expect, it, Mock, vi } from "vitest";
-import { signal, WritableSignal } from "@angular/core";
+import { inputBinding, signal, WritableSignal } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { RoonApiBrowseHierarchy, RoonApiBrowseLoadResponse } from "@nihilux/roon-web-model";
 import { RoonService } from "@services/roon.service";
@@ -20,10 +20,12 @@ describe("RoonBrowseListComponent", () => {
     displayModeClass: Mock;
     isBigFonts: Mock;
   };
-  let content: RoonApiBrowseLoadResponse;
-  let zoneId: string;
-  let hierarchy: RoonApiBrowseHierarchy;
-  let scrollIndex: number;
+  let content: WritableSignal<RoonApiBrowseLoadResponse>;
+  let zoneId: WritableSignal<string>;
+  let hierarchy: WritableSignal<RoonApiBrowseHierarchy>;
+  let isPaginated: WritableSignal<boolean>;
+  let isRecording: WritableSignal<boolean>;
+  let scrollIndex: WritableSignal<number>;
   let component: RoonBrowseListComponent;
   let fixture: ComponentFixture<RoonBrowseListComponent>;
 
@@ -40,7 +42,7 @@ describe("RoonBrowseListComponent", () => {
       displayModeClass: vi.fn().mockImplementation(() => $displayModeClass),
       isBigFonts: vi.fn().mockImplementation(() => $isBigFonts),
     };
-    content = {
+    content = signal({
       list: {
         title: "title",
         level: 42,
@@ -48,20 +50,27 @@ describe("RoonBrowseListComponent", () => {
       },
       items: [],
       offset: 0,
-    };
-    zoneId = "zone_id";
-    hierarchy = "browse";
-    scrollIndex = 0;
+    });
+    zoneId = signal("zone_id");
+    hierarchy = signal("browse");
+    isPaginated = signal(false);
+    isRecording = signal(false);
+    scrollIndex = signal(0);
     TestBed.configureTestingModule({
       providers: [MockProvider(RoonService, roonService), MockProvider(SettingsService, settingsService)],
       imports: [RoonBrowseListComponent],
     });
     await TestBed.compileComponents();
-    fixture = TestBed.createComponent(RoonBrowseListComponent);
-    fixture.componentRef.setInput("content", content);
-    fixture.componentRef.setInput("hierarchy", hierarchy);
-    fixture.componentRef.setInput("scrollIndex", scrollIndex);
-    fixture.componentRef.setInput("zoneId", zoneId);
+    fixture = TestBed.createComponent(RoonBrowseListComponent, {
+      bindings: [
+        inputBinding("content", content),
+        inputBinding("hierarchy", hierarchy),
+        inputBinding("isPaginated", isPaginated),
+        inputBinding("isRecording", isRecording),
+        inputBinding("scrollIndex", scrollIndex),
+        inputBinding("zoneId", zoneId),
+      ],
+    });
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

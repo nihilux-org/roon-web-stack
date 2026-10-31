@@ -1,4 +1,4 @@
-@if (withoutLabel) {
+@if (withoutLabel()) {
   <button
     mat-icon-button
     [matMenuTriggerFor]="zoneSelector"
@@ -16,7 +16,7 @@
   ><mat-icon fontIcon="speaker" />{{$label()}}</button>
 }
 
-<mat-menu #zoneSelector="matMenu" [yPosition]="yPosition" [xPosition]="xPosition" class="nr-menu-custom" [class]="$layoutClass()">
+<mat-menu #zoneSelector="matMenu" [yPosition]="yPosition()" [xPosition]="xPosition()" class="nr-menu-custom" [class]="$layoutClass()">
   @for (zd of $zones(); track zd.zone_id) {
     <button mat-menu-item (click)="onZoneSelected(zd.zone_id)"><mat-icon fontIcon="speaker" />{{zd.display_name}}</button>
   }

@@ -1,6 +1,6 @@
 import { deepEqual } from "fast-equals";
 import { NgTemplateOutlet } from "@angular/common";
-import { Component, computed, inject, Input, Signal, TemplateRef } from "@angular/core";
+import { Component, computed, inject, input, Signal, TemplateRef } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { ZoneSelectorComponent } from "@components/zone-selector/zone-selector.component";
@@ -24,8 +24,8 @@ import { SettingsService } from "@services/settings.service";
 })
 export class ZoneCommandsComponent {
   private readonly _roonService: RoonService;
-  @Input({ required: true }) $zoneCommands!: Signal<ZoneCommands>;
-  @Input({ required: false }) zoneVolume?: TemplateRef<{ class: string }>;
+  $zoneCommands = input.required<ZoneCommands>();
+  $zoneVolume = input<TemplateRef<{ class: string }>>();
   readonly $isSmallScreen: Signal<boolean>;
 
   constructor() {

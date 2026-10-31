@@ -2,22 +2,20 @@ import { BehaviorSubject, firstValueFrom, Observable, Subject, Subscription } fr
 import { CollectionViewer, DataSource } from "@angular/cdk/collections";
 import { CdkFixedSizeVirtualScroll, CdkVirtualForOf, CdkVirtualScrollViewport } from "@angular/cdk/scrolling";
 import {
-  AfterViewChecked,
-  booleanAttribute,
+  afterNextRender,
   Component,
   computed,
-  EventEmitter,
+  effect,
   inject,
-  Input,
-  numberAttribute,
-  OnChanges,
-  Output,
-  QueryList,
+  Injector,
+  input,
+  output,
+  runInInjectionContext,
   Signal,
   signal,
-  SimpleChanges,
-  ViewChild,
-  ViewChildren,
+  untracked,
+  viewChild,
+  viewChildren,
   WritableSignal,
 } from "@angular/core";
 import { MatButton, MatIconButton } from "@angular/material/button";
@@ -69,23 +67,24 @@ interface MenuTriggerData {
   templateUrl: "./roon-browse-list.component.html",
   styleUrl: "./roon-browse-list.component.scss",
 })
-export class RoonBrowseListComponent implements OnChanges, AfterViewChecked {
+export class RoonBrowseListComponent {
   private static readonly SUBTITLE_SPLITTER = /\s?\/?\s?\[\[\d*\|/;
+  private readonly _injector: Injector;
   private readonly _roonService: RoonService;
   private readonly _spatialNavigableService: NgxSpatialNavigableService;
   private readonly _inputValues: Map<string, string>;
   private _noActionClicked = true;
-  @Input({ required: true }) hierarchy!: RoonApiBrowseHierarchy;
-  @Input({ required: true }) zoneId!: string;
-  @Input({ required: true }) content!: RoonApiBrowseLoadResponse;
-  @Input({ required: true, transform: booleanAttribute }) isPaginated!: boolean;
-  @Input({ required: true, transform: numberAttribute }) scrollIndex!: number;
-  @Input({ required: true, transform: booleanAttribute }) isRecording!: boolean;
-  @Output() clickedItem = new EventEmitter<NavigationEvent>();
-  @Output() recordedAction = new EventEmitter<RecordedAction>();
-  @ViewChild(CdkVirtualScrollViewport) _virtualScroll?: CdkVirtualScrollViewport;
-  @ViewChildren(MatMenuTrigger) _menuTriggers!: QueryList<MatMenuTrigger>;
-  dataSource?: RoonListDataSource | Item[];
+  hierarchy = input.required<RoonApiBrowseHierarchy>();
+  zoneId = input.required<string>();
+  content = input.required<RoonApiBrowseLoadResponse>();
+  isPaginated = input.required<boolean>();
+  scrollIndex = input.required<number>();
+  isRecording = input.required<boolean>();
+  clickedItem = output<NavigationEvent>();
+  recordedAction = output<RecordedAction>();
+  _virtualScroll = viewChild(CdkVirtualScrollViewport);
+  _menuTriggers = viewChildren(MatMenuTrigger);
+  readonly $dataSource: WritableSignal<RoonListDataSource | Item[] | undefined> = signal(undefined);
   readonly $imageSize: Signal<number>;
   readonly $isBigFonts: Signal<boolean>;
   readonly $isOneColumn: Signal<boolean>;
@@ -95,6 +94,7 @@ export class RoonBrowseListComponent implements OnChanges, AfterViewChecked {
 
   constructor() {
     const settingsService = inject(SettingsService);
+    this._injector = inject(Injector);
     this._roonService = inject(RoonService);
     this._spatialNavigableService = inject(NgxSpatialNavigableService);
     this._inputValues = new Map<string, string>();
@@ -116,37 +116,37 @@ export class RoonBrowseListComponent implements OnChanges, AfterViewChecked {
       }
     });
     this.$lastFocusedItemId = signal("roon-browse-item-0");
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    let updateDataSource = false;
-    for (const changeKey in changes) {
-      if (changeKey === "content") {
-        updateDataSource = true;
-      } else if (changeKey === "hierarchy") {
-        updateDataSource = true;
-      }
-    }
-    if (updateDataSource) {
-      if (this.isPaginated) {
-        this.dataSource = new RoonListDataSource(this.hierarchy, this.content, this._roonService);
+    effect(() => {
+      const hierarchy = this.hierarchy();
+      const content = this.content();
+      if (this.isPaginated()) {
+        this.$dataSource.set(new RoonListDataSource(hierarchy, content, this._roonService));
       } else {
-        this.dataSource = this.content.items;
+        this.$dataSource.set(content.items);
       }
-    }
+      const scrollIndex = this.scrollIndex();
+      if (scrollIndex > 1) {
+        const virtualScroll = untracked(this._virtualScroll);
+        if (virtualScroll !== undefined) {
+          this.scrollTo(scrollIndex, virtualScroll);
+        }
+      }
+    });
   }
 
-  ngAfterViewChecked() {
-    if (this.scrollIndex > 1 && this._virtualScroll) {
-      this._virtualScroll.scrollToIndex(this.scrollIndex - 1, "instant");
-      const scrollSub = this._virtualScroll.scrolledIndexChange.subscribe((scrolledIndex) => {
-        if (scrolledIndex === this.scrollIndex - 1) {
-          this.scrollIndex = 0;
-          scrollSub.unsubscribe();
-          this.$lastFocusedItemId.set(`roon-browse-item-${scrolledIndex + 1}`);
-        }
+  private scrollTo(scrollIndex: number, virtualScroll: CdkVirtualScrollViewport) {
+    runInInjectionContext(this._injector, () => {
+      afterNextRender({
+        write: () => {
+          if (virtualScroll.getViewportSize() > 0) {
+            virtualScroll.scrollToIndex(scrollIndex - 1, "instant");
+            this.$lastFocusedItemId.set(`roon-browse-item-${scrollIndex}`);
+          } else {
+            this.scrollTo(scrollIndex, virtualScroll);
+          }
+        },
       });
-    }
+    });
   }
 
   // this is needed to clean artists when browsing content form Tidal or Qobuz
@@ -174,13 +174,13 @@ export class RoonBrowseListComponent implements OnChanges, AfterViewChecked {
     if (item_key && hint === "action_list") {
       this.onActionListClicked(item_key);
     } else if (item_key && hint === "action") {
-      if (this.isRecording) {
+      if (this.isRecording()) {
         this.recordedAction.emit({
           title,
           actionIndex: 0,
         });
       } else {
-        void firstValueFrom(this._roonService.navigate(this.zoneId, this.hierarchy, item_key));
+        void firstValueFrom(this._roonService.navigate(this.zoneId(), this.hierarchy(), item_key));
       }
     } else if (item_key) {
       const input = hasInput ? this._inputValues.get(`${item_key}_prompt_input`) : undefined;
@@ -197,13 +197,13 @@ export class RoonBrowseListComponent implements OnChanges, AfterViewChecked {
 
   onActionClicked(item_key: string, actionIndex: number, title: string) {
     this._noActionClicked = false;
-    if (this.isRecording) {
+    if (this.isRecording()) {
       this.recordedAction.emit({
         actionIndex,
         title,
       });
     } else {
-      void firstValueFrom(this._roonService.navigate(this.zoneId, this.hierarchy, item_key));
+      void firstValueFrom(this._roonService.navigate(this.zoneId(), this.hierarchy(), item_key));
     }
   }
 
@@ -212,7 +212,7 @@ export class RoonBrowseListComponent implements OnChanges, AfterViewChecked {
   }
 
   private onActionListClicked(item_key: string) {
-    const menuTrigger = this._menuTriggers.find((mt) => (mt.menuData as MenuTriggerData).item_key === item_key);
+    const menuTrigger = this._menuTriggers().find((mt) => (mt.menuData as MenuTriggerData).item_key === item_key);
     if (menuTrigger) {
       if (!menuTrigger.menuOpen) {
         const navigationSub = new Subscription();
@@ -237,7 +237,7 @@ export class RoonBrowseListComponent implements OnChanges, AfterViewChecked {
     const menuTriggerData: MenuTriggerData = menuTrigger.menuData as MenuTriggerData;
     levelToPop++;
     navigationSub.add(
-      this._roonService.navigate(this.zoneId, this.hierarchy, item_key).subscribe((actionLoadResponse) => {
+      this._roonService.navigate(this.zoneId(), this.hierarchy(), item_key).subscribe((actionLoadResponse) => {
         if (actionLoadResponse.list.hint === "action_list") {
           menuTriggerData.actions = actionLoadResponse.items;
           menuTrigger.openMenu();
@@ -248,9 +248,9 @@ export class RoonBrowseListComponent implements OnChanges, AfterViewChecked {
             if (this._noActionClicked) {
               void this._roonService
                 .browse({
-                  hierarchy: this.hierarchy,
+                  hierarchy: this.hierarchy(),
                   pop_levels: levelToPop,
-                  zone_or_output_id: this.zoneId,
+                  zone_or_output_id: this.zoneId(),
                   item_key: undefined,
                 })
                 .catch((err: unknown) => {

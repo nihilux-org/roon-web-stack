@@ -2,19 +2,19 @@
   <nr-zone-actions [queueComponentTemplateRef]="zoneQueue" [class]="layoutClass" class="zone-actions" ngxSnContainer />
 </ng-template>
 <ng-template #zoneCommands let-layoutClass="class">
-  <nr-zone-commands [$zoneCommands]="$zoneCommands" [class]="layoutClass" class="zone-commands" [zoneVolume]="$layout() !== DisplayMode.TEN_FEET ? zoneVolume : undefined" ngxSnContainer />
+  <nr-zone-commands [$zoneCommands]="$zoneCommands()" [class]="layoutClass" class="zone-commands" [$zoneVolume]="$layout() !== DisplayMode.TEN_FEET ? zoneVolume : undefined" ngxSnContainer />
 </ng-template>
 <ng-template #zoneCurrentTrack let-layoutClass="class">
-  <nr-zone-current-track [$isOneColumn]="$isOneColumn" [$trackDisplay]="$trackDisplay" [class]="layoutClass" class="zone-current-track"/>
+  <nr-zone-current-track [$isOneColumn]="$isOneColumn()" [$trackDisplay]="$trackDisplay()" [class]="layoutClass" class="zone-current-track"/>
 </ng-template>
 <ng-template #zoneImage let-layoutClass="class">
-  <nr-zone-image [$trackDisplay]="$trackDisplay" [class]="layoutClass" class="zone-image"/>
+  <nr-zone-image [$trackDisplay]="$trackDisplay()" [class]="layoutClass" class="zone-image"/>
 </ng-template>
 <ng-template #zoneProgression let-layoutClass="class">
-  <nr-zone-progression [$zoneProgression]="$zoneProgression" [class]="layoutClass" class="zone-progression"/>
+  <nr-zone-progression [$zoneProgression]="$zoneProgression()" [class]="layoutClass" class="zone-progression"/>
 </ng-template>
 <ng-template #zoneQueue let-layoutClass="class">
-  <nr-zone-queue [$trackDisplay]="$trackDisplay" [class]="layoutClass" class="zone-queue" />
+  <nr-zone-queue [$trackDisplay]="$trackDisplay()" [class]="layoutClass" class="zone-queue" />
 </ng-template>
 <ng-template #zoneVolume let-layoutClass="class">
   <nr-zone-volume [class]="layoutClass" class="zone-volume" />

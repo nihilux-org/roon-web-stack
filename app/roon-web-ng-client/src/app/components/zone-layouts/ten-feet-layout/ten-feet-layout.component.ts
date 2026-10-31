@@ -1,5 +1,5 @@
 import { NgTemplateOutlet } from "@angular/common";
-import { Component, computed, effect, inject, Input, OnDestroy, OnInit, Signal } from "@angular/core";
+import { Component, computed, effect, inject, input, OnDestroy, OnInit, Signal } from "@angular/core";
 import { MatIconButton } from "@angular/material/button";
 import { MatRipple } from "@angular/material/core";
 import { MatIcon } from "@angular/material/icon";
@@ -25,7 +25,7 @@ import { SettingsService } from "@services/settings.service";
   styleUrl: "./ten-feet-layout.component.scss",
 })
 export class TenFeetLayoutComponent implements OnInit, OnDestroy {
-  @Input({ required: true }) layout!: LayoutData;
+  layout = input.required<LayoutData>();
   private readonly _dialogService: DialogService;
   private readonly _idleService: IdleService;
   private readonly _$isBigFont: Signal<boolean>;

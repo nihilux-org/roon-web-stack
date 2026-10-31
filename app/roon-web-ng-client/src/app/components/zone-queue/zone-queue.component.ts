@@ -1,16 +1,6 @@
 import { deepEqual } from "fast-equals";
 import { CdkFixedSizeVirtualScroll, CdkVirtualForOf, CdkVirtualScrollViewport } from "@angular/cdk/scrolling";
-import {
-  Component,
-  computed,
-  HostBinding,
-  inject,
-  Input,
-  QueryList,
-  Signal,
-  ViewChild,
-  ViewChildren,
-} from "@angular/core";
+import { Component, computed, HostBinding, inject, input, Signal, viewChild, viewChildren } from "@angular/core";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatMenu, MatMenuContent, MatMenuItem, MatMenuTrigger } from "@angular/material/menu";
 import { RoonImageComponent } from "@components/roon-image/roon-image.component";
@@ -39,7 +29,7 @@ import { SettingsService } from "@services/settings.service";
 })
 export class ZoneQueueComponent {
   @HostBinding("class.open") open: boolean;
-  @Input({ required: true }) $trackDisplay!: Signal<TrackDisplay>;
+  $trackDisplay = input.required<TrackDisplay>();
   private readonly _roonService: RoonService;
   private readonly _spatialNavigableService: NgxSpatialNavigableService;
   readonly $isBigFonts: Signal<boolean>;
@@ -49,8 +39,8 @@ export class ZoneQueueComponent {
   readonly $imageSize: Signal<number>;
   readonly $itemSize: Signal<number>;
   readonly $layoutClass: Signal<string>;
-  @ViewChild(CdkVirtualScrollViewport) _virtualScroll?: CdkVirtualScrollViewport;
-  @ViewChildren(MatMenuTrigger) _menuTriggers!: QueryList<MatMenuTrigger>;
+  _virtualScroll = viewChild(CdkVirtualScrollViewport);
+  _menuTriggers = viewChildren(MatMenuTrigger);
 
   constructor() {
     this._roonService = inject(RoonService);
@@ -92,7 +82,7 @@ export class ZoneQueueComponent {
   }
 
   openActionMenu(queue_item_id: number) {
-    const menuTrigger = this._menuTriggers.find((mt) => mt.menuData === queue_item_id);
+    const menuTrigger = this._menuTriggers().find((mt) => mt.menuData === queue_item_id);
     if (menuTrigger) {
       menuTrigger.menuData = { queue_item_id };
       this._spatialNavigableService.suspendSpatialNavigation();
@@ -113,12 +103,12 @@ export class ZoneQueueComponent {
         queue_item_id: `${queue_item_id}`,
       },
     });
-    this._virtualScroll?.scrollToIndex(0, "instant");
+    this._virtualScroll()?.scrollToIndex(0, "instant");
   }
 
   onQueueTrackToggled() {
     if (this.$displayQueue()) {
-      this._virtualScroll?.checkViewportSize();
+      this._virtualScroll()?.checkViewportSize();
     } else {
       this.open = false;
     }
@@ -127,9 +117,9 @@ export class ZoneQueueComponent {
   onQueueTrackToggleStart() {
     if (this.$displayQueue()) {
       this.open = true;
-      if ((this._virtualScroll?.getViewportSize() ?? -1) === 0) {
+      if ((this._virtualScroll()?.getViewportSize() ?? -1) === 0) {
         setTimeout(() => {
-          this._virtualScroll?.checkViewportSize();
+          this._virtualScroll()?.checkViewportSize();
         }, 100);
       }
     }

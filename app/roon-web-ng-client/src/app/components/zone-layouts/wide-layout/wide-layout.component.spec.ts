@@ -1,6 +1,6 @@
 import { MockProvider } from "ng-mocks";
 import { beforeEach, describe, expect, it } from "vitest";
-import { Component, Input, Signal, signal, ViewChild, WritableSignal } from "@angular/core";
+import { Component, input, Signal, signal, viewChild, WritableSignal } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { SettingsService } from "@services/settings.service";
 import { WideLayoutComponent } from "./wide-layout.component";
@@ -46,8 +46,8 @@ import { WideLayoutComponent } from "./wide-layout.component";
   imports: [WideLayoutComponent],
 })
 class TemplateProducerComponent {
-  @Input() $layoutClass!: Signal<string>;
-  @ViewChild(WideLayoutComponent) wideLayout!: WideLayoutComponent;
+  $layoutClass = input.required<string>();
+  wideLayout = viewChild.required(WideLayoutComponent);
 }
 
 describe("WideLayoutComponent", () => {
@@ -72,7 +72,7 @@ describe("WideLayoutComponent", () => {
     fixture = TestBed.createComponent(TemplateProducerComponent);
     fixture.componentRef.setInput("$layoutClass", $layoutClass);
     await fixture.whenStable();
-    component = fixture.componentInstance.wideLayout;
+    component = fixture.componentInstance.wideLayout();
   });
 
   it("should create", () => {
