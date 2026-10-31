@@ -1,6 +1,6 @@
 import { MockComponent, MockProvider } from "ng-mocks";
 import { beforeEach, describe, expect, it, Mock, vi } from "vitest";
-import { Component, Input, Signal, signal, ViewChild, WritableSignal } from "@angular/core";
+import { Component, input, signal, viewChild, WritableSignal } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { ZoneSelectorComponent } from "@components/zone-selector/zone-selector.component";
 import { DialogService } from "@services/dialog.service";
@@ -49,8 +49,8 @@ import { TenFeetLayoutComponent } from "./ten-feet-layout.component";
   imports: [TenFeetLayoutComponent],
 })
 class TemplateProducerComponent {
-  @Input() $layoutClass!: Signal<string>;
-  @ViewChild(TenFeetLayoutComponent) tenFeetLayoutComponent!: TenFeetLayoutComponent;
+  $layoutClass = input.required<string>();
+  tenFeetLayoutComponent = viewChild.required(TenFeetLayoutComponent);
 }
 
 describe("TenFeetLayoutComponent", () => {
@@ -98,7 +98,7 @@ describe("TenFeetLayoutComponent", () => {
     fixture = TestBed.createComponent(TemplateProducerComponent);
     fixture.componentRef.setInput("$layoutClass", $layoutClass);
     await fixture.whenStable();
-    component = fixture.componentInstance.tenFeetLayoutComponent;
+    component = fixture.componentInstance.tenFeetLayoutComponent();
   });
 
   it("should create", () => {

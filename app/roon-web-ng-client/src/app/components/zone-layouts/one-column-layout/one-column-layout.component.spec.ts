@@ -1,7 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { Component, Input, Signal, signal, ViewChild, WritableSignal } from "@angular/core";
+import { Component, input, signal, viewChild, WritableSignal } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { CompactLayoutComponent } from "@components/zone-layouts/compact-layout/compact-layout.component";
 import { OneColumnLayoutComponent } from "./one-column-layout.component";
 
 @Component({
@@ -45,8 +44,8 @@ import { OneColumnLayoutComponent } from "./one-column-layout.component";
   imports: [OneColumnLayoutComponent],
 })
 class TemplateProducerComponent {
-  @Input() $layoutClass!: Signal<string>;
-  @ViewChild(OneColumnLayoutComponent) oneColumnLayout!: CompactLayoutComponent;
+  $layoutClass = input.required<string>();
+  oneColumnLayout = viewChild.required(OneColumnLayoutComponent);
 }
 
 describe("OneColumnLayoutComponent", () => {
@@ -59,7 +58,7 @@ describe("OneColumnLayoutComponent", () => {
     fixture = TestBed.createComponent(TemplateProducerComponent);
     fixture.componentRef.setInput("$layoutClass", $layoutClass);
     await fixture.whenStable();
-    component = fixture.componentInstance.oneColumnLayout;
+    component = fixture.componentInstance.oneColumnLayout();
   });
 
   it("should create", () => {

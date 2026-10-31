@@ -1,4 +1,4 @@
-import { Component, Input, Signal } from "@angular/core";
+import { Component, input } from "@angular/core";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { ZoneProgression } from "@model";
 
@@ -9,5 +9,5 @@ import { ZoneProgression } from "@model";
   styleUrl: "./zone-progression.component.scss",
 })
 export class ZoneProgressionComponent {
-  @Input({ required: true }) $zoneProgression!: Signal<ZoneProgression>;
+  $zoneProgression = input.required<ZoneProgression>();
 }

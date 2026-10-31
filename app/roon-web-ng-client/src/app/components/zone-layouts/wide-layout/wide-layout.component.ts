@@ -1,5 +1,5 @@
 import { NgTemplateOutlet } from "@angular/common";
-import { Component, inject, Input, Signal } from "@angular/core";
+import { Component, inject, input, Signal } from "@angular/core";
 import { LayoutData } from "@model";
 import { SettingsService } from "@services/settings.service";
 
@@ -10,7 +10,7 @@ import { SettingsService } from "@services/settings.service";
   styleUrl: "./wide-layout.component.scss",
 })
 export class WideLayoutComponent {
-  @Input({ required: true }) layout!: LayoutData;
+  layout = input.required<LayoutData>();
   readonly $isSmallTablet: Signal<boolean>;
 
   constructor() {

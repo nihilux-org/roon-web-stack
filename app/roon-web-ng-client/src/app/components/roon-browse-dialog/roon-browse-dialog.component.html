@@ -23,15 +23,15 @@
     </div>
   } @else {
     <nr-roon-browse-list
-      [content]="content!"
+      [content]="$content()!"
       [zoneId]="zoneId"
       [hierarchy]="hierarchy"
-      [scrollIndex]="scrollIndex"
-      [isPaginated]="isPaginated"
+      [scrollIndex]="$scrollIndex()"
+      [isPaginated]="$isPaginated()"
       [isRecording]="isRecording"
       (clickedItem)="onItemClicked($event)"
       (recordedAction)="onRecordedAction($event)" />
-    @if (withIndex) {
+    @if ($withIndex()) {
       <nr-alphabetical-index [class.is-big-fonts]="$isBigFont()" (clickedLetter)="onIndexClicked($event)" ngxSnContainer [ngxSnContainerRememberLastFocusedChild]="true" />
     }
   }

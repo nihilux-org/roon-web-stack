@@ -1,4 +1,4 @@
-import { Component, computed, inject, Input, Signal, TemplateRef } from "@angular/core";
+import { Component, computed, inject, input, Signal, TemplateRef } from "@angular/core";
 import { MatButton, MatIconButton } from "@angular/material/button";
 import { MatDialogConfig } from "@angular/material/dialog";
 import { MatIcon } from "@angular/material/icon";
@@ -30,7 +30,7 @@ import { SettingsService } from "@services/settings.service";
   styleUrl: "./zone-actions.component.scss",
 })
 export class ZoneActionsComponent {
-  @Input({ required: true }) queueComponentTemplateRef!: TemplateRef<LayoutContext>;
+  queueComponentTemplateRef = input.required<TemplateRef<LayoutContext>>();
   private readonly _dialogService: DialogService;
   private readonly _settingsService: SettingsService;
   private readonly _roonService: RoonService;
@@ -119,7 +119,7 @@ export class ZoneActionsComponent {
         width: "95svw",
         maxWidth: "95svw",
         data: {
-          queueComponentTemplateRef: this.queueComponentTemplateRef,
+          queueComponentTemplateRef: this.queueComponentTemplateRef(),
         },
       });
     } else {

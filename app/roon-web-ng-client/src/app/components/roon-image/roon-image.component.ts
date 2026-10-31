@@ -1,5 +1,5 @@
 import { IMAGE_LOADER, ImageLoaderConfig, NgOptimizedImage } from "@angular/common";
-import { booleanAttribute, Component, Input, numberAttribute, OnInit } from "@angular/core";
+import { Component, computed, input } from "@angular/core";
 
 @Component({
   selector: "nr-roon-image",
@@ -17,29 +17,18 @@ import { booleanAttribute, Component, Input, numberAttribute, OnInit } from "@an
     },
   ],
 })
-export class RoonImageComponent implements OnInit {
-  @Input({ required: true }) src!: string;
-  @Input({ required: true, transform: numberAttribute }) width!: number;
-  @Input({ required: true, transform: numberAttribute }) height!: number;
-  @Input({ required: true }) alt!: string;
-  @Input({ transform: booleanAttribute }) priority;
-  loaderParams: {
-    height: number;
-    width: number;
-  };
-
-  constructor() {
-    this.priority = false;
-    this.loaderParams = {
-      height: 0,
-      width: 0,
+export class RoonImageComponent {
+  src = input.required<string>();
+  width = input.required<number>();
+  height = input.required<number>();
+  alt = input.required<string>();
+  priority = input(false, {
+    transform: (v: string | boolean) => !!(v || v === "true"),
+  });
+  loaderParams = computed(() => {
+    return {
+      height: this.height() * 2,
+      width: this.width() * 2,
     };
-  }
-
-  ngOnInit(): void {
-    this.loaderParams = {
-      height: this.height * 2,
-      width: this.width * 2,
-    };
-  }
+  });
 }

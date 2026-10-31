@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from "@angular/core";
+import { Component, output } from "@angular/core";
 
 @Component({
   selector: "nr-alphabetical-index",
@@ -7,7 +7,7 @@ import { Component, EventEmitter, Output } from "@angular/core";
   styleUrl: "./alphabetical-index.component.scss",
 })
 export class AlphabeticalIndexComponent {
-  @Output() clickedLetter = new EventEmitter<string>();
+  clickedLetter = output<string>();
   readonly alphabet: string[];
   constructor() {
     this.alphabet = [
