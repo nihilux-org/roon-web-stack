@@ -29,7 +29,7 @@
     "@types/bun": "1.4.4",
     "@typescript-eslint/eslint-plugin": "8.72.1",
     "@typescript-eslint/parser": "8.72.1",
-    "@vitest/coverage-istanbul": "5.0.5",
+    "@vitest/coverage-istanbul": "5.1.0",
     "eslint": "10.14.0",
     "eslint-config-prettier": "10.1.8",
     "eslint-import-resolver-typescript": "4.4.5",
@@ -42,7 +42,7 @@
     "prettier": "3.9.10",
     "typescript": "6.0.3",
     "typescript-eslint": "8.72.1",
-    "vitest": "5.0.5",
+    "vitest": "5.1.0",
     "vitest-fetch-mock": "0.4.5"
   }
 }
