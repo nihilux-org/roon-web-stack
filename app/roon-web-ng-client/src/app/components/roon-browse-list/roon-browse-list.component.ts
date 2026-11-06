@@ -84,7 +84,7 @@ export class RoonBrowseListComponent {
   recordedAction = output<RecordedAction>();
   _virtualScroll = viewChild(CdkVirtualScrollViewport);
   _menuTriggers = viewChildren(MatMenuTrigger);
-  readonly $dataSource: WritableSignal<RoonListDataSource | Item[] | undefined> = signal(undefined);
+  readonly $dataSource: Signal<RoonListDataSource | Item[]>;
   readonly $imageSize: Signal<number>;
   readonly $isBigFonts: Signal<boolean>;
   readonly $isOneColumn: Signal<boolean>;
@@ -116,14 +116,16 @@ export class RoonBrowseListComponent {
       }
     });
     this.$lastFocusedItemId = signal("roon-browse-item-0");
-    effect(() => {
+    this.$dataSource = computed(() => {
       const hierarchy = this.hierarchy();
       const content = this.content();
-      if (this.isPaginated()) {
-        this.$dataSource.set(new RoonListDataSource(hierarchy, content, this._roonService));
+      if (untracked(this.isPaginated)) {
+        return new RoonListDataSource(hierarchy, content, this._roonService);
       } else {
-        this.$dataSource.set(content.items);
+        return content.items;
       }
+    });
+    effect(() => {
       const scrollIndex = this.scrollIndex();
       if (scrollIndex > 1) {
         const virtualScroll = untracked(this._virtualScroll);
