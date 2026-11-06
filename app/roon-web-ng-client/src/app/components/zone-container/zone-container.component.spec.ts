@@ -1,8 +1,7 @@
-import { MockComponent, MockProvider, ngMocks } from "ng-mocks";
+import { MockComponent, MockProvider } from "ng-mocks";
 import { beforeEach, describe, expect, it, Mock, vi } from "vitest";
 import { signal, WritableSignal } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { BrowserAnimationsModule, NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { ZoneActionsComponent } from "@components/zone-actions/zone-actions.component";
 import { ZoneCommandsComponent } from "@components/zone-commands/zone-commands.component";
 import { ZoneCurrentTrackComponent } from "@components/zone-current-track/zone-current-track.component";
@@ -41,7 +40,6 @@ describe("ZoneContainerComponent", () => {
   let spatialNavigationService: {
     resetSpatialNavigation: Mock;
   };
-  ngMocks.globalReplace(BrowserAnimationsModule, NoopAnimationsModule);
 
   beforeEach(async () => {
     $displayedZoneId = signal("zone_id");
