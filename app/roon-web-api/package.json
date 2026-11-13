@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@nihilux/roon-web-model": "workspace:*",
-    "hono": "4.13.16",
+    "hono": "4.13.17",
     "nanoid": "6.0.2",
     "node-roon-api": "github:roonlabs/node-roon-api",
     "node-roon-api-audioinput": "github:roonlabs/node-roon-api-audioinput",
