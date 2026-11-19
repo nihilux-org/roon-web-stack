@@ -1,4 +1,4 @@
-ARG BUN_VERSION=1.4.4
+ARG BUN_VERSION=1.4.5
 ARG ALPINE_VERSION=3.24
 
 FROM oven/bun:${BUN_VERSION}-alpine AS builder
@@ -30,6 +30,8 @@ COPY ./LICENSE ./LICENSE
 COPY --from=builder /usr/src/app/roon-web-api/bin/node_modules ./node_modules
 COPY --from=builder /usr/src/app/roon-web-api/bin/roon-web-api ./roon-web-api
 COPY --from=builder /usr/src/app/roon-web-ng-client/dist/roon-web-ng-client/browser ./web
+
+EXPOSE 9003
 
 USER bun
 
