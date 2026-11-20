@@ -50,6 +50,7 @@ export interface WSConnectOptions {
   host: string;
   port: number;
   onclose?: () => void;
+  onerror?: () => void;
 }
 
 export type RoonSubscriptionResponse = "Subscribed" | "Changed" | "Unsubscribed" | "NetworkError" | "ZoneNotFound";
@@ -438,9 +439,15 @@ export interface SettingsLayout<T extends SettingsValues> {
 
 export type RoonServiceRequired = "not_required" | "required" | "optional";
 
+export interface RoonServerAddress {
+  host?: string;
+  port: number;
+}
+
 export interface RoonExtensionOptions<T extends SettingsValues> {
   description: RoonExtensionDescription;
   log_level?: "none" | "all";
+  roonServerAddress: RoonServerAddress;
   RoonApiBrowse?: RoonServiceRequired;
   RoonApiImage?: RoonServiceRequired;
   RoonApiTransport?: RoonServiceRequired;
@@ -497,7 +504,7 @@ export interface RoonExtension<T extends SettingsValues> {
   start_discovery(provided_services?: ProvidedRoonServices[]): void;
   set_status(message: string): void;
   update_options(options: Partial<RoonExtensionOptions<T>>): void;
-  get_core(): Promise<RoonServer>;
+  get_server(): Promise<RoonServer>;
   settings(): SettingsManager<T> | undefined;
   audioInputSessionManager(): AudioInputSessionManager | undefined;
 }
