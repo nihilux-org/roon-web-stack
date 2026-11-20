@@ -21,11 +21,11 @@ const fetch = async (image_key: string, options: RoonApiImageResultOptions): Pro
       return {
         data: image,
         contentType: content_type,
-        cacheable: false,
+        cacheable: true,
       };
     } catch (err) {
       if (err === "NotFound") {
-        throw new MissingImageError(`${image_key} not found`, true);
+        throw new MissingImageError(`${image_key} not found`, false);
       }
       logger.error(err, "image can't be fetched from roon");
       throw err;

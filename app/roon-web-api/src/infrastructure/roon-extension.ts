@@ -22,8 +22,9 @@ import {
 } from "@nihilux/roon-web-model";
 import { Extension } from "@roon-kit";
 import { settingsOptions } from "./roon-extension-settings";
+import { roonServerAddress } from "./roon-server-address";
 
-export const extension_version = "0.0.14-beta-7";
+export const extension_version = "0.0.14-beta-8";
 
 const extension: RoonExtension<ExtensionSettings> = new Extension({
   description: {
@@ -34,6 +35,7 @@ const extension: RoonExtension<ExtensionSettings> = new Extension({
     email: "nihil@nihilux.org",
     website: `http://${hostInfo.ipV4}:${hostInfo.port}`,
   },
+  roonServerAddress,
   RoonApiBrowse: "required",
   RoonApiImage: "required",
   RoonApiTransport: "required",
@@ -135,7 +137,7 @@ const onServerLost = (listener: ServerListener): void => {
   extension.on("core_unpaired", listener);
 };
 
-const server = async (): Promise<RoonServer> => extension.get_core();
+const server = async (): Promise<RoonServer> => extension.get_server();
 
 const onZones = (listener: ZoneListener): void => {
   extension.on("subscribe_zones", listener);
@@ -160,7 +162,14 @@ const startExtension = (): void => {
     mustBeStarted = false;
     onServerPaired(onServerPairedDefaultListener);
     onServerLost(onServerLostDefaultListener);
-    logger.info("starting discovery, don't forget to enable the extension in roon settings if needed.");
+    if (roonServerAddress.host !== undefined) {
+      logger.info(
+        `connecting directly to roon server at ${roonServerAddress.host}:${roonServerAddress.port}, ` +
+          `don't forget to enable the extension in roon settings if needed.`
+      );
+    } else {
+      logger.info("starting discovery, don't forget to enable the extension in roon settings if needed.");
+    }
     extension.start_discovery();
     extension.set_status("starting...");
   }
@@ -175,7 +184,7 @@ const getImage = async (
 };
 
 const browse = async (options: RoonApiBrowseOptions | EmptyObject): Promise<RoonApiBrowseResponse> => {
-  const server = await extension.get_core();
+  const server = await extension.get_server();
   return server.services.RoonApiBrowse.browse(options).catch((err: unknown) => {
     logger.error(err, "error during roon#browse");
     throw err;
@@ -183,7 +192,7 @@ const browse = async (options: RoonApiBrowseOptions | EmptyObject): Promise<Roon
 };
 
 const load = async (options: RoonApiBrowseLoadOptions): Promise<RoonApiBrowseLoadResponse> => {
-  const server = await extension.get_core();
+  const server = await extension.get_server();
   return server.services.RoonApiBrowse.load(options).catch((err: unknown) => {
     logger.error(err, "error during roon#load");
     throw err;

@@ -64,11 +64,11 @@ describe("image-fetcher.ts test suite", () => {
       expect(result).toEqual({
         data: new Uint8Array([0x89, 0x50]),
         contentType: "image/png",
-        cacheable: false,
+        cacheable: true,
       });
     });
 
-    it("should throw MissingImageError with cacheable=true when roon returns NotFound", async () => {
+    it("should throw MissingImageError with cacheable=false when roon returns NotFound", async () => {
       airplayManagerMock.isAirplayImageKey.mockReturnValue(false);
       roonMock.getImage.mockRejectedValue("NotFound");
 
@@ -78,7 +78,7 @@ describe("image-fetcher.ts test suite", () => {
       try {
         await imageFetcher.fetch("missing_key", options);
       } catch (err: unknown) {
-        expect((err as MissingImageError).cacheable).toBe(true);
+        expect((err as MissingImageError).cacheable).toBe(false);
       }
     });
 

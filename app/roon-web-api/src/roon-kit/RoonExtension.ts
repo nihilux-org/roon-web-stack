@@ -1,19 +1,23 @@
 import EventEmitter from "events";
 import {
+  AudioInputSessionManager,
   ProvidedRoonServices,
   RequestedRoonServices,
   RoonApi,
   RoonApiStatus,
-  RoonServer, RoonExtension,
+  RoonExtension,
   RoonExtensionOptions,
+  RoonServer,
   RoonServiceRequired,
+  SettingsManager,
   SettingsValues,
-  SettingsManager, AudioInputSessionManager,
 } from "@nihilux/roon-web-model";
 import { TransientObject } from "./internals";
 import { RoonKit } from "./RoonKit";
 import { RoonExtensionSettings } from "./RoonExtensionSettings";
 import { RoonAudioInputSessionManager } from "./RoonAudioInputSessionManager";
+
+const CORE_RECONNECT_DELAY_MS = 1000;
 
 /**
  * Wrapper around the Roon API that simplifies initializing services and subscribing to zones.
@@ -22,9 +26,10 @@ export class Extension<T extends SettingsValues> extends EventEmitter implements
   private readonly _api: RoonApi;
   private readonly _audioInputSessionManager?: AudioInputSessionManager;
   private readonly _status: RoonApiStatus;
+  private readonly _settings?: RoonExtensionSettings<T>;
   private _options: RoonExtensionOptions<T>;
-  private _core?: TransientObject<RoonServer>;
-  private _settings?: RoonExtensionSettings<T>;
+  private _server?: TransientObject<RoonServer>;
+  private _serverReconnectTimeout?: ReturnType<typeof setTimeout>;
 
   /**
    * Creates a new `RoonExtension` instance.
@@ -50,7 +55,8 @@ export class Extension<T extends SettingsValues> extends EventEmitter implements
       ...options.description,
       log_level: options.log_level,
       core_paired: (newCore) => {
-        const core = this._core!.resolve(newCore);
+        clearTimeout(this._serverReconnectTimeout);
+        const core = this._server!.resolve(newCore);
         this.emit("core_paired", core);
 
         // Setup subscriptions
@@ -69,8 +75,8 @@ export class Extension<T extends SettingsValues> extends EventEmitter implements
       },
       core_unpaired: (oldCore) => {
         this.emit("core_unpaired", oldCore);
-        this._core!.dispose();
-        this._core = new TransientObject();
+        this._server!.dispose();
+        this._server = new TransientObject();
       },
     });
 
@@ -96,12 +102,12 @@ export class Extension<T extends SettingsValues> extends EventEmitter implements
    * @param provided_services Optional. Additional services provided by extension. RoonApiState is already provided so DO NOT add this service.
    */
   public start_discovery(provided_services: ProvidedRoonServices[] = []): void {
-    if (this._core) {
+    if (this._server) {
       throw new Error(`RoonExtension: Discovery has already been started.`);
     }
 
     // Initialize transient object for to hold paired core
-    this._core = new TransientObject();
+    this._server = new TransientObject();
 
     // Add RoonApiStatus to list of provided services.
     provided_services.push(this._status);
@@ -145,8 +151,8 @@ export class Extension<T extends SettingsValues> extends EventEmitter implements
       provided_services,
     });
 
-    // Start discovery
-    this._api.start_discovery();
+    // Start discovery, or connect directly to the configured core
+    this.connectServer();
   }
 
   /**
@@ -179,7 +185,7 @@ export class Extension<T extends SettingsValues> extends EventEmitter implements
    * @param options Options to apply.
    */
   public update_options(options: Partial<RoonExtensionOptions<T>>): void {
-    if (this._core) {
+    if (this._server) {
       throw new Error(
         `RoonExtension: Can't update options after discovery has been started.`
       );
@@ -192,7 +198,7 @@ export class Extension<T extends SettingsValues> extends EventEmitter implements
    * Returns the current RoonCore. If there isn't one paired it waits.
    * @returns The current RoonCore that's paired.
    */
-  public get_core(): Promise<RoonServer> {
+  public get_server(): Promise<RoonServer> {
     const transient = this.ensureStarted();
     return transient.getObject();
   }
@@ -206,13 +212,13 @@ export class Extension<T extends SettingsValues> extends EventEmitter implements
   }
 
   private ensureStarted(): TransientObject<RoonServer> {
-    if (!this._core) {
+    if (!this._server) {
       throw new Error(
         `RoonExtension: Discovery hasn't been started yet. Call start_discovery() first.`
       );
     }
 
-    return this._core;
+    return this._server;
   }
 
   private requireService(
@@ -231,5 +237,36 @@ export class Extension<T extends SettingsValues> extends EventEmitter implements
           break;
       }
     }
+  }
+
+  private connectServer(): void {
+    const { host, port } = this._options.roonServerAddress;
+    if (host !== undefined) {
+      if (this._server === undefined) {
+        this._server = new TransientObject<RoonServer>();
+      }
+      this._api.ws_connect({
+        host,
+        port,
+        onclose: () => {
+          this.scheduleCoreReconnect();
+        },
+        onerror: () => {
+          this.scheduleCoreReconnect()
+        },
+      });
+    } else {
+      this._api.start_discovery();
+    }
+  }
+
+  private scheduleCoreReconnect(): void {
+    if (this._serverReconnectTimeout !== undefined) {
+      return;
+    }
+    this._serverReconnectTimeout = setTimeout(() => {
+      this._serverReconnectTimeout = undefined;
+      this.connectServer();
+    }, CORE_RECONNECT_DELAY_MS);
   }
 }

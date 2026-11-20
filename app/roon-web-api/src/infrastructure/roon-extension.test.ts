@@ -77,6 +77,7 @@ describe("roon-extension.ts test suite", () => {
   });
 
   afterEach(() => {
+    vi.unstubAllEnvs();
     vi.clearAllMocks();
     vi.resetAllMocks();
     vi.resetModules();
@@ -118,9 +119,9 @@ describe("roon-extension.ts test suite", () => {
     expect(passedEventName).toEqual("core_unpaired");
   });
 
-  it("roon#server should return the same Promise as RoonExtension#get_core", async () => {
+  it("roon#server should return the same Promise as RoonExtension#get_server", async () => {
     const core = {} as unknown as RoonServer;
-    extensionMock.get_core.mockImplementation(() => Promise.resolve(core));
+    extensionMock.get_server.mockImplementation(() => Promise.resolve(core));
 
     const result = await roon.server();
 
@@ -266,6 +267,21 @@ describe("roon-extension.ts test suite", () => {
     );
   });
 
+  it("roon#startExtension should log the direct connection target when ROON_SERVER_IP is set", async () => {
+    vi.stubEnv("ROON_SERVER_IP", "10.0.0.42");
+    vi.stubEnv("ROON_SERVER_PORT", "9333");
+    vi.resetModules();
+    const { roon: directRoon } = await vi.importActual<{ roon: Roon }>("./roon-extension");
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    extensionMock.start_discovery.mockImplementation(() => {});
+
+    directRoon.startExtension();
+
+    expect(loggerMock.info).toHaveBeenCalledWith(
+      "connecting directly to roon server at 10.0.0.42:9333, don't forget to enable the extension in roon settings if needed."
+    );
+  });
+
   it("roon#startExtension should register the default onServerPaired listener", () => {
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     extensionMock.start_discovery.mockImplementation(() => {});
@@ -336,7 +352,7 @@ describe("roon-extension.ts test suite", () => {
         RoonApiImage: roonApiImage,
       },
     } as unknown as RoonServer;
-    extensionMock.get_core.mockImplementation(() => Promise.resolve(server));
+    extensionMock.get_server.mockImplementation(() => Promise.resolve(server));
     const image_key = "image_key";
     const options: RoonApiImageResultOptions = {
       format: "image/png",
@@ -372,7 +388,7 @@ describe("roon-extension.ts test suite", () => {
         } as unknown as RoonApiBrowse,
       },
     } as unknown as RoonServer;
-    extensionMock.get_core.mockImplementation(() => Promise.resolve(server));
+    extensionMock.get_server.mockImplementation(() => Promise.resolve(server));
     const options: RoonApiBrowseOptions = {
       item_key: "item_key",
       hierarchy: "browse",
@@ -406,7 +422,7 @@ describe("roon-extension.ts test suite", () => {
         } as unknown as RoonApiBrowse,
       },
     } as unknown as RoonServer;
-    extensionMock.get_core.mockImplementation(() => Promise.resolve(server));
+    extensionMock.get_server.mockImplementation(() => Promise.resolve(server));
     const options: RoonApiBrowseLoadOptions = {
       hierarchy: "browse",
       multi_session_key: "multi_session_key",

@@ -34,7 +34,7 @@ export class RoonAudioInputSessionManager implements AudioInputSessionManager {
     const { zone_id, url,  display_name, icon_url, info } = audioInputSession;
     const currentSession = this._currentSessions.get(zone_id);
     await currentSession?.session.end();
-    const server = await this._roonExtension.get_core();
+    const server = await this._roonExtension.get_server();
     return server.services.RoonApiAudioInput.begin_session(
       {
         zone_id,
@@ -59,7 +59,7 @@ export class RoonAudioInputSessionManager implements AudioInputSessionManager {
       switch (event) {
         case "SessionBegan":
           currentSession.session.session_id = body.session_id;
-          void this._roonExtension.get_core()
+          void this._roonExtension.get_server()
             .then(async (server) => {
               await server.services.RoonApiAudioInput.update_transport_controls({
                 session_id: currentSession.session.session_id,
@@ -126,7 +126,7 @@ export class RoonAudioInputSessionManager implements AudioInputSessionManager {
   public async update_track_info(zone_id: string, info: RoonAudioInputTrackInfoUpdate): Promise<void> {
     const currentSession = this._currentSessions.get(zone_id);
     if (currentSession !== undefined) {
-      const server = await this._roonExtension.get_core();
+      const server = await this._roonExtension.get_server();
       const update_track_info: RoonAudioInputUpdateTrackInfoUpdateOptions = {
         track_id: RoonAudioInputSessionManager.AIRPLAY_TRACK_ID,
         session_id: currentSession.session.session_id,

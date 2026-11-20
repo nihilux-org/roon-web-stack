@@ -2,7 +2,7 @@ import { Mock, vi } from "vitest";
 
 const on: Mock = vi.fn();
 const off: Mock = vi.fn();
-const get_core: Mock = vi.fn();
+const get_server: Mock = vi.fn();
 const set_status: Mock = vi.fn();
 const start_discovery: Mock = vi.fn();
 const save_config: Mock = vi.fn();
@@ -18,7 +18,7 @@ export interface ExtensionMock {
   on: Mock;
   off: Mock;
   set_status: Mock;
-  get_core: Mock;
+  get_server: Mock;
   start_discovery: Mock;
   api: () => { save_config: Mock; load_config: Mock };
   settings: Mock;
@@ -29,7 +29,7 @@ export const extensionMock: ExtensionMock = {
   on,
   off,
   set_status,
-  get_core,
+  get_server,
   start_discovery,
   api,
   settings,
@@ -45,7 +45,7 @@ vi.mock("@roon-kit", async () => {
         on = on;
         off = off;
         set_status = set_status;
-        get_core = get_core;
+        get_server = get_server;
         start_discovery = start_discovery;
         api = api;
         settings = settings;
