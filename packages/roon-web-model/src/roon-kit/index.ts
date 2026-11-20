@@ -19,6 +19,7 @@ export interface RoonExtensionDescription {
 
 export interface RoonApiOptions extends RoonExtensionDescription {
   log_level?: "none" | "all";
+  force_server?: boolean;
   core_paired?: (core: RoonServer) => void;
   core_unpaired?: (core: RoonServer) => void;
   core_found?: (core: RoonServer) => void;
