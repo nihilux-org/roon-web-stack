@@ -1,6 +1,6 @@
 import { Hono } from "hono";
-import { serveStatic } from "hono/bun";
 import * as path from "path";
+import { serveStatic } from "@hono/bun";
 
 const webRoot = path.join(process.env.WEB_NG_PATH ?? __dirname, "web");
 

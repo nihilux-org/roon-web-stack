@@ -13,6 +13,7 @@
     "test:watch": "vitest --watch"
   },
   "dependencies": {
+    "@hono/bun": "1.0.1",
     "@nihilux/roon-web-model": "workspace:*",
     "hono": "4.13.19",
     "nanoid": "6.0.2",
