@@ -1,0 +1,39 @@
+name: create tag and release
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: tag and release to create
+        required: true
+        type: string
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+jobs:
+  create-tag-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: create tag
+        env:
+          TAG: ${{ inputs.tag }}
+        run: |
+          echo "creating git tag $TAG"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag "${TAG}"
+          git push origin tag ${TAG}
+      - name: generate github-app token
+        id: generate-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.APP_CLIENT_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+      - name: create release
+        env:
+          GH_TOKEN: ${{ steps.generate-token.outputs.token }}
+          TAG: ${{ inputs.tag }}
+        run: |
+          gh release create ${TAG} --verify-tag -t ${TAG} --generate-notes --draft=true
