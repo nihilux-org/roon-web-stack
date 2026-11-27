@@ -15,7 +15,7 @@
   "dependencies": {
     "@hono/bun": "1.0.1",
     "@nihilux/roon-web-model": "workspace:*",
-    "hono": "4.13.21",
+    "hono": "4.13.23",
     "nanoid": "6.0.2",
     "node-roon-api": "github:roonlabs/node-roon-api",
     "node-roon-api-audioinput": "github:roonlabs/node-roon-api-audioinput",
@@ -34,9 +34,9 @@
     "@types/bun": "1.4.5",
     "@typescript-eslint/eslint-plugin": "8.74.0",
     "@typescript-eslint/parser": "8.74.0",
-    "@vitest/coverage-istanbul": "5.1.1",
+    "@vitest/coverage-istanbul": "5.1.2",
     "eslint": "10.15.0",
-    "eslint-config-prettier": "10.1.8",
+    "eslint-config-prettier": "10.1.9",
     "eslint-import-resolver-typescript": "4.4.5",
     "eslint-plugin-import": "2.32.0",
     "eslint-plugin-prettier": "5.5.7",
@@ -46,6 +46,6 @@
     "prettier": "3.10.1",
     "typescript": "6.0.3",
     "typescript-eslint": "8.74.0",
-    "vitest": "5.1.1"
+    "vitest": "5.1.2"
   }
 }
