@@ -27,8 +27,8 @@
     "@eslint/js": "10.0.1",
     "@nihilux/roon-web-model": "workspace:*",
     "@types/bun": "1.4.5",
-    "@typescript-eslint/eslint-plugin": "8.73.0",
-    "@typescript-eslint/parser": "8.73.0",
+    "@typescript-eslint/eslint-plugin": "8.74.0",
+    "@typescript-eslint/parser": "8.74.0",
     "@vitest/coverage-istanbul": "5.1.1",
     "eslint": "10.15.0",
     "eslint-config-prettier": "10.1.8",
@@ -41,8 +41,8 @@
     "happy-dom": "21.0.4",
     "prettier": "3.10.1",
     "typescript": "6.0.3",
-    "typescript-eslint": "8.73.0",
-    "vitest": "5.1.0",
+    "typescript-eslint": "8.74.0",
+    "vitest": "5.1.1",
     "vitest-fetch-mock": "0.4.5"
   }
 }
